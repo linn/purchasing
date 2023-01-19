@@ -39,8 +39,8 @@ function BoardComponents() {
     const { id } = useParams();
 
     const [board, setBoard] = useState(null);
-    const [crfNumber, setCrfNumber] = useState();
-    const [crfRevisionCode, setCrfRevisionCode] = useState();
+    const [crfNumber, setCrfNumber] = useState(null);
+    const [crfRevisionCode, setCrfRevisionCode] = useState(null);
     const [showChanges, setShowChanges] = useState(true);
     const searchBoards = searchTerm => reduxDispatch(boardsActions.search(searchTerm));
     const clearSearchBoards = () => reduxDispatch(boardsActions.clearSearch());
@@ -350,9 +350,15 @@ function BoardComponents() {
 
     const setCrfDetails = documentNumber => {
         setCrfNumber(documentNumber);
-        const crf = changeRequests.find(a => a.documentNumber.toString() === documentNumber);
-        setCrfRevisionCode(crf.revisionCode);
+        if (documentNumber) {
+            const crf = changeRequests.find(a => a.documentNumber.toString() === documentNumber);
+            setCrfRevisionCode(crf.revisionCode);
+        } else {
+            setCrfRevisionCode(null);
+        }
     };
+
+    const changesDisplaying = () => showChanges || crfNumber > 0;
 
     return (
         <Page history={history} style={{ paddingBottom: '20px' }} homeUrl={config.appRoot}>
@@ -491,6 +497,10 @@ function BoardComponents() {
                                         '& .accept': {
                                             bgcolor: '#b0f7b9'
                                         }
+                                    }}
+                                    columnVisibilityModel={{
+                                        addChangeDocumentNumber: changesDisplaying(),
+                                        deleteChangeDocumentNumber: changesDisplaying()
                                     }}
                                     rows={componentRows}
                                     columns={componentColumns}
