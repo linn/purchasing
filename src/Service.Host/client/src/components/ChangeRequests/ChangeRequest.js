@@ -32,12 +32,9 @@ function ChangeRequest() {
 
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.changeRequest));
 
-    useEffect(() => {
-        if (id && !item) {
-            reduxDispatch(changeRequestActions.fetch(id));
-        }
-    }, [id, reduxDispatch, item]);
-
+    if (!loading && !item) {
+        reduxDispatch(changeRequestActions.fetch(id));
+    }
     const statusChange = useSelector(reduxState =>
         itemSelectorHelpers.getItem(reduxState.changeRequestStatusChange)
     );
