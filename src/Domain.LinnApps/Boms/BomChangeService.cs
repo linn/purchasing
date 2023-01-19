@@ -296,12 +296,15 @@
                 this.bomChangeRepository.Add(change);
             }
 
+            // todo - hardcoded PROPOS? should this use the change in question's state?
             this.bomPack.CopyBom(srcPartNumber, destBom.BomId, change.ChangeId, "PROPOS", "O");
         }
 
         public void DeleteAllFromBom(string bomName, int crfNumber, int changedBy)
         {
             var bom = this.bomRepository.FindBy(x => x.BomName == bomName);
+            // todo - below is wrong
+            // don't make a new change if ones already sitting open for this crf/bom
             var change = new BomChange
                              {
                                  BomId = bom.BomId,
@@ -321,11 +324,22 @@
             foreach (var child in bom.Details)
             {
                 var detail = this.bomDetailRepository.FindById(child.DetailId);
-                if (!detail.DeleteChangeId.HasValue && new[] { "PROPOS", "ACCEPT", "LIVE" }.Contains(detail.ChangeState))
+                if (!detail.DeleteChangeId.HasValue && new[] { "PROPOS", "ACCEPT", "LIVE" }
+                        .Contains(detail.ChangeState))
                 {
                     detail.DeleteChangeId = change.ChangeId;
                 }
             }
+        }
+
+        public void ExplodeSubAssembly(string bomName, int crfNumber, string subAssembly, int changedBy)
+        {
+            var bom = this.bomRepository.FindBy(x => x.BomName == bomName);
+            var change = this.bomChangeRepository.FindBy(
+                x => x.DocumentNumber == crfNumber 
+                     && x.BomId == bom.BomId 
+                     && new[] { "PROPOS", "ACCEPT" }.Contains(x.ChangeState));
+            this.bomPack.ExplodeSubAssembly(bom.BomId, change.ChangeId, change.ChangeState, subAssembly);
         }
     }
 }

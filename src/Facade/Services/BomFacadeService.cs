@@ -59,5 +59,14 @@
             var updated = this.treeService.BuildBomTree(bomName, null, false, true);
             return new SuccessResult<BomTreeNode>(updated);
         }
+
+        public IResult<BomTreeNode> ExplodeSubAssembly(string bomName, int crfNumber, string subAssembly, int changedBy)
+        {
+            this.bomChangeService.ExplodeSubAssembly(bomName, crfNumber, subAssembly, changedBy);
+            this.transactionManager.Commit();
+            var updated = this.treeService.BuildBomTree(bomName, null, false, true);
+            return new SuccessResult<BomTreeNode>(updated);
+        }
     }
 }
+

@@ -52,7 +52,7 @@
 
             app.MapPost("/purchasing/boms/copy", this.CopyBom);
             app.MapPost("/purchasing/boms/delete", this.DeleteAllFromBom);
-
+            app.MapPost("/purchasing/boms/explode", this.ExplodeSubAssembly);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -282,6 +282,21 @@
             var result = bomFacadeService.DeleteBom(
                 functionResource.DestPartNumber,
                 functionResource.CrfNumber,
+                req.HttpContext.User.GetEmployeeNumber());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task ExplodeSubAssembly(
+            HttpRequest req,
+            HttpResponse res,
+            BomFunctionResource functionResource,
+            IBomFacadeService bomFacadeService)
+        {
+            var result = bomFacadeService.ExplodeSubAssembly(
+                functionResource.DestPartNumber,
+                functionResource.CrfNumber,
+                functionResource.SubAssembly,
                 req.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
