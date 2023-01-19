@@ -274,7 +274,7 @@
         {
             var destBom = this.bomRepository.FindBy(x => x.BomName == destBomPartNumber);
             var change = this.bomChangeRepository.FindBy(
-                x => x.DocumentNumber == crfNumber && x.BomId == destBom.BomId && x.ChangeState == "PROPOS");
+                x => x.DocumentNumber == crfNumber && x.BomId == destBom.BomId && new[] { "PROPOS", "ACCEPT" }.Contains(x.ChangeState));
             
             if (change == null)
             {
