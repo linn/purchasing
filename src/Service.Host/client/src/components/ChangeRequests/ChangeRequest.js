@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
@@ -32,7 +32,8 @@ function ChangeRequest() {
 
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.changeRequest));
 
-    if (!loading && !item) {
+    if (!loading && (!item || item?.documentNumber.toString() !== id)) {
+        console.log(item?.id, id);
         reduxDispatch(changeRequestActions.fetch(id));
     }
     const statusChange = useSelector(reduxState =>
@@ -75,11 +76,9 @@ function ChangeRequest() {
         return false;
     };
 
-    useEffect(() => {
-        if (item && statusChange && changedState(statusChange, item)) {
-            reduxDispatch(changeRequestActions.fetch(id));
-        }
-    }, [statusChange, reduxDispatch, item, id]);
+    if (item && statusChange && changedState(statusChange, item)) {
+        reduxDispatch(changeRequestActions.fetch(id));
+    }
 
     const [tab, setTab] = useState(0);
 
