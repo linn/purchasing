@@ -87,6 +87,13 @@
             {
                 foreach (var boardComponent in componentsToAdd)
                 {
+                    if (string.IsNullOrWhiteSpace(boardComponent.PartNumber)
+                        || string.IsNullOrWhiteSpace(boardComponent.CRef) || boardComponent.Quantity == 0)
+                    {
+                        throw new InvalidOptionException(
+                            $"Component at line {boardComponent.BoardLine} cRef {boardComponent.CRef} is malformed");
+                    }
+
                     var part = this.partRepository.FindBy(a => a.PartNumber == boardComponent.PartNumber.ToUpper());
                     boardComponent.AddChangeId = pcasChange.ChangeId;
                     boardComponent.AssemblyTechnology = part.AssemblyTechnology;
