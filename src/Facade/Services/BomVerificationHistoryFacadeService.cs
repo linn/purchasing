@@ -19,20 +19,14 @@
 
         private readonly IDatabaseService databaseService;
 
-        private readonly IBomVerificationHistoryService bomVerificationHistoryService;
-
         public BomVerificationHistoryFacadeService(
             IRepository<BomVerificationHistory, int> repository,
             ITransactionManager transactionManager,
             IBuilder<BomVerificationHistory> resourceBuilder,
-            IBomVerificationHistoryService bomVerificationHistoryService,
             IDatabaseService databaseService)
             : base(repository, transactionManager, resourceBuilder)
         {
-            this.resourceBuilder = resourceBuilder;
             this.databaseService = databaseService;
-            this.bomVerificationHistoryService = bomVerificationHistoryService;
-            this.transactionManager = transactionManager;
         }
 
         protected override BomVerificationHistory CreateFromResource(BomVerificationHistoryResource resource, IEnumerable<string> privileges = null)
@@ -49,7 +43,7 @@
                 TRef = requestId,
                 PartNumber = resource.PartNumber,
                 VerifiedBy = resource.VerifiedBy,
-                DateVerified = DateTime.Now.ToString("O"),
+                DateVerified = DateTime.Now,
                 DocumentType = resource.DocumentType,
                 DocumentNumber = resource.DocumentNumber,
                 Remarks= resource.Remarks
@@ -63,7 +57,7 @@
 
         protected override Expression<Func<BomVerificationHistory, bool>> SearchExpression(string searchTerm)
         {
-            return bomVerificationHistory => searchTerm.Trim().ToUpper().Equals(bomVerificationHistory.DocumentNumber);
+            throw new NotImplementedException();
         }
 
         protected override void SaveToLogTable(

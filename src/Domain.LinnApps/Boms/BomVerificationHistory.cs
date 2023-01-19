@@ -9,7 +9,7 @@
 
         public string PartNumber { get; set; }
 
-        public string DateVerified { get; set; }
+        public DateTime? DateVerified { get; set; }
 
         public int VerifiedBy { get; set; }
 

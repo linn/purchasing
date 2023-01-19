@@ -29,8 +29,6 @@
 
         protected ITransactionManager TransactionManager { get; private set; }
 
-        protected IBomVerificationHistoryService BomVerificationHistoryService { get; private set; }
-
         protected IDatabaseService DatabaseService { get; private set; }
 
         protected IAuthorisationService AuthorisationService { get; private set; }
@@ -40,14 +38,11 @@
         {
             this.BomVerificationHistoryRepository = Substitute.For<IRepository<BomVerificationHistory, int>>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
-            this.BomVerificationHistoryService = Substitute.For<IBomVerificationHistoryService>();
-            this.AuthorisationService = Substitute.For<IAuthorisationService>();
             this.DatabaseService= Substitute.For<IDatabaseService>();
 
             this.BomVerificationHistoryFacadeService = new BomVerificationHistoryFacadeService(this.BomVerificationHistoryRepository, 
                                                                                                this.TransactionManager, 
-                                                                                               new BomVerificationHistoryResourceBuilder(this.AuthorisationService),
-                                                                                               this.BomVerificationHistoryService, 
+                                                                                               new BomVerificationHistoryResourceBuilder(),
                                                                                                this.DatabaseService);
             this.Client = TestClient.With<BomVerificationHistoryModule>(
                 services =>

@@ -21,13 +21,7 @@
 
         public override BomVerificationHistory FindById(int key)
         {
-            return this.serviceDbContext.BomVerificationHistory
-                .Include(b => b.PartNumber)
-                .Include(b => b.DateVerified)
-                .Include(b => b.VerifiedBy)
-                .Include(b => b.DocumentType)
-                .Include(b => b.DocumentNumber)
-                .Include(b => b.Remarks).FirstOrDefault(b => b.TRef == key);
+            return this.serviceDbContext.BomVerificationHistory.FirstOrDefault(b => b.TRef == key);
         }
 
         public override IQueryable<BomVerificationHistory> FindAll()
@@ -53,13 +47,7 @@
 
         public override IQueryable<BomVerificationHistory> FilterBy(Expression<Func<BomVerificationHistory, bool>> expression)
         {
-            return this.serviceDbContext.BomVerificationHistory.Include(b => b.TRef)
-                .Include(b => b.PartNumber)
-                .Include(b => b.DateVerified)
-                .Include(b => b.VerifiedBy)
-                .Include(b => b.DocumentType)
-                .Include(b => b.DocumentNumber)
-                .Include(b => b.Remarks).Where(expression)
+            return this.serviceDbContext.BomVerificationHistory.Where(expression)
                 .AsNoTracking();
         }
     }

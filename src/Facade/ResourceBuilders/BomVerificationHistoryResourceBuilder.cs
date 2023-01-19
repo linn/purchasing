@@ -12,13 +12,6 @@
 
     public class BomVerificationHistoryResourceBuilder : IBuilder<BomVerificationHistory>
     {
-        private readonly IAuthorisationService authService;
-
-        public BomVerificationHistoryResourceBuilder(IAuthorisationService authService)
-        {
-            this.authService = authService;
-        }
-
         public BomVerificationHistoryResource Build(BomVerificationHistory model, IEnumerable<string> claims)
         {
             var resource = new BomVerificationHistoryResource

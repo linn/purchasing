@@ -2184,14 +2184,15 @@
 
         private void BuildBomVerificationHistory(ModelBuilder builder)
         {
-            var entity = builder.Entity<BomVerificationHistory>().ToTable("BOM_VERIFICATION_HISTORY").HasNoKey();
-            entity.Property(a => a.TRef).HasColumnName("TREF");
-            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER");
+            var entity = builder.Entity<BomVerificationHistory>().ToTable("BOM_VERIFICATION_HISTORY");
+            entity.HasKey(a => a.TRef);
+            entity.Property(a => a.TRef).HasColumnName("TREF").HasMaxLength(10);
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
             entity.Property(a => a.DateVerified).HasColumnName("DATE_VERIFIED");
-            entity.Property(a => a.VerifiedBy).HasColumnName("VERIFIED_BY");
-            entity.Property(a => a.DocumentType).HasColumnName("DOCUMENT_TYPE");
-            entity.Property(a => a.DocumentNumber).HasColumnName("DOCUMENT_NUMBER");
-            entity.Property(a => a.Remarks).HasColumnName("REMARKS");
+            entity.Property(a => a.VerifiedBy).HasColumnName("VERIFIED_BY").HasMaxLength(6);
+            entity.Property(a => a.DocumentType).HasColumnName("DOCUMENT_TYPE").HasMaxLength(6);
+            entity.Property(a => a.DocumentNumber).HasColumnName("DOCUMENT_NUMBER").HasMaxLength(10);
+            entity.Property(a => a.Remarks).HasColumnName("REMARKS").HasMaxLength(255);
         }
     }
 }
