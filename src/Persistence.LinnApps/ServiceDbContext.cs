@@ -210,6 +210,8 @@
 
         public DbSet<PcasChange> PcasChanges { get; set; }
 
+        public DbSet<BomVerificationHistory> BomVerificationHistory { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -324,6 +326,7 @@
             this.BuildVMasterMrh(builder);
             this.BuildBomDetails(builder);
             this.BuildBomCostDetails(builder);
+            this.BuildBomVerificationHistory(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -2177,6 +2180,19 @@
             entity.Property(a => a.MaterialPrice).HasColumnName("MATERIAL_PRICE");
             entity.Property(a => a.LabourTimeMins).HasColumnName("LTT");
             entity.Property(a => a.BomName).HasColumnName("BOM_NAME");
+        }
+
+        private void BuildBomVerificationHistory(ModelBuilder builder)
+        {
+            var entity = builder.Entity<BomVerificationHistory>().ToTable("BOM_VERIFICATION_HISTORY");
+            entity.HasKey(a => a.TRef);
+            entity.Property(a => a.TRef).HasColumnName("TREF").HasMaxLength(10);
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(a => a.DateVerified).HasColumnName("DATE_VERIFIED");
+            entity.Property(a => a.VerifiedBy).HasColumnName("VERIFIED_BY").HasMaxLength(6);
+            entity.Property(a => a.DocumentType).HasColumnName("DOCUMENT_TYPE").HasMaxLength(6);
+            entity.Property(a => a.DocumentNumber).HasColumnName("DOCUMENT_NUMBER").HasMaxLength(10);
+            entity.Property(a => a.Remarks).HasColumnName("REMARKS").HasMaxLength(255);
         }
     }
 }

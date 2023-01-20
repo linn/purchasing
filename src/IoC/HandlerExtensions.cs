@@ -93,7 +93,9 @@
                 .AddTransient<IHandler, JsonResultHandler<BomTreeNode>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<CircuitBoardResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<BomCostReportResource>>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<BoardComponentSummaryResource>>>();
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<BoardComponentSummaryResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<BomVerificationHistoryResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<BomVerificationHistoryResource>>>();
         }
     }
 }
