@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
-    using System.Text.RegularExpressions;
 
     using Linn.Common.Domain.Exceptions;
     using Linn.Common.Facade;
@@ -205,20 +204,17 @@
             var changeRequests = new List<ChangeRequest>();
 
             var fromDate = (lastMonths == null)
-                               ? new DateTime(2020, 1, 1)
+                               ? DateTime.Now.AddMonths(-120)
                                : DateTime.Now.AddMonths(-1 * (int)lastMonths);
-            var inclLive = ((outstanding == false) ? "LIVE" : "JUSTOUTSTANDING");
+            var inclLive = (outstanding == false) ? "LIVE" : "JUSTOUTSTANDING";
 
-            var newPartNumber = searchTerm.Trim().ToUpper().Replace('%', '*');
+            var newPartNumber = searchTerm.Trim().ToUpper();
             var partSearch = newPartNumber.Split('*');
 
             // this big if is just because Linq/EF/Oracle doesn't do a LIKE
             // supports IC*, *3, *LEWIS*, PCAS*L1R1 but not multiple * e.g. PCAS */L1*
             if (string.IsNullOrEmpty(newPartNumber))
             {
-                var a = this.repository.FilterBy(
-                    r => (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive)
-                         && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate);
                 changeRequests = this.repository.FilterBy(r => (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate).ToList();
             }
             else if (!newPartNumber.Contains("*"))
@@ -307,7 +303,5 @@
         {
             throw new NotImplementedException();
         }
-
-
     }
 }
