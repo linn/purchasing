@@ -79,7 +79,7 @@
                         // check if there's an open one for this bom
                         var change = this.bomChangeRepository.FindBy(
                             x => x.DocumentNumber == changeRequestNumber 
-                                 && new[] { "ACCEPT", "PROPOS" }.Contains(x.ChangeState) // todo - can we amend an ACCEPTed change?
+                                 && new[] { "ACCEPT", "PROPOS" }.Contains(x.ChangeState)
                                  && x.BomName == current.Name);
 
                         // create a new bom change if not
@@ -272,55 +272,14 @@
 
         public void CopyBom(string srcPartNumber, string destBomPartNumber, int changedBy, int crfNumber)
         {
-            var destBom = this.bomRepository.FindBy(x => x.BomName == destBomPartNumber);
-            var change = this.bomChangeRepository.FindBy(
-                x => x.DocumentNumber == crfNumber && x.BomId == destBom.BomId && new[] { "PROPOS", "ACCEPT" }.Contains(x.ChangeState));
-            
-            if (change == null)
-            {
-                var changeId = this.databaseService.GetIdSequence("CHG_SEQ");
-                change = new BomChange
-                             {
-                                 ChangeId = changeId,
-                                 BomName = destBom.BomName,
-                                 BomId = destBom.BomId,
-                                 DocumentType = "CRF",
-                                 DocumentNumber = crfNumber,
-                                 DateEntered = DateTime.Today,
-                                 EnteredById = changedBy,
-                                 ChangeState = "PROPOS",
-                                 PartNumber = destBom.BomName,
-                                 Comments = "BOM_UT",
-                                 PcasChange = "N"
-                             };
-                this.bomChangeRepository.Add(change);
-            }
-
-            // todo - hardcoded PROPOS? should this use the change in question's state?
-            this.bomPack.CopyBom(srcPartNumber, destBom.BomId, change.ChangeId, "PROPOS", "O");
+            var change = this.GetOrCreateBomChange(destBomPartNumber, crfNumber, changedBy);
+            this.bomPack.CopyBom(srcPartNumber, change.BomId, change.ChangeId, change.ChangeState, "O");
         }
 
         public void DeleteAllFromBom(string bomName, int crfNumber, int changedBy)
         {
-            var bom = this.bomRepository.FindBy(x => x.BomName == bomName);
-            // todo - below is wrong
-            // don't make a new change if ones already sitting open for this crf/bom
-            var change = new BomChange
-                             {
-                                 BomId = bom.BomId,
-                                 ChangeId = this.databaseService.GetIdSequence("CHG_SEQ"),
-                                 BomName = bomName,
-                                 DocumentType = "CRF", // for now
-                                 DocumentNumber = crfNumber,
-                                 PartNumber = bomName,
-                                 DateEntered = DateTime.Today,
-                                 EnteredById = changedBy,
-                                 ChangeState = "PROPOS",
-                                 Comments = "BOM_UT",
-                                 PcasChange = "N"
-                             };
-            this.bomChangeRepository.Add(change);
-
+            var change = this.GetOrCreateBomChange(bomName, crfNumber, changedBy);
+            var bom = this.bomRepository.FindBy(b => b.BomName == bomName);
             foreach (var child in bom.Details)
             {
                 var detail = this.bomDetailRepository.FindById(child.DetailId);
@@ -334,12 +293,37 @@
 
         public void ExplodeSubAssembly(string bomName, int crfNumber, string subAssembly, int changedBy)
         {
+            var change = this.GetOrCreateBomChange(bomName, crfNumber, changedBy);
+            this.bomPack.ExplodeSubAssembly(change.BomId, change.ChangeId, change.ChangeState, subAssembly);
+        }
+
+        private BomChange GetOrCreateBomChange(string bomName, int crfNumber, int changedBy)
+        {
             var bom = this.bomRepository.FindBy(x => x.BomName == bomName);
             var change = this.bomChangeRepository.FindBy(
-                x => x.DocumentNumber == crfNumber 
-                     && x.BomId == bom.BomId 
+                x => x.DocumentNumber == crfNumber
+                     && x.BomId == bom.BomId
                      && new[] { "PROPOS", "ACCEPT" }.Contains(x.ChangeState));
-            this.bomPack.ExplodeSubAssembly(bom.BomId, change.ChangeId, change.ChangeState, subAssembly);
+            if (change == null)
+            {
+                change = new BomChange
+                             {
+                                 BomId = bom.BomId,
+                                 ChangeId = this.databaseService.GetIdSequence("CHG_SEQ"),
+                                 BomName = bomName,
+                                 DocumentType = "CRF", // for now
+                                 DocumentNumber = crfNumber,
+                                 PartNumber = bomName,
+                                 DateEntered = DateTime.Today,
+                                 EnteredById = changedBy,
+                                 ChangeState = "PROPOS",
+                                 Comments = "BOM_UT",
+                                 PcasChange = "N"
+                             };
+                this.bomChangeRepository.Add(change);
+            }
+
+            return change;
         }
     }
 }

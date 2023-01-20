@@ -28,7 +28,8 @@
                                   ChangeId = 456,
                                   DocumentNumber = 666,
                                   DocumentType = "CRF",
-                                  ChangeState = "PROPOS"
+                                  ChangeState = "PROPOS",
+                                  BomId = 123
                               };
             this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(this.destBom);
             this.BomChangeRepository.FindBy(Arg.Any<Expression<Func<BomChange, bool>>>()).Returns(this.change);

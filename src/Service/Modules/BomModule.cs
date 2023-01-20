@@ -252,7 +252,8 @@
             IResult<IEnumerable<BomCostReportResource>> result = null;
             if (!string.IsNullOrEmpty(bomName))
             {
-                result = facadeService.GetBomCostReport(bomName, splitBySubAssembly, levels, labourHourlyRate);
+                result = facadeService.GetBomCostReport(
+                    bomName, splitBySubAssembly, levels, labourHourlyRate);
             }
 
             await res.Negotiate(result);
