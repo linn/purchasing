@@ -2,6 +2,7 @@
 {
     using System.Data;
 
+    using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
 
@@ -11,9 +12,12 @@
     {
         private readonly IDatabaseService databaseService;
 
-        public BomPack(IDatabaseService databaseService)
+        private readonly ITransactionManager transactionManager;
+
+        public BomPack(IDatabaseService databaseService, ITransactionManager transactionManager)
         {
             this.databaseService = databaseService;
+            this.transactionManager = transactionManager;
         }
 
         public void CopyBom(
@@ -64,6 +68,7 @@
 
         public void ExplodeSubAssembly(int bomId, int changeId, string changeState, string subAssembly)
         {
+            this.transactionManager.Commit(); // make sure any added BOM_CHANGE is committed
             using (var connection = this.databaseService.GetConnection())
             {
                 connection.Open();

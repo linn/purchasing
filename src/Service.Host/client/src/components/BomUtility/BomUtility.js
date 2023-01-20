@@ -543,7 +543,7 @@ function BomUtility() {
                 <Button
                     variant="contained"
                     onClick={() => {
-                        setCopyBomDialogOpen(false);
+                        setExplodeSubAssemblyDialogOpen(false);
                         setPartSearchTerm(null);
                         if (copyBomDialogOpen) {
                             reduxDispatch(
@@ -724,7 +724,7 @@ function BomUtility() {
                         </Grid>
                         <Grid item xs={4}>
                             {itemError && (
-                                <Grid item xs={12}>
+                                <Grid item xs={12} style={{ maxHeight: '200px' }} overflow="scroll">
                                     <ErrorCard
                                         errorMessage={itemError.details?.error || itemError.details}
                                     />
