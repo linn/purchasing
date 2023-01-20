@@ -505,13 +505,17 @@ function BomUtility() {
     const [copyBomDialogOpen, setCopyBomDialogOpen] = useState(false);
     const [deleteAllFromBomDialogOpen, setDeleteAllFromBomDialogOpen] = useState(false);
     const [safetyCriticalWarningDialogOpen, setSafetyCriticalWarningDialogOpen] = useState(false);
+    const [explodeSubAssemblyDialogOpen, setExplodeSubAssemblyDialogOpen] = useState(false);
 
-    const CopyBomDialog = () => (
-        <Dialog open={copyBomDialogOpen} onClose={() => setPartSearchTerm(null)}>
-            <DialogTitle>Copy BOM</DialogTitle>
+    const CopyExplodeBomDialog = () => (
+        <Dialog
+            open={copyBomDialogOpen || explodeSubAssemblyDialogOpen}
+            onClose={() => setPartSearchTerm(null)}
+        >
+            <DialogTitle>{copyBomDialogOpen ? 'Copy BOM' : 'Explode Sub Assembly'}</DialogTitle>
             <DialogContent dividers>
                 <Search
-                    visible={copyBomDialogOpen}
+                    visible={copyBomDialogOpen || explodeSubAssemblyDialogOpen}
                     autoFocus
                     propertyName="partNumber"
                     label="Part Number"
@@ -531,6 +535,7 @@ function BomUtility() {
                 <Button
                     onClick={() => {
                         setCopyBomDialogOpen(false);
+                        setExplodeSubAssemblyDialogOpen(false);
                     }}
                 >
                     Cancel
@@ -540,13 +545,23 @@ function BomUtility() {
                     onClick={() => {
                         setCopyBomDialogOpen(false);
                         setPartSearchTerm(null);
-                        reduxDispatch(
-                            bomTreeActions.postByHref('/purchasing/boms/copy', {
-                                srcPartNumber: bomToCopy,
-                                destPartNumber: bomName,
-                                crfNumber: crNumber
-                            })
-                        );
+                        if (copyBomDialogOpen) {
+                            reduxDispatch(
+                                bomTreeActions.postByHref('/purchasing/boms/copy', {
+                                    srcPartNumber: bomToCopy,
+                                    destPartNumber: bomName,
+                                    crfNumber: crNumber
+                                })
+                            );
+                        } else {
+                            reduxDispatch(
+                                bomTreeActions.postByHref('/purchasing/boms/explode', {
+                                    destPartNumber: bomName,
+                                    crfNumber: crNumber,
+                                    subAssembly: bomToCopy
+                                })
+                            );
+                        }
                     }}
                     disabled={!bomToCopy}
                 >
@@ -656,7 +671,7 @@ function BomUtility() {
     return (
         <Page history={history} homeUrl={config.appRoot}>
             {PartLookUp()}
-            {CopyBomDialog()}
+            {CopyExplodeBomDialog()}
             {DeleteAllFromBomDialog()}
             {DeleteSafetyCriticalWarningDialog()}
             <Grid container spacing={3}>
@@ -755,6 +770,15 @@ function BomUtility() {
                                 }}
                             >
                                 Delete All
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                disabled={!crNumber}
+                                onClick={() => {
+                                    setExplodeSubAssemblyDialogOpen(true);
+                                }}
+                            >
+                                Explode Sub Assembly
                             </Button>
                         </Grid>
                     </>
