@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.BomVerificationHistoryModuleTests
 {
+    using System.Linq;
     using System.Net;
 
     using FluentAssertions;
@@ -13,6 +14,8 @@
 
     public class WhenGettingBomVerificationHistoryEntryById : ContextBase
     {
+        private BomVerificationHistoryResource result;
+
         [SetUp]
         public void SetUp()
         {
@@ -55,12 +58,19 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var result = this.Response.DeserializeBody<BomVerificationHistoryResource>();
+            result = this.Response.DeserializeBody<BomVerificationHistoryResource>();
             result.TRef.Should().Be(123);
             result.DocumentNumber.Should().Be(654321);
             result.DocumentType.Should().Be("Test");
             result.Remarks.Should().Be("D.Skinmer");
             result.VerifiedBy.Should().Be(33086);
+        }
+
+        [Test]
+        public void ShouldReturnCorrectHeaderLinks()
+        {
+            result = this.Response.DeserializeBody<BomVerificationHistoryResource>();
+            result.Links.First(a => a.Rel == "self").Href.Should().Be($"/purchasing/bom-verification/654321");
         }
     }
 }

@@ -12,6 +12,11 @@
     {
         public BomVerificationHistoryResource Build(BomVerificationHistory model, IEnumerable<string> claims)
         {
+            if (model == null)
+            {
+                return new BomVerificationHistoryResource { Links = this.BuildLinks(null, claims).ToArray() };
+            }
+
             var resource = new BomVerificationHistoryResource
             {
                 TRef = model.TRef,

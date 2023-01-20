@@ -31,8 +31,6 @@
 
         protected IDatabaseService DatabaseService { get; private set; }
 
-        protected IAuthorisationService AuthorisationService { get; private set; }
-
         [SetUp]
         public void EstablishContext()
         {
