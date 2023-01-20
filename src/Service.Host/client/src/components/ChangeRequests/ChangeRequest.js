@@ -20,21 +20,15 @@ import MainTab from './Tabs/MainTab';
 import BomChangesTab from './Tabs/BomChangesTab';
 import PcasChangesTab from './Tabs/PcasChangesTab';
 import history from '../../history';
+import useInitialise from '../../hooks/useInitialise';
 
 function ChangeRequest() {
     const { id } = useParams();
 
     const reduxDispatch = useDispatch();
 
-    const loading = useSelector(reduxState =>
-        itemSelectorHelpers.getItemLoading(reduxState.changeRequest)
-    );
+    const [item, loading] = useInitialise(() => changeRequestActions.fetch(id), 'changeRequest');
 
-    const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.changeRequest));
-
-    if (!loading && (!item || item?.documentNumber.toString() !== id)) {
-        reduxDispatch(changeRequestActions.fetch(id));
-    }
     const statusChange = useSelector(reduxState =>
         itemSelectorHelpers.getItem(reduxState.changeRequestStatusChange)
     );
