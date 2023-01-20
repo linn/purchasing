@@ -442,7 +442,6 @@ function BomUtility() {
             // fetch this subAssembly's bomTree to add it to the tree view
             reduxDispatch(subAssemblyActions.fetchByHref(subAssemblyUrl));
         } else {
-            console.log(newValue);
             processRowUpdate({
                 ...partLookUp.forRow,
                 name: newValue.partNumber,
