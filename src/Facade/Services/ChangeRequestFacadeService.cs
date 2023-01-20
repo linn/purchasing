@@ -289,15 +289,7 @@
 
         protected override Expression<Func<ChangeRequest, bool>> SearchExpression(string searchTerm)
         {
-            // check if contains wildcard
-            if (searchTerm.Contains("*"))
-            {
-                var pattern = Regex.Escape(searchTerm).Replace("\\*", ".*?");
-                var regex = new Regex(pattern, RegexOptions.IgnoreCase);
-                return cr => regex.IsMatch(cr.NewPartNumber) && cr.ChangeState != "LIVE" && cr.ChangeState != "CANCEL";
-            }
-
-            return cr => searchTerm.Trim().ToUpper().Equals(cr.NewPartNumber) 
+           return cr => searchTerm.Trim().ToUpper().Equals(cr.NewPartNumber) 
                          && cr.ChangeState != "LIVE" && cr.ChangeState != "CANCEL";
         }
 
