@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Page,
+    Dropdown,
     InputField,
     Loading,
     collectionSelectorHelpers,
@@ -36,6 +37,9 @@ function ChangeRequestSearch() {
 
     const [documentNumber, setDocumentNumber] = useState('');
     const [newPartNumber, setNewPartNumber] = useState('');
+    const [filter, setFilter] = useState('OUTSTANDING');
+    const [outstanding, setOutstanding] = useState(true);
+    const [lastMonths, setLastMonths] = useState(60);
 
     const searchRequestsResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.changeRequests)
@@ -48,7 +52,7 @@ function ChangeRequestSearch() {
         {
             field: 'documentNumber',
             headerName: 'CRF',
-            width: 120,
+            width: 100,
             renderCell: params => (
                 <Link
                     className={classes.a}
@@ -57,6 +61,30 @@ function ChangeRequestSearch() {
                 >
                     {params.row.documentNumber}
                 </Link>
+            )
+        },
+        {
+            field: 'newPartNumber',
+            headerName: 'Part/Board',
+            width: 200,
+            renderCell: params => (
+                <>
+                    {
+                        {
+                            PARTEDIT: <>{params.row.newPartNumber}</>,
+                            BOARDEDIT: (
+                                <>
+                                    {params.row.boardCode} {params.row.revisionCode}
+                                </>
+                            ),
+                            REPLACE: (
+                                <>
+                                    {params.row.newPartNumber} -{'>'} {params.row.newPartNumber}
+                                </>
+                            )
+                        }[params.row.changeType]
+                    }
+                </>
             )
         },
         {
@@ -70,7 +98,7 @@ function ChangeRequestSearch() {
         {
             field: 'dateEntered',
             headerName: 'Entered',
-            width: 150,
+            width: 170,
             renderCell: params => (
                 <InputField
                     fullWidth
@@ -89,11 +117,28 @@ function ChangeRequestSearch() {
         }
     ];
 
+    const handleDropDownChange = (propertyName, newValue) => {
+        setFilter(newValue);
+        if (newValue === 'OUTSTANDING') {
+            setOutstanding(true);
+            setLastMonths(60);
+        } else {
+            setOutstanding(false);
+            setLastMonths(newValue);
+        }
+    };
+
     const lookup = () => history.push(`/purchasing/change-requests/${documentNumber}/`);
 
     const create = () => history.push('/purchasing/change-requests/create');
 
-    const search = () => dispatch(changeRequestsActions.search(newPartNumber));
+    const search = () =>
+        dispatch(
+            changeRequestsActions.searchWithOptions(
+                newPartNumber,
+                `&outstanding=${outstanding}&lastMonths=${lastMonths}`
+            )
+        );
 
     return (
         <Page history={history}>
@@ -127,14 +172,30 @@ function ChangeRequestSearch() {
                     </Button>
                 </Grid>
                 <Grid item xs={5} />
-                <Grid item xs={8} className={classes.gap}>
+                <Grid item xs={5} className={classes.gap}>
                     <InputField
                         fullWidth
-                        placeholder="Find proposed/accept CRFs with this part number"
+                        placeholder="Search new part number * wildcard"
                         value={newPartNumber}
                         label="New Part Number"
                         propertyName="newPartNumber"
                         onChange={(_, newValue) => setNewPartNumber(newValue)}
+                    />
+                </Grid>
+                <Grid item xs={3} className={classes.gap}>
+                    <Dropdown
+                        fullWidth
+                        value={filter}
+                        label="Filter"
+                        items={[
+                            { id: 'OUTSTANDING', displayText: 'Just Outstanding' },
+                            { id: 3, displayText: 'Last 3 Months' },
+                            { id: 6, displayText: 'Last 6 Months' },
+                            { id: 60, displayText: 'Last 5 Years' }
+                        ]}
+                        propertyName="changeType"
+                        onChange={handleDropDownChange}
+                        allowNoValue={false}
                     />
                 </Grid>
                 <Grid item xs={2} className={classes.gap}>

@@ -39,7 +39,9 @@
             IChangeRequestFacadeService facadeService,
             string searchTerm,
             bool? includeAllForBom,
-            bool? includeForBoard)
+            bool? includeForBoard,
+            bool? outstanding,
+            int? lastMonths)
         {
             if (string.IsNullOrEmpty(searchTerm))
             {
@@ -56,7 +58,7 @@
             }
             else
             {
-                await res.Negotiate(facadeService.Search(searchTerm));
+                await res.Negotiate(facadeService.SearchChangeRequests(searchTerm, outstanding, lastMonths));
             }
         }
 

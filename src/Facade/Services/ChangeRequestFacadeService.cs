@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Text.RegularExpressions;
 
     using Linn.Common.Domain.Exceptions;
     using Linn.Common.Facade;
@@ -195,6 +196,59 @@
                 changeRequests.Select(x => (ChangeRequestResource)this.resourceBuilder.Build(x, privileges)));
         }
 
+        public IResult<IEnumerable<ChangeRequestResource>> SearchChangeRequests(
+            string searchTerm,
+            bool? outstanding, 
+            int? lastMonths,
+            IEnumerable<string> privileges = null)
+        {
+            var changeRequests = new List<ChangeRequest>();
+
+            var fromDate = (lastMonths == null)
+                               ? new DateTime(2020, 1, 1)
+                               : DateTime.Now.AddMonths(-1 * (int)lastMonths);
+            var inclLive = ((outstanding == false) ? "LIVE" : "JUSTOUTSTANDING");
+
+            var newPartNumber = searchTerm.Trim().ToUpper().Replace('%', '*');
+            var partSearch = newPartNumber.Split('*');
+
+            // this big if is just because Linq/EF/Oracle doesn't do a LIKE
+            // supports IC*, *3, *LEWIS*, PCAS*L1R1 but not multiple * e.g. PCAS */L1*
+            if (string.IsNullOrEmpty(newPartNumber))
+            {
+                var a = this.repository.FilterBy(
+                    r => (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive)
+                         && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate);
+                changeRequests = this.repository.FilterBy(r => (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate).ToList();
+            }
+            else if (!newPartNumber.Contains("*"))
+            {
+                changeRequests = this.repository.FilterBy(r => r.NewPartNumber.Equals(newPartNumber) && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate).ToList();
+            }
+            else if (newPartNumber.EndsWith("*"))
+            {
+                // supporting *LEWIS*
+                if (newPartNumber.StartsWith("*"))
+                {
+                    changeRequests = this.repository.FilterBy(r => r.NewPartNumber.Contains(partSearch[1]) && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate).ToList();
+                }
+                else
+                {
+                    changeRequests = this.repository.FilterBy(r => r.NewPartNumber.StartsWith(partSearch.First()) && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate).ToList();
+                }
+            }
+            else if (newPartNumber.StartsWith("*"))
+            {
+                changeRequests = this.repository.FilterBy(r => r.NewPartNumber.EndsWith(partSearch.Last()) && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate).ToList();
+            }
+            else
+            {
+                changeRequests = this.repository.FilterBy(r => r.NewPartNumber.StartsWith(partSearch.First()) && r.NewPartNumber.EndsWith(partSearch.Last()) && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate).ToList();
+            }
+
+            return new SuccessResult<IEnumerable<ChangeRequestResource>>(changeRequests.OrderByDescending(r => r.DocumentNumber).Select(x => (ChangeRequestResource)this.resourceBuilder.Build(x, privileges)));
+        }
+
         protected override ChangeRequest CreateFromResource(
             ChangeRequestResource resource, IEnumerable<string> privileges = null)
         {
@@ -235,6 +289,14 @@
 
         protected override Expression<Func<ChangeRequest, bool>> SearchExpression(string searchTerm)
         {
+            // check if contains wildcard
+            if (searchTerm.Contains("*"))
+            {
+                var pattern = Regex.Escape(searchTerm).Replace("\\*", ".*?");
+                var regex = new Regex(pattern, RegexOptions.IgnoreCase);
+                return cr => regex.IsMatch(cr.NewPartNumber) && cr.ChangeState != "LIVE" && cr.ChangeState != "CANCEL";
+            }
+
             return cr => searchTerm.Trim().ToUpper().Equals(cr.NewPartNumber) 
                          && cr.ChangeState != "LIVE" && cr.ChangeState != "CANCEL";
         }
@@ -253,5 +315,7 @@
         {
             throw new NotImplementedException();
         }
+
+
     }
 }
