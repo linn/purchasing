@@ -195,6 +195,18 @@
                 changeRequests.Select(x => (ChangeRequestResource)this.resourceBuilder.Build(x, privileges)));
         }
 
+        public IResult<IEnumerable<ChangeRequestResource>> SearchChangeRequests(
+            string searchTerm,
+            bool? outstanding, 
+            int? lastMonths,
+            IEnumerable<string> privileges = null)
+        {
+            var expression = this.changeRequestService.SearchExpression(searchTerm, outstanding, lastMonths);
+            var changeRequests = this.repository.FindAll().Where(expression).OrderByDescending(r => r.DocumentNumber).ToList();
+
+            return new SuccessResult<IEnumerable<ChangeRequestResource>>(changeRequests.Select(x => (ChangeRequestResource)this.resourceBuilder.Build(x, privileges)));
+        }
+
         protected override ChangeRequest CreateFromResource(
             ChangeRequestResource resource, IEnumerable<string> privileges = null)
         {
@@ -235,7 +247,7 @@
 
         protected override Expression<Func<ChangeRequest, bool>> SearchExpression(string searchTerm)
         {
-            return cr => searchTerm.Trim().ToUpper().Equals(cr.NewPartNumber) 
+           return cr => searchTerm.Trim().ToUpper().Equals(cr.NewPartNumber) 
                          && cr.ChangeState != "LIVE" && cr.ChangeState != "CANCEL";
         }
 

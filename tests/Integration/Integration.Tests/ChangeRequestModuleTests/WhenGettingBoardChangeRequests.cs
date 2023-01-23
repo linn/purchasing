@@ -9,7 +9,6 @@
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.Boms;
-    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -21,18 +20,19 @@
         [SetUp]
         public void SetUp()
         {
-            this.Repository.FilterBy(Arg.Any<Expression<Func<ChangeRequest, bool>>>())
+            this.Repository.FilterBy(Arg.Any<Expression<Func<ChangeRequest,bool>>>())
                 .Returns(new List<ChangeRequest>
                              {
                                  new ChangeRequest
                                      {
                                          NewPartNumber = "SK HUB",
-                                         DateEntered = DateTime.Today
+                                         DateEntered = DateTime.Today,
+                                         ChangeState = "ACCEPT"
                                      }
                              }.AsQueryable());
 
             this.Response = this.Client.Get(
-                "/purchasing/change-requests?searchTerm=SK HUB&includeAllForBoard=True",
+                "/purchasing/change-requests?searchTerm=SK HUB&includeForBoard=True",
                 with => { with.Accept("application/json"); }).Result;
         }
 
