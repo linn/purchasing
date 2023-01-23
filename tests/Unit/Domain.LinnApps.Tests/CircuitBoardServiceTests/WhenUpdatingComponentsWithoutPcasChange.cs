@@ -15,8 +15,6 @@
 
     public class WhenUpdatingComponentsWithoutPcasChange : ContextBase
     {
-        private CircuitBoard result;
-
         private PcasChange pcasChange;
 
         private int changeRequestId;
@@ -93,7 +91,7 @@
             this.ChangeRequestRepository.FindById(this.changeRequestId).Returns(this.changeRequest);
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { PartNumber = "CAP 123", AssemblyTechnology = "SM" });
-            this.result = this.Sut.UpdateComponents(
+            this.Sut.UpdateComponents(
                 this.BoardCode,
                 this.pcasChange,
                 this.changeRequestId,

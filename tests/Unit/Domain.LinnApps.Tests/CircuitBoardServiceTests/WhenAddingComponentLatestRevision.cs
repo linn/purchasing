@@ -2,25 +2,25 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.Boms;
-    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NSubstitute;
 
     using NUnit.Framework;
 
-    public class WhenAddingInvalidComponent : ContextBase
+    public class WhenAddingComponentLatestRevision : ContextBase
     {
+        private CircuitBoard result;
+
         private IEnumerable<BoardComponent> componentsToAdd;
 
         private IEnumerable<BoardComponent> componentsToRemove;
-
-        private Action action;
 
         [SetUp]
         public void SetUp()
@@ -31,7 +31,7 @@
                                                {
                                                    BoardCode = this.BoardCode,
                                                    BoardLine = 2,
-                                                   CRef = string.Empty,
+                                                   CRef = "C001",
                                                    PartNumber = "CAP 123",
                                                    AssemblyTechnology = "SM",
                                                    ChangeState = "PROPOS",
@@ -48,7 +48,7 @@
 
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { PartNumber = "CAP 123", AssemblyTechnology = "SM" });
-            this.action = () => this.Sut.UpdateComponents(
+            this.result = this.Sut.UpdateComponents(
                 this.BoardCode,
                 this.PcasChange,
                 this.ChangeRequestId,
@@ -57,9 +57,12 @@
         }
 
         [Test]
-        public void ShouldThrowError()
+        public void ShouldSetToValuesCorrectly()
         {
-            this.action.Should().Throw<InvalidOptionException>();
+            this.result.Components.Should().HaveCount(2);
+            var addedComponent = this.result.Components.First(a => a.BoardLine == 2);
+            addedComponent.ToLayoutVersion.Should().BeNull();
+            addedComponent.ToRevisionVersion.Should().BeNull();
         }
     }
 }
