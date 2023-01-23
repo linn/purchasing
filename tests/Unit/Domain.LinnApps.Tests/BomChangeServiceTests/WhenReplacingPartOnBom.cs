@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using FluentAssertions;
@@ -78,7 +79,8 @@
 
             this.BomDetailRepository.FindById(4567)
                 .Returns(this.replacedDetail);
-
+            this.BomDetailRepository.FilterBy(Arg.Any<Expression<Func<BomDetail, bool>>>())
+                .Returns(new List<BomDetail> { new BomDetail { AddReplaceSeq = 2 } }.AsQueryable());
             this.Sut.CreateBomChanges(this.newTree, 100, 33087);
         }
 
@@ -100,7 +102,7 @@
                      && x.Qty == this.c2.Qty
                      && x.ChangeState == "PROPOS"
                      && x.AddChangeId == 6666
-                     && x.AddReplaceSeq == 1
+                     && x.AddReplaceSeq == 3
                      && x.DetailId == 10023
                      && !x.DeleteChangeId.HasValue
                      && !x.DeleteReplaceSeq.HasValue
@@ -110,7 +112,7 @@
         [Test]
         public void ShouldUpdateReplacedDetail()
         {
-            this.replacedDetail.DeleteReplaceSeq.Should().Be(1);
+            this.replacedDetail.DeleteReplaceSeq.Should().Be(3);
             this.replacedDetail.DeleteChangeId.Should().Be(6666);
             this.replacedDetail.ChangeState.Should().Be("PROPOS");
         }

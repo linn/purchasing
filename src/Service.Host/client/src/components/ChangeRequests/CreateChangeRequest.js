@@ -7,6 +7,9 @@ import {
     InputField,
     userSelectors
 } from '@linn-it/linn-form-components-library';
+import queryString from 'query-string';
+import { useLocation } from 'react-router-dom';
+
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -21,6 +24,9 @@ function CreateChangeRequest() {
         dispatch(employeesActions.fetch());
     }, [dispatch]);
 
+    const { search } = useLocation();
+    const newPartNumber = queryString.parse(search)?.bomName;
+
     const currentUserId = useSelector(state => userSelectors.getUserNumber(state));
     const currentUserName = useSelector(state => userSelectors.getName(state));
 
@@ -33,6 +39,7 @@ function CreateChangeRequest() {
             id: parseInt(currentUserId, 10),
             fullName: currentUserName
         },
+        newPartNumber,
         changeState: 'PROPOS',
         changeType: 'PARTEDIT',
         reasonForChange: '',

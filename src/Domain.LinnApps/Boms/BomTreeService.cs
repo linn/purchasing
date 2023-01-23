@@ -64,7 +64,8 @@
                                                     SafetyCritical = d.Part.SafetyCritical,
                                                     Type = d.Part.BomType,
                                                     Id = d.DetailId.ToString(),
-                                                    AddChangeDocumentNumber = d.AddChange.DocumentNumber
+                                                    AddChangeDocumentNumber = d.AddChange.DocumentNumber,
+                                                    DeleteChangeDocumentNumber = d.DeleteChange?.DocumentNumber
                                                 }).OrderBy(x => x.Name)
                                };
 
@@ -116,6 +117,7 @@
                                     Requirement = child.Requirement,
                                     DrawingReference = child.DrawingReference,
                                     AddChangeDocumentNumber = child.AddChangeDocumentNumber,
+                                    DeleteChangeDocumentNumber = child.DeleteChangeDocumentNumber,
                                     IsReplaced = child.IsReplaced,
                                     Children =
                                     children?
@@ -135,6 +137,8 @@
                                                         SafetyCritical = child.SafetyCritical,
                                                         DrawingReference = child.DrawingReference,
                                                         AddChangeDocumentNumber = detail.AddChange.DocumentNumber,
+                                                        DeleteChangeDocumentNumber = detail.DeleteChange != null ?
+                                                            detail.DeleteChange.DocumentNumber : null,
                                                         ChangeState = detail.ChangeState,
                                                         IsReplaced = detail.DeleteChangeId.HasValue,
                                                         Id = detail.DetailId.ToString()
@@ -190,7 +194,7 @@
                                      Qty = d.Qty,
                                      Type = d.Part.BomType,
                                      ParentName = root.BomName,
-                                     Id = d.DetailId.ToString()
+                                     Id = d.DetailId.ToString(),
                                  }).OrderBy(x => x.Name)
             };
             var q = new Queue<BomTreeNode>();
