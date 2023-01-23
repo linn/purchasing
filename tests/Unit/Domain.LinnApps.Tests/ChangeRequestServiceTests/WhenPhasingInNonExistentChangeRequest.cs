@@ -21,7 +21,7 @@
 
             var bomChangeIds = new List<int> { 1 };
 
-            this.action = () => this.Sut.PhaseInChanges(1, 1, null, new List<int>(), new List<string>());
+            this.action = () => this.Sut.PhaseInChanges(1, 1,null, new List<int>(), new List<string>());
         }
 
         [Test]

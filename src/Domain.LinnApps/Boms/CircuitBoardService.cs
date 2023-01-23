@@ -83,6 +83,7 @@
                             || component.FromRevisionVersion != component.ToRevisionVersion)
                         {
                             this.MaybeAddComponentPriorToCrfRevision(board, component, revision, pcasChange);
+                            this.MaybeAddComponentAfterCrfRevision(board, component, revision, pcasChange);
                         }
                     }
                 }
@@ -160,6 +161,44 @@
             }
         }
 
+        private void MaybeAddComponentAfterCrfRevision(
+            CircuitBoard board,
+            BoardComponent component,
+            BoardRevision revision,
+            PcasChange pcasChange)
+        {
+            if (component.ToRevisionVersion != revision.LayoutSequence
+                || component.ToRevisionVersion!= revision.VersionNumber)
+            {
+                if (!this.LatestLayout(board, revision) || !this.LatestVersion(board, revision))
+                {
+                    var (layout, version) = this.GetNextLayoutAndRevision(
+                        revision.LayoutSequence,
+                        revision.VersionNumber,
+                        board.Layouts.First(a => a.LayoutCode == revision.LayoutCode).Revisions
+                            .Max(r => r.VersionNumber));
+                    board.Components.Add(new BoardComponent
+                                             {
+                                                 BoardCode = board.BoardCode,
+                                                 BoardLine = board.Components.Max(a => a.BoardLine) + 1,
+                                                 CRef = component.CRef,
+                                                 PartNumber = component.PartNumber,
+                                                 AssemblyTechnology = component.AssemblyTechnology,
+                                                 ChangeState = pcasChange.ChangeState,
+                                                 FromLayoutVersion = layout,
+                                                 FromRevisionVersion = version,
+                                                 ToLayoutVersion = component.ToLayoutVersion,
+                                                 ToRevisionVersion = component.ToRevisionVersion,
+                                                 AddChangeId = pcasChange.ChangeId,
+                                                 AddChange = pcasChange,
+                                                 DeleteChangeId = null,
+                                                 DeleteChange = null,
+                                                 Quantity = component.Quantity
+                                             });
+                }
+            }
+        }
+
         private (int layout, int? version) GetPreviousLayoutAndRevision(int revisionLayoutSequence, int revisionVersionNumber)
         {
             if (revisionVersionNumber == 1)
@@ -168,6 +207,16 @@
             } 
 
             return (revisionLayoutSequence, revisionVersionNumber - 1);
+        }
+
+        private (int layout, int version) GetNextLayoutAndRevision(int revisionLayoutSequence, int revisionVersionNumber, int maxVersionNumber)
+        {
+            if (revisionVersionNumber == maxVersionNumber)
+            {
+                return (revisionLayoutSequence + 1, 1);
+            }
+
+            return (revisionLayoutSequence, revisionVersionNumber + 1);
         }
 
         private bool LatestLayout(CircuitBoard board, BoardRevision revision)
