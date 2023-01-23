@@ -26,6 +26,8 @@
 
         public int AddChangeDocumentNumber { get; set; }
 
+        public int? DeleteChangeDocumentNumber { get; set; }
+
         public bool IsReplaced { get; set; }
 
         public string ReplacementFor { get; set; }

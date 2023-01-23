@@ -8,5 +8,8 @@
             int destChangeId,
             string destChangeState,
             string addOrOverWrite);
+
+        void ExplodeSubAssembly(
+            int bomId, int changeId, string changeState, string subAssembly);
     }
 }

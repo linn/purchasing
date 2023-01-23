@@ -286,8 +286,11 @@ function BomUtility() {
         initialise();
     }, [initialise]);
 
+    const [changesMade, setChangesMade] = useState(false);
+
     // updates the tree with changes passed via a 'newNode' object
     const updateTree = (tree, newNode, addNode) => {
+        setChangesMade(true);
         const newTree = { ...tree };
         const q = [];
         q.push(newTree);
@@ -439,7 +442,6 @@ function BomUtility() {
             // fetch this subAssembly's bomTree to add it to the tree view
             reduxDispatch(subAssemblyActions.fetchByHref(subAssemblyUrl));
         } else {
-            console.log(newValue);
             processRowUpdate({
                 ...partLookUp.forRow,
                 name: newValue.partNumber,
@@ -502,13 +504,17 @@ function BomUtility() {
     const [copyBomDialogOpen, setCopyBomDialogOpen] = useState(false);
     const [deleteAllFromBomDialogOpen, setDeleteAllFromBomDialogOpen] = useState(false);
     const [safetyCriticalWarningDialogOpen, setSafetyCriticalWarningDialogOpen] = useState(false);
+    const [explodeSubAssemblyDialogOpen, setExplodeSubAssemblyDialogOpen] = useState(false);
 
-    const CopyBomDialog = () => (
-        <Dialog open={copyBomDialogOpen} onClose={() => setPartSearchTerm(null)}>
-            <DialogTitle>Copy BOM</DialogTitle>
+    const CopyExplodeBomDialog = () => (
+        <Dialog
+            open={copyBomDialogOpen || explodeSubAssemblyDialogOpen}
+            onClose={() => setPartSearchTerm(null)}
+        >
+            <DialogTitle>{copyBomDialogOpen ? 'Copy BOM' : 'Explode Sub Assembly'}</DialogTitle>
             <DialogContent dividers>
                 <Search
-                    visible={copyBomDialogOpen}
+                    visible={copyBomDialogOpen || explodeSubAssemblyDialogOpen}
                     autoFocus
                     propertyName="partNumber"
                     label="Part Number"
@@ -528,6 +534,7 @@ function BomUtility() {
                 <Button
                     onClick={() => {
                         setCopyBomDialogOpen(false);
+                        setExplodeSubAssemblyDialogOpen(false);
                     }}
                 >
                     Cancel
@@ -535,15 +542,25 @@ function BomUtility() {
                 <Button
                     variant="contained"
                     onClick={() => {
-                        setCopyBomDialogOpen(false);
+                        setExplodeSubAssemblyDialogOpen(false);
                         setPartSearchTerm(null);
-                        reduxDispatch(
-                            bomTreeActions.postByHref('/purchasing/boms/copy', {
-                                srcPartNumber: bomToCopy,
-                                destPartNumber: bomName,
-                                crfNumber: crNumber
-                            })
-                        );
+                        if (copyBomDialogOpen) {
+                            reduxDispatch(
+                                bomTreeActions.postByHref('/purchasing/boms/copy', {
+                                    srcPartNumber: bomToCopy,
+                                    destPartNumber: bomName,
+                                    crfNumber: crNumber
+                                })
+                            );
+                        } else {
+                            reduxDispatch(
+                                bomTreeActions.postByHref('/purchasing/boms/explode', {
+                                    destPartNumber: bomName,
+                                    crfNumber: crNumber,
+                                    subAssembly: bomToCopy
+                                })
+                            );
+                        }
                     }}
                     disabled={!bomToCopy}
                 >
@@ -653,7 +670,7 @@ function BomUtility() {
     return (
         <Page history={history} homeUrl={config.appRoot}>
             {PartLookUp()}
-            {CopyBomDialog()}
+            {CopyExplodeBomDialog()}
             {DeleteAllFromBomDialog()}
             {DeleteSafetyCriticalWarningDialog()}
             <Grid container spacing={3}>
@@ -706,7 +723,7 @@ function BomUtility() {
                         </Grid>
                         <Grid item xs={4}>
                             {itemError && (
-                                <Grid item xs={12}>
+                                <Grid item xs={12} style={{ maxHeight: '200px' }} overflow="scroll">
                                     <ErrorCard
                                         errorMessage={itemError.details?.error || itemError.details}
                                     />
@@ -726,7 +743,11 @@ function BomUtility() {
                             </Button>
                             <Button
                                 variant="outlined"
-                                onClick={() => history.push('/purchasing/change-requests/create')}
+                                onClick={() =>
+                                    history.push(
+                                        `/purchasing/change-requests/create?bomName=${bomName}`
+                                    )
+                                }
                             >
                                 RAISE NEW CRF
                             </Button>
@@ -748,6 +769,15 @@ function BomUtility() {
                                 }}
                             >
                                 Delete All
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                disabled={!crNumber}
+                                onClick={() => {
+                                    setExplodeSubAssemblyDialogOpen(true);
+                                }}
+                            >
+                                Explode Sub Assembly
                             </Button>
                         </Grid>
                     </>
@@ -853,8 +883,9 @@ function BomUtility() {
                 </Grid>
                 <Grid item xs={12}>
                     <SaveBackCancelButtons
-                        saveDisabled={!crNumber || subAssemblyLoading}
+                        saveDisabled={!crNumber || subAssemblyLoading || !changesMade}
                         saveClick={() => {
+                            setChangesMade(false);
                             reduxDispatch(bomTreeActions.clearErrorsForItem());
                             reduxDispatch(bomTreeActions.add({ treeRoot: treeView, crNumber }));
                         }}

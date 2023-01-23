@@ -2,6 +2,7 @@
 {
     using System.Data;
 
+    using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
 
@@ -11,9 +12,12 @@
     {
         private readonly IDatabaseService databaseService;
 
-        public BomPack(IDatabaseService databaseService)
+        private readonly ITransactionManager transactionManager;
+
+        public BomPack(IDatabaseService databaseService, ITransactionManager transactionManager)
         {
             this.databaseService = databaseService;
+            this.transactionManager = transactionManager;
         }
 
         public void CopyBom(
@@ -57,6 +61,46 @@
                                            Size = 50,
                                            Value = addOrOverWrite
                                        });
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+
+        public void ExplodeSubAssembly(int bomId, int changeId, string changeState, string subAssembly)
+        {
+            this.transactionManager.Commit(); // make sure any added BOM_CHANGE is committed
+            using (var connection = this.databaseService.GetConnection())
+            {
+                connection.Open();
+                var cmd = new OracleCommand("bom_pack.explode_sub_assembly", connection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+                cmd.Parameters.Add(new OracleParameter("p_bom_id", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Size = 50,
+                    Value = bomId
+                });
+                cmd.Parameters.Add(new OracleParameter("p_change_id", OracleDbType.Int32)
+                {
+                    Direction = ParameterDirection.Input,
+                    Size = 50,
+                    Value = changeId
+                });
+
+                cmd.Parameters.Add(new OracleParameter("p_change_state", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Size = 50,
+                    Value = changeState
+                });
+                cmd.Parameters.Add(new OracleParameter("p_sub_assembly", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Size = 50,
+                    Value = subAssembly
+                });
                 cmd.ExecuteNonQuery();
                 connection.Close();
             }

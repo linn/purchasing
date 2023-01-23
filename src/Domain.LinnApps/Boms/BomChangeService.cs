@@ -79,7 +79,7 @@
                         // check if there's an open one for this bom
                         var change = this.bomChangeRepository.FindBy(
                             x => x.DocumentNumber == changeRequestNumber 
-                                 && new[] { "ACCEPT", "PROPOS" }.Contains(x.ChangeState) // todo - can we amend an ACCEPTed change?
+                                 && new[] { "ACCEPT", "PROPOS" }.Contains(x.ChangeState)
                                  && x.BomName == current.Name);
 
                         // create a new bom change if not
@@ -102,10 +102,15 @@
                                          };
                             this.bomChangeRepository.Add(change);
                         }
-                        
-                        var replacementSeq = 1;
 
-                        foreach (var child in current.Children)
+                        var detailsOnChange = this.bomDetailRepository
+                            .FilterBy(x => x.BomId == bom.BomId && x.AddChangeId == change.ChangeId);
+                        
+                        var replacementSeq = !detailsOnChange.Any() ? 0 
+                                                 : detailsOnChange.Max(d => d.AddReplaceSeq.GetValueOrDefault());
+
+                        var children = current.Children.ToList();
+                        foreach (var child in children.ToList())
                         {
                             var part = this.partRepository.FindBy(x => x.PartNumber == child.Name);
 
@@ -113,38 +118,39 @@
                             {
                                 throw new ItemNotFoundException($"Invalid Part Number: {child.Name} on Assembly: {current.Name}");
                             }
-                            var detail = this.bomDetailRepository.FindById(int.Parse(child.Id));
-
-                            if (detail.BomId == 789)
+                            
+                            if (child.ToDelete.GetValueOrDefault())
                             {
-                                // case: deleting a detail PROPOS added by this change request
+                                var detail = this.bomDetailRepository.FindById(int.Parse(child.Id));
 
-                            }
-                            else if (child.ToDelete.GetValueOrDefault())
-                            {
-                                // case: deleting a part from the bom
-
-                                if (detail.DeleteChangeId.HasValue
-                                    && detail.DeleteChange?.DocumentNumber != changeRequestNumber)
+                                // case: deleting a detail added by this change request
+                                if (detail.AddChange.DocumentNumber == changeRequestNumber)
                                 {
-                                    throw new InvalidBomChangeException(
-                                        $"{child.Name} is already marked for deletion by another change request"
-                                        + $" ({detail.DeleteChange?.DocumentNumber})");
-                                }
+                                    // just delete the PROPOS'd record
+                                    this.bomDetailRepository.Remove(detail);
 
-                                if (detail.PcasLine == "Y")
+                                    // and remove it from the tree
+                                    children.Remove(child);
+                                }
+                                else
                                 {
-                                    throw new InvalidBomChangeException($"{child.Name} is a PCAS line - cannot delete here.");
-                                }
+                                    if (detail.DeleteChangeId.HasValue
+                                        && detail.DeleteChange?.DocumentNumber != changeRequestNumber)
+                                    {
+                                        throw new InvalidBomChangeException(
+                                            $"{child.Name} is already marked for deletion by another change request"
+                                            + $" ({detail.DeleteChange?.DocumentNumber})");
+                                    }
 
-                                // client shouldn't let this happen anyway - but just in case: 
-                                if (detail.DeleteChange?.DocumentNumber == changeRequestNumber)
-                                {
-                                    throw new InvalidBomChangeException(
-                                        $"Can't delete detail {child.Name} from {child.ParentName} since it added by this change request");
-                                }
+                                    if (detail.PcasLine == "Y")
+                                    {
+                                        throw new InvalidBomChangeException($"{child.Name} is a PCAS line - cannot delete here.");
+                                    }
 
-                                detail.DeleteChangeId = change.ChangeId;
+                                    detail.DeleteChangeId = change.ChangeId;
+
+                                    child.DeleteChangeDocumentNumber = change.DocumentNumber;
+                                }
                             }
                             else
                             {
@@ -212,7 +218,7 @@
                                         ChangeState = "PROPOS",
                                         AddChangeId = change.ChangeId,
                                         AddReplaceSeq = string.IsNullOrEmpty(child.ReplacementFor)
-                                                                             ? null : replacementSeq++,
+                                                                             ? null : replacementSeq + 1,
                                         DeleteChangeId = null,
                                         DeleteReplaceSeq = null,
                                         PcasLine = "N"
@@ -224,7 +230,6 @@
                                 {
                                     // case: replacing a detail on this bom with a new detail
                                     var replacement = current.Children.FirstOrDefault(c => c.ReplacementFor == child.Id);
-                                    var replacementPart = this.partRepository.FindBy(x => x.PartNumber == replacement.Name);
 
                                     if (replacement == null)
                                     {
@@ -253,15 +258,15 @@
                                             $"{child.Name} is a PCAS line - cannot replace here.");
                                     }
 
-                                    replacement.AddReplaceSeq = replacementSeq;
-                                    child.DeleteReplaceSeq = replacementSeq;
-
+                                    child.DeleteReplaceSeq = replacementSeq + 1;
                                     replacedDetail.DeleteChangeId = change.ChangeId;
-                                    replacedDetail.DeleteReplaceSeq = replacementSeq;
+                                    replacedDetail.DeleteReplaceSeq = replacementSeq + 1;
                                     replacedDetail.ChangeState = "PROPOS";
                                 }
                             }
                         }
+
+                        current.Children = children;
 
                         for (var i = 0; i < current.Children.Count(); i++)
                         {
@@ -281,37 +286,41 @@
 
         public void CopyBom(string srcPartNumber, string destBomPartNumber, int changedBy, int crfNumber)
         {
-            var destBom = this.bomRepository.FindBy(x => x.BomName == destBomPartNumber);
-            var change = this.bomChangeRepository.FindBy(
-                x => x.DocumentNumber == crfNumber && x.BomId == destBom.BomId && x.ChangeState == "PROPOS");
-            
-            if (change == null)
-            {
-                var changeId = this.databaseService.GetIdSequence("CHG_SEQ");
-                change = new BomChange
-                             {
-                                 ChangeId = changeId,
-                                 BomName = destBom.BomName,
-                                 BomId = destBom.BomId,
-                                 DocumentType = "CRF",
-                                 DocumentNumber = crfNumber,
-                                 DateEntered = DateTime.Today,
-                                 EnteredById = changedBy,
-                                 ChangeState = "PROPOS",
-                                 PartNumber = destBom.BomName,
-                                 Comments = "BOM_UT",
-                                 PcasChange = "N"
-                             };
-                this.bomChangeRepository.Add(change);
-            }
-
-            this.bomPack.CopyBom(srcPartNumber, destBom.BomId, change.ChangeId, "PROPOS", "O");
+            var change = this.GetOrCreateBomChange(destBomPartNumber, crfNumber, changedBy);
+            this.bomPack.CopyBom(srcPartNumber, change.BomId, change.ChangeId, change.ChangeState, "O");
         }
 
         public void DeleteAllFromBom(string bomName, int crfNumber, int changedBy)
         {
+            var change = this.GetOrCreateBomChange(bomName, crfNumber, changedBy);
+            var bom = this.bomRepository.FindBy(b => b.BomName == bomName);
+            foreach (var child in bom.Details)
+            {
+                var detail = this.bomDetailRepository.FindById(child.DetailId);
+                if (!detail.DeleteChangeId.HasValue && new[] { "PROPOS", "ACCEPT", "LIVE" }
+                        .Contains(detail.ChangeState))
+                {
+                    detail.DeleteChangeId = change.ChangeId;
+                }
+            }
+        }
+
+        public void ExplodeSubAssembly(string bomName, int crfNumber, string subAssembly, int changedBy)
+        {
+            var change = this.GetOrCreateBomChange(bomName, crfNumber, changedBy);
+            this.bomPack.ExplodeSubAssembly(change.BomId, change.ChangeId, change.ChangeState, subAssembly);
+        }
+
+        private BomChange GetOrCreateBomChange(string bomName, int crfNumber, int changedBy)
+        {
             var bom = this.bomRepository.FindBy(x => x.BomName == bomName);
-            var change = new BomChange
+            var change = this.bomChangeRepository.FindBy(
+                x => x.DocumentNumber == crfNumber
+                     && x.BomId == bom.BomId
+                     && new[] { "PROPOS", "ACCEPT" }.Contains(x.ChangeState));
+            if (change == null)
+            {
+                change = new BomChange
                              {
                                  BomId = bom.BomId,
                                  ChangeId = this.databaseService.GetIdSequence("CHG_SEQ"),
@@ -325,15 +334,10 @@
                                  Comments = "BOM_UT",
                                  PcasChange = "N"
                              };
-            this.bomChangeRepository.Add(change);
-            foreach (var child in bom.Details)
-            {
-                var detail = this.bomDetailRepository.FindById(child.DetailId);
-                if (!detail.DeleteChangeId.HasValue && new[] { "PROPOS", "ACCEPT", "LIVE" }.Contains(detail.ChangeState))
-                {
-                    detail.DeleteChangeId = change.ChangeId;
-                }
+                this.bomChangeRepository.Add(change);
             }
+
+            return change;
         }
     }
 }

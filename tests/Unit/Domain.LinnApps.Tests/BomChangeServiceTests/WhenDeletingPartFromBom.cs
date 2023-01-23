@@ -63,7 +63,10 @@
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(6666);
             this.deletedDetail = new BomDetail
                                      {
-                                         PartNumber = "ASS 1", Qty = 2, ChangeState = "LIVE", DetailId = 4567
+                                         PartNumber = "ASS 1", 
+                                         Qty = 2, ChangeState = "LIVE",
+                                         DetailId = 4567,
+                                         AddChange = new BomChange { ChangeId = 123 }
                                      };
             this.BomDetailRepository.FindById(4567)
                 .Returns(this.deletedDetail);
