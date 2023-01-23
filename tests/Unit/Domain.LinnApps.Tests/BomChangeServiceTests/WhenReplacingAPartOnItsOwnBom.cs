@@ -78,7 +78,14 @@
             this.DatabaseService.GetIdSequence("BOMDET_SEQ").Returns(10023);
             this.BomChangeRepository.FindBy(Arg.Any<Expression<Func<BomChange, bool>>>())
                 .Returns(new BomChange { DocumentNumber = 666 });
-            this.replacedDetail = new BomDetail { PartNumber = "CAP OLD", Qty = 2, ChangeState = "LIVE", DetailId = 123 };
+            this.replacedDetail = new BomDetail
+                                      {
+                                          PartNumber = "CAP OLD", 
+                                          Qty = 2, 
+                                          ChangeState = "LIVE", 
+                                          DetailId = 123,
+                                          AddChange = new BomChange { DocumentNumber = 999 }
+                                      };
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { DecrementRule = "YES", BomType = "C" });
 

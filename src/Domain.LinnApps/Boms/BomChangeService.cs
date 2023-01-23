@@ -123,6 +123,19 @@
                             {
                                 var detail = this.bomDetailRepository.FindById(int.Parse(child.Id));
 
+                                if (detail.DeleteChangeId.HasValue
+                                    && detail.DeleteChange?.DocumentNumber != changeRequestNumber)
+                                {
+                                    throw new InvalidBomChangeException(
+                                        $"{child.Name} is already marked for deletion by another change request"
+                                        + $" ({detail.DeleteChange?.DocumentNumber})");
+                                }
+
+                                if (detail.PcasLine == "Y")
+                                {
+                                    throw new InvalidBomChangeException($"{child.Name} is a PCAS line - cannot delete here.");
+                                }
+
                                 // case: deleting a detail added by this change request
                                 if (detail.AddChange.DocumentNumber == changeRequestNumber)
                                 {
@@ -131,24 +144,21 @@
 
                                     // and remove it from the tree
                                     children.Remove(child);
+
+                                    if (detail.AddReplaceSeq.HasValue)
+                                    {
+                                        // case: deleting a replacement record = undoing a replacement
+
+                                        // remove the detail from the database
+
+                                        // remove the detail from the tree
+
+                                        // tidy up the other side of the replacement
+                                    }
                                 }
                                 else
                                 {
-                                    if (detail.DeleteChangeId.HasValue
-                                        && detail.DeleteChange?.DocumentNumber != changeRequestNumber)
-                                    {
-                                        throw new InvalidBomChangeException(
-                                            $"{child.Name} is already marked for deletion by another change request"
-                                            + $" ({detail.DeleteChange?.DocumentNumber})");
-                                    }
-
-                                    if (detail.PcasLine == "Y")
-                                    {
-                                        throw new InvalidBomChangeException($"{child.Name} is a PCAS line - cannot delete here.");
-                                    }
-
                                     detail.DeleteChangeId = change.ChangeId;
-
                                     child.DeleteChangeDocumentNumber = change.DocumentNumber;
                                 }
                             }
@@ -230,12 +240,13 @@
                                 {
                                     // case: replacing a detail on this bom with a new detail
                                     var replacement = current.Children.FirstOrDefault(c => c.ReplacementFor == child.Id);
-
                                     if (replacement == null)
                                     {
                                         throw new InvalidBomChangeException(
                                             $"{child.Name} is marked for replacement but no replacement part is specified");
                                     }
+                                    
+                                    var replacedDetail = this.bomDetailRepository.FindById(int.Parse(child.Id));
 
                                     if (child.AddChangeDocumentNumber == changeRequestNumber)
                                     {
@@ -249,8 +260,6 @@
                                     {
                                         throw new InvalidBomChangeException($"Can't add {replacement.Name} to it's own BOM!");
                                     }
-
-                                    var replacedDetail = this.bomDetailRepository.FindById(int.Parse(child.Id));
 
                                     if (replacedDetail.PcasLine == "Y")
                                     {
