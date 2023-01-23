@@ -658,7 +658,7 @@
             var miniOrder = new MiniOrder();
             var detail = order.Details.First();
 
-            var nomAcc = this.nominalAccountRepository.FindById((int)detail.OrderPosting.NominalAccountId);
+            var nomAcc = this.nominalAccountRepository.FindById(detail.OrderPosting.NominalAccountId.Value);
 
             miniOrder.OrderNumber = order.OrderNumber;
             miniOrder.DocumentType = order.DocumentTypeName;
@@ -668,6 +668,7 @@
             miniOrder.Remarks = order.Remarks;
             miniOrder.SupplierId = order.SupplierId;
             miniOrder.PartNumber = detail.PartNumber;
+            miniOrder.DrawingReference = detail.DrawingReference;
             miniOrder.Currency = order.CurrencyCode;
             miniOrder.SuppliersDesignation = detail.SuppliersDesignation;
             miniOrder.Department = nomAcc.DepartmentCode;
@@ -1073,13 +1074,14 @@
             miniOrder.Remarks = updatedOrder.Remarks;
             miniOrder.SentByMethod = updatedOrder.SentByMethod;
 
-            var nomAcc = this.nominalAccountRepository.FindById((int)updatedDetail.OrderPosting.NominalAccountId);
+            var nomAcc = this.nominalAccountRepository.FindById(updatedDetail.OrderPosting.NominalAccountId.Value);
             miniOrder.Nominal = nomAcc.NominalCode;
             miniOrder.Department = nomAcc.DepartmentCode;
 
             miniOrder.RequestedDeliveryDate = updatedDetail.PurchaseDeliveries.First().DateRequested;
             miniOrder.InternalComments = updatedDetail.InternalComments;
             miniOrder.SuppliersDesignation = updatedDetail.SuppliersDesignation;
+            miniOrder.DrawingReference = updatedDetail.DrawingReference;
 
             var netTotal = updatedDetail.OurUnitPriceCurrency.GetValueOrDefault()
                            * updatedDetail.OurQty.GetValueOrDefault();
