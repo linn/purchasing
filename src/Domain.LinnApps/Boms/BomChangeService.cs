@@ -113,26 +113,38 @@
                             {
                                 throw new ItemNotFoundException($"Invalid Part Number: {child.Name} on Assembly: {current.Name}");
                             }
+                            var detail = this.bomDetailRepository.FindById(int.Parse(child.Id));
 
-                            if (child.ToDelete.GetValueOrDefault())
+                            if (detail.BomId == 789)
+                            {
+                                // case: deleting a detail PROPOS added by this change request
+
+                            }
+                            else if (child.ToDelete.GetValueOrDefault())
                             {
                                 // case: deleting a part from the bom
-                                var toDelete = this.bomDetailRepository.FindById(int.Parse(child.Id));
 
-                                if (toDelete.DeleteChangeId.HasValue
-                                    && toDelete.DeleteChange?.DocumentNumber != changeRequestNumber)
+                                if (detail.DeleteChangeId.HasValue
+                                    && detail.DeleteChange?.DocumentNumber != changeRequestNumber)
                                 {
                                     throw new InvalidBomChangeException(
                                         $"{child.Name} is already marked for deletion by another change request"
-                                        + $" ({toDelete.DeleteChange?.DocumentNumber})");
+                                        + $" ({detail.DeleteChange?.DocumentNumber})");
                                 }
 
-                                if (toDelete.PcasLine == "Y")
+                                if (detail.PcasLine == "Y")
                                 {
                                     throw new InvalidBomChangeException($"{child.Name} is a PCAS line - cannot delete here.");
                                 }
 
-                                toDelete.DeleteChangeId = change.ChangeId;
+                                // client shouldn't let this happen anyway - but just in case: 
+                                if (detail.DeleteChange?.DocumentNumber == changeRequestNumber)
+                                {
+                                    throw new InvalidBomChangeException(
+                                        $"Can't delete detail {child.Name} from {child.ParentName} since it added by this change request");
+                                }
+
+                                detail.DeleteChangeId = change.ChangeId;
                             }
                             else
                             {
