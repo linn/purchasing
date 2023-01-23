@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
 
     using Linn.Common.Authorisation;
     using Linn.Common.Domain.Exceptions;
@@ -197,6 +199,50 @@
             request.PhaseIn(week, selectedBomChangeIds);
 
             return request;
+        }
+
+        public Expression<Func<ChangeRequest, bool>> SearchExpression(string searchTerm, bool? outstanding, int? lastMonths)
+        {
+            var fromDate = (lastMonths == null)
+                               ? DateTime.Now.AddMonths(-120)
+                               : DateTime.Now.AddMonths(-1 * (int)lastMonths);
+            var inclLive = (outstanding == false) ? "LIVE" : "JUSTOUTSTANDING";
+
+            var newPartNumber = searchTerm.Trim().ToUpper();
+            var partSearch = newPartNumber.Split('*');
+
+            // this big if is just because Linq/EF/Oracle doesn't do a LIKE
+            // supports IC*, *3, *LEWIS*, PCAS*L1R1 but not multiple * e.g. PCAS */L1*
+            if (string.IsNullOrEmpty(newPartNumber))
+            {
+                return r => (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive)
+                         && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+            }
+            
+            if (!newPartNumber.Contains("*"))
+            {
+                return r => r.NewPartNumber.Equals(newPartNumber) && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+            }
+            
+            if (newPartNumber.EndsWith("*"))
+            {
+                // supporting *LEWIS*
+                if (newPartNumber.StartsWith("*"))
+                {
+                    return r => r.NewPartNumber.Contains(partSearch[1]) && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+                }
+                else
+                {
+                    return r => r.NewPartNumber.StartsWith(partSearch.First()) && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+                }
+            }
+            
+            if (newPartNumber.StartsWith("*"))
+            {
+                return r => r.NewPartNumber.EndsWith(partSearch.Last()) && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+            }
+
+            return r => r.NewPartNumber.StartsWith(partSearch.First()) && r.NewPartNumber.EndsWith(partSearch.Last()) && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
         }
     }
 }
