@@ -9,5 +9,7 @@
         void CopyBom(string srcPartNumber, string destBomPartNumber, int changedBy, int crfNumber);
 
         void DeleteAllFromBom(string bomName, int crfNumber, int changedBy);
+
+        void ExplodeSubAssembly(string bomName, int crfNumber, string subAssembly, int changedBy);
     }
 }

@@ -43,15 +43,17 @@
 
         public Bom FindBy(Expression<Func<Bom, bool>> expression)
         {
-            var test = this.serviceDbContext.Boms.Where(expression).Include(x => x.Details);
-            return this.serviceDbContext.Boms.Where(expression)
+            return this.serviceDbContext
+                .Boms.AsNoTracking().Where(expression)
                 .Include(b => b.Part)
                 .Include(b => b.Details)
                 .ThenInclude(d => d.Part).ThenInclude(p => p.PartSuppliers.Where(ps => ps.SupplierRanking == 1))
                 .Include(b => b.Details)
                 .ThenInclude(d => d.PartRequirement)
                 .Include(b => b.Details)
-                .ThenInclude(d => d.AddChange).FirstOrDefault();
+                .ThenInclude(d => d.AddChange)
+                .Include(b => b.Details)
+                .ThenInclude(d => d.DeleteChange).FirstOrDefault();
         }
 
         public IQueryable<Bom> FilterBy(Expression<Func<Bom, bool>> expression)

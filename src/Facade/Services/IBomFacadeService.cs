@@ -12,5 +12,8 @@
             string srcPartNumber, string destPartNumber, int changedBy, int crfNumber);
 
         IResult<BomTreeNode> DeleteBom(string bomName, int crfNumber, int changedBy);
+
+        IResult<BomTreeNode> ExplodeSubAssembly(
+            string bomName, int crfNumber, string subAssembly, int changedBy);
     }
 }

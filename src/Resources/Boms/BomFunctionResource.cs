@@ -7,5 +7,7 @@
         public string DestPartNumber { get; set; }
 
         public int CrfNumber { get; set; }
+
+        public string SubAssembly { get; set; }
     }
 }

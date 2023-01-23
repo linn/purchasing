@@ -79,7 +79,7 @@
                         // check if there's an open one for this bom
                         var change = this.bomChangeRepository.FindBy(
                             x => x.DocumentNumber == changeRequestNumber 
-                                 && new[] { "ACCEPT", "PROPOS" }.Contains(x.ChangeState) // todo - can we amend an ACCEPTed change?
+                                 && new[] { "ACCEPT", "PROPOS" }.Contains(x.ChangeState)
                                  && x.BomName == current.Name);
 
                         // create a new bom change if not
@@ -102,8 +102,12 @@
                                          };
                             this.bomChangeRepository.Add(change);
                         }
+
+                        var detailsOnChange = this.bomDetailRepository
+                            .FilterBy(x => x.BomId == bom.BomId && x.AddChangeId == change.ChangeId);
                         
-                        var replacementSeq = 1;
+                        var replacementSeq = !detailsOnChange.Any() ? 0 
+                                                 : detailsOnChange.Max(d => d.AddReplaceSeq.GetValueOrDefault());
 
                         foreach (var child in current.Children)
                         {
@@ -133,6 +137,8 @@
                                 }
 
                                 toDelete.DeleteChangeId = change.ChangeId;
+
+                                child.DeleteChangeDocumentNumber = change.DocumentNumber;
                             }
                             else
                             {
@@ -200,7 +206,7 @@
                                         ChangeState = "PROPOS",
                                         AddChangeId = change.ChangeId,
                                         AddReplaceSeq = string.IsNullOrEmpty(child.ReplacementFor)
-                                                                             ? null : replacementSeq++,
+                                                                             ? null : replacementSeq + 1,
                                         DeleteChangeId = null,
                                         DeleteReplaceSeq = null,
                                         PcasLine = "N"
@@ -212,7 +218,6 @@
                                 {
                                     // case: replacing a detail on this bom with a new detail
                                     var replacement = current.Children.FirstOrDefault(c => c.ReplacementFor == child.Id);
-                                    var replacementPart = this.partRepository.FindBy(x => x.PartNumber == replacement.Name);
 
                                     if (replacement == null)
                                     {
@@ -241,11 +246,9 @@
                                             $"{child.Name} is a PCAS line - cannot replace here.");
                                     }
 
-                                    replacement.AddReplaceSeq = replacementSeq;
-                                    child.DeleteReplaceSeq = replacementSeq;
-
+                                    child.DeleteReplaceSeq = replacementSeq + 1;
                                     replacedDetail.DeleteChangeId = change.ChangeId;
-                                    replacedDetail.DeleteReplaceSeq = replacementSeq;
+                                    replacedDetail.DeleteReplaceSeq = replacementSeq + 1;
                                     replacedDetail.ChangeState = "PROPOS";
                                 }
                             }
@@ -269,37 +272,41 @@
 
         public void CopyBom(string srcPartNumber, string destBomPartNumber, int changedBy, int crfNumber)
         {
-            var destBom = this.bomRepository.FindBy(x => x.BomName == destBomPartNumber);
-            var change = this.bomChangeRepository.FindBy(
-                x => x.DocumentNumber == crfNumber && x.BomId == destBom.BomId && x.ChangeState == "PROPOS");
-            
-            if (change == null)
-            {
-                var changeId = this.databaseService.GetIdSequence("CHG_SEQ");
-                change = new BomChange
-                             {
-                                 ChangeId = changeId,
-                                 BomName = destBom.BomName,
-                                 BomId = destBom.BomId,
-                                 DocumentType = "CRF",
-                                 DocumentNumber = crfNumber,
-                                 DateEntered = DateTime.Today,
-                                 EnteredById = changedBy,
-                                 ChangeState = "PROPOS",
-                                 PartNumber = destBom.BomName,
-                                 Comments = "BOM_UT",
-                                 PcasChange = "N"
-                             };
-                this.bomChangeRepository.Add(change);
-            }
-
-            this.bomPack.CopyBom(srcPartNumber, destBom.BomId, change.ChangeId, "PROPOS", "O");
+            var change = this.GetOrCreateBomChange(destBomPartNumber, crfNumber, changedBy);
+            this.bomPack.CopyBom(srcPartNumber, change.BomId, change.ChangeId, change.ChangeState, "O");
         }
 
         public void DeleteAllFromBom(string bomName, int crfNumber, int changedBy)
         {
+            var change = this.GetOrCreateBomChange(bomName, crfNumber, changedBy);
+            var bom = this.bomRepository.FindBy(b => b.BomName == bomName);
+            foreach (var child in bom.Details)
+            {
+                var detail = this.bomDetailRepository.FindById(child.DetailId);
+                if (!detail.DeleteChangeId.HasValue && new[] { "PROPOS", "ACCEPT", "LIVE" }
+                        .Contains(detail.ChangeState))
+                {
+                    detail.DeleteChangeId = change.ChangeId;
+                }
+            }
+        }
+
+        public void ExplodeSubAssembly(string bomName, int crfNumber, string subAssembly, int changedBy)
+        {
+            var change = this.GetOrCreateBomChange(bomName, crfNumber, changedBy);
+            this.bomPack.ExplodeSubAssembly(change.BomId, change.ChangeId, change.ChangeState, subAssembly);
+        }
+
+        private BomChange GetOrCreateBomChange(string bomName, int crfNumber, int changedBy)
+        {
             var bom = this.bomRepository.FindBy(x => x.BomName == bomName);
-            var change = new BomChange
+            var change = this.bomChangeRepository.FindBy(
+                x => x.DocumentNumber == crfNumber
+                     && x.BomId == bom.BomId
+                     && new[] { "PROPOS", "ACCEPT" }.Contains(x.ChangeState));
+            if (change == null)
+            {
+                change = new BomChange
                              {
                                  BomId = bom.BomId,
                                  ChangeId = this.databaseService.GetIdSequence("CHG_SEQ"),
@@ -313,15 +320,10 @@
                                  Comments = "BOM_UT",
                                  PcasChange = "N"
                              };
-            this.bomChangeRepository.Add(change);
-            foreach (var child in bom.Details)
-            {
-                var detail = this.bomDetailRepository.FindById(child.DetailId);
-                if (!detail.DeleteChangeId.HasValue && new[] { "PROPOS", "ACCEPT", "LIVE" }.Contains(detail.ChangeState))
-                {
-                    detail.DeleteChangeId = change.ChangeId;
-                }
+                this.bomChangeRepository.Add(change);
             }
+
+            return change;
         }
     }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
@@ -19,24 +19,15 @@ import changeRequestPhaseInsActions from '../../actions/changeRequestPhaseInsAct
 import MainTab from './Tabs/MainTab';
 import BomChangesTab from './Tabs/BomChangesTab';
 import PcasChangesTab from './Tabs/PcasChangesTab';
-
 import history from '../../history';
+import useInitialise from '../../hooks/useInitialise';
 
 function ChangeRequest() {
     const { id } = useParams();
 
     const reduxDispatch = useDispatch();
-    useEffect(() => {
-        if (id) {
-            reduxDispatch(changeRequestActions.fetch(id));
-        }
-    }, [id, reduxDispatch]);
 
-    const loading = useSelector(reduxState =>
-        itemSelectorHelpers.getItemLoading(reduxState.changeRequest)
-    );
-
-    const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.changeRequest));
+    const [item, loading] = useInitialise(() => changeRequestActions.fetch(id), 'changeRequest');
 
     const statusChange = useSelector(reduxState =>
         itemSelectorHelpers.getItem(reduxState.changeRequestStatusChange)
@@ -78,11 +69,9 @@ function ChangeRequest() {
         return false;
     };
 
-    useEffect(() => {
-        if (item && statusChange && changedState(statusChange, item)) {
-            reduxDispatch(changeRequestActions.fetch(id));
-        }
-    }, [statusChange, reduxDispatch, item, id]);
+    if (item && statusChange && changedState(statusChange, item)) {
+        reduxDispatch(changeRequestActions.fetch(id));
+    }
 
     const [tab, setTab] = useState(0);
 

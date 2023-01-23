@@ -42,5 +42,7 @@
         public IEnumerable<BomDetailComponent> Components { get; set; }
 
         public BomChange AddChange { get; set; }
+
+        public BomChange DeleteChange { get; set; }
     }
 }
