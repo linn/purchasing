@@ -20,7 +20,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.Repository.FilterBy(Arg.Any<Expression<Func<ChangeRequest,bool>>>())
+            this.Repository.FilterBy(Arg.Any<Expression<Func<ChangeRequest, bool>>>())
                 .Returns(new List<ChangeRequest>
                              {
                                  new ChangeRequest
@@ -60,7 +60,7 @@
         {
             var result = this.Response.DeserializeBody<IEnumerable<ChangeRequestResource>>().ToList();
             result.Should().NotBeNull();
-            result.Count().Should().Be(1);
+            result.Count.Should().Be(1);
             result.First().NewPartNumber.Should().Be("SK HUB");
         }
     }

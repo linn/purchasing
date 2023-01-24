@@ -1,8 +1,7 @@
-﻿using Linn.Common.Resources;
-using System;
-
-namespace Linn.Purchasing.Resources.Boms
+﻿namespace Linn.Purchasing.Resources.Boms
 {
+    using Linn.Common.Resources;
+
     public class BomVerificationHistoryResource : HypermediaResource
     {
         public int TRef { get; set; }

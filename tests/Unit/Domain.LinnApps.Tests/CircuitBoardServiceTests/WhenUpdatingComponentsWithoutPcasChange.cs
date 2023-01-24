@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Linq.Expressions;
 
     using FluentAssertions;
@@ -14,17 +13,41 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingComponents : ContextBase
+    public class WhenUpdatingComponentsWithoutPcasChange : ContextBase
     {
-        private CircuitBoard result;
+        private PcasChange pcasChange;
+
+        private int changeRequestId;
 
         private IEnumerable<BoardComponent> componentsToAdd;
 
         private IEnumerable<BoardComponent> componentsToRemove;
 
+        private int changeId;
+
+        private ChangeRequest changeRequest;
+
         [SetUp]
         public void SetUp()
         {
+            this.changeId = 890;
+            this.changeRequestId = 678;
+            this.changeRequest = new ChangeRequest
+                                     {
+                                         DocumentNumber = this.changeRequestId,
+                                         BoardCode = this.BoardCode,
+                                         RevisionCode = "L1R1",
+                                         ChangeState = "PROPOS"
+                                     };
+            this.pcasChange = new PcasChange
+                                  {
+                                      BoardCode = this.BoardCode,
+                                      ChangeId = this.changeId,
+                                      ChangeRequest = null, 
+                                      ChangeState = null,
+                                      RevisionCode = "L1R1"
+                                  };
+     
             this.componentsToAdd = new List<BoardComponent>
                                        {
                                            new BoardComponent
@@ -39,7 +62,7 @@
                                                    FromRevisionVersion = 1,
                                                    ToLayoutVersion = null,
                                                    ToRevisionVersion = null,
-                                                   AddChangeId = this.ChangeId,
+                                                   AddChangeId = this.changeId,
                                                    DeleteChangeId = null,
                                                    Quantity = 1
                                                }
@@ -64,39 +87,25 @@
                                                }
                                        };
 
+            this.BoardRepository.FindById(this.BoardCode).Returns(this.Board);
+            this.ChangeRequestRepository.FindById(this.changeRequestId).Returns(this.changeRequest);
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { PartNumber = "CAP 123", AssemblyTechnology = "SM" });
-            this.result = this.Sut.UpdateComponents(
+            this.Sut.UpdateComponents(
                 this.BoardCode,
-                this.PcasChange,
-                this.ChangeRequestId,
+                this.pcasChange,
+                this.changeRequestId,
                 this.componentsToAdd,
                 this.componentsToRemove);
         }
 
         [Test]
-        public void ShouldLookUpBoard()
+        public void ShouldPopulatePcasChange()
         {
-            this.BoardRepository.Received().FindById(this.BoardCode);
-        }
-
-        [Test]
-        public void ShouldLookUpChangeRequest()
-        {
-            this.ChangeRequestRepository.Received().FindById(this.ChangeRequestId);
-        }
-
-        [Test]
-        public void ShouldUpdateComponents()
-        {
-            this.result.Components.Should().HaveCount(2);
-            var removed = this.result.Components.First(a => a.BoardLine == 1);
-            removed.DeleteChangeId.Should().Be(this.ChangeId);
-            var added = this.result.Components.First(a => a.BoardLine == 2);
-            added.AddChangeId.Should().Be(this.ChangeId);
-            added.AssemblyTechnology.Should().Be("SM");
-            added.ToLayoutVersion.Should().BeNull();
-            added.ToRevisionVersion.Should().BeNull();
+            this.pcasChange.DocumentNumber.Should().Be(this.changeRequest.DocumentNumber);
+            this.pcasChange.DocumentType.Should().Be(this.changeRequest.DocumentType);
+            this.pcasChange.ChangeRequest.Should().Be(this.changeRequest);
+            this.pcasChange.ChangeState.Should().Be(this.changeRequest.ChangeState);
         }
     }
 }

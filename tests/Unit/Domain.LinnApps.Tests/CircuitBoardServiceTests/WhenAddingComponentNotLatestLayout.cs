@@ -18,28 +18,13 @@
     {
         private CircuitBoard result;
 
-        private PcasChange pcasChange;
-
         private IEnumerable<BoardComponent> componentsToAdd;
 
         private IEnumerable<BoardComponent> componentsToRemove;
 
-        private int changeId;
-
         [SetUp]
         public void SetUp()
         {
-            this.changeId = 890;
-
-            this.pcasChange = new PcasChange
-                                  {
-                                      BoardCode = this.BoardCode,
-                                      ChangeId = this.changeId,
-                                      ChangeRequest = this.ChangeRequest,
-                                      ChangeState = "PROPOS",
-                                      DocumentNumber = this.ChangeRequestId,
-                                      RevisionCode = "L1R1"
-                                  };
             this.componentsToAdd = new List<BoardComponent>
                                        {
                                            new BoardComponent
@@ -54,7 +39,7 @@
                                                    FromRevisionVersion = 1,
                                                    ToLayoutVersion = null,
                                                    ToRevisionVersion = null,
-                                                   AddChangeId = this.changeId,
+                                                   AddChangeId = this.ChangeId,
                                                    DeleteChangeId = null,
                                                    Quantity = 1
                                                }
@@ -81,7 +66,7 @@
                 .Returns(new Part { PartNumber = "CAP 123", AssemblyTechnology = "SM" });
             this.result = this.Sut.UpdateComponents(
                 this.BoardCode,
-                this.pcasChange,
+                this.PcasChange,
                 this.ChangeRequestId,
                 this.componentsToAdd,
                 this.componentsToRemove);

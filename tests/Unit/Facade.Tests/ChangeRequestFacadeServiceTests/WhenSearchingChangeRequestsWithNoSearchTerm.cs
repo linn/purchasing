@@ -1,15 +1,18 @@
 ﻿namespace Linn.Purchasing.Facade.Tests.ChangeRequestFacadeServiceTests
 {
-    using Linn.Common.Facade;
-    using Linn.Purchasing.Domain.LinnApps.Boms;
-    using Linn.Purchasing.Resources;
-    using NSubstitute;
-    using NUnit.Framework;
-    using System.Collections.Generic;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     using FluentAssertions;
+
+    using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Resources;
+
+    using NSubstitute;
+
+    using NUnit.Framework;
 
     public class WhenSearchingChangeRequestsWithNoSearchTerm : ContextBase
     {
@@ -38,7 +41,7 @@
                                      }
                              }.AsQueryable());
 
-            this.result = this.Sut.SearchChangeRequests("", true, null);
+            this.result = this.Sut.SearchChangeRequests(string.Empty, true, null);
         }
 
         [Test]

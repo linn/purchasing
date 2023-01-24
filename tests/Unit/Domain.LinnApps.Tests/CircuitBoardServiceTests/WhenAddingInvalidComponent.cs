@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Linq.Expressions;
 
     using FluentAssertions;
@@ -15,7 +14,7 @@
 
     using NUnit.Framework;
 
-    public class WhenRemovingComponentsAlreadyRemoved : ContextBase
+    public class WhenAddingInvalidComponent : ContextBase
     {
         private IEnumerable<BoardComponent> componentsToAdd;
 
@@ -26,14 +25,13 @@
         [SetUp]
         public void SetUp()
         {
-            this.componentsToAdd = null;
-            this.componentsToRemove = new List<BoardComponent>
+            this.componentsToAdd = new List<BoardComponent>
                                        {
                                            new BoardComponent
                                                {
                                                    BoardCode = this.BoardCode,
-                                                   BoardLine = 1,
-                                                   CRef = "C002",
+                                                   BoardLine = 2,
+                                                   CRef = string.Empty,
                                                    PartNumber = "CAP 123",
                                                    AssemblyTechnology = "SM",
                                                    ChangeState = "PROPOS",
@@ -41,12 +39,12 @@
                                                    FromRevisionVersion = 1,
                                                    ToLayoutVersion = null,
                                                    ToRevisionVersion = null,
-                                                   AddChangeId = 8763458,
+                                                   AddChangeId = this.ChangeId,
                                                    DeleteChangeId = null,
                                                    Quantity = 1
                                                }
                                        };
-            this.Board.Components.First(a => a.BoardLine == 1).DeleteChangeId = 987;
+            this.componentsToRemove = null;
 
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { PartNumber = "CAP 123", AssemblyTechnology = "SM" });
@@ -61,7 +59,7 @@
         [Test]
         public void ShouldThrowError()
         {
-            this.action.Should().Throw<InvalidActionException>();
+            this.action.Should().Throw<InvalidOptionException>();
         }
     }
 }

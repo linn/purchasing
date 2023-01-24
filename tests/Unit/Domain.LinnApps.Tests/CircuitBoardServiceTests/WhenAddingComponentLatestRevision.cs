@@ -14,7 +14,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingComponents : ContextBase
+    public class WhenAddingComponentLatestRevision : ContextBase
     {
         private CircuitBoard result;
 
@@ -44,25 +44,7 @@
                                                    Quantity = 1
                                                }
                                        };
-            this.componentsToRemove = new List<BoardComponent>
-                                       {
-                                           new BoardComponent
-                                               {
-                                                   BoardCode = this.BoardCode,
-                                                   BoardLine = 1,
-                                                   CRef = "C002",
-                                                   PartNumber = "CAP 123",
-                                                   AssemblyTechnology = "SM",
-                                                   ChangeState = "PROPOS",
-                                                   FromLayoutVersion = 1,
-                                                   FromRevisionVersion = 1,
-                                                   ToLayoutVersion = null,
-                                                   ToRevisionVersion = null,
-                                                   AddChangeId = 8763458,
-                                                   DeleteChangeId = null,
-                                                   Quantity = 1
-                                               }
-                                       };
+            this.componentsToRemove = null;
 
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { PartNumber = "CAP 123", AssemblyTechnology = "SM" });
@@ -75,28 +57,12 @@
         }
 
         [Test]
-        public void ShouldLookUpBoard()
-        {
-            this.BoardRepository.Received().FindById(this.BoardCode);
-        }
-
-        [Test]
-        public void ShouldLookUpChangeRequest()
-        {
-            this.ChangeRequestRepository.Received().FindById(this.ChangeRequestId);
-        }
-
-        [Test]
-        public void ShouldUpdateComponents()
+        public void ShouldSetToValuesCorrectly()
         {
             this.result.Components.Should().HaveCount(2);
-            var removed = this.result.Components.First(a => a.BoardLine == 1);
-            removed.DeleteChangeId.Should().Be(this.ChangeId);
-            var added = this.result.Components.First(a => a.BoardLine == 2);
-            added.AddChangeId.Should().Be(this.ChangeId);
-            added.AssemblyTechnology.Should().Be("SM");
-            added.ToLayoutVersion.Should().BeNull();
-            added.ToRevisionVersion.Should().BeNull();
+            var addedComponent = this.result.Components.First(a => a.BoardLine == 2);
+            addedComponent.ToLayoutVersion.Should().BeNull();
+            addedComponent.ToRevisionVersion.Should().BeNull();
         }
     }
 }
