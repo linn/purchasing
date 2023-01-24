@@ -656,7 +656,7 @@
             }
 
             text += $"\n{success} out of {orderNumbers.Count} emailed successfully";
-
+            this.log.Info(text);
             return new ProcessResult(true, text);
         }
 
