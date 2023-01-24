@@ -14,6 +14,7 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import AssemblyChange from './ChangeTypes/AssemblyChange';
+import BoardChange from './ChangeTypes/BoardChange';
 import employeesActions from '../../actions/employeesActions';
 import changeRequestActions from '../../actions/changeRequestActions';
 import history from '../../history';
@@ -118,7 +119,13 @@ function CreateChangeRequest() {
                                     handleFieldChange={handleFieldChange}
                                 />
                             ),
-                            BOARDEDIT: <Typography>Coming Soon...</Typography>,
+                            BOARDEDIT: (
+                                <BoardChange
+                                    item={item}
+                                    creating
+                                    handleFieldChange={handleFieldChange}
+                                />
+                            ),
                             REPLACE: <Typography>Coming Soon...</Typography>
                         }[item?.changeType]
                     }
