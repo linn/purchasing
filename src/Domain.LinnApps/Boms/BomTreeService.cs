@@ -65,7 +65,9 @@
                                                     Type = d.Part.BomType,
                                                     Id = d.DetailId.ToString(),
                                                     AddChangeDocumentNumber = d.AddChange.DocumentNumber,
-                                                    DeleteChangeDocumentNumber = d.DeleteChange?.DocumentNumber
+                                                    DeleteChangeDocumentNumber = d.DeleteChange?.DocumentNumber,
+                                                    AddReplaceSeq = d.AddReplaceSeq,
+                                                    DeleteReplaceSeq = d.DeleteReplaceSeq
                                                 }).OrderBy(x => x.Name)
                                };
 
@@ -119,6 +121,8 @@
                                     AddChangeDocumentNumber = child.AddChangeDocumentNumber,
                                     DeleteChangeDocumentNumber = child.DeleteChangeDocumentNumber,
                                     IsReplaced = child.IsReplaced,
+                                    AddReplaceSeq = child.AddReplaceSeq,
+                                    DeleteReplaceSeq = child.DeleteReplaceSeq,
                                     Children =
                                     children?
                                         .OrderBy(x => x.Part.PartNumber)
@@ -141,7 +145,9 @@
                                                             detail.DeleteChange.DocumentNumber : null,
                                                         ChangeState = detail.ChangeState,
                                                         IsReplaced = detail.DeleteChangeId.HasValue,
-                                                        Id = detail.DetailId.ToString()
+                                                        Id = detail.DetailId.ToString(),
+                                                        AddReplaceSeq = detail.AddReplaceSeq,
+                                                        DeleteReplaceSeq = detail.DeleteReplaceSeq
                                                     })
                                 };
                                 return node;

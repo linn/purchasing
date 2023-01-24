@@ -148,12 +148,17 @@
                                     if (detail.AddReplaceSeq.HasValue)
                                     {
                                         // case: deleting a replacement record = undoing a replacement
+                                        // tidy up the other side of the replacement to undelete the detail
+                                        var replacedDetail = this.bomDetailRepository.FindBy(
+                                            x => x.DeleteChangeId == change.ChangeId
+                                                 && x.DeleteReplaceSeq == detail.AddReplaceSeq);
+                                        replacedDetail.DeleteReplaceSeq = null;
+                                        replacedDetail.DeleteChangeId = null;
+                                        var nodeToUpdate = current.Children.FirstOrDefault(
+                                            x => x.DeleteChangeDocumentNumber == changeRequestNumber);
 
-                                        // remove the detail from the database
-
-                                        // remove the detail from the tree
-
-                                        // tidy up the other side of the replacement
+                                        nodeToUpdate.DeleteChangeDocumentNumber = null;
+                                        nodeToUpdate.DeleteReplaceSeq = null;
                                     }
                                 }
                                 else
