@@ -28,7 +28,7 @@
                               };
             this.Repository.FindById(1).Returns(request);
 
-            var week = new LinnWeek { WeekNumber = 1, WwYyyy = "012022", EndsOn = new DateTime(2100,12,12) };
+            var week = new LinnWeek { WeekNumber = 1, WwYyyy = "012022", EndsOn = new DateTime(2100, 12, 12) };
             this.WeekRepository.FindById(1).Returns(week);
 
             var bomChangeIds = new List<int> { 1 };

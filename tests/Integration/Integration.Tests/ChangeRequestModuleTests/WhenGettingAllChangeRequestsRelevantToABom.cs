@@ -69,7 +69,7 @@
         {
             var result = this.Response.DeserializeBody<IEnumerable<ChangeRequestResource>>().ToList();
             result.Should().NotBeNull();
-            result.Count().Should().Be(1);
+            result.Count.Should().Be(1);
             result.First().NewPartNumber.Should().Be("SK HUB");
         }
     }

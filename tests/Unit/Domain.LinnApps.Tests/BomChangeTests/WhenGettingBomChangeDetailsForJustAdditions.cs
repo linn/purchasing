@@ -11,7 +11,7 @@
 
     public class WhenGettingBomChangeDetailsForJustAdditions : ContextBase
     {
-        private IEnumerable<BomChangeDetail> Results;
+        private IEnumerable<BomChangeDetail> results;
 
         [SetUp]
         public void SetUp()
@@ -43,24 +43,24 @@
                                                      },
                                DeletedBomDetails = new List<BomDetail>()
                            };
-            this.Results = this.Sut.BomChangeDetails();
+            this.results = this.Sut.BomChangeDetails();
         }
 
         [Test]
         public void ShouldHaveTwoChangeDetails()
         {
-            this.Results.Count().Should().Be(2);
+            this.results.Count().Should().Be(2);
         }
 
         [Test]
         public void ShouldHaveRightChangeDetails()
         {
-            var conn = this.Results.SingleOrDefault(d => d.AddPartNumber == "CONN 1");
+            var conn = this.results.Single(d => d.AddPartNumber == "CONN 1");
             conn.Should().NotBeNull();
             conn.AddQty.Should().Be(1);
             conn.DeletePartNumber.Should().BeNull();
 
-            var lbl = this.Results.SingleOrDefault(d => d.AddPartNumber == "LBL 12");
+            var lbl = this.results.Single(d => d.AddPartNumber == "LBL 12");
             lbl.Should().NotBeNull();
             lbl.AddQty.Should().Be(2);
             lbl.DeletePartNumber.Should().BeNull();

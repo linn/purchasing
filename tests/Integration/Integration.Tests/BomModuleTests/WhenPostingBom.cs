@@ -22,7 +22,7 @@
         [SetUp]
         public void SetUp()
         {
-            var c1 = new BomTreeNode {Name = "COMP", Type = "C" };
+            var c1 = new BomTreeNode { Name = "COMP", Type = "C" };
             var c2 = new BomTreeNode { Name = "ASS", Type = "A" };
 
             this.tree = new BomTreeNode

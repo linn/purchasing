@@ -36,25 +36,21 @@
                 ReasonForChange = "Everything changes",
                 DescriptionOfChange = "Great idea",
                 ChangeState = "PROPOS",
-                BomChanges = new List<BomChange>
-                                                  {
-                                                      new BomChange
-                                                          {
-                                                              ChangeId = 1,
-                                                              BomName = "TOAST 001",
-                                                              ChangeState = "PROPOS"
-                                                          }
-                                                  },
+                BomChanges =
+                    new List<BomChange>
+                        {
+                            new BomChange { ChangeId = 1, BomName = "TOAST 001", ChangeState = "PROPOS" }
+                        },
                 PcasChanges = new List<PcasChange>
-                                                  {
-                                                      new PcasChange
-                                                          {
-                                                              ChangeId = 1,
-                                                              BoardCode = "TOAST",
-                                                              RevisionCode = "BREAD",
-                                                              ChangeState = "PROPOS"
-                                                          }
-                                                  }
+                                  {
+                                      new PcasChange
+                                          {
+                                              ChangeId = 1,
+                                              BoardCode = "TOAST",
+                                              RevisionCode = "BREAD",
+                                              ChangeState = "PROPOS"
+                                          }
+                                  }
             };
             this.Repository.FindById(1).Returns(changeRequest);
 

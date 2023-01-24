@@ -1,12 +1,15 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeRequestServiceTests
 {
-    using Linn.Purchasing.Domain.LinnApps.Exceptions;
-    using NSubstitute;
-    using NUnit.Framework;
-    using System.Collections.Generic;
     using System;
+    using System.Collections.Generic;
 
     using FluentAssertions;
+
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
+
+    using NSubstitute;
+
+    using NUnit.Framework;
 
     public class WhenPhasingInNonExistentChangeRequest : ContextBase
     {
@@ -21,7 +24,7 @@
 
             var bomChangeIds = new List<int> { 1 };
 
-            this.action = () => this.Sut.PhaseInChanges(1, 1,null, new List<int>(), new List<string>());
+            this.action = () => this.Sut.PhaseInChanges(1, 1, null, new List<int>(), new List<string>());
         }
 
         [Test]
