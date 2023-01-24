@@ -118,8 +118,15 @@
                             {
                                 throw new ItemNotFoundException($"Invalid Part Number: {child.Name} on Assembly: {current.Name}");
                             }
-                            
-                            if (child.ToDelete.GetValueOrDefault())
+
+                            if (new[] { "ACCEPT", "PROPOS" }.Contains(child.ChangeState) 
+                                && child.DeleteChangeDocumentNumber.HasValue)
+                            {
+                                // case: undo a deletion
+                                child.DeleteChangeDocumentNumber = null;
+                                this.bomDetailRepository.FindById(int.Parse(child.Id)).DeleteChangeId = null;
+                            }
+                            else if (child.ToDelete.GetValueOrDefault())
                             {
                                 var detail = this.bomDetailRepository.FindById(int.Parse(child.Id));
 
@@ -223,9 +230,11 @@
                                         throw new InvalidBomChangeException($"Can't add {child.Name} to it's own BOM!");
                                     }
 
+                                    var id = this.databaseService.GetIdSequence("BOMDET_SEQ");
+
                                     this.bomDetailRepository.Add(new BomDetail
                                     {
-                                        DetailId = this.databaseService.GetIdSequence("BOMDET_SEQ"),
+                                        DetailId = id,
                                         BomId = bom.BomId,
                                         PartNumber = child.Name,
                                         Qty = child.Qty,
@@ -239,6 +248,16 @@
                                         PcasLine = "N"
                                     });
                                     child.AddChangeDocumentNumber = change.DocumentNumber;
+
+                                    var replacement =
+                                        current.Children.FirstOrDefault(c => c.ReplacementFor == child.Id);
+                                    
+                                    if (replacement != null)
+                                    {
+                                        replacement.ReplacementFor = id.ToString();
+                                    }
+
+                                    child.Id = id.ToString();
                                 }
 
                                 if (!string.IsNullOrEmpty(child.ReplacedBy))

@@ -88,7 +88,7 @@
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { DecrementRule = "YES", BomType = "C" });
 
-            this.BomDetailRepository.FindById(4567)
+            this.BomDetailRepository.FindById(10023)
                 .Returns(this.replacedDetail);
 
             this.action = () => this.Sut.CreateBomChanges(this.newTree, 100, 33087);
