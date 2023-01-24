@@ -636,14 +636,27 @@
                 else
                 {
                     var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
-                    this.SendOrderPdfEmail(html, supplierContactEmail, copyToSelf, userNumber, order, null);
-                    text += $"Order {orderNumber} emailed successfully to {supplierContactEmail}\n";
-                    success++;
+                    try
+                    {
+                        this.SendOrderPdfEmail(html, supplierContactEmail, copyToSelf, userNumber, order, null);
+                        text += $"Order {orderNumber} emailed successfully to {supplierContactEmail}\n";
+                        success++;
+                    }
+                    catch (MimeKit.ParseException exception)
+                    {
+                        this.log.Warning($"Order {orderNumber} to {supplierContactEmail} failed with parse exception. {exception.Message}.");
+                        text += $"Order {orderNumber} to {supplierContactEmail} failed with parse exception. {exception.Message}. \n";
+                    }
+                    catch (Exception exception)
+                    {
+                        this.log.Warning($"Order {orderNumber} to {supplierContactEmail} failed with unknown exception. {exception.Message}.");
+                        text += $"Order {orderNumber} to {supplierContactEmail} failed with unknown exception. {exception.Message}. \n";
+                    }
                 }
             }
 
             text += $"\n{success} out of {orderNumbers.Count} emailed successfully";
-
+            this.log.Info(text);
             return new ProcessResult(true, text);
         }
 
@@ -658,7 +671,7 @@
             var miniOrder = new MiniOrder();
             var detail = order.Details.First();
 
-            var nomAcc = this.nominalAccountRepository.FindById((int)detail.OrderPosting.NominalAccountId);
+            var nomAcc = this.nominalAccountRepository.FindById(detail.OrderPosting.NominalAccountId.Value);
 
             miniOrder.OrderNumber = order.OrderNumber;
             miniOrder.DocumentType = order.DocumentTypeName;
@@ -668,6 +681,7 @@
             miniOrder.Remarks = order.Remarks;
             miniOrder.SupplierId = order.SupplierId;
             miniOrder.PartNumber = detail.PartNumber;
+            miniOrder.DrawingReference = detail.DrawingReference;
             miniOrder.Currency = order.CurrencyCode;
             miniOrder.SuppliersDesignation = detail.SuppliersDesignation;
             miniOrder.Department = nomAcc.DepartmentCode;
@@ -1073,13 +1087,14 @@
             miniOrder.Remarks = updatedOrder.Remarks;
             miniOrder.SentByMethod = updatedOrder.SentByMethod;
 
-            var nomAcc = this.nominalAccountRepository.FindById((int)updatedDetail.OrderPosting.NominalAccountId);
+            var nomAcc = this.nominalAccountRepository.FindById(updatedDetail.OrderPosting.NominalAccountId.Value);
             miniOrder.Nominal = nomAcc.NominalCode;
             miniOrder.Department = nomAcc.DepartmentCode;
 
             miniOrder.RequestedDeliveryDate = updatedDetail.PurchaseDeliveries.First().DateRequested;
             miniOrder.InternalComments = updatedDetail.InternalComments;
             miniOrder.SuppliersDesignation = updatedDetail.SuppliersDesignation;
+            miniOrder.DrawingReference = updatedDetail.DrawingReference;
 
             var netTotal = updatedDetail.OurUnitPriceCurrency.GetValueOrDefault()
                            * updatedDetail.OurQty.GetValueOrDefault();
