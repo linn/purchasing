@@ -636,14 +636,27 @@
                 else
                 {
                     var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
-                    this.SendOrderPdfEmail(html, supplierContactEmail, copyToSelf, userNumber, order, null);
-                    text += $"Order {orderNumber} emailed successfully to {supplierContactEmail}\n";
-                    success++;
+                    try
+                    {
+                        this.SendOrderPdfEmail(html, supplierContactEmail, copyToSelf, userNumber, order, null);
+                        text += $"Order {orderNumber} emailed successfully to {supplierContactEmail}\n";
+                        success++;
+                    }
+                    catch (MimeKit.ParseException exception)
+                    {
+                        this.log.Warning($"Order {orderNumber} to {supplierContactEmail} failed with parse exception. {exception.Message}.");
+                        text += $"Order {orderNumber} to {supplierContactEmail} failed with parse exception. {exception.Message}. \n";
+                    }
+                    catch (Exception exception)
+                    {
+                        this.log.Warning($"Order {orderNumber} to {supplierContactEmail} failed with unknown exception. {exception.Message}.");
+                        text += $"Order {orderNumber} to {supplierContactEmail} failed with unknown exception. {exception.Message}. \n";
+                    }
                 }
             }
 
             text += $"\n{success} out of {orderNumbers.Count} emailed successfully";
-
+            this.log.Info(text);
             return new ProcessResult(true, text);
         }
 
