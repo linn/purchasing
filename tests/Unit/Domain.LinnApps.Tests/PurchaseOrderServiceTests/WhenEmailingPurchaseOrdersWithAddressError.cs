@@ -6,6 +6,7 @@
     using FluentAssertions;
 
     using Linn.Common.Email;
+    using Linn.Common.Logging;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -86,7 +87,13 @@
         public void ShouldReturnMessage()
         {
             var message = this.result.Message;
-            message.Should().Contain("Order 123 to email777 failed. Some error. ");
+            message.Should().Contain("Order 123 to email777 failed with parse exception. Some error. ");
+        }
+
+        [Test]
+        public void ShouldLogError()
+        {
+            this.Log.Received().Warning("Order 123 to email777 failed with parse exception. Some error.");
         }
 
         [Test]

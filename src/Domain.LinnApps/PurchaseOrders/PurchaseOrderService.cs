@@ -644,7 +644,13 @@
                     }
                     catch (MimeKit.ParseException exception)
                     {
-                        text += $"Order {orderNumber} to {supplierContactEmail} failed. {exception.Message}. \n";
+                        this.log.Warning($"Order {orderNumber} to {supplierContactEmail} failed with parse exception. {exception.Message}.");
+                        text += $"Order {orderNumber} to {supplierContactEmail} failed with parse exception. {exception.Message}. \n";
+                    }
+                    catch (Exception exception)
+                    {
+                        this.log.Warning($"Order {orderNumber} to {supplierContactEmail} failed with unknown exception. {exception.Message}.");
+                        text += $"Order {orderNumber} to {supplierContactEmail} failed with unknown exception. {exception.Message}. \n";
                     }
                 }
             }
