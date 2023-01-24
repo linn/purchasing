@@ -636,9 +636,16 @@
                 else
                 {
                     var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
-                    this.SendOrderPdfEmail(html, supplierContactEmail, copyToSelf, userNumber, order, null);
-                    text += $"Order {orderNumber} emailed successfully to {supplierContactEmail}\n";
-                    success++;
+                    try
+                    {
+                        this.SendOrderPdfEmail(html, supplierContactEmail, copyToSelf, userNumber, order, null);
+                        text += $"Order {orderNumber} emailed successfully to {supplierContactEmail}\n";
+                        success++;
+                    }
+                    catch (MimeKit.ParseException exception)
+                    {
+                        text += $"Order {orderNumber} to {supplierContactEmail} failed. {exception.Message}. \n";
+                    }
                 }
             }
 
