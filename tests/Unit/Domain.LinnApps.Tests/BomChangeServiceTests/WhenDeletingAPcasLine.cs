@@ -28,7 +28,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.c1 = this.c1 = new BomTreeNode
+            this.c1 = new BomTreeNode
             {
                 Type = "A",
                 Qty = 2,
