@@ -41,7 +41,6 @@
                            Name = entity.Name,
                            PhoneNumber = entity.PhoneNumber,
                            InvoiceContactMethod = entity.InvoiceContactMethod,
-                           LiveOnOracle = entity.LiveOnOracle,
                            SuppliersReference = entity.SuppliersReference,
                            WebAddress = entity.WebAddress,
                            OrderContactMethod = entity.OrderContactMethod,

@@ -1,6 +1,8 @@
 ﻿namespace Linn.Purchasing.Persistence.LinnApps.Repositories
 {
+    using System;
     using System.Linq;
+    using System.Linq.Expressions;
 
     using Linn.Common.Persistence.EntityFramework;
     using Linn.Purchasing.Domain.LinnApps;
@@ -24,6 +26,15 @@
                 .Include(n => n.Nominal)
                 .Include(n => n.Department)
                 .First(n => n.AccountId == key);
+        }
+
+        public override NominalAccount FindBy(Expression<Func<NominalAccount, bool>> expression)
+        {
+            return this.serviceDbContext.NominalAccounts
+                .Where(expression)
+                .Include(n => n.Nominal)
+                .Include(n => n.Department)
+                .SingleOrDefault();
         }
     }
 }

@@ -110,7 +110,7 @@
             current.PhoneNumber = updated.PhoneNumber;
             current.OrderContactMethod = updated.OrderContactMethod;
             current.SuppliersReference = updated.SuppliersReference;
-            current.LiveOnOracle = updated.LiveOnOracle;
+            current.LiveOnOracle = "Y";
             current.ExpenseAccount = updated.ExpenseAccount;
             current.PaymentDays = updated.PaymentDays;
             current.PaymentMethod = updated.PaymentMethod;

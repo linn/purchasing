@@ -38,6 +38,8 @@
 
         private readonly IRepository<Supplier, int> supplierRepository;
 
+        private readonly IRepository<NominalAccount, int> nominalAccountRepository;
+
         public PurchaseOrderReqService(
             string appRoot,
             IAuthorisationService authService,
@@ -49,7 +51,8 @@
             IPurchaseOrdersPack purchaseOrdersPack,
             ICurrencyPack currencyPack,
             IQueryRepository<Part> partRepository,
-            IRepository<Supplier, int> supplierRepository)
+            IRepository<Supplier, int> supplierRepository,
+            IRepository<NominalAccount, int> nominalAccountRepository)
         {
             this.authService = authService;
             this.purchaseOrderReqsPack = purchaseOrderReqsPack;
@@ -62,6 +65,7 @@
             this.currencyPack = currencyPack;
             this.partRepository = partRepository;
             this.supplierRepository = supplierRepository;
+            this.nominalAccountRepository = nominalAccountRepository;
         }
 
         public void Authorise(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)
@@ -393,6 +397,11 @@
             entity.RemarksForOrder = updatedEntity.RemarksForOrder;
             entity.InternalNotes = updatedEntity.InternalNotes;
             entity.DepartmentCode = updatedEntity.DepartmentCode;
+
+            var nominalAccount = this.nominalAccountRepository.FindBy(
+                a => a.NominalCode == updatedEntity.NominalCode && a.DepartmentCode == updatedEntity.DepartmentCode);
+            entity.Nominal = nominalAccount.Nominal;
+            entity.Department = nominalAccount.Department;
         }
 
         private string GetNextState(string from, bool changeIsFromFunction = false)

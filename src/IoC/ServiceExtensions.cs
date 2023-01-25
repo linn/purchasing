@@ -184,7 +184,8 @@
                         x.GetService<IPurchaseOrdersPack>(),
                         x.GetService<ICurrencyPack>(),
                         x.GetService<IQueryRepository<Part>>(),
-                        x.GetService<IRepository<Supplier, int>>()))
+                        x.GetService<IRepository<Supplier, int>>(),
+                        x.GetService<IRepository<NominalAccount, int>>()))
                 .AddTransient<IWhatsDueInReportService, WhatsDueInReportService>()
                 .AddTransient<IOutstandingPoReqsReportService, OutstandingPoReqsReportService>()
                 .AddTransient<IMaterialRequirementsPlanningService, MaterialRequirementsPlanningService>()
