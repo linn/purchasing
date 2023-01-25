@@ -119,7 +119,9 @@ function MainTab({ item, approve }) {
                     text="View/Edit Bom"
                     onClick={() => {
                         history.push(
-                            `/purchasing/boms/bom-utility?bomName=${item?.newPartNumber}&changeRequest=${item?.documentNumber}`
+                            `/purchasing/boms/bom-utility?bomName=${
+                                item?.newPartNumber
+                            }&changeRequest=${approveUri && item?.documentNumber}`
                         );
                     }}
                 >
