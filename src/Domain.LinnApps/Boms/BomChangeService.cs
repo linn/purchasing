@@ -109,7 +109,8 @@
                         var replacementSeq = !detailsOnChange.Any() ? 0 
                                                  : detailsOnChange.Max(d => d.AddReplaceSeq.GetValueOrDefault());
 
-                        foreach (var child in current.Children)
+                        var children = current.Children.ToList();
+                        foreach (var child in children.ToList())
                         {
                             var part = this.partRepository.FindBy(x => x.PartNumber == child.Name);
 
@@ -118,51 +119,65 @@
                                 throw new ItemNotFoundException($"Invalid Part Number: {child.Name} on Assembly: {current.Name}");
                             }
 
-                            if (child.ToDelete.GetValueOrDefault())
+                            if (new[] { "ACCEPT", "PROPOS" }.Contains(child.ChangeState) 
+                                && child.DeleteChangeDocumentNumber.HasValue)
                             {
-                                // case: deleting a part from the bom
-                                var toDelete = this.bomDetailRepository.FindById(int.Parse(child.Id));
+                                // case: undo a deletion
+                                child.DeleteChangeDocumentNumber = null;
+                                this.bomDetailRepository.FindById(int.Parse(child.Id)).DeleteChangeId = null;
+                                continue;
+                            }
+                            else if (child.ToDelete.GetValueOrDefault())
+                            {
+                                // case: deletion
+                                var detail = this.bomDetailRepository.FindById(int.Parse(child.Id));
 
-                                if (toDelete.DeleteChangeId.HasValue
-                                    && toDelete.DeleteChange?.DocumentNumber != changeRequestNumber)
+                                if (detail.DeleteChangeId.HasValue
+                                    && detail.DeleteChange?.DocumentNumber != changeRequestNumber)
                                 {
                                     throw new InvalidBomChangeException(
                                         $"{child.Name} is already marked for deletion by another change request"
-                                        + $" ({toDelete.DeleteChange?.DocumentNumber})");
+                                        + $" ({detail.DeleteChange?.DocumentNumber})");
                                 }
 
-                                if (toDelete.PcasLine == "Y")
+                                if (detail.PcasLine == "Y")
                                 {
                                     throw new InvalidBomChangeException($"{child.Name} is a PCAS line - cannot delete here.");
                                 }
 
-                                toDelete.DeleteChangeId = change.ChangeId;
+                                // case: deleting a detail added by this change request
+                                if (detail.AddChange.DocumentNumber == changeRequestNumber)
+                                {
+                                    // just delete the PROPOS'd record
+                                    this.bomDetailRepository.Remove(detail);
 
-                                child.DeleteChangeDocumentNumber = change.DocumentNumber;
+                                    // and remove it from the tree
+                                    children.Remove(child);
+
+                                    if (detail.AddReplaceSeq.HasValue)
+                                    {
+                                        // case: deleting a replacement record = undoing a replacement
+                                        // tidy up the other side of the replacement to undelete the detail
+                                        var replacedDetail = this.bomDetailRepository.FindBy(
+                                            x => x.DeleteChangeId == change.ChangeId
+                                                 && x.DeleteReplaceSeq == detail.AddReplaceSeq);
+                                        replacedDetail.DeleteReplaceSeq = null;
+                                        replacedDetail.DeleteChangeId = null;
+                                        var nodeToUpdate = current.Children.FirstOrDefault(
+                                            x => x.DeleteChangeDocumentNumber == changeRequestNumber);
+
+                                        nodeToUpdate.DeleteChangeDocumentNumber = null;
+                                        nodeToUpdate.DeleteReplaceSeq = null;
+                                    }
+                                }
+                                else
+                                {
+                                    detail.DeleteChangeId = change.ChangeId;
+                                    child.DeleteChangeDocumentNumber = change.DocumentNumber;
+                                }
                             }
                             else
                             {
-                                if (bom.Details != null 
-                                    && string.IsNullOrEmpty(child.ReplacedBy)
-                                    && bom.Details.Select(x => x.DetailId.ToString()).Contains(child.Id))
-                                {
-                                    // case: updating fields of existing detail on this bom
-                                    // can only do this if part was added by current crf
-                                    var toUpdate = this.bomDetailRepository.FindById(int.Parse(child.Id));
-
-                                    if (toUpdate.Qty != child.Qty || toUpdate.GenerateRequirement != child.Requirement)
-                                    {
-                                        if (toUpdate.AddChangeId != change.ChangeId)
-                                        {
-                                            throw new InvalidBomChangeException(
-                                                "Can't directly update details added by a different CRF - Replace them instead!");
-                                        }
-
-                                        toUpdate.Qty = child.Qty;
-                                        toUpdate.GenerateRequirement = child.Requirement;
-                                    }
-                                }
-
                                 if (bom.Details == null || bom.Details.Count == 0 || bom.Details.All(d => d.DetailId.ToString() != child.Id))
                                 {
                                     // case: adding a new detail
@@ -196,9 +211,11 @@
                                         throw new InvalidBomChangeException($"Can't add {child.Name} to it's own BOM!");
                                     }
 
+                                    var id = this.databaseService.GetIdSequence("BOMDET_SEQ");
+
                                     this.bomDetailRepository.Add(new BomDetail
                                     {
-                                        DetailId = this.databaseService.GetIdSequence("BOMDET_SEQ"),
+                                        DetailId = id,
                                         BomId = bom.BomId,
                                         PartNumber = child.Name,
                                         Qty = child.Qty,
@@ -212,18 +229,49 @@
                                         PcasLine = "N"
                                     });
                                     child.AddChangeDocumentNumber = change.DocumentNumber;
+
+                                    var replacement =
+                                        current.Children.FirstOrDefault(c => c.ReplacementFor == child.Id);
+                                    
+                                    if (replacement != null)
+                                    {
+                                        replacement.ReplacementFor = id.ToString();
+                                    }
+
+                                    child.Id = id.ToString();
+                                } 
+                                else if (bom.Details != null
+                                              && string.IsNullOrEmpty(child.ReplacedBy)
+                                              && bom.Details.Select(x => x.DetailId.ToString()).Contains(child.Id))
+                                {
+                                    // case: updating fields of existing component on this bom
+                                    // can only do this if part was added by current crf
+                                    var toUpdate = this.bomDetailRepository.FindById(int.Parse(child.Id));
+
+                                    if (toUpdate.Qty != child.Qty || toUpdate.GenerateRequirement != child.Requirement)
+                                    {
+                                        if (toUpdate.AddChangeId != change.ChangeId)
+                                        {
+                                            throw new InvalidBomChangeException(
+                                                "Can't directly update details added by a different CRF - Replace them instead!");
+                                        }
+
+                                        toUpdate.Qty = child.Qty;
+                                        toUpdate.GenerateRequirement = child.Requirement;
+                                    }
                                 }
 
                                 if (!string.IsNullOrEmpty(child.ReplacedBy))
                                 {
                                     // case: replacing a detail on this bom with a new detail
                                     var replacement = current.Children.FirstOrDefault(c => c.ReplacementFor == child.Id);
-
                                     if (replacement == null)
                                     {
                                         throw new InvalidBomChangeException(
                                             $"{child.Name} is marked for replacement but no replacement part is specified");
                                     }
+                                    
+                                    var replacedDetail = this.bomDetailRepository.FindById(int.Parse(child.Id));
 
                                     if (child.AddChangeDocumentNumber == changeRequestNumber)
                                     {
@@ -237,8 +285,6 @@
                                     {
                                         throw new InvalidBomChangeException($"Can't add {replacement.Name} to it's own BOM!");
                                     }
-
-                                    var replacedDetail = this.bomDetailRepository.FindById(int.Parse(child.Id));
 
                                     if (replacedDetail.PcasLine == "Y")
                                     {
@@ -254,15 +300,21 @@
                             }
                         }
 
+                        current.Children = children;
+                        current.HasChanged = false;
+                    }
+
+                    if (current.Children != null)
+                    {
                         for (var i = 0; i < current.Children.Count(); i++)
                         {
-                            if (current.Children?.Count() > 0)
+                            if (current.Children.Any())
                             {
                                 q.Enqueue(current.Children.ElementAt(i));
                             }
                         }
                     }
-
+                    
                     n--;
                 }
             }

@@ -32,7 +32,7 @@
                                               { 
                                                   new BomTreeNode
                                                     {
-                                                        Name = "CAP 530", ParentName = "BOM", Id = "123"
+                                                        Name = "CAP 530", ParentName = "BOM", Id = "123", Type = "C"
                                                     }
                                               },
                            };
