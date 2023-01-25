@@ -49,9 +49,9 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2)
 function BomUtility() {
     const reduxDispatch = useDispatch();
     const { search } = useLocation();
-    const { bomName } = queryString.parse(search);
+    const { bomName, changeRequest } = queryString.parse(search);
 
-    const [crNumber, setCrNumber] = useState();
+    const [crNumber, setCrNumber] = useState(changeRequest);
     const [changeRequests, changeRequestsLoading] = useInitialise(
         () => changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True'),
         changeRequestsItemType.item,
