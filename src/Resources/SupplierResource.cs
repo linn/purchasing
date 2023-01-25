@@ -22,8 +22,6 @@
 
         public string SuppliersReference { get; set; }
 
-        public string LiveOnOracle { get; set; }
-
         public int? InvoiceGoesToId { get; set; }
 
         public string InvoiceGoesToName { get; set; }

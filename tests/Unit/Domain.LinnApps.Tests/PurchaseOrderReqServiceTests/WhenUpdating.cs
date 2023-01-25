@@ -85,6 +85,12 @@
                         {
                             FromState = this.fromState, ToState = this.toState, UserAllowed = "Y"
                         });
+            this.NominalAccountRepository.FindBy(Arg.Any<Expression<Func<NominalAccount, bool>>>())
+                .Returns(new NominalAccount
+                             {
+                                 Nominal = new Nominal { NominalCode = "00001234", Description = "Nom Description" },
+                                 Department = new Department { DepartmentCode = "00002345", Description = "Dept Description" }
+                             });
 
             this.MockPartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { StockControlled = "N" });
@@ -131,10 +137,17 @@
             this.current.SecondAuthById.Should().Be(this.current.SecondAuthById);
             this.current.FinanceCheckById.Should().Be(this.current.FinanceCheckById);
             this.current.TurnedIntoOrderById.Should().Be(this.current.TurnedIntoOrderById);
-            this.current.Nominal.Should().Be(this.updated.Nominal);
             this.current.RemarksForOrder.Should().Be(this.updated.RemarksForOrder);
             this.current.InternalNotes.Should().Be(this.updated.InternalNotes);
-            this.current.Department.Should().Be(this.updated.Department);
+        }
+
+        [Test]
+        public void ShouldSetNominalAndDepartment()
+        {
+            this.current.Nominal.NominalCode.Should().Be("00001234");
+            this.current.Nominal.Description.Should().Be("Nom Description");
+            this.current.Department.DepartmentCode.Should().Be("00002345");
+            this.current.Department.Description.Should().Be("Dept Description");
         }
     }
 }

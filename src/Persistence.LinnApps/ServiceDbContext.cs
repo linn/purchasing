@@ -345,7 +345,7 @@
 
             // below line commented due to causing crashing during local dev. Uncomment if want to see sql in debug window
             // optionsBuilder.UseLoggerFactory(MyLoggerFactory);
-            optionsBuilder.EnableSensitiveDataLogging(true);
+            // optionsBuilder.EnableSensitiveDataLogging(true);
             base.OnConfiguring(optionsBuilder);
         }
 
