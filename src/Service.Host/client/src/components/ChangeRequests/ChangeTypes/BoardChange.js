@@ -3,13 +3,17 @@ import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import {
+    Dropdown,
     InputField,
+    Loading,
     Typeahead,
-    collectionSelectorHelpers
+    collectionSelectorHelpers,
+    itemSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import boardsActions from '../../../actions/boardsActions';
+import boardActions from '../../../actions/boardActions';
 import history from '../../../history';
 
 function BoardChange({ item, creating, handleFieldChange }) {
@@ -28,31 +32,66 @@ function BoardChange({ item, creating, handleFieldChange }) {
         collectionSelectorHelpers.getSearchLoading(state.boards)
     );
 
+    const board = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.board));
+    const boardLoading = useSelector(reduxState =>
+        itemSelectorHelpers.getItemLoading(reduxState.board)
+    );
+
     const handleBoardChange = selectedBoard => {
         handleFieldChange('boardCode', selectedBoard.boardCode);
         handleFieldChange('boardDescription', selectedBoard.description);
+        dispatch(boardActions.fetch(selectedBoard.boardCode));
+    };
+
+    const revisionsList = () => {
+        if (board?.layouts) {
+            return board.layouts
+                .map(l =>
+                    l.revisions.map(r => ({ displayText: r.revisionCode, id: r.revisionCode }))
+                )
+                .flat();
+        }
+        return [];
     };
 
     return (
         <>
             {creating ? (
-                <Grid item xs={12}>
-                    <Typeahead
-                        label="Board"
-                        title="Search for a board"
-                        onSelect={handleBoardChange}
-                        items={boardsSearchResults}
-                        loading={boardsSearchLoading}
-                        fetchItems={searchTerm => dispatch(boardsActions.search(searchTerm))}
-                        clearSearch={() => dispatch(boardsActions.clearSearch)}
-                        value={item?.boardCode}
-                        modal
-                        links={false}
-                        debounce={1000}
-                        minimumSearchTermLength={2}
-                    />
-                    <Typography>{item?.boardDescription}</Typography>
-                </Grid>
+                <>
+                    <Grid item xs={4}>
+                        <Typeahead
+                            label="Board"
+                            title="Search for board"
+                            onSelect={handleBoardChange}
+                            items={boardsSearchResults}
+                            loading={boardsSearchLoading}
+                            fetchItems={searchTerm => dispatch(boardsActions.search(searchTerm))}
+                            clearSearch={() => dispatch(boardsActions.clearSearch)}
+                            value={item?.boardCode}
+                            modal
+                            links={false}
+                            debounce={1000}
+                            minimumSearchTermLength={2}
+                        />
+                    </Grid>
+                    <Grid item xs={8}>
+                        {boardLoading ? (
+                            <Loading />
+                        ) : (
+                            <Dropdown
+                                fullWidth
+                                value={item?.revisionCode}
+                                label="Revision"
+                                items={revisionsList()}
+                                propertyName="revisionCode"
+                                onChange={handleFieldChange}
+                            />
+                        )}
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Typography>{item?.boardDescription}</Typography>
+                    </Grid>
+                </>
             ) : (
                 <>
                     <Grid item xs={12}>

@@ -66,6 +66,16 @@ function CreateChangeRequest() {
         dispatch(changeRequestActions.add(item));
     };
 
+    const canCreate = () => {
+        if (item.changeType === 'PARTEDIT') {
+            return item.newPartNumber?.length > 0;
+        }
+        if (item.changeType === 'BOARDEDIT') {
+            return item.boardCode?.length > 0 && item.revisionCode?.length > 0;
+        }
+        return false;
+    };
+
     return (
         <Page history={history}>
             <Grid container>
@@ -151,7 +161,12 @@ function CreateChangeRequest() {
                     />
                 </Grid>
                 <Grid item xs={2}>
-                    <Button variant="outlined" color="primary" onClick={create}>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={create}
+                        disabled={!canCreate()}
+                    >
                         Create
                     </Button>
                 </Grid>
