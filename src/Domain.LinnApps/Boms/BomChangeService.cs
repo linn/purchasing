@@ -125,9 +125,11 @@
                                 // case: undo a deletion
                                 child.DeleteChangeDocumentNumber = null;
                                 this.bomDetailRepository.FindById(int.Parse(child.Id)).DeleteChangeId = null;
+                                continue;
                             }
                             else if (child.ToDelete.GetValueOrDefault())
                             {
+                                // case: deletion
                                 var detail = this.bomDetailRepository.FindById(int.Parse(child.Id));
 
                                 if (detail.DeleteChangeId.HasValue
@@ -176,27 +178,6 @@
                             }
                             else
                             {
-                                if (bom.Details != null 
-                                    && string.IsNullOrEmpty(child.ReplacedBy)
-                                    && bom.Details.Select(x => x.DetailId.ToString()).Contains(child.Id))
-                                {
-                                    // case: updating fields of existing detail on this bom
-                                    // can only do this if part was added by current crf
-                                    var toUpdate = this.bomDetailRepository.FindById(int.Parse(child.Id));
-
-                                    if (toUpdate.Qty != child.Qty || toUpdate.GenerateRequirement != child.Requirement)
-                                    {
-                                        if (toUpdate.AddChangeId != change.ChangeId)
-                                        {
-                                            throw new InvalidBomChangeException(
-                                                "Can't directly update details added by a different CRF - Replace them instead!");
-                                        }
-
-                                        toUpdate.Qty = child.Qty;
-                                        toUpdate.GenerateRequirement = child.Requirement;
-                                    }
-                                }
-
                                 if (bom.Details == null || bom.Details.Count == 0 || bom.Details.All(d => d.DetailId.ToString() != child.Id))
                                 {
                                     // case: adding a new detail
@@ -258,6 +239,26 @@
                                     }
 
                                     child.Id = id.ToString();
+                                } 
+                                else if (bom.Details != null
+                                              && string.IsNullOrEmpty(child.ReplacedBy)
+                                              && bom.Details.Select(x => x.DetailId.ToString()).Contains(child.Id))
+                                {
+                                    // case: updating fields of existing component on this bom
+                                    // can only do this if part was added by current crf
+                                    var toUpdate = this.bomDetailRepository.FindById(int.Parse(child.Id));
+
+                                    if (toUpdate.Qty != child.Qty || toUpdate.GenerateRequirement != child.Requirement)
+                                    {
+                                        if (toUpdate.AddChangeId != change.ChangeId)
+                                        {
+                                            throw new InvalidBomChangeException(
+                                                "Can't directly update details added by a different CRF - Replace them instead!");
+                                        }
+
+                                        toUpdate.Qty = child.Qty;
+                                        toUpdate.GenerateRequirement = child.Requirement;
+                                    }
                                 }
 
                                 if (!string.IsNullOrEmpty(child.ReplacedBy))
@@ -300,16 +301,20 @@
                         }
 
                         current.Children = children;
+                        current.HasChanged = false;
+                    }
 
+                    if (current.Children != null)
+                    {
                         for (var i = 0; i < current.Children.Count(); i++)
                         {
-                            if (current.Children?.Count() > 0)
+                            if (current.Children.Any())
                             {
                                 q.Enqueue(current.Children.ElementAt(i));
                             }
                         }
                     }
-
+                    
                     n--;
                 }
             }
