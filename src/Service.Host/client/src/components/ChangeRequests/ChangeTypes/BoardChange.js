@@ -47,9 +47,29 @@ function BoardChange({ item, creating, handleFieldChange }) {
         if (board?.layouts) {
             return board.layouts
                 .map(l =>
-                    l.revisions.map(r => ({ displayText: r.revisionCode, id: r.revisionCode }))
+                    l.revisions.map(r => ({
+                        displayText: r.revisionCode,
+                        id: r.revisionCode,
+                        layoutSequence: r.layoutSequence,
+                        versionNumber: r.versionNumber
+                    }))
                 )
-                .flat();
+                .flat()
+                .sort((a, b) => {
+                    if (a.layoutSequence < b.layoutSequence) {
+                        return -1;
+                    }
+                    if (a.layoutSequence > b.layoutSequence) {
+                        return 1;
+                    }
+                    if (a.versionNumber < b.versionNumber) {
+                        return -1;
+                    }
+                    if (a.versionNumber > b.versionNumber) {
+                        return 1;
+                    }
+                    return 0;
+                });
         }
         return [];
     };
