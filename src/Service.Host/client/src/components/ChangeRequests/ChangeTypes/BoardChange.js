@@ -136,7 +136,7 @@ function BoardChange({ item, creating, handleFieldChange }) {
                     <Grid item xs={12}>
                         <Button
                             onClick={() => {
-                                history.push(`/purchasing/boms/board/${item?.boardCode}`);
+                                history.push(`/purchasing/boms/boards/${item?.boardCode}`);
                             }}
                         >
                             {item?.boardDescription}
