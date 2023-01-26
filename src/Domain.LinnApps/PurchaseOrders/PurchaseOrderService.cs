@@ -249,6 +249,7 @@
             }
 
             string debitNoteHtml = null;
+            string debitNoteMessage = string.Empty;
 
             if (order.DocumentType.Name is "RO" or "CO")
             {
@@ -256,6 +257,7 @@
                 if (debitNote != null)
                 {
                     debitNoteHtml = this.creditDebitNoteHtmlService.GetHtml(debitNote).Result;
+                    debitNoteMessage = $"and debit note {debitNote.NoteNumber} ";
                 }
             }
 
@@ -263,7 +265,7 @@
 
             this.SendOrderPdfEmail(html, emailAddress, bcc, currentUserId, order, debitNoteHtml);
 
-            return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to {emailAddress}");
+            return new ProcessResult(true, $"Email sent for purchase order {orderNumber} {debitNoteMessage}to {emailAddress}");
         }
 
         public ProcessResult SendSupplierAssemblyEmail(int orderNumber)
@@ -624,6 +626,10 @@
                 else if (order.Cancelled == "Y")
                 {
                     text += $"Order {orderNumber} is cancelled\n";
+                }
+                else if (order.DocumentType?.Name == "RO")
+                {
+                    text += $"Order {orderNumber} is a returns order - email from main order page!\n";
                 }
                 else if (!order.AuthorisedById.HasValue)
                 {

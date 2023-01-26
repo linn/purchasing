@@ -27,7 +27,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.orders = new List<int> { 123, 456, 789, 101, 202 };
+            this.orders = new List<int> { 123, 456, 789, 101, 202, 999 };
             this.userNumber = 808;
 
             this.order123 = new PurchaseOrder
@@ -53,6 +53,31 @@
                                                       new PurchaseOrderDetail { PartNumber = "P1" }
                                                   }
                                 };
+            var returnsOrder = new PurchaseOrder
+                                   {
+                                       OrderNumber = 999,
+                                       AuthorisedById = 123,
+                                       BaseOrderNetTotal = 123,
+                                       DocumentType = new DocumentType { Name = "RO" },
+                                       Supplier = new Supplier
+                                                      {
+                                                          SupplierId = 777,
+                                                          SupplierContacts =
+                                                              new List<SupplierContact>
+                                                                  {
+                                                                      new SupplierContact
+                                                                          {
+                                                                              IsMainOrderContact = "Y",
+                                                                              EmailAddress = "email777"
+                                                                          }
+                                                                  }
+                                                      },
+                                       Details = new List<PurchaseOrderDetail>
+                                                     {
+                                                         new PurchaseOrderDetail { PartNumber = "P1" }
+                                                     }
+                                   };
+            ;
             this.PurchaseOrderRepository.FindById(123).Returns(this.order123);
             this.PurchaseOrderRepository.FindById(456).Returns(
                 new PurchaseOrder
@@ -93,6 +118,7 @@
                     });
             this.PurchaseOrderRepository.FindById(101)
                 .Returns((PurchaseOrder)null);
+            this.PurchaseOrderRepository.FindById(999).Returns(returnsOrder);
             this.EmployeeRepository.FindById(this.userNumber)
                 .Returns(new Employee { FullName = "Fred", PhoneListEntry = new PhoneListEntry { EmailAddress = "fred@co" } });
             this.MiniOrderRepository.FindById(123).Returns(new MiniOrder { OrderNumber = 123 });
@@ -114,7 +140,8 @@
             message.Should().Contain("Order 789 is not authorised");
             message.Should().Contain("Order 101 could not be found");
             message.Should().Contain("Order 202 could not find order contact email");
-            message.Should().Contain("1 out of 5 emailed successfully");
+            message.Should().Contain("Order 999 is a returns order - email from main order page!");
+            message.Should().Contain("1 out of 6 emailed successfully");
         }
 
         [Test]
