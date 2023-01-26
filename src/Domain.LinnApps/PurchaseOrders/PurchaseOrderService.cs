@@ -625,6 +625,10 @@
                 {
                     text += $"Order {orderNumber} is cancelled\n";
                 }
+                else if (order.DocumentType?.Name == "RO")
+                {
+                    text += $"Order {orderNumber} is a returns order - email from main order page!\n";
+                }
                 else if (!order.AuthorisedById.HasValue)
                 {
                     text += $"Order {orderNumber} is not authorised\n";
