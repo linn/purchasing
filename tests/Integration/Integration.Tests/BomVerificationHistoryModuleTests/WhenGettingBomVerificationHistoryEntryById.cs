@@ -70,7 +70,7 @@
         public void ShouldReturnCorrectHeaderLinks()
         {
             result = this.Response.DeserializeBody<BomVerificationHistoryResource>();
-            result.Links.First(a => a.Rel == "self").Href.Should().Be($"/purchasing/bom-verification/654321");
+            result.Links.First(a => a.Rel == "self").Href.Should().Be($"/purchasing/bom-verification/123");
         }
     }
 }

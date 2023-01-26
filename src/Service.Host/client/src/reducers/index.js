@@ -110,6 +110,7 @@ import subAssembly from './subAssembly';
 import boardComponentSummaries from './boardComponentSummaries';
 import boardComponents from './boardComponents';
 import changeRequestPhaseIns from './changeRequestPhaseIns';
+import bomVerificationHistory from './bomVerificationHistory';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -128,6 +129,7 @@ const rootReducer = history =>
         bomCostReport,
         bomTypeChange,
         bomTree,
+        bomVerificationHistory,
         board,
         boardComponents,
         boardComponentSummaries,

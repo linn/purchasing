@@ -34,7 +34,7 @@
 
         public string GetLocation(BomVerificationHistory model)
         {
-            return $"/purchasing/bom-verification/{model.DocumentNumber}";
+            return $"/purchasing/bom-verification/{model.TRef}";
         }
 
         object IBuilder<BomVerificationHistory>.Build(BomVerificationHistory entity, IEnumerable<string> claims) => this.Build(entity, claims);
