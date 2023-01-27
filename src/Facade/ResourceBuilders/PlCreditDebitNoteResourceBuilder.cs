@@ -21,6 +21,13 @@
 
         public PlCreditDebitNoteResource Build(PlCreditDebitNote note, IEnumerable<string> claims)
         {
+            if (note == null)
+            {
+                return new PlCreditDebitNoteResource 
+                           { 
+                               Links = this.BuildLinks(null, claims).ToArray()
+                           };
+            }
             return new PlCreditDebitNoteResource
                    {
                        OrderQty = note.OrderQty,
@@ -75,7 +82,7 @@
                 yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
             }
 
-            if (this.authService.HasPermissionFor(AuthorisedAction.PlCreditDebitNoteCreate, claims))
+            if (true) // (this.authService.HasPermissionFor(AuthorisedAction.PlCreditDebitNoteCreate, claims))
             {
                 yield return new LinkResource { Rel = "create", Href = $"/purchasing/pl-credit-debit-notes/create" };
             }
