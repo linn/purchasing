@@ -13,9 +13,12 @@ import {
     collectionSelectorHelpers,
     itemSelectorHelpers,
     Search,
+    getRequestErrors,
     utilities,
+    getItemError,
     InputField,
-    SaveBackCancelButtons
+    SaveBackCancelButtons,
+    ErrorCard
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
@@ -35,6 +38,7 @@ import history from '../../history';
 import config from '../../config';
 import boardComponentsReducer from './boardComponentsReducer';
 import partsActions from '../../actions/partsActions';
+import { boardComponents } from '../../itemTypes';
 
 function BoardComponents() {
     const reduxDispatch = useDispatch();
@@ -68,6 +72,14 @@ function BoardComponents() {
     const loading = useSelector(reduxState =>
         itemSelectorHelpers.getItemLoading(reduxState.boardComponents)
     );
+    const requestErrors = useSelector(reduxState =>
+        getRequestErrors(reduxState)?.filter(error => error.type !== 'FETCH_ERROR')
+    );
+
+    const componentError = useSelector(reduxState =>
+        getItemError(reduxState, boardComponents.item)
+    );
+
     useEffect(() => {
         if (id && item?.boardCode !== id && !board) {
             reduxDispatch(boardComponentsActions.fetch(id));
@@ -391,7 +403,13 @@ function BoardComponents() {
     };
 
     return (
-        <Page history={history} style={{ paddingBottom: '20px' }} homeUrl={config.appRoot}>
+        <Page
+            history={history}
+            style={{ paddingBottom: '20px' }}
+            homeUrl={config.appRoot}
+            requestErrors={requestErrors}
+            showRequestErrors
+        >
             <Typography variant="h5" gutterBottom>
                 Search or select PCAS board
             </Typography>
@@ -524,6 +542,11 @@ function BoardComponents() {
                 {loading && (
                     <Grid item xs={12}>
                         <Loading />
+                    </Grid>
+                )}
+                {componentError && (
+                    <Grid item xs={12}>
+                        <ErrorCard errorMessage={componentError.details} />
                     </Grid>
                 )}
                 <Grid item xs={2}>
