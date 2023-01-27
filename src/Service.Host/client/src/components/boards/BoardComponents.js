@@ -14,6 +14,7 @@ import {
     itemSelectorHelpers,
     Search,
     utilities,
+    InputField,
     SaveBackCancelButtons
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
@@ -45,6 +46,9 @@ function BoardComponents() {
     const [showChanges, setShowChanges] = useState(true);
     const searchBoards = searchTerm => reduxDispatch(boardsActions.search(searchTerm));
     const clearSearchBoards = () => reduxDispatch(boardsActions.clearSearch());
+    const [findDialogOpen, setFindDialogOpen] = useState(false);
+    const [findField, setFindField] = useState('partNumber');
+    const [findValue, setFindValue] = useState(null);
     const searchBoardsResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.boards)
     );
@@ -290,6 +294,20 @@ function BoardComponents() {
         return true;
     };
 
+    const matchesFindCriteria = (cRef, partNumber) => {
+        if (findField && findValue) {
+            if (findField === 'cref') {
+                return findValue.toUpperCase() === cRef;
+            }
+
+            if (findField === 'partNumber') {
+                return findValue.toUpperCase() === partNumber;
+            }
+        }
+
+        return true;
+    };
+
     const componentRows = state.board?.components
         ? utilities.sortEntityList(
               state.board.components
@@ -303,7 +321,8 @@ function BoardComponents() {
                               f.fromRevisionVersion,
                               f.toRevisionVersion
                           ) &&
-                          changesStateOk(f.changeState)
+                          changesStateOk(f.changeState) &&
+                          matchesFindCriteria(f.cRef, f.partNumber)
                   )
                   .map(c => ({ ...c, id: c.boardLine })),
               'cRef'
@@ -378,6 +397,49 @@ function BoardComponents() {
             </Typography>
             {renderPartLookUp()}
             <Grid container spacing={2}>
+                <Dialog open={findDialogOpen} fullWidth maxWidth="md">
+                    <DialogTitle>Find</DialogTitle>
+                    <DialogContent dividers>
+                        <Dropdown
+                            items={[
+                                { id: 'cref', displayText: 'Cref' },
+                                { id: 'partNumber', displayText: 'Part Number' }
+                            ]}
+                            label="Find"
+                            propertyName="findField"
+                            value={findField}
+                            onChange={(_, n) => {
+                                setFindField(n);
+                            }}
+                        />
+                        <InputField
+                            value={findValue}
+                            fullWidth
+                            label="Value To Find"
+                            onChange={(_, val) => setFindValue(val)}
+                            propertyName="findValue"
+                        />
+                        <Button
+                            variant="outlined"
+                            onClick={() => setFindDialogOpen(false)}
+                            size="small"
+                            style={{ marginBottom: '25px' }}
+                        >
+                            Find
+                        </Button>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={() => {
+                                setFindValue(null);
+                                setFindDialogOpen(false);
+                            }}
+                        >
+                            Clear Find
+                        </Button>
+                        <Button onClick={() => setFindDialogOpen(false)}>Close</Button>
+                    </DialogActions>
+                </Dialog>
                 <Grid item xs={5}>
                     <Stack direction="row" spacing={2}>
                         <Search
@@ -411,7 +473,7 @@ function BoardComponents() {
                         </Button>
                     </Stack>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={3}>
                     <Stack direction="row" spacing={2}>
                         <Dropdown
                             items={changeRequests?.map(c => ({
@@ -420,7 +482,7 @@ function BoardComponents() {
                             }))}
                             allowNoValue
                             loading={changeRequestsLoading}
-                            label="CRF Number"
+                            label="CRF"
                             propertyName="crNumber"
                             helperText="Select a corresponding CRF to start editing"
                             value={crfNumber}
@@ -430,10 +492,19 @@ function BoardComponents() {
                         />
                     </Stack>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={4}>
                     <Stack direction="row" spacing={2}>
                         <Button
                             variant="outlined"
+                            onClick={() => setFindDialogOpen(true)}
+                            size="small"
+                            style={{ marginBottom: '25px' }}
+                        >
+                            Find Items
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            style={{ marginBottom: '25px' }}
                             onClick={() => {
                                 setShowChanges(!showChanges);
                             }}
