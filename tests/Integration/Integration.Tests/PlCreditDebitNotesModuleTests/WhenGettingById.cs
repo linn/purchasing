@@ -1,10 +1,12 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.PlCreditDebitNotesModuleTests
 {
     using System;
+    using System.Collections.Generic;
     using System.Net;
 
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
@@ -33,8 +35,10 @@
                                 PurchaseOrder = new PurchaseOrder { OrderNumber = 4567 },
                                 ReturnsOrderNumber = 4321
                             };
+            this.MockAuthService.HasPermissionFor(
+                AuthorisedAction.PlCreditDebitNoteCreate,
+                Arg.Any<IEnumerable<string>>()).Returns(true);
             this.MockPlCreditDebitNoteRepository.FindById(this.data.NoteNumber).Returns(this.data);
-
             this.Response = this.Client.Get(
                 $"/purchasing/pl-credit-debit-notes/{this.data.NoteNumber}",
                 with =>
@@ -72,6 +76,8 @@
             resource.OrderQty.Should().Be(this.data.OrderQty);
             resource.OriginalOrderNumber.Should().Be(this.data.PurchaseOrder.OrderNumber);
             resource.ReturnsOrderNumber.Should().Be(this.data.ReturnsOrderNumber);
+
+            resource.Links.Should().Contain(x => x.Rel == "create");
         }
     }
 }

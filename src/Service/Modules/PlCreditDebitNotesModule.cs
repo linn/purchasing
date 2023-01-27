@@ -26,6 +26,19 @@
             app.MapGet("/purchasing/pl-credit-debit-notes/{id}", this.GetNote);
             app.MapPut("/purchasing/pl-credit-debit-notes/{id}", this.UpdateDebitNote);
             app.MapPost("/purchasing/pl-credit-debit-notes/email", this.EmailDebitNote);
+            app.MapGet("/purchasing/pl-credit-debit-notes/application-state", this.GetState);
+
+        }
+
+        private async Task GetState(
+            HttpRequest req,
+            HttpResponse res,
+            IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource> service)
+
+        {
+            var result = service.GetApplicationState(req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
         }
 
         private async Task GetOpenDebitNotes(
