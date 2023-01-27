@@ -6,7 +6,7 @@ import {
     Dropdown,
     InputField,
     Loading,
-    Typeahead,
+    Search,
     collectionSelectorHelpers,
     itemSelectorHelpers
 } from '@linn-it/linn-form-components-library';
@@ -41,6 +41,10 @@ function BoardChange({ item, creating, handleFieldChange }) {
         handleFieldChange('boardCode', selectedBoard.boardCode);
         handleFieldChange('boardDescription', selectedBoard.description);
         dispatch(boardActions.fetch(selectedBoard.boardCode));
+    };
+
+    const setBoardWithoutSearch = () => {
+        dispatch(boardActions.fetch(item.boardCode));
     };
 
     const revisionsList = () => {
@@ -79,19 +83,23 @@ function BoardChange({ item, creating, handleFieldChange }) {
             {creating ? (
                 <>
                     <Grid item xs={4}>
-                        <Typeahead
+                        <Search
+                            propertyName="boardCode"
                             label="Board"
-                            title="Search for board"
-                            onSelect={handleBoardChange}
-                            items={boardsSearchResults}
+                            helperText="use enter to search"
+                            handleValueChange={(_, newVal) =>
+                                handleFieldChange('boardCode', newVal)
+                            }
+                            onResultSelect={newValue => {
+                                handleBoardChange(newValue);
+                            }}
+                            clearSearch={() => {}}
+                            onKeyPressFunctions={[{ keyCode: 9, action: setBoardWithoutSearch }]}
+                            searchResults={boardsSearchResults}
                             loading={boardsSearchLoading}
-                            fetchItems={searchTerm => dispatch(boardsActions.search(searchTerm))}
-                            clearSearch={() => dispatch(boardsActions.clearSearch)}
+                            search={searchTerm => dispatch(boardsActions.search(searchTerm))}
                             value={item?.boardCode}
-                            modal
-                            links={false}
-                            debounce={1000}
-                            minimumSearchTermLength={2}
+                            resultsInModal
                         />
                     </Grid>
                     <Grid item xs={8}>
