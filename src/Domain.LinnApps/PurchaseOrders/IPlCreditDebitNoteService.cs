@@ -27,6 +27,8 @@
             PlCreditDebitNote note, 
             Stream pdfAttachment);
 
-        void CreateDebitOrNoteFromPurchaseOrder(PurchaseOrder order);
+        void CreateDebitOrCreditNoteFromPurchaseOrder(PurchaseOrder order);
+
+        PlCreditDebitNote CreateNote(PlCreditDebitNote candidate, IEnumerable<string> privileges);
     }
 }

@@ -5,9 +5,13 @@
     using System.Linq;
     using System.Linq.Expressions;
 
+    using Amazon.Runtime.Internal.Util;
+
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
 
     public class PlCreditDebitNoteFacadeService 
@@ -29,7 +33,48 @@
             PlCreditDebitNoteResource resource, 
             IEnumerable<string> privileges = null)
         {
-            throw new NotImplementedException();
+            var note = new PlCreditDebitNote
+                           {
+                               PartNumber = resource.PartNumber, 
+                               OrderQty = resource.OrderQty, 
+                               ReturnsOrderNumber = resource.ReturnsOrderNumber,
+                               ReturnsOrderLine = resource.ReturnsOrderLine ?? 1,
+                               NetTotal = resource.NetTotal,
+                               Total = resource.Total,
+                               OrderUnitPrice = resource.OrderUnitPrice,
+                               OrderUnitOfMeasure = resource.OrderUnitOfMeasure,
+                               VatTotal = resource.VatTotal,
+                               Notes = resource.Notes,
+                               Supplier = new Supplier { SupplierId = resource.SupplierId.GetValueOrDefault() },
+                               SuppliersDesignation = resource.SuppliersDesignation,
+                               PurchaseOrder = new PurchaseOrder
+                                                   {
+                                                       // todo - is this right?
+                                                       OrderNumber = resource.OriginalOrderNumber.GetValueOrDefault()
+                                                   },
+                               Currency = new Currency { Code =  resource.Currency },
+                               VatRate = resource.VatRate,
+                               NoteType = new CreditDebitNoteType { Type = resource.NoteType },
+                               // CreditOrReplace = null, todo
+                               OriginalOrderNumber = resource.OriginalOrderNumber,
+                               OriginalOrderLine = 1,
+                               Details = resource.OrderDetails?.Select(d => new PlCreditDebitNoteDetail
+                                                                                {
+                                                                                    LineNumber = d.Line,
+                                                                                    PartNumber = d.PartNumber,
+                                                                                    OrderQty = d.OrderQty.GetValueOrDefault(),
+                                                                                    OriginalOrderLine = d.Line,
+                                                                                    ReturnsOrderLine = d.Line,
+                                                                                    NetTotal = d.NetTotalCurrency,
+                                                                                    Total = d.DetailTotalCurrency.GetValueOrDefault(),
+                                                                                    OrderUnitPrice = d.OurUnitPriceCurrency.GetValueOrDefault(),
+                                                                                    OrderUnitOfMeasure = d.OrderUnitOfMeasure,
+                                                                                    VatTotal = d.VatTotalCurrency.GetValueOrDefault(),
+                                                                                    SuppliersDesignation = d.SuppliersDesignation,
+                                                                                }).ToList(),
+                               CreatedBy = resource.Who.GetValueOrDefault()
+                           };
+            return this.domainService.CreateNote(note, privileges);
         }
 
         protected override void UpdateFromResource(

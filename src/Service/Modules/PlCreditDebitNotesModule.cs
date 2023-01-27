@@ -20,6 +20,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
+            app.MapPost("/purchasing/pl-credit-debit-notes", this.CreateNote);
             app.MapGet("/purchasing/open-debit-notes", this.GetOpenDebitNotes);
             app.MapGet("/purchasing/pl-credit-debit-notes", this.SearchNotes);
             app.MapGet("/purchasing/pl-credit-debit-notes/{id}", this.GetNote);
@@ -93,6 +94,20 @@
 
         {
             var result = service.GetById(id);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task CreateNote(
+            HttpRequest req,
+            HttpResponse res,
+            PlCreditDebitNoteResource resource,
+            IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource> service)
+        {
+            resource.Who = req.HttpContext.User.GetEmployeeNumber();
+            var result = service.Add(
+                resource,
+                req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }

@@ -77,7 +77,7 @@
         [Test]
         public void ShouldNotCallCreateDebitNote()
         {
-            this.MockPlCreditDebitNoteService.Received().CreateDebitOrNoteFromPurchaseOrder(
+            this.MockPlCreditDebitNoteService.Received().CreateDebitOrCreditNoteFromPurchaseOrder(
                 Arg.Any<PurchaseOrder>());
         }
     }

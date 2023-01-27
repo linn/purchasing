@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PlCreditDebitNotesTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PlCreditDebitNoteServiceTests
 {
     using System;
     using System.Collections.Generic;

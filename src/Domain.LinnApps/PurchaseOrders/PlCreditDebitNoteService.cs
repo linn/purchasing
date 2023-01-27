@@ -162,7 +162,7 @@
             }
         }
 
-        public void CreateDebitOrNoteFromPurchaseOrder(PurchaseOrder order)
+        public void CreateDebitOrCreditNoteFromPurchaseOrder(PurchaseOrder order)
         {
             if (order.DocumentTypeName == "CO" || order.DocumentTypeName == "RO")
             {
@@ -217,6 +217,29 @@
 
                 this.repository.Add(note);
             }
+        }
+
+        public PlCreditDebitNote CreateNote(PlCreditDebitNote candidate, IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PlCreditDebitNoteCreate, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to create purchase ledger notes");
+            }
+
+            candidate.NoteNumber = this.databaseService.GetNextVal("PLCDN_SEQ");
+            candidate.NoteType = this.noteTypesRepository.FindById(candidate.NoteType.Type);
+            candidate.DateCreated = DateTime.Today;
+            candidate.Supplier = this.supplierRepository.FindById(candidate.Supplier.SupplierId);
+
+            foreach (var detail in candidate.Details)
+            {
+                {
+                    detail.NoteNumber = candidate.NoteNumber;
+                    detail.Header = candidate;
+                }
+            }
+
+            return candidate;
         }
     }
 }

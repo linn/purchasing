@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PlCreditDebitNotesTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PlCreditDebitNoteServiceTests
 {
     using Linn.Common.Authorisation;
     using Linn.Common.Email;
