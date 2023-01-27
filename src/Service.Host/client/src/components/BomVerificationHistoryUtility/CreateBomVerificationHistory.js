@@ -113,7 +113,7 @@ function CreateBomVerificationHistory() {
                 <Grid item xs={12}>
                     <InputField
                         fullWidth
-                        value={item.remarks}
+                        value={`${item.remarks}`}
                         label="Remarks"
                         propertyName="remarks"
                         onChange={handleFieldChange}
