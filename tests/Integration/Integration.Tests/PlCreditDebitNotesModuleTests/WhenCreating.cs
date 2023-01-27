@@ -51,7 +51,7 @@
                 NoteType = new CreditDebitNoteType { Type = "C" }
             };
 
-            this.MockDomainService.CreateNote(Arg.Any<PlCreditDebitNote>(), Arg.Any<IEnumerable<string>>())
+            this.MockDomainService.CreateCreditNote(Arg.Any<PlCreditDebitNote>(), Arg.Any<IEnumerable<string>>())
                 .Returns(this.note);
 
             this.Response = this.Client.PostAsJsonAsync(
@@ -82,7 +82,7 @@
         [Test]
         public void ShouldCallCorrectDomainServiceMethod()
         {
-            this.MockDomainService.Received().CreateNote(
+            this.MockDomainService.Received().CreateCreditNote(
                 Arg.Is<PlCreditDebitNote>(x => x.OriginalOrderNumber == this.resource.OriginalOrderNumber),
                 Arg.Any<IEnumerable<string>>());
         }

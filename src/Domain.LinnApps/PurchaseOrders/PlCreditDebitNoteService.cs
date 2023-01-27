@@ -219,7 +219,7 @@
             }
         }
 
-        public PlCreditDebitNote CreateNote(PlCreditDebitNote candidate, IEnumerable<string> privileges)
+        public PlCreditDebitNote CreateCreditNote(PlCreditDebitNote candidate, IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PlCreditDebitNoteCreate, privileges))
             {
@@ -227,17 +227,31 @@
             }
 
             candidate.NoteNumber = this.databaseService.GetNextVal("PLCDN_SEQ");
-            candidate.NoteType = this.noteTypesRepository.FindById(candidate.NoteType.Type);
+
+            candidate.NoteType = this.noteTypesRepository.FindById("C");
             candidate.DateCreated = DateTime.Today;
             candidate.Supplier = this.supplierRepository.FindById(candidate.Supplier.SupplierId);
+            candidate.Details = new List<PlCreditDebitNoteDetail>
+                                    {
+                                        new PlCreditDebitNoteDetail
+                                            {
+                                                NoteNumber = candidate.NoteNumber,
+                                                LineNumber = 1,
+                                                PartNumber = candidate.PartNumber,
+                                                OrderQty = candidate.OrderQty,
+                                                OriginalOrderLine = candidate.OriginalOrderLine,
+                                                ReturnsOrderLine = candidate.ReturnsOrderLine,
+                                                NetTotal = candidate.NetTotal,
+                                                Total = candidate.Total,
+                                                OrderUnitPrice = candidate.OrderUnitPrice,
+                                                OrderUnitOfMeasure = candidate.OrderUnitOfMeasure,
+                                                VatTotal = candidate.VatTotal,
+                                                Notes = candidate.Notes,
+                                                SuppliersDesignation = candidate.SuppliersDesignation,
+                                                Header = candidate
+                                            }
+                                    };
 
-            foreach (var detail in candidate.Details)
-            {
-                {
-                    detail.NoteNumber = candidate.NoteNumber;
-                    detail.Header = candidate;
-                }
-            }
 
             return candidate;
         }

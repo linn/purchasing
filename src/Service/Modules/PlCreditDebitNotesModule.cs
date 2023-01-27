@@ -117,7 +117,8 @@
             PlCreditDebitNoteResource resource,
             IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource> service)
         {
-            resource.Who = req.HttpContext.User.GetEmployeeNumber();
+            resource.Who ??= req.HttpContext.User.GetEmployeeNumber();
+
             var result = service.Add(
                 resource,
                 req.HttpContext.GetPrivileges());

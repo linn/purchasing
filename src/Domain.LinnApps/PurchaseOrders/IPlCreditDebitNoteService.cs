@@ -29,6 +29,6 @@
 
         void CreateDebitOrCreditNoteFromPurchaseOrder(PurchaseOrder order);
 
-        PlCreditDebitNote CreateNote(PlCreditDebitNote candidate, IEnumerable<string> privileges);
+        PlCreditDebitNote CreateCreditNote(PlCreditDebitNote candidate, IEnumerable<string> privileges);
     }
 }

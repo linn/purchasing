@@ -54,27 +54,12 @@
                                                    },
                                Currency = new Currency { Code =  resource.Currency },
                                VatRate = resource.VatRate,
-                               NoteType = new CreditDebitNoteType { Type = resource.NoteType },
                                // CreditOrReplace = null, todo
                                OriginalOrderNumber = resource.OriginalOrderNumber,
                                OriginalOrderLine = 1,
-                               Details = resource.OrderDetails?.Select(d => new PlCreditDebitNoteDetail
-                                                                                {
-                                                                                    LineNumber = d.Line,
-                                                                                    PartNumber = d.PartNumber,
-                                                                                    OrderQty = d.OrderQty.GetValueOrDefault(),
-                                                                                    OriginalOrderLine = d.Line,
-                                                                                    ReturnsOrderLine = d.Line,
-                                                                                    NetTotal = d.NetTotalCurrency,
-                                                                                    Total = d.DetailTotalCurrency.GetValueOrDefault(),
-                                                                                    OrderUnitPrice = d.OurUnitPriceCurrency.GetValueOrDefault(),
-                                                                                    OrderUnitOfMeasure = d.OrderUnitOfMeasure,
-                                                                                    VatTotal = d.VatTotalCurrency.GetValueOrDefault(),
-                                                                                    SuppliersDesignation = d.SuppliersDesignation,
-                                                                                }).ToList(),
                                CreatedBy = resource.Who.GetValueOrDefault()
                            };
-            return this.domainService.CreateNote(note, privileges);
+            return this.domainService.CreateCreditNote(note, privileges);
         }
 
         protected override void UpdateFromResource(

@@ -26,7 +26,7 @@
                 AuthorisedAction.PlCreditDebitNoteCancel,
                 Arg.Is<List<string>>(x => !x.Contains(AuthorisedAction.PlCreditDebitNoteCreate))).Returns(false);
 
-            this.action = () => this.Sut.CreateNote(
+            this.action = () => this.Sut.CreateCreditNote(
                 this.note,
                 new List<string>());
         }

@@ -39,7 +39,7 @@
                 AuthorisedAction.PlCreditDebitNoteCreate,
                 Arg.Is<List<string>>(x => !x.Contains(AuthorisedAction.PlCreditDebitNoteCreate))).Returns(true);
             this.MockDatabaseService.GetNextVal("PLCDN_SEQ").Returns(666);
-            this.result = this.Sut.CreateNote(
+            this.result = this.Sut.CreateCreditNote(
                 this.candidate,
                 new List<string>());
         }
