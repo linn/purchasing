@@ -539,6 +539,13 @@ function BoardComponents() {
                         </Link>
                     </Stack>
                 </Grid>
+                {state.board?.discrepancies && (
+                    <Grid item xs={12}>
+                        <Typography variant="subtitle1" gutterBottom>
+                            {`Discrepancy warning: ${state.board.discrepancies}`}
+                        </Typography>
+                    </Grid>
+                )}
                 {loading && (
                     <Grid item xs={12}>
                         <Loading />

@@ -11,6 +11,7 @@
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Edi;
+    using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
@@ -67,6 +68,8 @@
 
         protected IDatabaseService DatabaseService { get; private set; }
 
+        protected IPcasPack PcasPack { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -86,6 +89,7 @@
             this.MockBomReportsDomainService = Substitute.For<IBomReportsService>();
 
             this.BomTreeReportsService = new BomTreeReportService(this.BomTreeService);
+            this.PcasPack = Substitute.For<IPcasPack>();
 
             this.BomReportsFacadeService = new BomReportsFacadeService(
                 this.MockBomReportsDomainService,
@@ -107,7 +111,8 @@
                 this.BoardRevisionTypeRepository,
                 this.PcasChangeRepository,
                 this.CircuitBoardService,
-                this.DatabaseService);
+                this.DatabaseService,
+                this.PcasPack);
 
             this.BomChangeService = Substitute.For<IBomChangeService>();
               
