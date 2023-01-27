@@ -83,7 +83,7 @@ import BomCostReportOptions from './reports/BomCostReportOptions';
 import BoardsSummary from './boards/BoardsSummary';
 import BoardComponents from './boards/BoardComponents';
 import BomUtilitySearch from './BomUtility/BomUtilitySearch';
-import CreateNote from './plDebitCreditNotes/CreateNote';
+import CreateDebitNote from './plDebitCreditNotes/CreateDebitNote';
 
 const Root = ({ store }) => (
     <div>
@@ -222,7 +222,7 @@ const Root = ({ store }) => (
                                 <Route
                                     exact
                                     path="/purchasing/pl-credit-debit-notes/create"
-                                    component={CreateNote}
+                                    component={CreateDebitNote}
                                 />
                                 <Route
                                     exact
