@@ -49,13 +49,14 @@ function BoardChange({ item, creating, handleFieldChange }) {
 
     const revisionsList = () => {
         if (board?.layouts) {
-            return board.layouts
+            const list = board.layouts
                 .map(l =>
                     l.revisions.map(r => ({
                         displayText: r.revisionCode,
                         id: r.revisionCode,
                         layoutSequence: r.layoutSequence,
-                        versionNumber: r.versionNumber
+                        versionNumber: r.versionNumber,
+                        pcasPartNumber: r.pcasPartNumber
                     }))
                 )
                 .flat()
@@ -74,8 +75,22 @@ function BoardChange({ item, creating, handleFieldChange }) {
                     }
                     return 0;
                 });
+            return list;
         }
         return [];
+    };
+
+    const handleRevisionChange = (propertyName, newValue) => {
+        if (newValue) {
+            const revisions = revisionsList();
+            const revision = revisions.find(r => r.id === newValue);
+
+            handleFieldChange('revisionCode', newValue);
+            if (revision?.pcasPartNumber) {
+                handleFieldChange('oldPartNumber', revision.pcasPartNumber);
+                handleFieldChange('newPartNumber', revision.pcasPartNumber);
+            }
+        }
     };
 
     return (
@@ -86,7 +101,7 @@ function BoardChange({ item, creating, handleFieldChange }) {
                         <Search
                             propertyName="boardCode"
                             label="Board"
-                            helperText="use enter to search"
+                            helperText="use Enter to search or Tab to proceed"
                             handleValueChange={(_, newVal) =>
                                 handleFieldChange('boardCode', newVal)
                             }
@@ -103,17 +118,42 @@ function BoardChange({ item, creating, handleFieldChange }) {
                         />
                     </Grid>
                     <Grid item xs={8}>
-                        {boardLoading ? (
-                            <Loading />
+                        {item?.boardCode ? (
+                            <>
+                                {boardLoading ? (
+                                    <Loading />
+                                ) : (
+                                    <>
+                                        <Dropdown
+                                            fullWidth
+                                            value={item?.revisionCode}
+                                            label="Revision"
+                                            items={revisionsList()}
+                                            propertyName="revisionsList()"
+                                            onChange={handleRevisionChange}
+                                        />
+
+                                        <Button
+                                            onClick={() => {
+                                                history.push(
+                                                    `/purchasing/boms/boards/${item?.boardCode}`
+                                                );
+                                            }}
+                                        >
+                                            New Layout / Revision
+                                        </Button>
+                                    </>
+                                )}
+                            </>
                         ) : (
-                            <Dropdown
-                                fullWidth
-                                value={item?.revisionCode}
-                                label="Revision"
-                                items={revisionsList()}
-                                propertyName="revisionCode"
-                                onChange={handleFieldChange}
-                            />
+                            <Button
+                                onClick={() => {
+                                    history.push('/purchasing/boms/boards/create');
+                                }}
+                                style={{ marginTop: '30px' }}
+                            >
+                                Create New Board
+                            </Button>
                         )}
                     </Grid>
                     <Grid item xs={12}>
@@ -141,6 +181,14 @@ function BoardChange({ item, creating, handleFieldChange }) {
                             disabled
                         />
                     </Grid>
+                    <Grid item xs={4}>
+                        <InputField
+                            value={item?.newPartNumber}
+                            label="PCAS Part#"
+                            propertyName="newPartNumber"
+                            disabled
+                        />
+                    </Grid>
                     <Grid item xs={12}>
                         <Button
                             onClick={() => {
@@ -160,7 +208,8 @@ BoardChange.propTypes = {
     item: PropTypes.shape({
         boardCode: PropTypes.string,
         revisionCode: PropTypes.string,
-        boardDescription: PropTypes.string
+        boardDescription: PropTypes.string,
+        newPartNumber: PropTypes.string
     }),
     creating: PropTypes.bool,
     handleFieldChange: PropTypes.func
@@ -170,7 +219,8 @@ BoardChange.defaultProps = {
     item: {
         boardCode: null,
         revisionCode: null,
-        boardDescription: null
+        boardDescription: null,
+        newPartNumber: null
     },
     creating: false,
     handleFieldChange: null
