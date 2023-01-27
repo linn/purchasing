@@ -1,5 +1,5 @@
 import React, { useState, useReducer, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link as RouterLink } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -25,6 +25,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import Link from '@mui/material/Link';
 
 import boardComponentsActions from '../../actions/boardComponentsActions';
 import boardsActions from '../../actions/boardsActions';
@@ -63,13 +64,12 @@ function BoardComponents() {
     const loading = useSelector(reduxState =>
         itemSelectorHelpers.getItemLoading(reduxState.boardComponents)
     );
-
     useEffect(() => {
-        if (id) {
+        if (id && item?.boardCode !== id && !board) {
             reduxDispatch(boardComponentsActions.fetch(id));
             setBoard(id);
         }
-    }, [id, reduxDispatch]);
+    }, [id, item?.boardCode, reduxDispatch, board]);
 
     useEffect(() => {
         if (item) {
@@ -378,7 +378,7 @@ function BoardComponents() {
             </Typography>
             {renderPartLookUp()}
             <Grid container spacing={2}>
-                <Grid item xs={6}>
+                <Grid item xs={5}>
                     <Stack direction="row" spacing={2}>
                         <Search
                             propertyName="boardCode"
@@ -430,15 +430,25 @@ function BoardComponents() {
                         />
                     </Stack>
                 </Grid>
-                <Grid item xs={2}>
-                    <Button
-                        variant="outlined"
-                        onClick={() => {
-                            setShowChanges(!showChanges);
-                        }}
-                    >
-                        {showChanges ? 'hide' : 'show'} changes{' '}
-                    </Button>
+                <Grid item xs={3}>
+                    <Stack direction="row" spacing={2}>
+                        <Button
+                            variant="outlined"
+                            onClick={() => {
+                                setShowChanges(!showChanges);
+                            }}
+                        >
+                            {showChanges ? 'hide' : 'show'} changes{' '}
+                        </Button>
+                        <Link
+                            style={{ marginTop: '5px' }}
+                            component={RouterLink}
+                            variant="button"
+                            to={`/purchasing/boms/boards/${state?.board?.boardCode}`}
+                        >
+                            Board Details
+                        </Link>
+                    </Stack>
                 </Grid>
                 {loading && (
                     <Grid item xs={12}>
