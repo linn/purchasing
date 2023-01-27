@@ -1891,6 +1891,7 @@
             entity.HasOne(o => o.OldPart).WithMany().HasForeignKey(o => o.OldPartNumber);
             entity.Property(c => c.NewPartNumber).HasColumnName("NEW_PART_NUMBER");
             entity.Property(c => c.BoardCode).HasColumnName("BOARD_CODE").HasMaxLength(6);
+            entity.HasOne(o => o.CircuitBoard).WithMany().HasForeignKey(o => o.BoardCode);
             entity.Property(c => c.RevisionCode).HasColumnName("REVISION_CODE").HasMaxLength(10);
             entity.HasOne(o => o.NewPart).WithMany().HasForeignKey(o => o.NewPartNumber);
             entity.Property(c => c.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
