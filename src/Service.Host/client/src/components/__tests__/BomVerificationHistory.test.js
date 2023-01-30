@@ -102,8 +102,6 @@ describe('When creating...', () => {
         render(<CreateBomVerificationHistory />);
     });
     test('Should add with values on create...', async () => {
-        // const createButton = screen.getByRole('button', { name: 'Create' });
-        // fireEvent.click(createButton);
         const searchInput = screen.getByLabelText('Part Number');
         fireEvent.change(searchInput, { target: { value: 'TON IC' } });
         fireEvent.keyDown(searchInput, { key: 'Enter', code: 'Enter', keyCode: 13 });
@@ -114,9 +112,15 @@ describe('When creating...', () => {
         const input = await screen.getByLabelText('Remarks', undefined, { timeout: 5000 });
         fireEvent.change(input, { target: { value: 'B.Slime' } });
 
-        const createButton = screen.getByRole('button', { name: 'Create' });
+        const createButton = await screen.findByRole('button', { name: 'Create' });
         fireEvent.click(createButton);
 
         expect(addSpy).toHaveBeenCalledTimes(1);
+        expect(addSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                partNumber: 'TON IC',
+                remarks: 'B.Slime'
+            })
+        );
     });
 });
