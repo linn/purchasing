@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.BomVerificationHistoryModuleTests
 {
     using System.Net.Http;
-    using Linn.Common.Authorisation;
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
@@ -38,10 +37,11 @@
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.DatabaseService= Substitute.For<IDatabaseService>();
 
-            this.BomVerificationHistoryFacadeService = new BomVerificationHistoryFacadeService(this.BomVerificationHistoryRepository, 
-                                                                                               this.TransactionManager, 
-                                                                                               new BomVerificationHistoryResourceBuilder(),
-                                                                                               this.DatabaseService);
+            this.BomVerificationHistoryFacadeService = new BomVerificationHistoryFacadeService(
+                this.BomVerificationHistoryRepository,
+                this.TransactionManager,
+                new BomVerificationHistoryResourceBuilder(),
+                this.DatabaseService);
             this.Client = TestClient.With<BomVerificationHistoryModule>(
                 services =>
                     {

@@ -49,7 +49,7 @@ function BoardChange({ item, creating, handleFieldChange }) {
 
     const revisionsList = () => {
         if (board?.layouts) {
-            const list = board.layouts
+            return board.layouts
                 .map(l =>
                     l.revisions.map(r => ({
                         displayText: r.revisionCode,
@@ -75,7 +75,6 @@ function BoardChange({ item, creating, handleFieldChange }) {
                     }
                     return 0;
                 });
-            return list;
         }
         return [];
     };

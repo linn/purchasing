@@ -29,7 +29,6 @@ const order = {
         orderContactMethod: null,
         invoiceContactMethod: null,
         suppliersReference: null,
-        liveOnOracle: null,
         invoiceGoesToId: null,
         invoiceGoesToName: null,
         expenseAccount: null,

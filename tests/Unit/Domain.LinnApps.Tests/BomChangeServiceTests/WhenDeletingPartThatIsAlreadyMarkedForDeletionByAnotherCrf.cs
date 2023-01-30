@@ -28,7 +28,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.c1 = this.c1 = new BomTreeNode
+            this.c1 = new BomTreeNode
             {
                 Type = "A",
                 Qty = 2,
@@ -70,7 +70,8 @@
                 DetailId = 4567,
                 PcasLine = "Y",
                 DeleteChangeId = 666,
-                DeleteChange = new BomChange { DocumentNumber = 123456 }
+                DeleteChange = new BomChange { DocumentNumber = 123456 },
+                AddChange = new BomChange { ChangeId = 123 }
             };
             this.BomDetailRepository.FindById(4567)
                 .Returns(this.deletedDetail);

@@ -31,12 +31,6 @@
 
         protected ITransactionManager TransactionManager { get; set; }
 
-        protected IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>
-           PurchaseOrderFacadeService
-        {
-            get; private set;
-        }
-
         protected IPurchaseOrderReqFacadeService
             PurchaseOrderReqFacadeService
         {
@@ -68,11 +62,7 @@
             private set;
         }
 
-        protected IFacadeResourceService<Tariff, int, TariffResource, TariffResource> TariffService
-        {
-            get;
-            private set;
-        }
+        protected IFacadeResourceService<Tariff, int, TariffResource, TariffResource> TariffService { get; private set; }
 
         protected IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>
             PurchaseOrderReqStateFacadeService
@@ -92,9 +82,6 @@
         public void EstablishContext()
         {
             this.TransactionManager = Substitute.For<ITransactionManager>();
-            this.PurchaseOrderFacadeService =
-                Substitute
-                    .For<IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>>();
             this.CurrencyService = Substitute.For<IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource>>();
             this.OrderMethodService = Substitute
                 .For<IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource>>();
@@ -126,7 +113,6 @@
                 services =>
                     {
                         services.AddSingleton(this.TransactionManager);
-                        services.AddSingleton(this.PurchaseOrderFacadeService);
                         services.AddSingleton(this.PurchaseOrderReqFacadeService);
                         services.AddSingleton(this.CurrencyService);
                         services.AddSingleton(this.OrderMethodService);

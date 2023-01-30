@@ -345,7 +345,7 @@
 
             // below line commented due to causing crashing during local dev. Uncomment if want to see sql in debug window
             // optionsBuilder.UseLoggerFactory(MyLoggerFactory);
-            optionsBuilder.EnableSensitiveDataLogging(true);
+            // optionsBuilder.EnableSensitiveDataLogging(true);
             base.OnConfiguring(optionsBuilder);
         }
 
@@ -2155,7 +2155,9 @@
             entity.Property(a => a.ToLayoutVersion).HasColumnName("TO_LAYOUT_VERSION");
             entity.Property(a => a.ToRevisionVersion).HasColumnName("TO_REVISION_VERSION");
             entity.Property(a => a.AddChangeId).HasColumnName("ADD_CHANGE_ID");
+            entity.HasOne(a => a.AddChange).WithMany().HasForeignKey(a => a.AddChangeId);
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
+            entity.HasOne(a => a.DeleteChange).WithMany().HasForeignKey(a => a.DeleteChangeId);
             entity.Property(a => a.Quantity).HasColumnName("QTY");
         }
 

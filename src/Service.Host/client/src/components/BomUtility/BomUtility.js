@@ -49,9 +49,9 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2)
 function BomUtility() {
     const reduxDispatch = useDispatch();
     const { search } = useLocation();
-    const { bomName } = queryString.parse(search);
+    const { bomName, changeRequest } = queryString.parse(search);
 
-    const [crNumber, setCrNumber] = useState();
+    const [crNumber, setCrNumber] = useState(changeRequest);
     const [changeRequests, changeRequestsLoading] = useInitialise(
         () => changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True'),
         changeRequestsItemType.item,
@@ -290,6 +290,7 @@ function BomUtility() {
 
     // updates the tree with changes passed via a 'newNode' object
     const updateTree = (tree, newNode, addNode) => {
+        console.log(newNode, addNode);
         setChangesMade(true);
         const newTree = { ...tree };
         const q = [];
@@ -314,6 +315,12 @@ function BomUtility() {
                                     newNode.replacementFor === x.id
                                 ) {
                                     return { ...x, replacedBy: newNode.name };
+                                }
+                                if (
+                                    newNode.undoReplaceSeq &&
+                                    x.deleteReplaceSeq === newNode.undoReplaceSeq
+                                ) {
+                                    return { ...x, toDelete: false, isReplaced: false };
                                 }
                                 return x;
                             }
@@ -504,7 +511,9 @@ function BomUtility() {
     const [copyBomDialogOpen, setCopyBomDialogOpen] = useState(false);
     const [deleteAllFromBomDialogOpen, setDeleteAllFromBomDialogOpen] = useState(false);
     const [safetyCriticalWarningDialogOpen, setSafetyCriticalWarningDialogOpen] = useState(false);
+    const [undoReplacementDialogOpen, setUndoReplacementDialogOpen] = useState(false);
     const [explodeSubAssemblyDialogOpen, setExplodeSubAssemblyDialogOpen] = useState(false);
+    const [undoDeletionDialogOpen, setUndoDeletionDialogOpen] = useState(false);
 
     const CopyExplodeBomDialog = () => (
         <Dialog
@@ -635,6 +644,75 @@ function BomUtility() {
         </Dialog>
     );
 
+    const UndoReplacementDialog = () => (
+        <Dialog open={undoReplacementDialogOpen} onClose={() => setPartSearchTerm(null)}>
+            <DialogTitle>Undo Replacement?</DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    The part your are deleting is a replacement part. Do you want to undo the
+                    replacement?
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={() => {
+                        setUndoReplacementDialogOpen(false);
+                    }}
+                >
+                    Cancel
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={() => {
+                        setUndoReplacementDialogOpen(false);
+                        processRowUpdate({
+                            ...contextMenu.detail,
+                            toDelete: true,
+                            undoReplaceSeq: contextMenu?.detail.addReplaceSeq
+                        });
+                        setContextMenu(null);
+                    }}
+                >
+                    Accept
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+
+    const UndoDeletionDialogOpen = () => (
+        <Dialog open={undoDeletionDialogOpen} onClose={() => setPartSearchTerm(null)}>
+            <DialogTitle>Undo Deletion?</DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    The part your are deleting is already marked for deletion - Do you want to undo?
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={() => {
+                        setUndoDeletionDialogOpen(false);
+                    }}
+                >
+                    Cancel
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={() => {
+                        setUndoDeletionDialogOpen(false);
+                        processRowUpdate({
+                            ...contextMenu.detail,
+                            toDelete: false,
+                            isReplaced: false
+                        });
+                        setContextMenu(null);
+                    }}
+                >
+                    Accept
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+
     const handleClose = () => setContextMenu(null);
 
     const handleReplaceClick = () => {
@@ -647,7 +725,11 @@ function BomUtility() {
     };
 
     const handleDeleteClick = () => {
-        if (contextMenu?.detail.safetyCritical === 'Y') {
+        if (contextMenu?.detail.deleteChangeDocumentNumber) {
+            setUndoDeletionDialogOpen(true);
+        } else if (contextMenu?.detail.addReplaceSeq) {
+            setUndoReplacementDialogOpen(true);
+        } else if (contextMenu?.detail.safetyCritical === 'Y') {
             setSafetyCriticalWarningDialogOpen(true);
         } else {
             processRowUpdate({ ...contextMenu.detail, toDelete: true });
@@ -673,6 +755,8 @@ function BomUtility() {
             {CopyExplodeBomDialog()}
             {DeleteAllFromBomDialog()}
             {DeleteSafetyCriticalWarningDialog()}
+            {UndoReplacementDialog()}
+            {UndoDeletionDialogOpen()}
             <Grid container spacing={3}>
                 <SnackbarMessage
                     visible={snackbarVisible}

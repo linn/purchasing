@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using FluentAssertions;
@@ -22,17 +23,21 @@
 
         private BomDetail deletedDetail;
 
+        private BomTreeNode result;
+
         [SetUp]
         public void SetUp()
         {
-            this.c1 = this.c1 = new BomTreeNode
+            this.c1 = new BomTreeNode
                                     {
                                         Type = "A",
                                         Qty = 2,
                                         Name = "ASS 1",
+                                        ChangeState = "PROPOS",
                                         ParentName = "BOM",
                                         ToDelete = true,
-                                        Id = "4567"
+                                        Id = "4567",
+                                        DeleteChangeDocumentNumber = 100
                                     };
             this.newTree = new BomTreeNode
                                {
@@ -53,7 +58,7 @@
                                           {
                                               PartNumber = "ASS 1",
                                               Qty = 2,
-                                              ChangeState = "LIVE"
+                                              ChangeState = "PROPOS"
                                           }
                                   }
                 });
@@ -63,27 +68,27 @@
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(6666);
             this.deletedDetail = new BomDetail
                                      {
-                                         PartNumber = "ASS 1", Qty = 2, ChangeState = "LIVE", DetailId = 4567
+                                         PartNumber = "ASS 1", 
+                                         Qty = 2, ChangeState = "PROPOS",
+                                         DetailId = 4567,
+                                         AddChange = new BomChange { ChangeId = 123 }
                                      };
             this.BomDetailRepository.FindById(4567)
                 .Returns(this.deletedDetail);
 
-            this.Sut.CreateBomChanges(this.newTree, 100, 33087);
+            this.result = this.Sut.CreateBomChanges(this.newTree, 100, 33087);
         }
 
         [Test]
-        public void ShouldAddChange()
+        public void ShouldUndoDelete()
         {
-            this.BomChangeRepository
-                .Received(1).Add(Arg.Any<BomChange>());
-            this.BomChangeRepository
-                .Received(1).Add(Arg.Is<BomChange>(c => c.BomName == "BOM" && c.DocumentNumber == 100));
+            this.deletedDetail.DeleteChangeId.Should().BeNull();
         }
 
         [Test]
-        public void ShouldUpdateDeletedDetail()
+        public void ShouldReturnTree()
         {
-            this.deletedDetail.DeleteChangeId.Should().Be(6666);
+            this.result.Children.First().DeleteChangeDocumentNumber.Should().BeNull();
         }
     }
 }

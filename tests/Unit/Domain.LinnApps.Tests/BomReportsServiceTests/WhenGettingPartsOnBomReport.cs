@@ -1,15 +1,12 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.BomReportsServiceTests
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Linq.Expressions;
 
     using FluentAssertions;
 
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Boms;
-    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NSubstitute;

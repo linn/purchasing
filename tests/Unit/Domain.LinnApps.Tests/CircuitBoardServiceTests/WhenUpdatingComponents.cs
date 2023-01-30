@@ -18,40 +18,13 @@
     {
         private CircuitBoard result;
 
-        private PcasChange pcasChange;
-
-        private int changeRequestId;
-
         private IEnumerable<BoardComponent> componentsToAdd;
 
         private IEnumerable<BoardComponent> componentsToRemove;
 
-        private int changeId;
-
-        private ChangeRequest changeRequest;
-
         [SetUp]
         public void SetUp()
         {
-            this.changeId = 890;
-            this.changeRequestId = 678;
-            this.changeRequest = new ChangeRequest
-                                     {
-                                         DocumentNumber = this.changeRequestId,
-                                         BoardCode = this.BoardCode,
-                                         RevisionCode = "L1R1",
-                                         ChangeState = "PROPOS"
-                                     };
-            this.pcasChange = new PcasChange
-                                  {
-                                      BoardCode = this.BoardCode,
-                                      ChangeId = this.changeId,
-                                      ChangeRequest = this.changeRequest,
-                                      ChangeState = "PROPOS",
-                                      DocumentNumber = this.changeRequestId,
-                                      RevisionCode = "L1R1"
-                                  };
-     
             this.componentsToAdd = new List<BoardComponent>
                                        {
                                            new BoardComponent
@@ -66,7 +39,7 @@
                                                    FromRevisionVersion = 1,
                                                    ToLayoutVersion = null,
                                                    ToRevisionVersion = null,
-                                                   AddChangeId = this.changeId,
+                                                   AddChangeId = this.ChangeId,
                                                    DeleteChangeId = null,
                                                    Quantity = 1
                                                }
@@ -91,14 +64,12 @@
                                                }
                                        };
 
-            this.BoardRepository.FindById(this.BoardCode).Returns(this.Board);
-            this.ChangeRequestRepository.FindById(this.changeRequestId).Returns(this.changeRequest);
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { PartNumber = "CAP 123", AssemblyTechnology = "SM" });
             this.result = this.Sut.UpdateComponents(
                 this.BoardCode,
-                this.pcasChange,
-                this.changeRequestId,
+                this.PcasChange,
+                this.ChangeRequestId,
                 this.componentsToAdd,
                 this.componentsToRemove);
         }
@@ -112,7 +83,7 @@
         [Test]
         public void ShouldLookUpChangeRequest()
         {
-            this.ChangeRequestRepository.Received().FindById(this.changeRequestId);
+            this.ChangeRequestRepository.Received().FindById(this.ChangeRequestId);
         }
 
         [Test]
@@ -120,9 +91,9 @@
         {
             this.result.Components.Should().HaveCount(2);
             var removed = this.result.Components.First(a => a.BoardLine == 1);
-            removed.DeleteChangeId.Should().Be(this.changeId);
+            removed.DeleteChangeId.Should().Be(this.ChangeId);
             var added = this.result.Components.First(a => a.BoardLine == 2);
-            added.AddChangeId.Should().Be(this.changeId);
+            added.AddChangeId.Should().Be(this.ChangeId);
             added.AssemblyTechnology.Should().Be("SM");
             added.ToLayoutVersion.Should().BeNull();
             added.ToRevisionVersion.Should().BeNull();

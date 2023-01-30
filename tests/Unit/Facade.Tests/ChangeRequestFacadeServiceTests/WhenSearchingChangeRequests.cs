@@ -53,8 +53,8 @@
         [Test]
         public void ShouldReturnOneMatchingChangeRequest()
         {
-            var resources = ((SuccessResult<IEnumerable<ChangeRequestResource>>)this.result).Data;
-            resources.Count().Should().Be(1);
+            var resources = ((SuccessResult<IEnumerable<ChangeRequestResource>>)this.result).Data.ToList();
+            resources.Count.Should().Be(1);
             var request = resources.First();
             request.DocumentNumber.Should().Be(1);
             request.NewPartNumber.Should().Be("TEST1");

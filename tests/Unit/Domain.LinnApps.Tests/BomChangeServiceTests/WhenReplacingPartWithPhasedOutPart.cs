@@ -77,7 +77,13 @@
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(6666);
             this.DatabaseService.GetIdSequence("BOMDET_SEQ").Returns(10023);
 
-            this.replacedDetail = new BomDetail { PartNumber = "CAP OLD", Qty = 2, ChangeState = "LIVE" };
+            this.replacedDetail = new BomDetail
+                                      {
+                                          PartNumber = "CAP OLD", 
+                                          Qty = 2, 
+                                          ChangeState = "LIVE",
+                                          AddChange = new BomChange { DocumentNumber = 999 }
+                                      };
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>()).Returns(new Part { DatePurchPhasedOut = DateTime.Today });
 
             this.BomDetailRepository.FindById(4567)

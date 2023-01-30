@@ -146,7 +146,7 @@ function ChangeRequest() {
                             <Box sx={{ borderBottom: 0, borderColor: 'divider' }}>
                                 <Tabs
                                     value={tab}
-                                    onChange={(event, newValue) => {
+                                    onChange={(_, newValue) => {
                                         setTab(newValue);
                                     }}
                                 >

@@ -41,6 +41,8 @@
 
         protected IRepository<Supplier, int> MockSupplierRepository { get; private set; }
 
+        protected IRepository<NominalAccount, int> NominalAccountRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -55,6 +57,7 @@
             this.MockCurrencyPack = Substitute.For<ICurrencyPack>();
             this.MockSupplierRepository = Substitute.For<IRepository<Supplier, int>>();
             this.MockPartRepository = Substitute.For<IQueryRepository<Part>>();
+            this.NominalAccountRepository = Substitute.For<IRepository<NominalAccount, int>>();
 
             this.Sut = new PurchaseOrderReqService(
                 "app.linn",
@@ -67,7 +70,8 @@
                 this.MockPurchaseOrdersPack,
                 this.MockCurrencyPack,
                 this.MockPartRepository,
-                this.MockSupplierRepository);
+                this.MockSupplierRepository,
+                this.NominalAccountRepository);
         }
     }
 }

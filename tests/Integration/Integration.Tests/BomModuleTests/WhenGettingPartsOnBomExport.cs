@@ -5,7 +5,6 @@
     using FluentAssertions;
 
     using Linn.Common.Reporting.Models;
-    using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Integration.Tests.Extensions;
 
     using NSubstitute;
@@ -27,7 +26,7 @@
 
             this.reportTitle = "Parts on SK HUB Bom";
 
-            this.results = new ResultsModel() { ReportTitle = new NameModel(this.reportTitle) };
+            this.results = new ResultsModel { ReportTitle = new NameModel(this.reportTitle) };
 
             this.MockBomReportsDomainService.GetPartsOnBomReport(
                 this.bomName.Trim().ToUpper()).Returns(this.results);

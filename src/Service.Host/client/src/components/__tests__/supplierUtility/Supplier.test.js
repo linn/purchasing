@@ -47,7 +47,6 @@ const supplierData = {
     orderContactMethod: 'EMAIL',
     invoiceContactMethod: 'EMAIL',
     suppliersReference: 'REF',
-    liveOnOracle: 'Y',
     accountingCompany: 'LINN',
     vatNumber: '0012345',
     invoiceGoesToId: 124,
@@ -551,7 +550,6 @@ describe('When creating supplier...', () => {
                 approvedCarrier: 'N',
                 currencyCode: 'GBP',
                 expenseAccount: 'N',
-                liveOnOracle: 'Y',
                 orderHold: 'N',
                 paymentMethod: 'CHEQUE',
                 phoneNumber: 'NEW SUPPLIER NAME'

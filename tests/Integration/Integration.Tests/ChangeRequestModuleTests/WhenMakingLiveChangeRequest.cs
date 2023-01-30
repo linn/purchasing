@@ -1,18 +1,22 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.ChangeRequestModuleTests
 {
-    using FluentAssertions;
-    using Linn.Purchasing.Domain.LinnApps.Boms;
-    using Linn.Purchasing.Domain.LinnApps;
-    using Linn.Purchasing.Integration.Tests.Extensions;
-    using Linn.Purchasing.Resources.RequestResources;
-    using Linn.Purchasing.Resources;
-    using NSubstitute;
-    using NUnit.Framework;
-    using System.Collections.Generic;
-    using System.Net.Http.Json;
-    using System.Net;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
+    using System.Net.Http.Json;
+
+    using FluentAssertions;
+
+    using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Integration.Tests.Extensions;
+    using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
+
+    using NSubstitute;
+
+    using NUnit.Framework;
 
     public class WhenMakingLiveChangeRequest : ContextBase
     {
@@ -24,34 +28,33 @@
                 .Returns(true);
 
             var changeRequest = new ChangeRequest
-            {
-                DocumentType = "CRF",
-                DocumentNumber = 1,
-                DateEntered = new DateTime(2020, 1, 1),
-                EnteredBy = new Employee { Id = 10, FullName = "Barry White" },
-                ReasonForChange = "Everything changes",
-                DescriptionOfChange = "Great idea",
-                ChangeState = "ACCEPT",
-                BomChanges = new List<BomChange>
-                                                  {
-                                                      new BomChange
+                                    {
+                                        DocumentType = "CRF",
+                                        DocumentNumber = 1,
+                                        DateEntered = new DateTime(2020, 1, 1),
+                                        EnteredBy = new Employee { Id = 10, FullName = "Barry White" },
+                                        ReasonForChange = "Everything changes",
+                                        DescriptionOfChange = "Great idea",
+                                        ChangeState = "ACCEPT",
+                                        BomChanges =
+                                            new List<BomChange>
+                                                {
+                                                    new BomChange
+                                                        {
+                                                            ChangeId = 1, BomName = "TOAST 001", ChangeState = "ACCEPT"
+                                                        }
+                                                },
+                                        PcasChanges = new List<PcasChange>
                                                           {
-                                                              ChangeId = 1,
-                                                              BomName = "TOAST 001",
-                                                              ChangeState = "ACCEPT"
+                                                              new PcasChange
+                                                                  {
+                                                                      ChangeId = 1,
+                                                                      BoardCode = "TOAST",
+                                                                      RevisionCode = "BREAD",
+                                                                      ChangeState = "ACCEPT"
+                                                                  }
                                                           }
-                                                  },
-                PcasChanges = new List<PcasChange>
-                                                  {
-                                                      new PcasChange
-                                                          {
-                                                              ChangeId = 1,
-                                                              BoardCode = "TOAST",
-                                                              RevisionCode = "BREAD",
-                                                              ChangeState = "ACCEPT"
-                                                          }
-                                                  }
-            };
+                                    };
             this.Repository.FindById(1).Returns(changeRequest);
             var employee = new Employee() {Id = 1, FullName = "Alison"};
             this.EmployeeRepository.FindById(Arg.Any<int>()).Returns(employee);

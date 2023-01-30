@@ -6,7 +6,7 @@
 
     using NUnit.Framework;
 
-    public class WhenAppovedAndCheckingCanEditWithRights : ContextBase
+    public class WhenApprovedAndCheckingCanEditWithRights : ContextBase
     {
         [SetUp]
         public void SetUp()
