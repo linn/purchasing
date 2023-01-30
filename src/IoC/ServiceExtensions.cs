@@ -229,6 +229,7 @@
                 .AddTransient<ITemplateEngine, RazorTemplateEngine>()
                 .AddTransient<ISalesTaxPack, SalesTaxPack>()
                 .AddTransient<IBomPack, BomPack>()
+                .AddTransient<IPcasPack, PcasPack>()
 
                 // proxy
                 .AddTransient<IHtmlTemplateService<PurchaseOrder>>(x =>

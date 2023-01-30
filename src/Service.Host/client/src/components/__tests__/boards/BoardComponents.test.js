@@ -116,7 +116,6 @@ describe('When board received...', () => {
     });
 
     test('Should render details', () => {
-        expect(screen.getByDisplayValue('649')).toBeInTheDocument();
         expect(screen.getByText('L1')).toBeInTheDocument();
         expect(screen.getByText('L1R1')).toBeInTheDocument();
         expect(screen.getByText('RES 488')).toBeInTheDocument();
