@@ -12,6 +12,7 @@
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
+    using Org.BouncyCastle.Asn1.X509;
 
     public class PlCreditDebitNoteService : IPlCreditDebitNoteService
     {
@@ -231,6 +232,9 @@
             candidate.NoteType = this.noteTypesRepository.FindById("C");
             candidate.DateCreated = DateTime.Today;
             candidate.Supplier = this.supplierRepository.FindById(candidate.Supplier.SupplierId);
+
+            candidate.VatRate = this.salesTaxPack.GetVatRateSupplier(candidate.Supplier.SupplierId);
+
             candidate.Details = new List<PlCreditDebitNoteDetail>
                                     {
                                         new PlCreditDebitNoteDetail
@@ -251,7 +255,6 @@
                                                 Header = candidate
                                             }
                                     };
-
 
             return candidate;
         }

@@ -67,5 +67,7 @@
         public string ReasonCancelled { get; set; }
 
         public string TypePrintDescription { get; set; }
+
+        public string CreditOrReplace { get; set; }
     }
 }

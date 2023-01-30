@@ -5,11 +5,8 @@
     using System.Linq;
     using System.Linq.Expressions;
 
-    using Amazon.Runtime.Internal.Util;
-
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
@@ -39,6 +36,7 @@
                                OrderQty = resource.OrderQty, 
                                ReturnsOrderNumber = resource.ReturnsOrderNumber,
                                ReturnsOrderLine = resource.ReturnsOrderLine ?? 1,
+                               OriginalOrderLine = resource.ReturnsOrderLine ?? 1,
                                NetTotal = resource.NetTotal,
                                Total = resource.Total,
                                OrderUnitPrice = resource.OrderUnitPrice,
@@ -49,14 +47,12 @@
                                SuppliersDesignation = resource.SuppliersDesignation,
                                PurchaseOrder = new PurchaseOrder
                                                    {
-                                                       // todo - is this right?
                                                        OrderNumber = resource.OriginalOrderNumber.GetValueOrDefault()
                                                    },
-                               Currency = new Currency { Code =  resource.Currency },
+                               Currency = new Currency { Code = resource.Currency },
                                VatRate = resource.VatRate,
-                               // CreditOrReplace = null, todo
+                               CreditOrReplace = resource.CreditOrReplace,
                                OriginalOrderNumber = resource.OriginalOrderNumber,
-                               OriginalOrderLine = 1,
                                CreatedBy = resource.Who.GetValueOrDefault()
                            };
             return this.domainService.CreateCreditNote(note, privileges);

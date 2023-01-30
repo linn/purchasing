@@ -6,7 +6,6 @@
 
     using FluentAssertions;
 
-    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -23,10 +22,12 @@
         [SetUp]
         public void SetUp()
         {
+            var supplier = new Supplier { SupplierId = 123 };
+            this.MockSupplierRepository.FindById(123).Returns(supplier);
             this.candidate = new PlCreditDebitNote 
                                  { 
                                      NoteType = new CreditDebitNoteType { Type = "C" },
-                                     Supplier = new Supplier { SupplierId = 123 },
+                                     Supplier = supplier,
                                      Details = new List<PlCreditDebitNoteDetail> 
                                                    { 
                                                        new PlCreditDebitNoteDetail 
@@ -35,6 +36,7 @@
                                                            }
                                                    }
                                  };
+            this.MockSalesTaxPack.GetVatRateSupplier(123).Returns(0.2m);
             this.MockAuthService.HasPermissionFor(
                 AuthorisedAction.PlCreditDebitNoteCreate,
                 Arg.Is<List<string>>(x => !x.Contains(AuthorisedAction.PlCreditDebitNoteCreate))).Returns(true);
@@ -48,6 +50,7 @@
         public void ShouldReturnCreated()
         {
             this.result.NoteNumber.Should().Be(666);
+            this.result.VatRate.Should().Be(0.2m);
             this.result.DateCreated.Should().Be(DateTime.Today);
             this.result.Details.First().NoteNumber.Should().Be(666);
         }
