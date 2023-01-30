@@ -31,6 +31,7 @@
                 .Include(x => x.EnteredBy)
                 .Include(x => x.OldPart)
                 .Include(x => x.NewPart)
+                .Include(c => c.CircuitBoard)
                 .First(c => c.DocumentNumber == key && c.DocumentType == "CRF");
         }
 
