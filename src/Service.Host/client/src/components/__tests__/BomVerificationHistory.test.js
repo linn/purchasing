@@ -109,7 +109,7 @@ describe('When creating...', () => {
         fireEvent.click(result);
 
         // need to wait for modal to close
-        const input = await screen.getByLabelText('Remarks', undefined, { timeout: 5000 });
+        const input = screen.getByLabelText('Remarks');
         fireEvent.change(input, { target: { value: 'B.Slime' } });
 
         const createButton = await screen.findByRole('button', { name: 'Create' });
