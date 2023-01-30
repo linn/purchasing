@@ -29,6 +29,14 @@ function BomVerificationHistory() {
         itemSelectorHelpers.getSnackbarVisible(reduxState.bomVerificationHistory)
     );
 
+    const getDateString = isoString => {
+        if (!isoString) {
+            return null;
+        }
+        const date = new Date(isoString);
+        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    };
+
     useEffect(() => {
         if (id) {
             reduxDispatch(bomVerificationHistoryActions.fetch(id));
@@ -55,18 +63,18 @@ function BomVerificationHistory() {
                     <Grid item xs={12}>
                         <InputField
                             fullWidth
-                            value={`${item?.partNumber}`}
+                            value={item?.partNumber}
                             label="Part Number"
                             disabled
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <InputField fullWidth value={`${item?.tRef}`} label="TRef" disabled />
+                        <InputField fullWidth value={item?.tRef} label="TRef" disabled />
                     </Grid>
                     <Grid item xs={12}>
                         <InputField
                             fullWidth
-                            value={`${item?.dateVerified}`}
+                            value={getDateString(item?.dateVerified)}
                             label="Date Verified"
                             disabled
                         />
@@ -74,15 +82,15 @@ function BomVerificationHistory() {
                     <Grid item xs={12}>
                         <InputField
                             fullWidth
-                            value={`(${item?.verifiedBy})`}
-                            label="Verified By (UC)"
+                            value={item?.verifiedBy}
+                            label="Verified By"
                             disabled
                         />
                     </Grid>
                     <Grid item xs={12}>
                         <InputField
                             fullWidth
-                            value={`(${item?.remarks})`}
+                            value={item?.remarks}
                             label="Remarks"
                             propertyName="remarks"
                             rows={2}

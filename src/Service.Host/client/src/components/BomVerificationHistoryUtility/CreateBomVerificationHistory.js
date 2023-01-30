@@ -63,6 +63,14 @@ function CreateBomVerificationHistory() {
         dispatch(bomVerificationHistoryActions.add(item));
     };
 
+    const getDateString = isoString => {
+        if (!isoString) {
+            return null;
+        }
+        const date = new Date(isoString);
+        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    };
+
     return (
         <Page history={history}>
             <Grid container>
@@ -97,7 +105,7 @@ function CreateBomVerificationHistory() {
                 <Grid item xs={12}>
                     <InputField
                         fullWidth
-                        value={`${item.dateVerified}`}
+                        value={getDateString(item.dateVerified)}
                         label="Date Verified"
                         disabled
                     />
@@ -106,14 +114,14 @@ function CreateBomVerificationHistory() {
                     <InputField
                         fullWidth
                         value={`${currentUserName} (${item.verifiedBy})`}
-                        label="Verified By (UC)"
+                        label="Verified By"
                         disabled
                     />
                 </Grid>
                 <Grid item xs={12}>
                     <InputField
                         fullWidth
-                        value={`${item.remarks}`}
+                        value={item.remarks}
                         label="Remarks"
                         propertyName="remarks"
                         onChange={handleFieldChange}

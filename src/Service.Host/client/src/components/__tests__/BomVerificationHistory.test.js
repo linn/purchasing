@@ -16,11 +16,6 @@ jest.mock('react-redux', () => ({
     useSelector: jest.fn()
 }));
 
-jest.mock('react-router', () => ({
-    ...jest.requireActual('react-router'),
-    useLocation: jest.fn()
-}));
-
 const addSpy = jest.spyOn(bomVerificationHistoryActions, 'add');
 const fetchSpy = jest.spyOn(bomVerificationHistoryActions, 'fetch');
 const idParam = {
@@ -89,7 +84,7 @@ describe('When item received...', () => {
 
     test('Should render details', () => {
         expect(screen.getByDisplayValue('SK HUB')).toBeInTheDocument();
-        expect(screen.getByDisplayValue('2023-01-26T13:55:20.0000000')).toBeInTheDocument();
+        expect(screen.getByDisplayValue('26/1/2023')).toBeInTheDocument();
         expect(screen.getByDisplayValue('123456')).toBeInTheDocument();
     });
 });
@@ -108,7 +103,6 @@ describe('When creating...', () => {
         const result = screen.getByText('TON IC');
         fireEvent.click(result);
 
-        // need to wait for modal to close
         const input = screen.getByLabelText('Remarks');
         fireEvent.change(input, { target: { value: 'B.Slime' } });
 
