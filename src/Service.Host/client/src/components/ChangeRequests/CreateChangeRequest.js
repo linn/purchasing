@@ -14,6 +14,7 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import AssemblyChange from './ChangeTypes/AssemblyChange';
+import BoardChange from './ChangeTypes/BoardChange';
 import employeesActions from '../../actions/employeesActions';
 import changeRequestActions from '../../actions/changeRequestActions';
 import history from '../../history';
@@ -63,6 +64,16 @@ function CreateChangeRequest() {
 
     const create = () => {
         dispatch(changeRequestActions.add(item));
+    };
+
+    const canCreate = () => {
+        if (item.changeType === 'PARTEDIT') {
+            return item.newPartNumber?.length > 0;
+        }
+        if (item.changeType === 'BOARDEDIT') {
+            return item.boardCode?.length > 0 && item.revisionCode?.length > 0;
+        }
+        return false;
     };
 
     return (
@@ -118,7 +129,13 @@ function CreateChangeRequest() {
                                     handleFieldChange={handleFieldChange}
                                 />
                             ),
-                            BOARDEDIT: <Typography>Coming Soon...</Typography>,
+                            BOARDEDIT: (
+                                <BoardChange
+                                    item={item}
+                                    creating
+                                    handleFieldChange={handleFieldChange}
+                                />
+                            ),
                             REPLACE: <Typography>Coming Soon...</Typography>
                         }[item?.changeType]
                     }
@@ -144,7 +161,12 @@ function CreateChangeRequest() {
                     />
                 </Grid>
                 <Grid item xs={2}>
-                    <Button variant="outlined" color="primary" onClick={create}>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={create}
+                        disabled={!canCreate()}
+                    >
                         Create
                     </Button>
                 </Grid>

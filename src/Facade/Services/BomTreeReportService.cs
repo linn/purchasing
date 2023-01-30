@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Boms;

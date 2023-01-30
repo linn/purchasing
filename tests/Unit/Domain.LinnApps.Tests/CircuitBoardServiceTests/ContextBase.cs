@@ -28,22 +28,38 @@
 
         protected ChangeRequest ChangeRequest { get; set; }
 
+        protected int ChangeId { get; set; }
+
+        protected PcasChange PcasChange { get; set; }
+
         [SetUp]
         public void EstablishContext()
         {
             this.ChangeRequestRepository = Substitute.For<IRepository<ChangeRequest, int>>();
             this.BoardRepository = Substitute.For<IRepository<CircuitBoard, string>>();
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
+            const string RevisionBeingChanged = "L1R1";
 
             this.ChangeRequestId = 678;
             this.ChangeRequest = new ChangeRequest
                                      {
                                          DocumentNumber = this.ChangeRequestId,
                                          BoardCode = this.BoardCode,
-                                         RevisionCode = "L1R1",
+                                         RevisionCode = RevisionBeingChanged,
                                          ChangeState = "PROPOS"
                                      };
             this.ChangeRequestRepository.FindById(this.ChangeRequestId).Returns(this.ChangeRequest);
+
+            this.ChangeId = 890;
+            this.PcasChange = new PcasChange
+                                  {
+                                      BoardCode = this.BoardCode,
+                                      ChangeId = this.ChangeId,
+                                      ChangeRequest = this.ChangeRequest,
+                                      ChangeState = "PROPOS",
+                                      DocumentNumber = this.ChangeRequestId,
+                                      RevisionCode = RevisionBeingChanged
+                                  };
 
             this.BoardCode = "123";
             this.Board = new CircuitBoard

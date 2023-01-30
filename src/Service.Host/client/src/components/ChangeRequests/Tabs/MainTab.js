@@ -9,6 +9,7 @@ import {
 } from '@linn-it/linn-form-components-library';
 import Button from '@mui/material/Button';
 import AssemblyChange from '../ChangeTypes/AssemblyChange';
+import BoardChange from '../ChangeTypes/BoardChange';
 import ChangeState from '../ChangeState';
 import changeRequestActions from '../../../actions/changeRequestActions';
 import history from '../../../history';
@@ -47,7 +48,7 @@ function MainTab({ item, approve }) {
                 {
                     {
                         PARTEDIT: <AssemblyChange item={item} />,
-                        BOARDEDIT: <>Board Edit</>,
+                        BOARDEDIT: <BoardChange item={item} />,
                         REPLACE: <>Replace</>
                     }[item?.changeType]
                 }
@@ -118,7 +119,11 @@ function MainTab({ item, approve }) {
                 <Button
                     text="View/Edit Bom"
                     onClick={() => {
-                        history.push(`/purchasing/boms/bom-utility?bomName=${item?.newPartNumber}`);
+                        history.push(
+                            `/purchasing/boms/bom-utility?bomName=${
+                                item?.newPartNumber
+                            }&changeRequest=${approveUri && item?.documentNumber}`
+                        );
                     }}
                 >
                     View/Edit Bom

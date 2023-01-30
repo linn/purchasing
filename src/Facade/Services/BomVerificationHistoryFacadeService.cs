@@ -40,7 +40,7 @@
                 DateVerified = DateTime.Now,
                 DocumentType = resource.DocumentType,
                 DocumentNumber = resource.DocumentNumber,
-                Remarks= resource.Remarks
+                Remarks = resource.Remarks
             };
         }
 

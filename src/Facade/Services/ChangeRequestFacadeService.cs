@@ -195,6 +195,18 @@
                 changeRequests.Select(x => (ChangeRequestResource)this.resourceBuilder.Build(x, privileges)));
         }
 
+        public IResult<IEnumerable<ChangeRequestResource>> SearchChangeRequests(
+            string searchTerm,
+            bool? outstanding, 
+            int? lastMonths,
+            IEnumerable<string> privileges = null)
+        {
+            var expression = this.changeRequestService.SearchExpression(searchTerm, outstanding, lastMonths);
+            var changeRequests = this.repository.FindAll().Where(expression).OrderByDescending(r => r.DocumentNumber).ToList();
+
+            return new SuccessResult<IEnumerable<ChangeRequestResource>>(changeRequests.Select(x => (ChangeRequestResource)this.resourceBuilder.Build(x, privileges)));
+        }
+
         protected override ChangeRequest CreateFromResource(
             ChangeRequestResource resource, IEnumerable<string> privileges = null)
         {
@@ -215,7 +227,10 @@
                            DateEntered = DateTime.Now,
                            EnteredById = (int)resource.EnteredBy.Id,
                            ProposedById = (int)resource.ProposedBy.Id,
+                           OldPartNumber = resource.OldPartNumber,
                            NewPartNumber = resource.NewPartNumber,
+                           BoardCode = resource.BoardCode,
+                           RevisionCode = resource.RevisionCode,
                            ReasonForChange = resource.ReasonForChange,
                            DescriptionOfChange = resource.DescriptionOfChange,
                            GlobalReplace = resource.GlobalReplace ? "Y" : "N",
@@ -235,7 +250,7 @@
 
         protected override Expression<Func<ChangeRequest, bool>> SearchExpression(string searchTerm)
         {
-            return cr => searchTerm.Trim().ToUpper().Equals(cr.NewPartNumber) 
+           return cr => searchTerm.Trim().ToUpper().Equals(cr.NewPartNumber) 
                          && cr.ChangeState != "LIVE" && cr.ChangeState != "CANCEL";
         }
 

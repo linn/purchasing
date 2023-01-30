@@ -121,14 +121,6 @@
                 return null;
             }
 
-            var addChange = this.pcasChangeRepository.FindBy(a => a.ChangeId == boardComponent.AddChangeId);
-            PcasChange deleteChange = null;
-
-            if (boardComponent.DeleteChangeId.HasValue)
-            {
-                deleteChange = this.pcasChangeRepository.FindBy(a => a.ChangeId == boardComponent.DeleteChangeId);
-            }
-
             return new BoardComponentResource
                        {
                            BoardCode = boardComponent.BoardCode,
@@ -144,10 +136,11 @@
                            AddChangeId = boardComponent.AddChangeId,
                            DeleteChangeId = boardComponent.DeleteChangeId,
                            Quantity = boardComponent.Quantity,
-                           AddChangeDocumentType = addChange?.DocumentType,
-                           AddChangeDocumentNumber = addChange?.DocumentNumber,
-                           DeleteChangeDocumentType = deleteChange?.DocumentType,
-                           DeleteChangeDocumentNumber = deleteChange?.DocumentNumber
+                           AddChangeDocumentType = boardComponent.AddChange.DocumentType,
+                           AddChangeDocumentNumber = boardComponent.AddChange.DocumentNumber,
+                           DeleteChangeDocumentType = boardComponent.DeleteChange?.DocumentType,
+                           DeleteChangeDocumentNumber = boardComponent.DeleteChange?.DocumentNumber,
+                           DeleteChangeState = boardComponent.DeleteChange?.ChangeState
                        };
         }
 

@@ -96,7 +96,7 @@
                            PhoneNumber = resource.PhoneNumber,
                            OrderContactMethod = resource.OrderContactMethod,
                            SuppliersReference = resource.SuppliersReference,
-                           LiveOnOracle = resource.LiveOnOracle,
+                           LiveOnOracle = "Y",
                            ExpenseAccount = resource.ExpenseAccount,
                            PaymentDays = resource.PaymentDays,
                            PaymentMethod = resource.PaymentMethod,

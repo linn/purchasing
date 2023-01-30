@@ -1,15 +1,17 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeTests
 {
-    using Linn.Purchasing.Domain.LinnApps.Boms;
-    using NUnit.Framework;
     using System.Collections.Generic;
     using System.Linq;
 
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps.Boms;
+
+    using NUnit.Framework;
+
     public class WhenGettingBomChangeDetailsAndJustDeletions : ContextBase
     {
-        private IEnumerable<BomChangeDetail> Results;
+        private IEnumerable<BomChangeDetail> results;
 
         [SetUp]
         public void SetUp()
@@ -41,24 +43,24 @@
                                                 }
                                         }
             };
-            this.Results = this.Sut.BomChangeDetails();
+            this.results = this.Sut.BomChangeDetails();
         }
 
         [Test]
         public void ShouldHaveTwoChangeDetails()
         {
-            this.Results.Count().Should().Be(2);
+            this.results.Count().Should().Be(2);
         }
 
         [Test]
         public void ShouldHaveRightChangeDetails()
         {
-            var conn = this.Results.SingleOrDefault(d => d.DeletePartNumber == "CONN 1");
+            var conn = this.results.Single(d => d.DeletePartNumber == "CONN 1");
             conn.Should().NotBeNull();
             conn.DeleteQty.Should().Be(1);
             conn.AddPartNumber.Should().BeNull();
 
-            var lbl = this.Results.SingleOrDefault(d => d.DeletePartNumber == "LBL 12");
+            var lbl = this.results.Single(d => d.DeletePartNumber == "LBL 12");
             lbl.Should().NotBeNull();
             lbl.DeleteQty.Should().Be(2);
             lbl.AddPartNumber.Should().BeNull();

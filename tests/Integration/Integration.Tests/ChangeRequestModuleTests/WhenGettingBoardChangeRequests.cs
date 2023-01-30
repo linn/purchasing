@@ -9,7 +9,6 @@
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.Boms;
-    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -27,12 +26,13 @@
                                  new ChangeRequest
                                      {
                                          NewPartNumber = "SK HUB",
-                                         DateEntered = DateTime.Today
+                                         DateEntered = DateTime.Today,
+                                         ChangeState = "ACCEPT"
                                      }
                              }.AsQueryable());
 
             this.Response = this.Client.Get(
-                "/purchasing/change-requests?searchTerm=SK HUB&includeAllForBoard=True",
+                "/purchasing/change-requests?searchTerm=SK HUB&includeForBoard=True",
                 with => { with.Accept("application/json"); }).Result;
         }
 
@@ -60,7 +60,7 @@
         {
             var result = this.Response.DeserializeBody<IEnumerable<ChangeRequestResource>>().ToList();
             result.Should().NotBeNull();
-            result.Count().Should().Be(1);
+            result.Count.Should().Be(1);
             result.First().NewPartNumber.Should().Be("SK HUB");
         }
     }

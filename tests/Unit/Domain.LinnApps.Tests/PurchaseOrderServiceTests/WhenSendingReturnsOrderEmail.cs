@@ -55,7 +55,8 @@
             this.NoteRepository.FindBy(Arg.Any<Expression<Func<PlCreditDebitNote, bool>>>())
                 .Returns(new PlCreditDebitNote
                              {
-                                 PurchaseOrder = this.order
+                                 PurchaseOrder = this.order,
+                                 NoteNumber = 666
                              });
 
             this.MiniOrderRepository.FindById(this.orderNumber).Returns(this.miniOrder);
@@ -88,7 +89,8 @@
         public void ShouldReturnSuccessProcessResult()
         {
             this.result.Success.Should().BeTrue();
-            this.result.Message.Should().Be("Email sent for purchase order 5678 to seller@wesellthings.com");
+            this.result.Message
+                .Should().Be("Email sent for purchase order 5678 and debit note 666 to seller@wesellthings.com");
         }
 
         [Test]

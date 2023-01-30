@@ -47,6 +47,7 @@
                 Qty = 2,
                 Name = "CAP NEW",
                 HasChanged = true,
+                Id = "56789",
                 ParentName = "BOM"
             };
 
@@ -58,24 +59,32 @@
                 HasChanged = true,
                 Children = new List<BomTreeNode> { this.c1, this.c2 }
             };
-            this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(new Bom
-            {
-                BomId = 100,
-                BomName = "BOM",
-                Details = new List<BomDetailViewEntry>
+            this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>())
+                .Returns(new Bom
+                {
+                    BomId = 100,
+                    BomName = "BOM",
+                    Details = new List<BomDetailViewEntry>
                                   {
                                         new BomDetailViewEntry
                                             {
                                                 PartNumber = "CAP OLD",
                                                 Qty = 2,
-                                                ChangeState = "LIVE"
+                                                ChangeState = "LIVE",
+                                                DetailId = 4567
                                             }
                                   }
-            });
+                });
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(6666);
             this.DatabaseService.GetIdSequence("BOMDET_SEQ").Returns(10023);
 
-            this.replacedDetail = new BomDetail { PartNumber = "CAP OLD", Qty = 2, ChangeState = "LIVE" };
+            this.replacedDetail = new BomDetail
+                                      {
+                                          PartNumber = "CAP OLD", 
+                                          Qty = 2, 
+                                          ChangeState = "LIVE",
+                                          AddChange = new BomChange { DocumentNumber = 999 }
+                                      };
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { DecrementRule = "YES", BomType = "C" });
 

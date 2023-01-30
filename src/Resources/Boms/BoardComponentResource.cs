@@ -34,6 +34,8 @@
 
         public int? DeleteChangeDocumentNumber { get; set; }
 
+        public string DeleteChangeState { get; set; }
+
         public decimal Quantity { get; set; }
     }
 }

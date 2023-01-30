@@ -1,5 +1,5 @@
 import React, { useState, useReducer, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link as RouterLink } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -13,7 +13,12 @@ import {
     collectionSelectorHelpers,
     itemSelectorHelpers,
     Search,
-    SaveBackCancelButtons
+    getRequestErrors,
+    utilities,
+    getItemError,
+    InputField,
+    SaveBackCancelButtons,
+    ErrorCard
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
@@ -24,6 +29,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import Link from '@mui/material/Link';
 
 import boardComponentsActions from '../../actions/boardComponentsActions';
 import boardsActions from '../../actions/boardsActions';
@@ -32,17 +38,21 @@ import history from '../../history';
 import config from '../../config';
 import boardComponentsReducer from './boardComponentsReducer';
 import partsActions from '../../actions/partsActions';
+import { boardComponents } from '../../itemTypes';
 
 function BoardComponents() {
     const reduxDispatch = useDispatch();
     const { id } = useParams();
 
     const [board, setBoard] = useState(null);
-    const [crfNumber, setCrfNumber] = useState();
-    const [crfRevisionCode, setCrfRevisionCode] = useState();
+    const [crfNumber, setCrfNumber] = useState(null);
+    const [crfRevisionCode, setCrfRevisionCode] = useState(null);
     const [showChanges, setShowChanges] = useState(true);
     const searchBoards = searchTerm => reduxDispatch(boardsActions.search(searchTerm));
     const clearSearchBoards = () => reduxDispatch(boardsActions.clearSearch());
+    const [findDialogOpen, setFindDialogOpen] = useState(false);
+    const [findField, setFindField] = useState('partNumber');
+    const [findValue, setFindValue] = useState(null);
     const searchBoardsResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.boards)
     );
@@ -62,13 +72,20 @@ function BoardComponents() {
     const loading = useSelector(reduxState =>
         itemSelectorHelpers.getItemLoading(reduxState.boardComponents)
     );
+    const requestErrors = useSelector(reduxState =>
+        getRequestErrors(reduxState)?.filter(error => error.type !== 'FETCH_ERROR')
+    );
+
+    const componentError = useSelector(reduxState =>
+        getItemError(reduxState, boardComponents.item)
+    );
 
     useEffect(() => {
-        if (id) {
+        if (id && item?.boardCode !== id && !board) {
             reduxDispatch(boardComponentsActions.fetch(id));
             setBoard(id);
         }
-    }, [id, reduxDispatch]);
+    }, [id, item?.boardCode, reduxDispatch, board]);
 
     useEffect(() => {
         if (item) {
@@ -224,14 +241,16 @@ function BoardComponents() {
             width: 50,
             renderCell: params => (
                 <Tooltip title="Remove">
-                    <IconButton
-                        aria-label="remove"
-                        size="small"
-                        disabled={!crfNumber || params.row.deleteChangeId}
-                        onClick={() => handleDeleteRow(params)}
-                    >
-                        <DeleteIcon fontSize="inherit" />
-                    </IconButton>
+                    <div>
+                        <IconButton
+                            aria-label="remove"
+                            size="small"
+                            disabled={!crfNumber || params.row.deleteChangeId > 0}
+                            onClick={() => handleDeleteRow(params)}
+                        >
+                            <DeleteIcon fontSize="inherit" />
+                        </IconButton>
+                    </div>
                 </Tooltip>
             )
         },
@@ -241,14 +260,16 @@ function BoardComponents() {
             width: 50,
             renderCell: params => (
                 <Tooltip title="Replace">
-                    <IconButton
-                        aria-label="replace"
-                        disabled={!crfNumber}
-                        size="small"
-                        onClick={() => handleReplaceRow(params)}
-                    >
-                        <UpgradeIcon fontSize="inherit" />
-                    </IconButton>
+                    <div>
+                        <IconButton
+                            aria-label="replace"
+                            disabled={!crfNumber}
+                            size="small"
+                            onClick={() => handleReplaceRow(params)}
+                        >
+                            <UpgradeIcon fontSize="inherit" />
+                        </IconButton>
+                    </div>
                 </Tooltip>
             )
         }
@@ -263,7 +284,8 @@ function BoardComponents() {
                 if (
                     (state.selectedRevision.versionNumber < fromRevision &&
                         state.selectedLayout.layoutSequence === fromLayout) ||
-                    (state.selectedRevision.versionNumber > toRevision &&
+                    (toRevision &&
+                        state.selectedRevision.versionNumber > toRevision &&
                         state.selectedLayout.layoutSequence === toLayout)
                 ) {
                     return false;
@@ -284,21 +306,39 @@ function BoardComponents() {
         return true;
     };
 
+    const matchesFindCriteria = (cRef, partNumber) => {
+        if (findField && findValue) {
+            if (findField === 'cref') {
+                return findValue.toUpperCase() === cRef;
+            }
+
+            if (findField === 'partNumber') {
+                return findValue.toUpperCase() === partNumber;
+            }
+        }
+
+        return true;
+    };
+
     const componentRows = state.board?.components
-        ? state.board.components
-              .filter(
-                  f =>
-                      f.changeState !== 'CANCEL' &&
-                      f.changeState !== 'HIST' &&
-                      versionsAreCorrect(
-                          f.fromLayoutVersion,
-                          f.toLayoutVersion,
-                          f.fromRevisionVersion,
-                          f.toRevisionVersion
-                      ) &&
-                      changesStateOk(f.changeState)
-              )
-              .map(c => ({ ...c, id: c.boardLine }))
+        ? utilities.sortEntityList(
+              state.board.components
+                  .filter(
+                      f =>
+                          f.changeState !== 'CANCEL' &&
+                          f.changeState !== 'HIST' &&
+                          versionsAreCorrect(
+                              f.fromLayoutVersion,
+                              f.toLayoutVersion,
+                              f.fromRevisionVersion,
+                              f.toRevisionVersion
+                          ) &&
+                          changesStateOk(f.changeState) &&
+                          matchesFindCriteria(f.cRef, f.partNumber)
+                  )
+                  .map(c => ({ ...c, id: c.boardLine })),
+              'cRef'
+          )
         : [];
 
     const layout =
@@ -315,10 +355,12 @@ function BoardComponents() {
 
     const goToSelectedBoard = selectedBoard => {
         setBoard(selectedBoard.boardCode);
+        setCrfNumber(null);
         reduxDispatch(boardComponentsActions.fetch(selectedBoard.boardCode));
     };
 
     const goToBoard = () => {
+        setCrfNumber(null);
         if (board) {
             reduxDispatch(boardComponentsActions.fetch(board.toUpperCase()));
         }
@@ -335,9 +377,15 @@ function BoardComponents() {
         dispatch({ type: 'populate', payload: item });
     };
 
+    const changesDisplaying = () => showChanges || crfNumber > 0;
+
     const getDisplayClass = params => {
-        if (params.row.removing || params.row.deleteChangeId) {
-            return 'removing';
+        if (params.row.changeState === 'LIVE' && params.row.deleteChangeId && changesDisplaying()) {
+            return `removing-${params.row.deleteChangeState?.toLowerCase()}`;
+        }
+
+        if (params.row.removing) {
+            return `removing-${params.row.changeState?.toLowerCase()}`;
         }
 
         return params.row.changeState?.toLowerCase();
@@ -345,18 +393,72 @@ function BoardComponents() {
 
     const setCrfDetails = documentNumber => {
         setCrfNumber(documentNumber);
-        const crf = changeRequests.find(a => a.documentNumber.toString() === documentNumber);
-        setCrfRevisionCode(crf.revisionCode);
+        if (documentNumber) {
+            const crf = changeRequests.find(a => a.documentNumber.toString() === documentNumber);
+            setCrfRevisionCode(crf.revisionCode);
+            dispatch({ type: 'setSelectedRevisionToCrf', payload: crf.revisionCode });
+        } else {
+            setCrfRevisionCode(null);
+        }
     };
 
     return (
-        <Page history={history} style={{ paddingBottom: '20px' }} homeUrl={config.appRoot}>
+        <Page
+            history={history}
+            style={{ paddingBottom: '20px' }}
+            homeUrl={config.appRoot}
+            requestErrors={requestErrors}
+            showRequestErrors
+        >
             <Typography variant="h5" gutterBottom>
                 Search or select PCAS board
             </Typography>
             {renderPartLookUp()}
             <Grid container spacing={2}>
-                <Grid item xs={6}>
+                <Dialog open={findDialogOpen} fullWidth maxWidth="md">
+                    <DialogTitle>Find</DialogTitle>
+                    <DialogContent dividers>
+                        <Dropdown
+                            items={[
+                                { id: 'cref', displayText: 'Cref' },
+                                { id: 'partNumber', displayText: 'Part Number' }
+                            ]}
+                            label="Find"
+                            propertyName="findField"
+                            value={findField}
+                            onChange={(_, n) => {
+                                setFindField(n);
+                            }}
+                        />
+                        <InputField
+                            value={findValue}
+                            fullWidth
+                            label="Value To Find"
+                            onChange={(_, val) => setFindValue(val)}
+                            propertyName="findValue"
+                        />
+                        <Button
+                            variant="outlined"
+                            onClick={() => setFindDialogOpen(false)}
+                            size="small"
+                            style={{ marginBottom: '25px' }}
+                        >
+                            Find
+                        </Button>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={() => {
+                                setFindValue(null);
+                                setFindDialogOpen(false);
+                            }}
+                        >
+                            Clear Find
+                        </Button>
+                        <Button onClick={() => setFindDialogOpen(false)}>Close</Button>
+                    </DialogActions>
+                </Dialog>
+                <Grid item xs={5}>
                     <Stack direction="row" spacing={2}>
                         <Search
                             propertyName="boardCode"
@@ -389,7 +491,7 @@ function BoardComponents() {
                         </Button>
                     </Stack>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={3}>
                     <Stack direction="row" spacing={2}>
                         <Dropdown
                             items={changeRequests?.map(c => ({
@@ -398,7 +500,7 @@ function BoardComponents() {
                             }))}
                             allowNoValue
                             loading={changeRequestsLoading}
-                            label="CRF Number"
+                            label="CRF"
                             propertyName="crNumber"
                             helperText="Select a corresponding CRF to start editing"
                             value={crfNumber}
@@ -408,19 +510,50 @@ function BoardComponents() {
                         />
                     </Stack>
                 </Grid>
-                <Grid item xs={2}>
-                    <Button
-                        variant="outlined"
-                        onClick={() => {
-                            setShowChanges(!showChanges);
-                        }}
-                    >
-                        {showChanges ? 'hide' : 'show'} changes{' '}
-                    </Button>
+                <Grid item xs={4}>
+                    <Stack direction="row" spacing={2}>
+                        <Button
+                            variant="outlined"
+                            onClick={() => setFindDialogOpen(true)}
+                            size="small"
+                            style={{ marginBottom: '25px' }}
+                        >
+                            Find Items
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            style={{ marginBottom: '25px' }}
+                            onClick={() => {
+                                setShowChanges(!showChanges);
+                            }}
+                        >
+                            {showChanges ? 'hide' : 'show'} changes{' '}
+                        </Button>
+                        <Link
+                            style={{ marginTop: '5px' }}
+                            component={RouterLink}
+                            variant="button"
+                            to={`/purchasing/boms/boards/${state?.board?.boardCode}`}
+                        >
+                            Board Details
+                        </Link>
+                    </Stack>
                 </Grid>
+                {state.board?.discrepancies && (
+                    <Grid item xs={12}>
+                        <Typography variant="subtitle1" gutterBottom>
+                            {`Discrepancy warning: ${state.board.discrepancies}`}
+                        </Typography>
+                    </Grid>
+                )}
                 {loading && (
                     <Grid item xs={12}>
                         <Loading />
+                    </Grid>
+                )}
+                {componentError && (
+                    <Grid item xs={12}>
+                        <ErrorCard errorMessage={componentError.details} />
                     </Grid>
                 )}
                 <Grid item xs={2}>
@@ -435,10 +568,12 @@ function BoardComponents() {
                                     density="compact"
                                     autoHeight
                                     onSelectionModelChange={newSelectionModel => {
-                                        dispatch({
-                                            type: 'setSelectedLayout',
-                                            payload: newSelectionModel
-                                        });
+                                        if (!crfNumber > 0) {
+                                            dispatch({
+                                                type: 'setSelectedLayout',
+                                                payload: newSelectionModel
+                                            });
+                                        }
                                     }}
                                     loading={loading}
                                     hideFooterSelectedRowCount
@@ -463,10 +598,12 @@ function BoardComponents() {
                                     hideFooterSelectedRowCount
                                     autoHeight
                                     onSelectionModelChange={newSelectionModel => {
-                                        dispatch({
-                                            type: 'setSelectedRevision',
-                                            payload: newSelectionModel
-                                        });
+                                        if (!crfNumber > 0) {
+                                            dispatch({
+                                                type: 'setSelectedRevision',
+                                                payload: newSelectionModel
+                                            });
+                                        }
                                     }}
                                     hideFooter={revisionRows.length <= 40}
                                 />
@@ -486,10 +623,18 @@ function BoardComponents() {
                                         '& .accept': {
                                             bgcolor: '#b0f7b9'
                                         },
-                                        '& .removing': {
-                                            bgcolor: 'indianred',
-                                            textDecorationLine: 'line-through'
+                                        '& .removing-propos': {
+                                            textDecorationLine: 'line-through',
+                                            bgcolor: 'yellow'
+                                        },
+                                        '& .removing-accept': {
+                                            textDecorationLine: 'line-through',
+                                            bgcolor: '#b0f7b9'
                                         }
+                                    }}
+                                    columnVisibilityModel={{
+                                        addChangeDocumentNumber: changesDisplaying(),
+                                        deleteChangeDocumentNumber: changesDisplaying()
                                     }}
                                     rows={componentRows}
                                     columns={componentColumns}
@@ -521,14 +666,16 @@ function BoardComponents() {
                 <Grid item xs={4} />
                 <Grid item xs={8}>
                     <Tooltip title="Remove">
-                        <Button
-                            disabled={!crfNumber}
-                            onClick={() => {
-                                dispatch({ type: 'newComponent', payload: { crfNumber } });
-                            }}
-                        >
-                            New Component
-                        </Button>
+                        <div>
+                            <Button
+                                disabled={!crfNumber}
+                                onClick={() => {
+                                    dispatch({ type: 'newComponent', payload: { crfNumber } });
+                                }}
+                            >
+                                New Component
+                            </Button>
+                        </div>
                     </Tooltip>
                 </Grid>
                 <Grid item xs={12}>

@@ -70,7 +70,7 @@
         public void ShouldPhaseInBomChange()
         {
             var resource = ((SuccessResult<ChangeRequestResource>)this.result).Data;
-            var change = resource.BomChanges.FirstOrDefault();
+            var change = resource.BomChanges.First();
             change.Should().NotBeNull();
             change.PhaseInWeekNumber.Should().Be(1);
             change.PhaseInWWYYYY.Should().Be("012022");

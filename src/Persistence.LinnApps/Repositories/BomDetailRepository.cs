@@ -19,7 +19,8 @@
 
         public override BomDetail FindById(int key)
         {
-            return this.FilterBy(x => x.DetailId == key).Include(x => x.DeleteChange)
+            return this.FilterBy(x => x.DetailId == key)
+                .Include(x => x.DeleteChange).Include(x => x.AddChange)
                 .FirstOrDefault();
         }
     }
