@@ -44,7 +44,7 @@
                 throw new ItemNotFoundException($"Could not find change request {changeRequestId}");
             }
 
-            if (pcasChange.ChangeRequest is null)
+            if (pcasChange.ChangeState is null)
             {
                 pcasChange.ChangeRequest = changeRequest;
                 pcasChange.ChangeState = changeRequest.ChangeState;

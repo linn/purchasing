@@ -10,6 +10,7 @@
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Facade.Extensions;
     using Linn.Purchasing.Resources.Boms;
 
@@ -27,6 +28,8 @@
 
         private readonly IDatabaseService databaseService;
 
+        private readonly IPcasPack pcasPack;
+
         private readonly IQueryable<BoardRevisionType> types;
 
         public CircuitBoardFacadeService(
@@ -36,7 +39,8 @@
             IRepository<BoardRevisionType, string> boardRevisionTypeRepository,
             IRepository<PcasChange, int> pcasChangeRepository,
             ICircuitBoardService circuitBoardService,
-            IDatabaseService databaseService)
+            IDatabaseService databaseService,
+            IPcasPack pcasPack)
             : base(repository, transactionManager, resourceBuilder)
         {
             this.transactionManager = transactionManager;
@@ -44,6 +48,7 @@
             this.pcasChangeRepository = pcasChangeRepository;
             this.circuitBoardService = circuitBoardService;
             this.databaseService = databaseService;
+            this.pcasPack = pcasPack;
             this.types = boardRevisionTypeRepository.FindAll();
         }
 
@@ -97,8 +102,17 @@
                 return new BadRequestResult<CircuitBoardResource>(e.Message);
             }
 
+            var discrepancies = this.pcasPack.DiscrepanciesOnChange(
+                id,
+                updateResource.ChangeRequestRevisionCode,
+                pcasChange.ChangeId);
+
+            var resource = (CircuitBoardResource)this.resourceBuilder.Build(result, privileges);
+            resource.Discrepancies = discrepancies;
+
             this.transactionManager.Commit();
-            return new SuccessResult<CircuitBoardResource>((CircuitBoardResource)this.resourceBuilder.Build(result, privileges));
+
+            return new SuccessResult<CircuitBoardResource>(resource);
         }
 
         protected override CircuitBoard CreateFromResource(

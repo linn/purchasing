@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useReducer } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link as RouterLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import Tabs from '@mui/material/Tabs';
+import Link from '@mui/material/Link';
 import Tab from '@mui/material/Tab';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -182,7 +183,17 @@ function Board({ creating }) {
                             onChange={() => {}}
                         />
                     </Grid>
-                    <Grid item xs={4} />
+                    <Grid item xs={4}>
+                        <div style={{ paddingTop: '30px', float: 'right' }}>
+                            <Link
+                                component={RouterLink}
+                                variant="button"
+                                to={`/purchasing/boms/board-components/${state?.board?.boardCode}`}
+                            >
+                                Board Components
+                            </Link>
+                        </div>
+                    </Grid>
                     <Grid item xs={12}>
                         <Tabs
                             value={selectedTab}

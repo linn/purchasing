@@ -32,11 +32,9 @@
                 throw new DomainException("Bom Verification History not present");
             }
 
-            var requestId = this.databaseService.GetIdSequence("BVH_SEQ");
-
             return new BomVerificationHistory
             {
-                TRef = requestId,
+                TRef = this.databaseService.GetNextVal("BVH_SEQ"),
                 PartNumber = resource.PartNumber,
                 VerifiedBy = resource.VerifiedBy,
                 DateVerified = DateTime.Now,

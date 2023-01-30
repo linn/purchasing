@@ -19,9 +19,9 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/purchasing/bom-verification/create", this.GetApp);
+            app.MapGet("/purchasing/bom-verification/", this.GetApp);
             app.MapGet("/purchasing/bom-verification/{id:int}", this.GetBomVerificationHistoryEntry);
-            app.MapPost("/purchasing/bom-verification/create", this.CreateBomVerificationHistoryEntry);
+            app.MapPost("/purchasing/bom-verification/", this.CreateBomVerificationHistoryEntry);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)

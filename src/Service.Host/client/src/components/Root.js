@@ -84,6 +84,8 @@ import BoardsSummary from './boards/BoardsSummary';
 import BoardComponents from './boards/BoardComponents';
 import BomUtilitySearch from './BomUtility/BomUtilitySearch';
 import CreateCreditNote from './plDebitCreditNotes/CreateCreditNote';
+import CreateBomVerificationHistory from './BomVerificationHistoryUtility/CreateBomVerificationHistory';
+import BomVerificationHistory from './BomVerificationHistoryUtility/BomVerificationHistory';
 
 const Root = ({ store }) => (
     <div>
@@ -509,6 +511,16 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/boms/bom-utility"
                                     component={BomUtility}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/bom-verification"
+                                    component={CreateBomVerificationHistory}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/bom-verification/:id"
+                                    component={BomVerificationHistory}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>
