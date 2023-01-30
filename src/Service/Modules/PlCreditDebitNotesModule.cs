@@ -27,7 +27,6 @@
             app.MapPut("/purchasing/pl-credit-debit-notes/{id}", this.UpdateDebitNote);
             app.MapPost("/purchasing/pl-credit-debit-notes/email", this.EmailDebitNote);
             app.MapGet("/purchasing/pl-credit-debit-notes/application-state", this.GetState);
-
         }
 
         private async Task GetState(
