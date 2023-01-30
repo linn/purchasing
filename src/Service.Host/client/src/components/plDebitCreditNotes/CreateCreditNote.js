@@ -17,7 +17,7 @@ import partsActions from '../../actions/partsActions';
 import plCreditDebitNoteActions from '../../actions/plCreditDebitNoteActions';
 import { purchaseOrders, parts } from '../../itemTypes';
 
-function CreateDebitNote() {
+function CreateCreditNote() {
     const [note, setNote] = useState({});
     const [order, setOrder] = useState({});
     const dispatch = useDispatch();
@@ -287,4 +287,4 @@ function CreateDebitNote() {
     );
 }
 
-export default CreateDebitNote;
+export default CreateCreditNote;
