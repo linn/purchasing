@@ -12,7 +12,6 @@
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
-    using Org.BouncyCastle.Asn1.X509;
 
     public class PlCreditDebitNoteService : IPlCreditDebitNoteService
     {
@@ -32,6 +31,10 @@
 
         private readonly IRepository<CreditDebitNoteType, string> noteTypesRepository;
 
+        private readonly IRepository<Currency, string> currencyRepository;
+
+        private readonly IRepository<PurchaseOrder, int> purchaseOrderRepository;
+
         public PlCreditDebitNoteService(
             IAuthorisationService authService,
             IEmailService emailService,
@@ -40,7 +43,9 @@
             ISalesTaxPack salesTaxPack,
             IRepository<Supplier, int> supplierRepository,
             IDatabaseService databaseService,
-            IRepository<CreditDebitNoteType, string> noteTypesRepository)
+            IRepository<CreditDebitNoteType, string> noteTypesRepository,
+            IRepository<Currency, string> currencyRepository,
+            IRepository<PurchaseOrder, int> purchaseOrderRepository)
         {
             this.authService = authService;
             this.emailService = emailService;
@@ -50,6 +55,8 @@
             this.databaseService = databaseService;
             this.supplierRepository = supplierRepository;
             this.noteTypesRepository = noteTypesRepository;
+            this.currencyRepository = currencyRepository;
+            this.purchaseOrderRepository = purchaseOrderRepository;
         }
 
         public void CloseDebitNote(
@@ -231,10 +238,12 @@
 
             candidate.NoteType = this.noteTypesRepository.FindById("C");
             candidate.DateCreated = DateTime.Today;
+            candidate.PurchaseOrder = this.purchaseOrderRepository.FindById((int)candidate.OriginalOrderNumber);
             candidate.Supplier = this.supplierRepository.FindById(candidate.Supplier.SupplierId);
-
+            candidate.Currency = this.currencyRepository.FindById(candidate.Currency.Code);
             candidate.VatRate = this.salesTaxPack.GetVatRateSupplier(candidate.Supplier.SupplierId);
-
+            candidate.SuppliersDesignation = candidate.PurchaseOrder.Details
+                .First(d => d.Line == candidate.OriginalOrderLine).SuppliersDesignation;
             candidate.Details = new List<PlCreditDebitNoteDetail>
                                     {
                                         new PlCreditDebitNoteDetail

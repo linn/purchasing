@@ -83,7 +83,7 @@ function Note() {
 
     const EmailDialog = () => (
         <Dialog open={emailDialogOpen}>
-            <DialogTitle>Delete All From Bom</DialogTitle>
+            <DialogTitle>Alert</DialogTitle>
             <DialogContent dividers>
                 <Typography variant="h6">
                     Clicking confirm will email this note to the supplier!
@@ -101,6 +101,7 @@ function Note() {
                     variant="contained"
                     onClick={() => {
                         setPdfLoading(true);
+                        setEmailDialogOpen(false);
                         dispatch(plCreditDebitNoteActions.clearErrorsForItem());
                         dispatch(sendPlNoteEmailActions.clearProcessData());
                         emailPdf(pdfRef, blob =>
