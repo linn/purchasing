@@ -52,7 +52,17 @@ const stateWithItem = {
 };
 
 const stateWithUser = {
-    oidc: { user: { profile: { name: 'User Name', employee: '/employees/33087' } } }
+    oidc: { user: { profile: { name: 'User Name', employee: '/employees/33087' } } },
+    parts: {
+        searchItems: [
+            {
+                partNumber: 'TON IC',
+                description: 'A NEW IC',
+                id: 161,
+                bomType: 'C'
+            }
+        ]
+    }
 };
 
 describe('When component mounts...', () => {
@@ -92,14 +102,20 @@ describe('When creating...', () => {
         render(<CreateBomVerificationHistory />);
     });
     test('Should add with values on create...', async () => {
-        let input = screen.getByLabelText('Part Number');
-        fireEvent.change(input, { target: { value: 'SK HUB' } });
+        // const createButton = screen.getByRole('button', { name: 'Create' });
+        // fireEvent.click(createButton);
+        const searchInput = screen.getByLabelText('Part Number');
+        fireEvent.change(searchInput, { target: { value: 'TON IC' } });
+        fireEvent.keyDown(searchInput, { key: 'Enter', code: 'Enter', keyCode: 13 });
+        const result = screen.getByText('TON IC');
+        fireEvent.click(result);
 
-        input = screen.getByLabelText('Remarks');
-        fireEvent.change(input, { target: { value: 'B. Slime' } });
+        // need to wait for modal to close
+        const input = await screen.getByLabelText('Remarks', undefined, { timeout: 5000 });
+        fireEvent.change(input, { target: { value: 'B.Slime' } });
 
-        const button = screen.getByRole('button', { name: 'Create' });
-        fireEvent.click(button);
+        const createButton = screen.getByRole('button', { name: 'Create' });
+        fireEvent.click(createButton);
 
         expect(addSpy).toHaveBeenCalledTimes(1);
     });
