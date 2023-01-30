@@ -1,15 +1,12 @@
 ﻿namespace Linn.Purchasing.Facade.Tests.ChangeRequestFacadeServiceTests
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq.Expressions;
 
     using FluentAssertions;
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
-    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Resources;
 
     using NSubstitute;

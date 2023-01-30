@@ -1,11 +1,13 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeTests
 {
-    using Linn.Purchasing.Domain.LinnApps.Boms;
-    using NUnit.Framework;
     using System.Collections.Generic;
     using System.Linq;
 
     using FluentAssertions;
+
+    using Linn.Purchasing.Domain.LinnApps.Boms;
+
+    using NUnit.Framework;
 
     public class WhenGettingBomChangeDetailsForAReplace : ContextBase
     {
@@ -15,36 +17,37 @@
         public void SetUp()
         {
             this.Sut = new BomChange
-            {
-                ChangeId = 1,
-                DocumentNumber = 1,
-                BomName = "TOM",
-                ChangeState = "PROPOS",
-                AddedBomDetails = new List<BomDetail>
-                                                     {
-                                                         new BomDetail
-                                                             {
-                                                                 DetailId = 1,
-                                                                 PartNumber = "CONN 1",
-                                                                 Qty = 1,
-                                                                 GenerateRequirement = "Y",
-                                                                 AddChangeId = 1,
-                                                                 AddReplaceSeq = 1
-                                                             }
-                                                     },
-                DeletedBomDetails = new List<BomDetail>
-                                        {
-                                            new BomDetail
-                                                {
-                                                    DetailId = 1,
-                                                    PartNumber = "LBL 12",
-                                                    Qty = 2,
-                                                    GenerateRequirement = "N",
-                                                    DeleteChangeId = 1,
-                                                    DeleteReplaceSeq = 1
-                                                }
-                                        }
-            };
+                           {
+                               ChangeId = 1,
+                               DocumentNumber = 1,
+                               BomName = "TOM",
+                               ChangeState = "PROPOS",
+                               AddedBomDetails =
+                                   new List<BomDetail>
+                                       {
+                                           new BomDetail
+                                               {
+                                                   DetailId = 1,
+                                                   PartNumber = "CONN 1",
+                                                   Qty = 1,
+                                                   GenerateRequirement = "Y",
+                                                   AddChangeId = 1,
+                                                   AddReplaceSeq = 1
+                                               }
+                                       },
+                               DeletedBomDetails = new List<BomDetail>
+                                                       {
+                                                           new BomDetail
+                                                               {
+                                                                   DetailId = 1,
+                                                                   PartNumber = "LBL 12",
+                                                                   Qty = 2,
+                                                                   GenerateRequirement = "N",
+                                                                   DeleteChangeId = 1,
+                                                                   DeleteReplaceSeq = 1
+                                                               }
+                                                       }
+                           };
             this.results = this.Sut.BomChangeDetails();
         }
 
@@ -57,7 +60,7 @@
         [Test]
         public void ShouldHaveRightSingleChangeDetails()
         {
-            var detail = this.results.FirstOrDefault();
+            var detail = this.results.First();
             detail.Should().NotBeNull();
             detail.AddPartNumber.Should().Be("CONN 1");
             detail.AddQty.Should().Be(1);

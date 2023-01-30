@@ -59,6 +59,14 @@ function CreatePurchaseOrderUt() {
 
     useEffect(() => {
         if (item) {
+            if (partNumber) {
+                setPartSearchTerm(partNumber);
+            }
+
+            if (supplierId) {
+                setSupplierSearchTerm(supplierId);
+            }
+
             const initialOrder = {
                 ...item,
                 documentType: { name: 'PO' },

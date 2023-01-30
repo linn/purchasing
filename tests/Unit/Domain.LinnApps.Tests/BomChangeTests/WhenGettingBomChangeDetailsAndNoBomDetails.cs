@@ -11,7 +11,7 @@
 
     public class WhenGettingBomChangeDetailsAndNoBomDetails : ContextBase
     {
-        private IEnumerable<BomChangeDetail> Results;
+        private IEnumerable<BomChangeDetail> results;
 
         [SetUp]
         public void SetUp()
@@ -25,13 +25,13 @@
                                AddedBomDetails = new List<BomDetail>(),
                                DeletedBomDetails = new List<BomDetail>()
             };
-            this.Results = this.Sut.BomChangeDetails();
+            this.results = this.Sut.BomChangeDetails();
         }
 
         [Test]
         public void ShouldHaveTwoChangeDetails()
         {
-            this.Results.Count().Should().Be(0);
+            this.results.Count().Should().Be(0);
         }
     }
 }

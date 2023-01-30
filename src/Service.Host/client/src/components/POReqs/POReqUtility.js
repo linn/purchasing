@@ -928,7 +928,7 @@ function POReqUtility({ creating }) {
                                 <InputField
                                     fullWidth
                                     value={req.unitPrice}
-                                    label="Unit Price"
+                                    label="Unit Price (Ex-Vat)"
                                     number
                                     propertyName="unitPrice"
                                     onChange={(propertyName, newValue) =>

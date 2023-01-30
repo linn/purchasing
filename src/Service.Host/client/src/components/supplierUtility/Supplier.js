@@ -83,7 +83,6 @@ function Supplier({ creating }) {
     const defaults = useMemo(
         () => ({
             accountingCompany: 'LINN',
-            liveOnOracle: 'Y',
             expenseAccount: 'N',
             currencyCode: 'GBP',
             paysInFc: 'N',
@@ -323,7 +322,6 @@ function Supplier({ creating }) {
                                                     suppliersReference={
                                                         state.supplier.suppliersReference
                                                     }
-                                                    liveOnOracle={state.supplier.liveOnOracle}
                                                     accountingCompany={
                                                         state.supplier.accountingCompany
                                                     }

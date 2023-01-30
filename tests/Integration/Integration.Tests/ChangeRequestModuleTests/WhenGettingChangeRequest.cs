@@ -110,7 +110,7 @@
             result.BomChanges.Count().Should().Be(1);
             result.PcasChanges.Count().Should().Be(1);
 
-            var bomChange = result.BomChanges.FirstOrDefault();
+            var bomChange = result.BomChanges.First();
             bomChange.Should().NotBeNull();
             bomChange.BomChangeDetails.Count().Should().Be(1);
         }

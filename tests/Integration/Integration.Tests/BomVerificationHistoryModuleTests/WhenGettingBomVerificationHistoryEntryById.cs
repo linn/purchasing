@@ -58,12 +58,12 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            result = this.Response.DeserializeBody<BomVerificationHistoryResource>();
-            result.TRef.Should().Be(123);
-            result.DocumentNumber.Should().Be(654321);
-            result.DocumentType.Should().Be("Test");
-            result.Remarks.Should().Be("D.Skinmer");
-            result.VerifiedBy.Should().Be(33086);
+            this.result = this.Response.DeserializeBody<BomVerificationHistoryResource>();
+            this.result.TRef.Should().Be(123);
+            this.result.DocumentNumber.Should().Be(654321);
+            this.result.DocumentType.Should().Be("Test");
+            this.result.Remarks.Should().Be("D.Skinmer");
+            this.result.VerifiedBy.Should().Be(33086);
         }
 
         [Test]

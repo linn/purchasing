@@ -16,7 +16,7 @@
                                DocumentNumber = 1,
                                ChangeState = "ACCEPT"
                            };
-            var week = new LinnWeek() { WeekNumber = 1, WwYyyy = "012022" };
+            var week = new LinnWeek { WeekNumber = 1, WwYyyy = "012022" };
             this.Sut.PhaseIn(week);
         }
 

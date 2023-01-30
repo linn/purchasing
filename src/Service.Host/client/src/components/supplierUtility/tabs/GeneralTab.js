@@ -19,7 +19,6 @@ function GeneralTab({
     suppliersReference,
     orderContactMethod,
     invoiceContactMethod,
-    liveOnOracle,
     accountingCompany
 }) {
     const reduxDispatch = useDispatch();
@@ -59,16 +58,6 @@ function GeneralTab({
                     value={webAddress}
                     label="Website"
                     propertyName="webAddress"
-                    onChange={handleFieldChange}
-                />
-            </Grid>
-            <Grid item xs={4} />
-            <Grid item xs={8}>
-                <InputField
-                    fullWidth
-                    value={liveOnOracle}
-                    label="Live On Oracle"
-                    propertyName="liveOnOracle"
                     onChange={handleFieldChange}
                 />
             </Grid>
@@ -129,7 +118,6 @@ GeneralTab.propTypes = {
     webAddress: PropTypes.string,
     orderContactMethod: PropTypes.string,
     invoiceContactMethod: PropTypes.string,
-    liveOnOracle: PropTypes.string,
     suppliersReference: PropTypes.string,
     handleFieldChange: PropTypes.func.isRequired,
     accountingCompany: PropTypes.string
@@ -142,7 +130,6 @@ GeneralTab.defaultProps = {
     orderContactMethod: null,
     invoiceContactMethod: null,
     suppliersReference: null,
-    liveOnOracle: null,
     accountingCompany: null
 };
 

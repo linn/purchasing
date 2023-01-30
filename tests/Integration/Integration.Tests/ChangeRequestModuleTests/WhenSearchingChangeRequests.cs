@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Linq.Expressions;
     using System.Net;
 
     using FluentAssertions;
@@ -20,18 +19,25 @@
         [SetUp]
         public void SetUp()
         {
-            this.Repository.FilterBy(Arg.Any<Expression<Func<ChangeRequest, bool>>>())
+            this.Repository.FindAll()
                 .Returns(new List<ChangeRequest>
                              {
                                  new ChangeRequest
                                      {
                                          NewPartNumber = "SK HUB",
-                                         DateEntered = DateTime.Today
+                                         DateEntered = DateTime.Today,
+                                         ChangeState = "ACCEPT"
+                                     },
+                                 new ChangeRequest
+                                     {
+                                         NewPartNumber = "TURNTABLE",
+                                         DateEntered = DateTime.Today,
+                                         ChangeState = "ACCEPT"
                                      }
                              }.AsQueryable());
 
             this.Response = this.Client.Get(
-                "/purchasing/change-requests?searchTerm=SK HUB",
+                "/purchasing/change-requests?searchTerm=*HUB*",
                 with => { with.Accept("application/json"); }).Result;
         }
 
@@ -51,7 +57,7 @@
         [Test]
         public void ShouldCallRepository()
         {
-            this.Repository.Received().FilterBy(Arg.Any<Expression<Func<ChangeRequest, bool>>>());
+            this.Repository.Received().FindAll();
         }
 
         [Test]
@@ -59,7 +65,7 @@
         {
             var result = this.Response.DeserializeBody<IEnumerable<ChangeRequestResource>>().ToList();
             result.Should().NotBeNull();
-            result.Count().Should().Be(1);
+            result.Count.Should().Be(1);
             result.First().NewPartNumber.Should().Be("SK HUB");
         }
     }
