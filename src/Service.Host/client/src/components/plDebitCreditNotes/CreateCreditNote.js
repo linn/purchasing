@@ -22,7 +22,7 @@ import plCreditDebitNoteActions from '../../actions/plCreditDebitNoteActions';
 import { purchaseOrders, parts, plCreditDebitNote } from '../../itemTypes';
 
 function CreateCreditNote() {
-    const [note, setNote] = useState({});
+    const [note, setNote] = useState({ creditOrReplace: 'CREDIT' });
     const [order, setOrder] = useState({});
     const dispatch = useDispatch();
     const poSearchResults = useSelector(state =>
@@ -278,6 +278,7 @@ function CreateCreditNote() {
                                 propertyName="creditOrReplace"
                                 value={note.creditOrReplace}
                                 fullWidth
+                                allowNoValue={false}
                                 items={['CREDIT', 'REPLACE']}
                                 onChange={(_, newval) =>
                                     setNote(n => ({ ...n, creditOrReplace: newval }))
