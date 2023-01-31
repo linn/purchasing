@@ -3,15 +3,31 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Linn.Common.Authorisation;
     using Linn.Common.Facade;
     using Linn.Common.Resources;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 
     public class PlCreditDebitNoteResourceBuilder : IBuilder<PlCreditDebitNote>
     {
+        private readonly IAuthorisationService authService;
+
+        public PlCreditDebitNoteResourceBuilder(IAuthorisationService authService)
+        {
+            this.authService = authService;
+        }
+
         public PlCreditDebitNoteResource Build(PlCreditDebitNote note, IEnumerable<string> claims)
         {
+            if (note == null)
+            {
+                return new PlCreditDebitNoteResource 
+                           { 
+                               Links = this.BuildLinks(null, claims).ToArray()
+                           };
+            }
             return new PlCreditDebitNoteResource
                    {
                        OrderQty = note.OrderQty,
@@ -61,7 +77,16 @@
 
         private IEnumerable<LinkResource> BuildLinks(PlCreditDebitNote model, IEnumerable<string> claims)
         {
-            yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
+            
+            if (model != null)
+            {
+                yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
+            }
+
+            if (this.authService.HasPermissionFor(AuthorisedAction.PlCreditDebitNoteCreate, claims))
+            {
+                yield return new LinkResource { Rel = "create", Href = $"/purchasing/pl-credit-debit-notes/create" };
+            }
         }
     }
 }

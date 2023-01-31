@@ -20,11 +20,24 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
+            app.MapPost("/purchasing/pl-credit-debit-notes", this.CreateNote);
             app.MapGet("/purchasing/open-debit-notes", this.GetOpenDebitNotes);
             app.MapGet("/purchasing/pl-credit-debit-notes", this.SearchNotes);
             app.MapGet("/purchasing/pl-credit-debit-notes/{id}", this.GetNote);
             app.MapPut("/purchasing/pl-credit-debit-notes/{id}", this.UpdateDebitNote);
             app.MapPost("/purchasing/pl-credit-debit-notes/email", this.EmailDebitNote);
+            app.MapGet("/purchasing/pl-credit-debit-notes/application-state", this.GetState);
+        }
+
+        private async Task GetState(
+            HttpRequest req,
+            HttpResponse res,
+            IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource> service)
+
+        {
+            var result = service.GetApplicationState(req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
         }
 
         private async Task GetOpenDebitNotes(
@@ -93,6 +106,21 @@
 
         {
             var result = service.GetById(id);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task CreateNote(
+            HttpRequest req,
+            HttpResponse res,
+            PlCreditDebitNoteResource resource,
+            IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource> service)
+        {
+            resource.Who ??= req.HttpContext.User.GetEmployeeNumber();
+
+            var result = service.Add(
+                resource,
+                req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }

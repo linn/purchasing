@@ -31,6 +31,10 @@
 
         private readonly IRepository<CreditDebitNoteType, string> noteTypesRepository;
 
+        private readonly IRepository<Currency, string> currencyRepository;
+
+        private readonly IRepository<PurchaseOrder, int> purchaseOrderRepository;
+
         public PlCreditDebitNoteService(
             IAuthorisationService authService,
             IEmailService emailService,
@@ -39,7 +43,9 @@
             ISalesTaxPack salesTaxPack,
             IRepository<Supplier, int> supplierRepository,
             IDatabaseService databaseService,
-            IRepository<CreditDebitNoteType, string> noteTypesRepository)
+            IRepository<CreditDebitNoteType, string> noteTypesRepository,
+            IRepository<Currency, string> currencyRepository,
+            IRepository<PurchaseOrder, int> purchaseOrderRepository)
         {
             this.authService = authService;
             this.emailService = emailService;
@@ -49,6 +55,8 @@
             this.databaseService = databaseService;
             this.supplierRepository = supplierRepository;
             this.noteTypesRepository = noteTypesRepository;
+            this.currencyRepository = currencyRepository;
+            this.purchaseOrderRepository = purchaseOrderRepository;
         }
 
         public void CloseDebitNote(
@@ -162,7 +170,7 @@
             }
         }
 
-        public void CreateDebitOrNoteFromPurchaseOrder(PurchaseOrder order)
+        public void CreateDebitOrCreditNoteFromPurchaseOrder(PurchaseOrder order)
         {
             if (order.DocumentTypeName == "CO" || order.DocumentTypeName == "RO")
             {
@@ -217,6 +225,47 @@
 
                 this.repository.Add(note);
             }
+        }
+
+        public PlCreditDebitNote CreateCreditNote(PlCreditDebitNote candidate, IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PlCreditDebitNoteCreate, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to create purchase ledger notes");
+            }
+
+            candidate.NoteNumber = this.databaseService.GetNextVal("PLCDN_SEQ");
+
+            candidate.NoteType = this.noteTypesRepository.FindById("C");
+            candidate.DateCreated = DateTime.Today;
+            candidate.PurchaseOrder = this.purchaseOrderRepository.FindById((int)candidate.OriginalOrderNumber);
+            candidate.Supplier = this.supplierRepository.FindById(candidate.Supplier.SupplierId);
+            candidate.Currency = this.currencyRepository.FindById(candidate.Currency.Code);
+            candidate.VatRate = this.salesTaxPack.GetVatRateSupplier(candidate.Supplier.SupplierId);
+            candidate.SuppliersDesignation = candidate.PurchaseOrder.Details
+                .First(d => d.Line == candidate.OriginalOrderLine).SuppliersDesignation;
+            candidate.Details = new List<PlCreditDebitNoteDetail>
+                                    {
+                                        new PlCreditDebitNoteDetail
+                                            {
+                                                NoteNumber = candidate.NoteNumber,
+                                                LineNumber = 1,
+                                                PartNumber = candidate.PartNumber,
+                                                OrderQty = candidate.OrderQty,
+                                                OriginalOrderLine = candidate.OriginalOrderLine,
+                                                ReturnsOrderLine = candidate.ReturnsOrderLine,
+                                                NetTotal = candidate.NetTotal,
+                                                Total = candidate.Total,
+                                                OrderUnitPrice = candidate.OrderUnitPrice,
+                                                OrderUnitOfMeasure = candidate.OrderUnitOfMeasure,
+                                                VatTotal = candidate.VatTotal,
+                                                Notes = candidate.Notes,
+                                                SuppliersDesignation = candidate.SuppliersDesignation,
+                                                Header = candidate
+                                            }
+                                    };
+
+            return candidate;
         }
     }
 }

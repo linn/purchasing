@@ -83,6 +83,7 @@ import BomCostReportOptions from './reports/BomCostReportOptions';
 import BoardsSummary from './boards/BoardsSummary';
 import BoardComponents from './boards/BoardComponents';
 import BomUtilitySearch from './BomUtility/BomUtilitySearch';
+import CreateCreditNote from './plDebitCreditNotes/CreateCreditNote';
 import CreateBomVerificationHistory from './BomVerificationHistoryUtility/CreateBomVerificationHistory';
 import BomVerificationHistory from './BomVerificationHistoryUtility/BomVerificationHistory';
 
@@ -219,6 +220,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/pl-credit-debit-notes"
                                     component={Search}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/pl-credit-debit-notes/create"
+                                    component={CreateCreditNote}
                                 />
                                 <Route
                                     exact

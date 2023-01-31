@@ -16,6 +16,9 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 import { makeStyles } from '@mui/styles';
 import IconButton from '@mui/material/IconButton';
 import Close from '@mui/icons-material/Close';
@@ -48,6 +51,7 @@ function Note() {
 
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [cancelReason, setCancelReason] = useState('');
+    const [emailDialogOpen, setEmailDialogOpen] = useState(false);
 
     const [pdfLoading, setPdfLoading] = useState(false);
 
@@ -77,6 +81,40 @@ function Note() {
 
     const setSnackbarVisible = () => dispatch(sendPlNoteEmailActions.setMessageVisible(false));
 
+    const EmailDialog = () => (
+        <Dialog open={emailDialogOpen}>
+            <DialogTitle>Alert</DialogTitle>
+            <DialogContent dividers>
+                <Typography variant="h6">
+                    Clicking confirm will email this note to the supplier!
+                </Typography>
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={() => {
+                        setEmailDialogOpen(false);
+                    }}
+                >
+                    Cancel
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={() => {
+                        setPdfLoading(true);
+                        setEmailDialogOpen(false);
+                        dispatch(plCreditDebitNoteActions.clearErrorsForItem());
+                        dispatch(sendPlNoteEmailActions.clearProcessData());
+                        emailPdf(pdfRef, blob =>
+                            dispatch(sendPlNoteEmailActions.requestProcessStart(blob, { id }))
+                        );
+                    }}
+                >
+                    Confirm
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+
     useEffect(() => {
         if (id) {
             dispatch(plCreditDebitNoteActions.fetch(id));
@@ -85,6 +123,7 @@ function Note() {
 
     const Content = () => (
         <Grid container spacing={3}>
+            {EmailDialog()}
             {item.cancelled && (
                 <Grid item xs={12}>
                     <Typography color="secondary" variant="h3">
@@ -328,14 +367,7 @@ function Note() {
                         pdf
                     </Button>
                     <Button
-                        onClick={() => {
-                            setPdfLoading(true);
-                            dispatch(plCreditDebitNoteActions.clearErrorsForItem());
-                            dispatch(sendPlNoteEmailActions.clearProcessData());
-                            emailPdf(pdfRef, blob =>
-                                dispatch(sendPlNoteEmailActions.requestProcessStart(blob, { id }))
-                            );
-                        }}
+                        onClick={() => setEmailDialogOpen(true)}
                         disabled={item?.cancelled}
                         variant="contained"
                     >
