@@ -307,6 +307,7 @@ function BomUtility() {
                     } else {
                         let replacedIndex = null;
                         let replacementFor = null;
+                        let replacedNode = null;
                         current.children = current.children.map((x, index) => {
                             if (x.id !== newNode.id) {
                                 if (
@@ -327,16 +328,19 @@ function BomUtility() {
                             if (newNode.isReplaced) {
                                 replacedIndex = index;
                                 replacementFor = x.id;
+                                replacedNode = newNode;
                             }
                             return { ...newNode, changeState: 'PROPOS' };
                         });
                         if (replacedIndex !== null) {
                             current.children.splice(replacedIndex + 1, 0, {
+                                ...replacedNode,
                                 id: uid(),
-                                type: 'C',
                                 parentId: current.id,
                                 changeState: 'PROPOS',
-                                replacementFor
+                                replacementFor,
+                                isReplaced: false,
+                                addChangeDocumentNumber: null
                             });
                         }
                     }
