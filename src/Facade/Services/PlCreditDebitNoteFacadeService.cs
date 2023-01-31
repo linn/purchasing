@@ -32,11 +32,11 @@
         {
             var note = new PlCreditDebitNote
                            {
-                               PartNumber = resource.PartNumber, 
+                               PartNumber = resource.PartNumber.ToUpper(), 
                                OrderQty = resource.OrderQty, 
                                ReturnsOrderNumber = resource.ReturnsOrderNumber,
-                               ReturnsOrderLine = resource.ReturnsOrderLine ?? 1,
-                               OriginalOrderLine = resource.ReturnsOrderLine ?? 1,
+                               ReturnsOrderLine = resource.ReturnsOrderLine,
+                               OriginalOrderLine = resource.ReturnsOrderLine,
                                NetTotal = resource.NetTotal,
                                Total = resource.Total,
                                OrderUnitPrice = resource.OrderUnitPrice,

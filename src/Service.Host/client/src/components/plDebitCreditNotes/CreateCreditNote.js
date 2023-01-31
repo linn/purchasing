@@ -11,6 +11,7 @@ import {
     Dropdown,
     SaveBackCancelButtons,
     Loading,
+    Title,
     ErrorCard,
     getItemError
 } from '@linn-it/linn-form-components-library';
@@ -22,7 +23,12 @@ import plCreditDebitNoteActions from '../../actions/plCreditDebitNoteActions';
 import { purchaseOrders, parts, plCreditDebitNote } from '../../itemTypes';
 
 function CreateCreditNote() {
-    const [note, setNote] = useState({ creditOrReplace: 'CREDIT' });
+    const [note, setNote] = useState({
+        creditOrReplace: 'CREDIT',
+        orderUnitOfMeasure: 'ONES',
+        currency: 'GBP',
+        partNumber: 'SUNDRY'
+    });
     const [order, setOrder] = useState({});
     const dispatch = useDispatch();
     const poSearchResults = useSelector(state =>
@@ -53,10 +59,14 @@ function CreateCreditNote() {
         itemSelectorHelpers.getItemLoading(state[plCreditDebitNote.item])
     );
     const itemError = useSelector(reduxState => getItemError(reduxState, plCreditDebitNote.item));
+    const [type, setType] = useState('F');
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
+                <Grid item xs={12}>
+                    <Title text="Create Purchase Ledger Credit Note" />{' '}
+                </Grid>
                 {itemError && (
                     <Grid item xs={12}>
                         <ErrorCard errorMessage={itemError.details?.error || itemError.details} />
@@ -68,10 +78,21 @@ function CreateCreditNote() {
                     </Grid>
                 ) : (
                     <>
+                        <Grid item xs={12}>
+                            <Dropdown
+                                label="Note Type"
+                                value={type}
+                                onChange={(_, newVal) => setType(newVal)}
+                                items={['C', 'F']}
+                                allowNoValue={false}
+                                propertyName="type"
+                            />
+                        </Grid>
                         <Grid item xs={3}>
                             <Search
                                 propertyName="returnsOrder"
                                 label="Returns Order"
+                                disabled={type === 'F'}
                                 value={note?.returnsOrderNumber}
                                 handleValueChange={(_, newVal) =>
                                     setNote(n => ({ ...n, returnsOrderNumber: newVal }))
@@ -114,7 +135,8 @@ function CreateCreditNote() {
                                 label="Line"
                                 value={note?.returnsOrderLine}
                                 propertyName="returnsOrderLine"
-                                disabled={!order}
+                                disabled={type === 'F' || !order}
+                                autoFocus={false}
                                 type="number"
                                 onChange={(_, newVal) => {
                                     const line = order.details?.find(d => d.line === newVal);
@@ -141,6 +163,8 @@ function CreateCreditNote() {
                                 propertyName="purchaseOrder"
                                 label="Orig Order Number"
                                 value={note.originalOrderNumber}
+                                autoFocus={false}
+                                disabled={type === 'F'}
                                 handleValueChange={(_, newVal) =>
                                     setNote(n => ({ ...n, originalOrderNumber: newVal }))
                                 }
@@ -170,6 +194,7 @@ function CreateCreditNote() {
                                 value={note?.originalOrderLine}
                                 propertyName="originalOrderLine"
                                 type="number"
+                                disabled={type === 'F'}
                                 onChange={(_, newVal) => {
                                     setNote(n => ({
                                         ...n,
@@ -178,19 +203,26 @@ function CreateCreditNote() {
                                 }}
                             />
                         </Grid>
-                        <Grid item xs={3}>
+                        <Grid iten xs={8} />
+
+                        <Grid item xs={12}>
                             <InputField
                                 value={note.supplierId}
                                 propertyName="supplierId"
                                 label="Supplier"
-                                onChange={() => {}}
+                                type="number"
+                                required
+                                onChange={(_, newVal) => {
+                                    setNote(n => ({ ...n, supplierId: newVal }));
+                                }}
                             />
                         </Grid>
-                        <Grid iten xs={5} />
                         <Grid item xs={3}>
                             <Search
                                 propertyName="partNumber"
                                 label="Part"
+                                required
+                                autoFocus={false}
                                 value={note.partNumber}
                                 handleValueChange={(_, newVal) =>
                                     setNote(n => ({ ...n, partNumber: newVal }))
@@ -211,6 +243,7 @@ function CreateCreditNote() {
                                 value={note.orderQty}
                                 propertyName="orderQty"
                                 label="Qty"
+                                required
                                 type="number"
                                 onChange={(_, newVal) => setNote(n => ({ ...n, orderQty: newVal }))}
                             />
@@ -219,6 +252,7 @@ function CreateCreditNote() {
                             <InputField
                                 value={note.orderUnitOfMeasure}
                                 propertyName="orderUnitOfMeasure"
+                                required
                                 label="UoM"
                                 onChange={(_, newVal) =>
                                     setNote(n => ({ ...n, orderUnitOfMeasure: newVal }))
@@ -230,6 +264,7 @@ function CreateCreditNote() {
                                 value={note.orderUnitPrice}
                                 propertyName="orderUnitPrice"
                                 label="Unit Price"
+                                required
                                 type="number"
                                 onChange={(_, newVal) =>
                                     setNote(n => ({ ...n, orderUnitPrice: newVal }))
@@ -240,7 +275,8 @@ function CreateCreditNote() {
                             <InputField
                                 value={note.currency}
                                 propertyName="currency"
-                                label="Currency"
+                                required
+                                label="Currency Code"
                                 onChange={(_, newVal) => setNote(n => ({ ...n, currency: newVal }))}
                             />
                         </Grid>
@@ -248,6 +284,7 @@ function CreateCreditNote() {
                             <InputField
                                 value={note.netTotal}
                                 propertyName="netTotal"
+                                required
                                 label="Net"
                                 type="number"
                                 onChange={(_, newVal) => setNote(n => ({ ...n, netTotal: newVal }))}
@@ -257,6 +294,7 @@ function CreateCreditNote() {
                             <InputField
                                 value={note.vatTotal}
                                 propertyName="vatTotal"
+                                required
                                 label="VAT"
                                 type="number"
                                 onChange={(_, newVal) => setNote(n => ({ ...n, vatTotal: newVal }))}
@@ -266,6 +304,7 @@ function CreateCreditNote() {
                             <InputField
                                 value={note.total}
                                 propertyName="total"
+                                required
                                 label="Total"
                                 type="number"
                                 onChange={(_, newVal) => setNote(n => ({ ...n, total: newVal }))}
@@ -303,7 +342,17 @@ function CreateCreditNote() {
                                 backClick={() => {
                                     history.push('/purchasing/pl-credit-debit-notes');
                                 }}
-                                saveDisabled={!order?.orderNumber}
+                                saveDisabled={
+                                    !note.partNumber ||
+                                    !note.creditOrReplace ||
+                                    !note.total ||
+                                    !note.vatTotal ||
+                                    !note.netTotal ||
+                                    !note.supplierId ||
+                                    !note.orderUnitPrice ||
+                                    !note.orderQty ||
+                                    !note.currency
+                                }
                                 cancelClick={() => {
                                     setNote({});
                                     setOrder({});
