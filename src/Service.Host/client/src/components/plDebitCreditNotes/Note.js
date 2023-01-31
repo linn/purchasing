@@ -217,6 +217,16 @@ function Note() {
                     </Grid>
                 </Fragment>
             ))}
+            {!item.orderDetails && (
+                <>
+                    <Grid item xs={2}>
+                        <Typography variant="subtitle2">Part:</Typography>
+                    </Grid>
+                    <Grid item xs={10}>
+                        <Typography variant="subtitle1">{item.partNumber}</Typography>
+                    </Grid>
+                </>
+            )}
             <Grid item xs={2}>
                 <Typography variant="subtitle2">Qty:</Typography>
             </Grid>

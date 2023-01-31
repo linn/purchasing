@@ -236,14 +236,30 @@
 
             candidate.NoteNumber = this.databaseService.GetNextVal("PLCDN_SEQ");
 
-            candidate.NoteType = this.noteTypesRepository.FindById("C");
+            candidate.NoteType = candidate.ReturnsOrderNumber.HasValue 
+                                     ? this.noteTypesRepository.FindById("C") : this.noteTypesRepository.FindById("F");
             candidate.DateCreated = DateTime.Today;
-            candidate.PurchaseOrder = this.purchaseOrderRepository.FindById((int)candidate.OriginalOrderNumber);
+            candidate.PurchaseOrder = candidate.OriginalOrderNumber.HasValue 
+                                          ? this.purchaseOrderRepository.FindById((int)candidate.OriginalOrderNumber) : null;
+            
             candidate.Supplier = this.supplierRepository.FindById(candidate.Supplier.SupplierId);
-            candidate.Currency = this.currencyRepository.FindById(candidate.Currency.Code);
+            
+            if (candidate.Supplier == null)
+            {
+                throw new ItemNotFoundException("SupplierId not recognised");
+            }
+
+            candidate.Currency = this.currencyRepository.FindById(candidate.Currency.Code.ToUpper());
+
+            if (candidate.Currency == null)
+            {
+                throw new ItemNotFoundException("Currency code not recognised");
+            }
+
             candidate.VatRate = this.salesTaxPack.GetVatRateSupplier(candidate.Supplier.SupplierId);
-            candidate.SuppliersDesignation = candidate.PurchaseOrder.Details
-                .First(d => d.Line == candidate.OriginalOrderLine).SuppliersDesignation;
+            candidate.SuppliersDesignation = candidate.PurchaseOrder?.Details
+                .First(d => d.Line == candidate.OriginalOrderLine).SuppliersDesignation ?? candidate.PartNumber;
+
             candidate.Details = new List<PlCreditDebitNoteDetail>
                                     {
                                         new PlCreditDebitNoteDetail
