@@ -11,6 +11,7 @@ import {
     Dropdown,
     SaveBackCancelButtons,
     Loading,
+    Title,
     ErrorCard,
     getItemError
 } from '@linn-it/linn-form-components-library';
@@ -63,6 +64,9 @@ function CreateCreditNote() {
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
+                <Grid item xs={12}>
+                    <Title text="Create Purchase Ledger Credit Note" />{' '}
+                </Grid>
                 {itemError && (
                     <Grid item xs={12}>
                         <ErrorCard errorMessage={itemError.details?.error || itemError.details} />
@@ -81,6 +85,7 @@ function CreateCreditNote() {
                                 onChange={(_, newVal) => setType(newVal)}
                                 items={['C', 'F']}
                                 allowNoValue={false}
+                                propertyName="type"
                             />
                         </Grid>
                         <Grid item xs={3}>

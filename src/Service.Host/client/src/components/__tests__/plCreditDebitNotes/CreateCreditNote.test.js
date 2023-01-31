@@ -30,6 +30,8 @@ describe('When creating...', () => {
     });
 
     test('should dispatch add action with correct data', async () => {
+        const typeDropdown = screen.getByLabelText('Note Type');
+        fireEvent.change(typeDropdown, { target: { value: 'C' } });
         const roOrderSearchInput = screen.getByLabelText('Returns Order');
         fireEvent.change(roOrderSearchInput, { target: { value: 743638 } });
         fireEvent.keyDown(roOrderSearchInput, { key: 'Enter', code: 'Enter', keyCode: 13 });
