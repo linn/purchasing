@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PlCreditDebitNotesTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PlCreditDebitNoteServiceTests
 {
     using System.Collections.Generic;
 
@@ -9,7 +9,7 @@
 
     using NUnit.Framework;
 
-    public class WhenCreatingANote : ContextBase
+    public class WhenCreatingANoteFromOrder : ContextBase
     {
         private PurchaseOrder order;
 
@@ -49,7 +49,7 @@
                                                }
                              };
 
-            this.Sut.CreateDebitOrNoteFromPurchaseOrder(this.order);
+            this.Sut.CreateDebitOrCreditNoteFromPurchaseOrder(this.order);
         }
 
         [Test]

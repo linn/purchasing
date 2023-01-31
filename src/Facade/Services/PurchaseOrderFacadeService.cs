@@ -354,7 +354,7 @@
 
             if (order.DocumentTypeName is "CO" or "RO")
             {
-                this.creditDebitNoteService.CreateDebitOrNoteFromPurchaseOrder(order);
+                this.creditDebitNoteService.CreateDebitOrCreditNoteFromPurchaseOrder(order);
                 this.transactionManager.Commit();
             }
             

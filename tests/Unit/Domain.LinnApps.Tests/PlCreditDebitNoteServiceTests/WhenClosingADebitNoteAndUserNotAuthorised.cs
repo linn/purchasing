@@ -1,18 +1,21 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PlCreditDebitNotesTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PlCreditDebitNoteServiceTests
 {
     using System;
     using System.Collections.Generic;
 
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using NSubstitute;
 
     using NUnit.Framework;
 
-    public class WhenClosingADebitNote : ContextBase
+    public class WhenClosingADebitNoteAndUserNotAuthorised : ContextBase
     {
+        private Action action;
+
         private PlCreditDebitNote note;
 
         [SetUp]
@@ -21,22 +24,19 @@
             this.note = new PlCreditDebitNote { DateCreated = DateTime.UnixEpoch, NoteNumber = 1 };
             this.MockAuthService.HasPermissionFor(
                 AuthorisedAction.PlCreditDebitNoteClose,
-                Arg.Is<List<string>>(x => x.Contains(AuthorisedAction.PlCreditDebitNoteClose))).Returns(true);
+                Arg.Is<List<string>>(x => !x.Contains(AuthorisedAction.PlCreditDebitNoteClose))).Returns(false);
 
-            this.Sut.CloseDebitNote(
+            this.action = () => this.Sut.CloseDebitNote(
                 this.note,
                 "REASON",
                 33087,
-                new List<string> { AuthorisedAction.PlCreditDebitNoteClose });
+                new List<string>());
         }
 
         [Test]
-        public void ShouldReturnClosed()
+        public void ShouldThrowUnauthorisedActionException()
         {
-            this.note.NoteNumber.Should().Be(1);
-            this.note.DateClosed.Should().Be(DateTime.Today);
-            this.note.ReasonClosed.Should().Be("REASON");
-            this.note.ClosedBy.Should().Be(33087);
+            this.action.Should().Throw<UnauthorisedActionException>();
         }
     }
 }

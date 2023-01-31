@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PlCreditDebitNotesTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PlCreditDebitNoteServiceTests
 {
     using Linn.Common.Authorisation;
     using Linn.Common.Email;
@@ -32,6 +32,10 @@
 
         protected IRepository<CreditDebitNoteType, string> MockNoteTypeRepository { get; private set; }
 
+        protected IRepository<Currency, string> MockCurrencyRepository { get; private set; }
+
+        protected IRepository<PurchaseOrder, int> MockOrderRepository { get; private set;  }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -43,6 +47,9 @@
             this.MockSalesTaxPack = Substitute.For<ISalesTaxPack>();
             this.MockNoteTypeRepository = Substitute.For<IRepository<CreditDebitNoteType, string>>();
             this.MockRepository = Substitute.For<IRepository<PlCreditDebitNote, int>>();
+            this.MockCurrencyRepository = Substitute.For<IRepository<Currency, string>>();
+            this.MockOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
+
             this.Sut = new PlCreditDebitNoteService(
                 this.MockAuthService, 
                 this.MockEmailService, 
@@ -51,7 +58,9 @@
                 this.MockSalesTaxPack,
                 this.MockSupplierRepository,
                 this.MockDatabaseService,
-                this.MockNoteTypeRepository);
+                this.MockNoteTypeRepository,
+                this.MockCurrencyRepository,
+                this.MockOrderRepository);
         }
     }
 }
