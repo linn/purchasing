@@ -96,15 +96,11 @@
                     current.Children = current.Children?.Select(
                         child =>
                             {
-                                if (child.Name == "PCSM 219/L1R1")
-                                {
-                                    var x = "stop";
-                                }
                                 var children = child.Type != "C" ? this.detailViewRepository
-                                    .FilterBy(x => x.BomName == child.Name)
-                                    .Where(x => showChanges || x.ChangeState == "LIVE")
-                                    .Where(c => !requirementOnly
-                                                || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0))
+                                                       .FilterBy(x => x.BomName == child.Name)
+                                                       .Where(x => showChanges || x.ChangeState == "LIVE")
+                                                       .Where(c => !requirementOnly
+                                                                   || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0))
                                                    :null;
 
                                 var node = new BomTreeNode
