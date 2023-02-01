@@ -111,7 +111,6 @@
 
         private void ProcessBomChangeForSubAssembly(BomTreeNode current, BomChange change, Bom bom)
         {
-            // initialise replacement seq to be the max replacement seq currently on this change
             var detailsOnChange = this.bomDetailRepository
                 .FilterBy(x => x.BomId == change.BomId && x.AddChangeId == change.ChangeId);
             var replacementSeq = !detailsOnChange.Any() ? 0
@@ -308,7 +307,6 @@
         {
             var bomLookup = this.bomRepository.FindBy(x => x.BomName == name);
 
-            // create a bom if required
             var bom = bomLookup ?? new Bom
                                        {
                                            BomId = this.databaseService.GetIdSequence("BOM_SEQ"),
