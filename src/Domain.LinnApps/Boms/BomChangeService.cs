@@ -60,7 +60,7 @@
                     {
                         var bom = this.GetOrCreateBom(current.Name);
                         var change = this.GetOrCreateBomChange(current.Name, changeRequestNumber, enteredBy, bom);
-                        this.ProcessBomChangeForSubAssembly(current, change, bom);
+                        this.ProcessBomChange(current, change, bom);
                         current.HasChanged = false;
                     }
 
@@ -109,7 +109,7 @@
             this.bomPack.ExplodeSubAssembly(change.BomId, change.ChangeId, change.ChangeState, subAssembly);
         }
 
-        private void ProcessBomChangeForSubAssembly(BomTreeNode current, BomChange change, Bom bom)
+        private void ProcessBomChange(BomTreeNode current, BomChange change, Bom bom)
         {
             var detailsOnChange = this.bomDetailRepository
                 .FilterBy(x => x.BomId == change.BomId && x.AddChangeId == change.ChangeId);
