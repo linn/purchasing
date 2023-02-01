@@ -29,12 +29,12 @@
         {
             try
             {
-                var result = this.bomChangeService.ProcessTreeUpdate(
+                this.bomChangeService.ProcessTreeUpdate(
                     resource.TreeRoot,
                     resource.CrNumber,
                     resource.EnteredBy);
                 this.transactionManager.Commit();
-                return new SuccessResult<BomTreeNode>(this.treeService.BuildBomTree(result.Name, null, false, true));
+                return new SuccessResult<BomTreeNode>(this.treeService.BuildBomTree(resource.TreeRoot.Name, null, false, true));
             }
             catch (DomainException e)
             {

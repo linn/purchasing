@@ -65,12 +65,6 @@
                     Details = new List<BomDetailViewEntry>()
                 },
                 new Bom
-                    {
-                        BomName = "BOM",
-                        BomId = 123,
-                        Details = new List<BomDetailViewEntry>()
-                    },
-                new Bom
                 {
                     BomName = "ASS 1",
                     BomId = 456,

@@ -17,7 +17,7 @@
 
     public class WhenUpdatingExistingDetailFields : ContextBase
     {
-        private BomTreeNode result;
+        private BomDetail detail;
 
         [SetUp]
         public void SetUp()
@@ -39,13 +39,14 @@
                                                     }
                                               },
             };
-            this.BomDetailRepository.FindById(123).Returns(new BomDetail
-                                                               {
-                                                                   DetailId = 123, 
-                                                                   Qty = 1, 
-                                                                   AddChangeId = 666,
-                                                                   AddChange = new BomChange { DocumentNumber = 100 }
-                                                               });
+            this.detail = new BomDetail
+                              {
+                                  DetailId = 123,
+                                  Qty = 1,
+                                  AddChangeId = 666,
+                                  AddChange = new BomChange {DocumentNumber = 100}
+                              };
+            this.BomDetailRepository.FindById(123).Returns(this.detail);
             this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(
                 new Bom
                 {
@@ -57,13 +58,13 @@
                 .Returns(new BomChange { ChangeId = 666, DocumentNumber = 100 });
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { DecrementRule = "YES", BomType = "C" });
-            this.result = this.Sut.ProcessTreeUpdate(tree, 100, 33087);
+            this.Sut.ProcessTreeUpdate(tree, 100, 33087);
         }
 
         [Test]
         public void ShouldUpdateField()
         {
-            this.result.Children.First().Qty.Should().Be(2);
+            this.detail.Qty.Should().Be(2);
         }
     }
 }

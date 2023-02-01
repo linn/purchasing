@@ -35,7 +35,7 @@
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(this.part);
 
-            this.result = this.Sut.ProcessTreeUpdate(
+            this.Sut.ProcessTreeUpdate(
                 new BomTreeNode
                     {
                         Name = "NEW BOM", HasChanged = true, Children = new List<BomTreeNode>()

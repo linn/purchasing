@@ -11,8 +11,7 @@
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-    using Org.BouncyCastle.Asn1.Ocsp;
+
 
     public class BomChangeService : IBomChangeService
     {
@@ -44,9 +43,9 @@
             this.bomPack = bomPack;
         }
 
-        public BomTreeNode ProcessTreeUpdate(BomTreeNode tree, int changeRequestNumber, int enteredBy)
+        public void ProcessTreeUpdate(BomTreeNode tree, int changeRequestNumber, int enteredBy)
         {
-            // traversing the updated tree...
+            // traversing the updated tree to enact changes to all boms involved in this change...
             var q = new Queue<BomTreeNode>();
             q.Enqueue(tree);
             while (q.Count != 0)
@@ -59,58 +58,10 @@
 
                     if (current.HasChanged.GetValueOrDefault() && current.Children != null)
                     {
-                        var bomLookup = this.bomRepository.FindBy(x => x.BomName == current.Name);
-                        
-                        // create a bom if required
-                        var bom = bomLookup ?? new Bom
-                                      {
-                                          BomId = this.databaseService.GetIdSequence("BOM_SEQ"),
-                                          BomName = tree.Name,
-                                          Part = this.partRepository.FindBy(x => x.PartNumber == tree.Name),
-                                          Depth = 1,
-                                          CommonBom = "N"
-                                      };
-                        
-                            if (bomLookup == null)
-                            {
-                                this.bomRepository.Add(bom);
-                                bom.Part.BomId = bom.BomId;
-                            }
-                        
-                            // obtain a bom_change to make incoming changes against
-                            // check if there's an open one for this bom
-                            var change = this.bomChangeRepository.FindBy(
-                                x => x.DocumentNumber == changeRequestNumber 
-                                     && new[] { "ACCEPT", "PROPOS" }.Contains(x.ChangeState)
-                                     && x.BomName == current.Name);
-                        
-                            // create a new bom change if not
-                            if (change == null)
-                            {
-                                var id = this.databaseService.GetIdSequence("CHG_SEQ");
-                                change = new BomChange
-                                             {
-                                                 BomId = bom.BomId,
-                                                 ChangeId = id,
-                                                 BomName = current.Name,
-                                                 DocumentType = "CRF", // for now
-                                                 DocumentNumber = changeRequestNumber,
-                                                 PartNumber = current.Name,
-                                                 DateEntered = DateTime.Today,
-                                                 EnteredById = enteredBy,
-                                                 ChangeState = "PROPOS",
-                                                 Comments = "BOM_UT",
-                                                 PcasChange = "N"
-                                             };
-                                this.bomChangeRepository.Add(change);
-                            }
-
-                            this.ProcessBomChangeForSubAssembly(current, change);
-                        
-                            var children = current.Children.ToList();
-                            
-                            current.Children = children;
-                            current.HasChanged = false;
+                        var bom = this.GetOrCreateBom(current.Name);
+                        var change = this.GetOrCreateBomChange(current.Name, changeRequestNumber, enteredBy, bom);
+                        this.ProcessBomChangeForSubAssembly(current, change, bom);
+                        current.HasChanged = false;
                     }
 
                     if (current.Children != null)
@@ -127,20 +78,19 @@
                     n--;
                 }
             }
-
-            return tree;
         }
 
         public void CopyBom(string srcPartNumber, string destBomPartNumber, int changedBy, int crfNumber)
         {
-            var change = this.GetOrCreateBomChange(destBomPartNumber, crfNumber, changedBy);
+            var change = this.GetOrCreateBomChange(
+                destBomPartNumber, crfNumber, changedBy, this.GetOrCreateBom(destBomPartNumber));
             this.bomPack.CopyBom(srcPartNumber, change.BomId, change.ChangeId, change.ChangeState, "O");
         }
 
         public void DeleteAllFromBom(string bomName, int crfNumber, int changedBy)
         {
-            var change = this.GetOrCreateBomChange(bomName, crfNumber, changedBy);
             var bom = this.bomRepository.FindBy(b => b.BomName == bomName);
+            var change = this.GetOrCreateBomChange(bomName, crfNumber, changedBy, bom);
             foreach (var child in bom.Details)
             {
                 var detail = this.bomDetailRepository.FindById(child.DetailId);
@@ -154,22 +104,20 @@
 
         public void ExplodeSubAssembly(string bomName, int crfNumber, string subAssembly, int changedBy)
         {
-            var change = this.GetOrCreateBomChange(bomName, crfNumber, changedBy);
+            var change = this.GetOrCreateBomChange(
+                bomName, crfNumber, changedBy, this.GetOrCreateBom(bomName));
             this.bomPack.ExplodeSubAssembly(change.BomId, change.ChangeId, change.ChangeState, subAssembly);
         }
 
-        private void ProcessBomChangeForSubAssembly(BomTreeNode current, BomChange change)
+        private void ProcessBomChangeForSubAssembly(BomTreeNode current, BomChange change, Bom bom)
         {
-            var bom = this.bomRepository.FindBy(x => x.BomName == current.Name);
-
             // initialise replacement seq to be the max replacement seq currently on this change
             var detailsOnChange = this.bomDetailRepository
                 .FilterBy(x => x.BomId == change.BomId && x.AddChangeId == change.ChangeId);
             var replacementSeq = !detailsOnChange.Any() ? 0
                                      : detailsOnChange.Max(d => d.AddReplaceSeq.GetValueOrDefault());
 
-            var children = current.Children.ToList();
-            foreach (var child in children.ToList())
+            foreach (var child in current.Children)
             {
                 var isAddition = bom.Details
                                  == null || bom.Details.Count == 0
@@ -356,9 +304,31 @@
             replacedDetail.ChangeState = "PROPOS";
         }
 
-        private BomChange GetOrCreateBomChange(string bomName, int crfNumber, int changedBy)
+        private Bom GetOrCreateBom(string name)
         {
-            var bom = this.bomRepository.FindBy(x => x.BomName == bomName);
+            var bomLookup = this.bomRepository.FindBy(x => x.BomName == name);
+
+            // create a bom if required
+            var bom = bomLookup ?? new Bom
+                                       {
+                                           BomId = this.databaseService.GetIdSequence("BOM_SEQ"),
+                                           BomName = name,
+                                           Part = this.partRepository.FindBy(x => x.PartNumber == name),
+                                           Depth = 1,
+                                           CommonBom = "N"
+                                       };
+
+            if (bomLookup == null)
+            {
+                this.bomRepository.Add(bom);
+                bom.Part.BomId = bom.BomId;
+            }
+
+            return bom;
+        }
+
+        private BomChange GetOrCreateBomChange(string bomName, int crfNumber, int changedBy, Bom bom)
+        {
             var change = this.bomChangeRepository.FindBy(
                 x => x.DocumentNumber == crfNumber
                      && x.BomId == bom.BomId

@@ -23,8 +23,6 @@
 
         private BomDetail deletedDetail;
 
-        private BomTreeNode result;
-
         [SetUp]
         public void SetUp()
         {
@@ -75,20 +73,14 @@
                                      };
             this.BomDetailRepository.FindById(4567)
                 .Returns(this.deletedDetail);
-
-            this.result = this.Sut.ProcessTreeUpdate(this.newTree, 100, 33087);
+            
+            this.Sut.ProcessTreeUpdate(this.newTree, 100, 33087);
         }
 
         [Test]
         public void ShouldUndoDelete()
         {
             this.deletedDetail.DeleteChangeId.Should().BeNull();
-        }
-
-        [Test]
-        public void ShouldReturnTree()
-        {
-            this.result.Children.First().DeleteChangeDocumentNumber.Should().BeNull();
         }
     }
 }

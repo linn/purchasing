@@ -29,8 +29,6 @@
 
         private BomChange bomChange;
 
-        private BomTreeNode result;
-
         [SetUp]
         public void SetUp()
         {
@@ -131,7 +129,7 @@
             this.BomDetailRepository
                 .FindBy(Arg.Any<Expression<Func<BomDetail, bool>>>()).Returns(this.replacedToUndo);
 
-            this.result = this.Sut.ProcessTreeUpdate(this.newTree, 48451, 33879);
+            this.Sut.ProcessTreeUpdate(this.newTree, 48451, 33879);
         }
 
         [Test]

@@ -77,19 +77,6 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
                                            } 
                                   }
                 },
-                new Bom 
-                    {
-                        BomName = "BOM",
-                        BomId = 123,
-                        Details = new List<BomDetailViewEntry>
-                                      {
-                                          new BomDetailViewEntry
-                                              {
-                                                  PartNumber = "ASS 1",
-                                                  DetailId = 345
-                                              }
-                                      }
-                    },
                 new Bom
                 {
                     BomName = "ASS 1",
@@ -126,14 +113,6 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
         {
             this.BomDetailRepository.Received(2).Add(Arg.Any<BomDetail>());
             this.BomDetailRepository.Received(1).Add(Arg.Is<BomDetail>(
-                x => x.PartNumber == this.c11.Name
-                     && x.Qty == this.c11.Qty
-                     && x.ChangeState == "PROPOS"
-                     && x.DetailId == 2
-                     && !x.DeleteChangeId.HasValue
-                     && x.BomId == 456
-                     && x.AddChangeId == 2));
-            this.BomDetailRepository.Received(1).Add(Arg.Is<BomDetail>(
                 x => x.PartNumber == this.c12.Name
                      && x.Qty == this.c12.Qty
                      && x.ChangeState == "PROPOS"
@@ -141,6 +120,14 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
                      && !x.DeleteChangeId.HasValue
                      && x.BomId == 123
                      && x.AddChangeId == 1));
+            this.BomDetailRepository.Received(1).Add(Arg.Is<BomDetail>(
+                x => x.PartNumber == this.c11.Name
+                     && x.Qty == this.c11.Qty
+                     && x.ChangeState == "PROPOS"
+                     && x.DetailId == 2
+                     && !x.DeleteChangeId.HasValue
+                     && x.BomId == 456
+                     && x.AddChangeId == 2));
         }
     }
 }
