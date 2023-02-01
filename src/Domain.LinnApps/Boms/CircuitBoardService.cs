@@ -130,6 +130,11 @@
             return board;
         }
 
+        public ProcessResult UpdateFromFile(string boardCode, string revisionCode, string fileType, string fileString)
+        {
+            throw new System.NotImplementedException();
+        }
+
         private void MaybeAddComponentPriorToCrfRevision(
             CircuitBoard board,
             BoardComponent component,

@@ -12,6 +12,7 @@
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Facade.Extensions;
+    using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.Boms;
 
     public class CircuitBoardFacadeService :
@@ -113,6 +114,17 @@
             this.transactionManager.Commit();
 
             return new SuccessResult<CircuitBoardResource>(resource);
+        }
+
+        public IResult<ProcessResultResource> UploadBoardFile(
+            string boardCode,
+            string revisionCode,
+            string fileType,
+            string fileString,
+            IEnumerable<string> getPrivileges)
+        {
+            var result = this.circuitBoardService.UpdateFromFile(boardCode, revisionCode, fileType, fileString);
+            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "ok"));
         }
 
         protected override CircuitBoard CreateFromResource(

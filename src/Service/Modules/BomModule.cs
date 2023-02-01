@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
     using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
 
     using Carter;
@@ -53,6 +54,7 @@
             app.MapPost("/purchasing/boms/copy", this.CopyBom);
             app.MapPost("/purchasing/boms/delete", this.DeleteAllFromBom);
             app.MapPost("/purchasing/boms/explode", this.ExplodeSubAssembly);
+            app.MapPost("/purchasing/purchase-orders/boms/upload-board-file", this.UploadBoardFile);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -299,6 +301,34 @@
                 functionResource.CrfNumber,
                 functionResource.SubAssembly,
                 req.HttpContext.User.GetEmployeeNumber());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task UploadBoardFile(
+            HttpRequest req,
+            HttpResponse res,
+            ICircuitBoardFacadeService circuitBoardFacadeService,
+            string boardCode,
+            string revisionCode)
+        {
+            IResult<ProcessResultResource> result;
+
+            if (req.ContentType == "text/tab-separated-values")
+            {
+                var reader = new StreamReader(req.Body).ReadToEndAsync();
+
+                result = circuitBoardFacadeService.UploadBoardFile(
+                    boardCode,
+                    revisionCode,
+                    "TSB",
+                    reader.Result,
+                    req.HttpContext.GetPrivileges());
+            }
+            else
+            {
+                result = new BadRequestResult<ProcessResultResource>("Unsupported content type.");
+            }
 
             await res.Negotiate(result);
         }

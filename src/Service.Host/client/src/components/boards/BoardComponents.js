@@ -12,11 +12,13 @@ import {
     Dropdown,
     collectionSelectorHelpers,
     itemSelectorHelpers,
+    processSelectorHelpers,
     Search,
     getRequestErrors,
     utilities,
     getItemError,
     InputField,
+    FileUploader,
     SaveBackCancelButtons,
     ErrorCard
 } from '@linn-it/linn-form-components-library';
@@ -30,6 +32,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Link from '@mui/material/Link';
+import Close from '@mui/icons-material/Close';
+import { makeStyles } from '@mui/styles';
 
 import boardComponentsActions from '../../actions/boardComponentsActions';
 import boardsActions from '../../actions/boardsActions';
@@ -38,7 +42,9 @@ import history from '../../history';
 import config from '../../config';
 import boardComponentsReducer from './boardComponentsReducer';
 import partsActions from '../../actions/partsActions';
+import uploadBoardFileActions from '../../actions/uploadBoardFileActions';
 import { boardComponents } from '../../itemTypes';
+import { uploadBoardFile } from '../../processTypes';
 
 function BoardComponents() {
     const reduxDispatch = useDispatch();
@@ -50,7 +56,9 @@ function BoardComponents() {
     const [showChanges, setShowChanges] = useState(true);
     const searchBoards = searchTerm => reduxDispatch(boardsActions.search(searchTerm));
     const clearSearchBoards = () => reduxDispatch(boardsActions.clearSearch());
+
     const [findDialogOpen, setFindDialogOpen] = useState(false);
+    const [loadDialogOpen, setLoadDialogOpen] = useState(false);
     const [findField, setFindField] = useState('partNumber');
     const [findValue, setFindValue] = useState(null);
     const searchBoardsResults = useSelector(state =>
@@ -112,6 +120,14 @@ function BoardComponents() {
                   .revisions.map(l => ({ ...l, id: l.revisionCode }))
             : [];
 
+    const useStyles = makeStyles(() => ({
+        pullRight: {
+            float: 'right'
+        }
+    }));
+
+    const classes = useStyles();
+
     const handleDeleteRow = params => {
         const comp = params.row;
         if (comp.addChangeDocumentNumber?.toString() === crfNumber) {
@@ -149,6 +165,27 @@ function BoardComponents() {
     const partsSearchLoading = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchLoading(reduxState.parts)
     );
+
+    const uploadLoading = useSelector(reduxState =>
+        processSelectorHelpers.getWorking(reduxState[uploadBoardFile.item])
+    );
+
+    const uploadResult = useSelector(reduxState =>
+        processSelectorHelpers.getData(reduxState[uploadBoardFile.item])
+    );
+
+    const uploadError = useSelector(reduxState => getItemError(reduxState, uploadBoardFile.item));
+
+    const uploadMessage = useSelector(reduxState =>
+        processSelectorHelpers.getMessageText(reduxState[uploadBoardFile.item])
+    );
+
+    const uploadSnackbarVisible = useSelector(reduxState =>
+        processSelectorHelpers.getMessageVisible(reduxState[uploadBoardFile.item])
+    );
+
+    const setUploadSnackbarVisible = () =>
+        dispatch(uploadBoardFileActions.setMessageVisible(false));
 
     const handlePartSelect = newValue => {
         dispatch({
@@ -458,7 +495,44 @@ function BoardComponents() {
                         <Button onClick={() => setFindDialogOpen(false)}>Close</Button>
                     </DialogActions>
                 </Dialog>
-                <Grid item xs={5}>
+                <Dialog open={loadDialogOpen} fullWidth maxWidth="lg">
+                    <DialogTitle>
+                        Load File
+                        <IconButton
+                            className={classes.pullRight}
+                            aria-label="Close"
+                            onClick={() => setLoadDialogOpen(false)}
+                        >
+                            <Close />
+                        </IconButton>
+                    </DialogTitle>
+                    <DialogContent dividers>
+                        <FileUploader
+                            doUpload={data => {
+                                reduxDispatch(uploadBoardFileActions.clearErrorsForItem());
+                                reduxDispatch(uploadBoardFileActions.clearProcessData());
+                                reduxDispatch(
+                                    uploadBoardFileActions.requestProcessStart(data, {
+                                        boardCode: state.board.boardCode,
+                                        revisionCode: state.selectedRevision.revisionCode
+                                    })
+                                );
+                            }}
+                            loading={uploadLoading}
+                            result={uploadResult}
+                            error={uploadError}
+                            snackbarVisible={uploadSnackbarVisible}
+                            setSnackbarVisible={setUploadSnackbarVisible}
+                            message={uploadMessage}
+                            initiallyExpanded
+                            helperText="Upload a board file."
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setLoadDialogOpen(false)}>Close</Button>
+                    </DialogActions>
+                </Dialog>
+                <Grid item xs={3}>
                     <Stack direction="row" spacing={2}>
                         <Search
                             propertyName="boardCode"
@@ -485,13 +559,13 @@ function BoardComponents() {
                             variant="outlined"
                             onClick={goToBoard}
                             size="small"
-                            style={{ marginBottom: '25px' }}
+                            style={{ marginBottom: '45px' }}
                         >
                             Go
                         </Button>
                     </Stack>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={5}>
                     <Stack direction="row" spacing={2}>
                         <Dropdown
                             items={changeRequests?.map(c => ({
@@ -508,6 +582,14 @@ function BoardComponents() {
                                 setCrfDetails(n);
                             }}
                         />
+                        <Button
+                            variant="outlined"
+                            onClick={() => setLoadDialogOpen(true)}
+                            size="small"
+                            style={{ marginBottom: '25px' }}
+                        >
+                            Load File
+                        </Button>
                     </Stack>
                 </Grid>
                 <Grid item xs={4}>

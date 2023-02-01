@@ -10,5 +10,7 @@
             int changeRequestId,
             IEnumerable<BoardComponent> componentsToAdd,
             IEnumerable<BoardComponent> componentsToRemove);
+
+        ProcessResult UpdateFromFile(string boardCode, string revisionCode, string fileType, string fileString);
     }
 }
