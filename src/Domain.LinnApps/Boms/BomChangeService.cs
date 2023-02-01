@@ -12,7 +12,6 @@
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
-
     public class BomChangeService : IBomChangeService
     {
         private readonly IDatabaseService databaseService;
@@ -111,14 +110,16 @@
 
         private void ProcessBomChange(BomTreeNode current, BomChange change, Bom bom)
         {
-            var detailsOnChange = this.bomDetailRepository
-                .FilterBy(x => x.BomId == change.BomId && x.AddChangeId == change.ChangeId);
-
-            var replacementSeq = !detailsOnChange.Any() ? 0
-                                     : detailsOnChange.Max(d => d.AddReplaceSeq.GetValueOrDefault());
-
             foreach (var child in current.Children)
             {
+                int replacementSeq = 0;
+
+                var detailsOnChange = this.bomDetailRepository
+                    .FilterBy(x => x.BomId == change.BomId && x.AddChangeId == change.ChangeId);
+
+                replacementSeq = detailsOnChange == null || !detailsOnChange.Any() ? 0
+                                         : detailsOnChange.Max(d => d.AddReplaceSeq.GetValueOrDefault());
+
                 var isAddition = bom.Details
                                  == null || bom.Details.Count == 0
                                          || bom.Details.All(d => d.DetailId.ToString() != child.Id);
