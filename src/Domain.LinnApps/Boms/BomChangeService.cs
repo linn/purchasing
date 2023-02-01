@@ -113,6 +113,7 @@
         {
             var detailsOnChange = this.bomDetailRepository
                 .FilterBy(x => x.BomId == change.BomId && x.AddChangeId == change.ChangeId);
+
             var replacementSeq = !detailsOnChange.Any() ? 0
                                      : detailsOnChange.Max(d => d.AddReplaceSeq.GetValueOrDefault());
 
@@ -285,11 +286,6 @@
             {
                 throw new InvalidBomChangeException(
                     $"{node.Name} was added by the current change request - no need to replace it - just edit it directly.");
-            }
-
-            if (replacement.Name == change.BomName)
-            {
-                throw new InvalidBomChangeException($"Can't add {replacement.Name} to it's own BOM!");
             }
 
             if (replacedDetail.PcasLine == "Y")
