@@ -112,12 +112,10 @@
         {
             foreach (var child in current.Children)
             {
-                int replacementSeq = 0;
-
                 var detailsOnChange = this.bomDetailRepository
                     .FilterBy(x => x.BomId == change.BomId && x.AddChangeId == change.ChangeId);
 
-                replacementSeq = detailsOnChange == null || !detailsOnChange.Any() ? 0
+                var replacementSeq = detailsOnChange == null || !detailsOnChange.Any() ? 0
                                          : detailsOnChange.Max(d => d.AddReplaceSeq.GetValueOrDefault());
 
                 var isAddition = bom.Details
