@@ -76,7 +76,7 @@
             this.BomDetailRepository.FindById(4567)
                 .Returns(this.deletedDetail);
 
-            this.result = this.Sut.CreateBomChanges(this.newTree, 100, 33087);
+            this.result = this.Sut.ProcessTreeUpdate(this.newTree, 100, 33087);
         }
 
         [Test]

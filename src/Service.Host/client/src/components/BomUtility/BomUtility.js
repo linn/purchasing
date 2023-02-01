@@ -51,7 +51,7 @@ function BomUtility() {
     const { search } = useLocation();
     const { bomName, changeRequest } = queryString.parse(search);
 
-    const [crNumber, setCrNumber] = useState(changeRequest);
+    const [crNumber, setCrNumber] = useState(changeRequest === 'null' ? null : changeRequest);
     const [changeRequests, changeRequestsLoading] = useInitialise(
         () => changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True'),
         changeRequestsItemType.item,
@@ -289,8 +289,7 @@ function BomUtility() {
     const [changesMade, setChangesMade] = useState(false);
 
     // updates the tree with changes passed via a 'newNode' object
-    const updateTree = (tree, newNode, addNode) => {
-        console.log(newNode, addNode);
+    const updateTree = (tree, newNode, addNode, addChangeDocumentNumber) => {
         setChangesMade(true);
         const newTree = { ...tree };
         const q = [];
@@ -303,7 +302,10 @@ function BomUtility() {
                 if (current.id === newNode.parentId) {
                     current.hasChanged = true;
                     if (addNode) {
-                        current.children = [...current.children, newNode];
+                        current.children = [
+                            ...current.children,
+                            { ...newNode, addChangeDocumentNumber }
+                        ];
                     } else {
                         let replacedIndex = null;
                         let replacementFor = null;
@@ -330,7 +332,7 @@ function BomUtility() {
                                 replacementFor = x.id;
                                 replacedNode = newNode;
                             }
-                            return { ...newNode, changeState: 'PROPOS' };
+                            return { ...newNode };
                         });
                         if (replacedIndex !== null) {
                             current.children.splice(replacedIndex + 1, 0, {
@@ -340,7 +342,7 @@ function BomUtility() {
                                 changeState: 'PROPOS',
                                 replacementFor,
                                 isReplaced: false,
-                                addChangeDocumentNumber: null
+                                addChangeDocumentNumber
                             });
                         }
                     }
@@ -408,11 +410,14 @@ function BomUtility() {
         return null;
     };
 
-    const processRowUpdate = useCallback(newRow => {
-        setDisableChangesButton(true);
-        setTreeView(tr => updateTree(tr, newRow, false));
-        return newRow;
-    }, []);
+    const processRowUpdate = useCallback(
+        newRow => {
+            setDisableChangesButton(true);
+            setTreeView(tr => updateTree(tr, newRow, false, crNumber));
+            return newRow;
+        },
+        [crNumber]
+    );
 
     // add a new line to the children list of the selected node
     const addLine = () => {

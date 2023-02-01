@@ -87,7 +87,7 @@
                 .Returns(this.replacedDetail);
             this.BomDetailRepository.FilterBy(Arg.Any<Expression<Func<BomDetail, bool>>>())
                 .Returns(new List<BomDetail> { new BomDetail { AddReplaceSeq = 2 } }.AsQueryable());
-            this.Sut.CreateBomChanges(this.newTree, 100, 33087);
+            this.Sut.ProcessTreeUpdate(this.newTree, 100, 33087);
         }
 
         [Test]

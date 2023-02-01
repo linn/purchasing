@@ -77,6 +77,19 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
                                            } 
                                   }
                 },
+                new Bom 
+                    {
+                        BomName = "BOM",
+                        BomId = 123,
+                        Details = new List<BomDetailViewEntry>
+                                      {
+                                          new BomDetailViewEntry
+                                              {
+                                                  PartNumber = "ASS 1",
+                                                  DetailId = 345
+                                              }
+                                      }
+                    },
                 new Bom
                 {
                     BomName = "ASS 1",
@@ -88,7 +101,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
             this.BomDetailRepository.FindById(345).Returns(new BomDetail { Qty = 2, GenerateRequirement = "Y" });
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(1, 2);
             this.DatabaseService.GetIdSequence("BOMDET_SEQ").Returns(1, 2, 3);
-            this.Sut.CreateBomChanges(this.newTree, 100, 33087);
+            this.Sut.ProcessTreeUpdate(this.newTree, 100, 33087);
         }
 
         [Test]

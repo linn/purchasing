@@ -40,7 +40,7 @@
                                     TreeRoot = this.tree
                                 };
 
-            this.BomChangeService.CreateBomChanges(
+            this.BomChangeService.ProcessTreeUpdate(
                 Arg.Any<BomTreeNode>(),
                 4567,
                 Arg.Any<int>()).Returns(this.resource.TreeRoot);

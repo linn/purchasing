@@ -39,7 +39,13 @@
                                                     }
                                               },
             };
-            this.BomDetailRepository.FindById(123).Returns(new BomDetail { DetailId = 123, Qty = 1, AddChangeId = 666 });
+            this.BomDetailRepository.FindById(123).Returns(new BomDetail
+                                                               {
+                                                                   DetailId = 123, 
+                                                                   Qty = 1, 
+                                                                   AddChangeId = 666,
+                                                                   AddChange = new BomChange { DocumentNumber = 100 }
+                                                               });
             this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(
                 new Bom
                 {
@@ -48,10 +54,10 @@
                     Details = new List<BomDetailViewEntry> { new BomDetailViewEntry { DetailId = 123, Qty = 1 } }
                 });
             this.BomChangeRepository.FindBy(Arg.Any<Expression<Func<BomChange, bool>>>())
-                .Returns(new BomChange { ChangeId = 666 });
+                .Returns(new BomChange { ChangeId = 666, DocumentNumber = 100 });
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { DecrementRule = "YES", BomType = "C" });
-            this.result = this.Sut.CreateBomChanges(tree, 100, 33087);
+            this.result = this.Sut.ProcessTreeUpdate(tree, 100, 33087);
         }
 
         [Test]

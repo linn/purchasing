@@ -65,6 +65,12 @@
                     Details = new List<BomDetailViewEntry>()
                 },
                 new Bom
+                    {
+                        BomName = "BOM",
+                        BomId = 123,
+                        Details = new List<BomDetailViewEntry>()
+                    },
+                new Bom
                 {
                     BomName = "ASS 1",
                     BomId = 456,
@@ -74,7 +80,7 @@
                 .Returns(new Part { DecrementRule = "YES", BomType = "C" });
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(1, 2);
             this.DatabaseService.GetIdSequence("BOMDET_SEQ").Returns(1, 2, 3);
-            this.Sut.CreateBomChanges(this.newTree, 100, 33087);
+            this.Sut.ProcessTreeUpdate(this.newTree, 100, 33087);
         }
 
         [Test]

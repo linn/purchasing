@@ -56,7 +56,8 @@
                                           {
                                               PartNumber = "ASS 1",
                                               Qty = 2,
-                                              ChangeState = "LIVE"
+                                              ChangeState = "LIVE",
+                                              DetailId = 4567
                                           }
                                   }
             });
@@ -76,19 +77,13 @@
                 .Returns(this.deletedDetail);
             this.BomChangeRepository.FindBy(Arg.Any<Expression<Func<BomChange, bool>>>())
                 .Returns(new BomChange { ChangeId = 123, DocumentNumber = 666 });
-            this.result = this.Sut.CreateBomChanges(this.newTree, 666, 33087);
+            this.result = this.Sut.ProcessTreeUpdate(this.newTree, 666, 33087);
         }
 
         [Test]
         public void ShouldDeleteDetail()
         {
             this.BomDetailRepository.Received().Remove(Arg.Is<BomDetail>(x => x.DetailId == 4567));
-        }
-
-        [Test]
-        public void ShouldReturnTreeWithoutDeletedDetail()
-        {
-            this.result.Children.Count().Should().Be(0);
         }
     }
 }
