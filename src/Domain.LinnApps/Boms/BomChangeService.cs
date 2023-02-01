@@ -164,32 +164,7 @@
 
         private void AddNode(BomTreeNode node, BomChange change, int? replacementSeq)
         {
-            var part = this.partRepository.FindBy(p => p.PartNumber == node.Name);
-
-            if (part == null)
-            {
-                throw new ItemNotFoundException($"Invalid Part Number: {node.Name} on Assembly: BOM");
-            }
-
-            if (part.DatePurchPhasedOut.HasValue)
-            {
-                throw new InvalidBomChangeException(
-                    $"Can't add {node.Name} to {node.ParentName} - part has been phased out by purchasing");
-            }
-
-            if (string.IsNullOrEmpty(part.DecrementRule))
-            {
-                throw new InvalidBomChangeException(
-                    $"Can't add {node.Name} to {node.ParentName} - part has no decrement rule!");
-            }
-
-            if (string.IsNullOrEmpty(part.BomType))
-            {
-                throw new InvalidBomChangeException(
-                    $"Can't add {node.Name} to {node.ParentName} - part has no BOM Type!");
-            }
-
-            node.ChangeState = "PROPOS";
+            this.CheckPart(node.Name, node.ParentName);
 
             if (node.Name == change.BomName)
             {
@@ -205,7 +180,7 @@
                 PartNumber = node.Name,
                 Qty = node.Qty,
                 GenerateRequirement = node.Requirement,
-                ChangeState = "PROPOS",
+                ChangeState = change.ChangeState,
                 AddChangeId = change.ChangeId,
                 AddReplaceSeq = string.IsNullOrEmpty(node.ReplacementFor)
                                                      ? null : replacementSeq + 1,
@@ -247,7 +222,7 @@
                 throw new InvalidBomChangeException($"{node.Name} is a PCAS line - cannot delete here.");
             }
 
-            if (detail?.AddChange?.DocumentNumber == change.DocumentNumber)
+            if (detail.AddChange.DocumentNumber == change.DocumentNumber)
             {
                 this.bomDetailRepository.Remove(detail);
 
@@ -296,7 +271,7 @@
 
             replacedDetail.DeleteChangeId = change.ChangeId;
             replacedDetail.DeleteReplaceSeq = seq + 1;
-            replacedDetail.ChangeState = "PROPOS";
+            replacedDetail.ChangeState = change.ChangeState;
         }
 
         private Bom GetOrCreateBom(string name)
@@ -347,6 +322,33 @@
             }
 
             return change;
+        }
+
+        private void CheckPart(string partNumber, string assembly)
+        {
+            var part = this.partRepository.FindBy(x => x.PartNumber == partNumber);
+            if (part == null)
+            {
+                throw new ItemNotFoundException($"Invalid Part Number: {partNumber} on Assembly: {assembly}");
+            }
+
+            if (part.DatePurchPhasedOut.HasValue)
+            {
+                throw new InvalidBomChangeException(
+                $"Can't add {partNumber} to {assembly} - part has been phased out by purchasing");
+            }
+
+            if (string.IsNullOrEmpty(part.DecrementRule))
+            {
+                throw new InvalidBomChangeException(
+                $"Can't add {partNumber} to {assembly} - part has no decrement rule!");
+            }
+
+            if (string.IsNullOrEmpty(part.BomType))
+            {
+                throw new InvalidBomChangeException(
+                    $"Can't add {partNumber} to {assembly} - part has no BOM Type!");
+            }
         }
     }
 }
