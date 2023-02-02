@@ -174,7 +174,7 @@ function BomUtility() {
         {
             field: 'name',
             headerName: 'Part',
-            width: 150,
+            width: 175,
             editable: false,
             renderCell: partLookUpCell,
             align: 'right'
@@ -220,8 +220,8 @@ function BomUtility() {
         },
         {
             field: 'addChangeDocumentNumber',
-            headerName: 'Add CRF',
-            width: 100,
+            headerName: 'Add',
+            width: 75,
             hide: !showChanges,
             editable: false,
             renderCell: params => (
@@ -238,8 +238,8 @@ function BomUtility() {
         },
         {
             field: 'deleteChangeDocumentNumber',
-            headerName: 'Del CRF',
-            width: 100,
+            headerName: 'Del',
+            width: 75,
             hide: !showChanges,
             editable: false,
             renderCell: params =>
@@ -263,7 +263,8 @@ function BomUtility() {
             field: 'drawingReference',
             headerName: 'Drawing Ref',
             width: 150,
-            editable: false
+            editable: false,
+            hide: true
         },
         {
             field: 'replacementFor',
@@ -894,13 +895,13 @@ function BomUtility() {
                         </Grid>
                     </>
                 )}
-                <Grid item xs={3} height="30px">
+                <Grid item xs={4} height="30px">
                     {subAssemblyLoading && <LinearProgress />}
                 </Grid>
-                <Grid item xs={9} height="30px" />
+                <Grid item xs={8} height="30px" />
                 <Grid
                     item
-                    xs={3}
+                    xs={4}
                     sx={{
                         height: '85vh',
                         overflowY: bomTreeLoading ? 'hidden' : 'scroll',
@@ -927,7 +928,7 @@ function BomUtility() {
                 </Grid>
                 <Grid
                     item
-                    xs={9}
+                    xs={8}
                     sx={{
                         paddingTop: '0px ! important',
                         height: '85vh',
