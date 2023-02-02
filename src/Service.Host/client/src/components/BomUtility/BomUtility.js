@@ -182,6 +182,7 @@ function BomUtility() {
         {
             field: 'description',
             headerName: 'Description',
+            hide: true,
             width: 250,
             editable: false,
             renderCell: params =>
@@ -265,27 +266,6 @@ function BomUtility() {
             width: 150,
             editable: false,
             hide: true
-        },
-        {
-            field: 'replacementFor',
-            headerName: 'Replacing',
-            width: 180,
-            editable: false,
-            hide: true // useful for debugging, but hidden generally
-        },
-        {
-            field: 'replacedBy',
-            headerName: 'Replaced By',
-            width: 180,
-            editable: false,
-            hide: true // useful for debugging, but hidden generally,
-        },
-        {
-            field: 'parentId',
-            headerName: 'Parent',
-            width: 180,
-            editable: false,
-            hide: true // useful for debugging, but hidden generally
         }
     ];
     const initialise = useCallback(() => {
