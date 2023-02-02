@@ -120,7 +120,6 @@ function BomUtility() {
         e.preventDefault();
         const { target } = e;
         const detail = selected.children.find(x => x.id === target.id);
-
         setContextMenu(
             crNumber && contextMenu === null
                 ? {
@@ -233,7 +232,7 @@ function BomUtility() {
         },
         {
             field: 'addReplaceSeq',
-            headerName: 'Seq',
+            headerName: 'In',
             width: 75,
             editable: false
         },
@@ -256,14 +255,14 @@ function BomUtility() {
         },
         {
             field: 'deleteReplaceSeq',
-            headerName: 'Seq',
+            headerName: 'Out',
             width: 75,
             editable: false
         },
         {
             field: 'drawingReference',
             headerName: 'Drawing Ref',
-            width: 200,
+            width: 150,
             editable: false
         },
         {
@@ -580,6 +579,7 @@ function BomUtility() {
                     variant="contained"
                     onClick={() => {
                         setExplodeSubAssemblyDialogOpen(false);
+                        setCopyBomDialogOpen(false);
                         setPartSearchTerm(null);
                         if (copyBomDialogOpen) {
                             reduxDispatch(
@@ -894,13 +894,13 @@ function BomUtility() {
                         </Grid>
                     </>
                 )}
-                <Grid item xs={4} height="30px">
+                <Grid item xs={3} height="30px">
                     {subAssemblyLoading && <LinearProgress />}
                 </Grid>
-                <Grid item xs={8} height="30px" />
+                <Grid item xs={9} height="30px" />
                 <Grid
                     item
-                    xs={4}
+                    xs={3}
                     sx={{
                         height: '85vh',
                         overflowY: bomTreeLoading ? 'hidden' : 'scroll',
@@ -927,7 +927,7 @@ function BomUtility() {
                 </Grid>
                 <Grid
                     item
-                    xs={8}
+                    xs={9}
                     sx={{
                         paddingTop: '0px ! important',
                         height: '85vh',
@@ -958,7 +958,6 @@ function BomUtility() {
                         hideFooter
                         autoHeight
                         experimentalFeatures={{ newEditingApi: true }}
-                        checkboxSelection
                         disableSelectionOnClick
                         columns={columns}
                         getRowClassName={params => params.row.changeState?.toLowerCase()}
