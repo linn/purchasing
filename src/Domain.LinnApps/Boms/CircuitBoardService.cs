@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -132,7 +133,15 @@
 
         public ProcessResult UpdateFromFile(string boardCode, string revisionCode, string fileType, string fileString)
         {
-            throw new System.NotImplementedException();
+            if (fileType != "TSB")
+            {
+                throw new InvalidOptionException(
+                    $"File type {fileType} has no supporting strategy and cannot be processed");
+            }
+
+            var strategy = new TabSeparatedReadStrategy();
+            var fileContents = strategy.ReadFile(fileString);
+            return new ProcessResult(true, "ok");
         }
 
         private void MaybeAddComponentPriorToCrfRevision(
