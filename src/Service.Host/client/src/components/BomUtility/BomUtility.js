@@ -119,14 +119,20 @@ function BomUtility() {
     const onContextMenu = e => {
         e.preventDefault();
         const { target } = e;
-        const detail = selected.children.find(x => x.name === target.innerText);
+        const detail = selected.children.find(x => x.id === target.id);
+
         setContextMenu(
             crNumber && contextMenu === null
                 ? {
                       mouseX: e.clientX + 2,
                       mouseY: e.clientY - 6,
                       part: target.innerText,
-                      canReplace: Number(crNumber) !== detail.addChangeDocumentNumber,
+                      canDelete: !detail.deleteReplaceSeq,
+                      canReplace:
+                          Number(crNumber) !== detail.addChangeDocumentNumber &&
+                          !detail.addReplaceSeq &&
+                          !detail.deleteReplaceSeq &&
+                          !detail.replacementFor,
                       detail: { ...detail, parentId: selected.id }
                   }
                 : null
@@ -135,9 +141,9 @@ function BomUtility() {
 
     const partLookUpCell = params => (
         <>
-            <span onContextMenu={crNumber ? onContextMenu : null}>
+            <span id={params.row.id} onContextMenu={crNumber ? onContextMenu : null}>
                 {params.row.isReplaced || params.row.toDelete ? (
-                    <s>{params.row.name}</s>
+                    <s id={params.row.id}>{params.row.name}</s>
                 ) : (
                     params.row.name
                 )}
@@ -961,7 +967,9 @@ function BomUtility() {
                             >
                                 REPLACE
                             </MenuItem>
-                            <MenuItem onClick={handleDeleteClick}>DELETE</MenuItem>
+                            <MenuItem disabled={!contextMenu.canDelete} onClick={handleDeleteClick}>
+                                DELETE
+                            </MenuItem>
                         </Menu>
                     )}
                     <Grid item xs={1}>
