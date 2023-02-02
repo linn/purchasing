@@ -124,7 +124,7 @@
 
                 var isDeletion = child.ToDelete.GetValueOrDefault();
 
-                var isDeletionUndo = !child.IsReplaced && new[] { "ACCEPT", "PROPOS" }.Contains(child.ChangeState)
+                var isDeletionUndo = !child.IsReplaced && child.ChangeState == "LIVE"
                                             && child.DeleteChangeDocumentNumber.HasValue;
 
                 var isExistingNode = bom.Details != null && string.IsNullOrEmpty(child.ReplacedBy)
@@ -135,7 +135,7 @@
 
                 if (isDeletionUndo)
                 {
-                    this.UndoNodeDeletion(child);
+                    this.UndoNodeDeletion(child, change.DocumentNumber);
                 }
                 else if (isDeletion)
                 {
@@ -240,8 +240,15 @@
             }
         }
 
-        private void UndoNodeDeletion(BomTreeNode node)
+        private void UndoNodeDeletion(BomTreeNode node, int changeRequestNumber)
         {
+            // todo - is this correct? - if so add a unit test to enshrine it
+            if (node.DeleteChangeDocumentNumber.GetValueOrDefault() != changeRequestNumber)
+            {
+                throw new InvalidBomChangeException(
+                    $"cannot undo delete of {node.Name} - it was deleted on a different change request.");
+            }
+
             node.DeleteChangeDocumentNumber = null;
             this.bomDetailRepository.FindById(int.Parse(node.Id)).DeleteChangeId = null;
         }

@@ -31,7 +31,7 @@
                                         Type = "A",
                                         Qty = 2,
                                         Name = "ASS 1",
-                                        ChangeState = "PROPOS",
+                                        ChangeState = "LIVE",
                                         ParentName = "BOM",
                                         ToDelete = true,
                                         Id = "4567",
@@ -56,7 +56,7 @@
                                           {
                                               PartNumber = "ASS 1",
                                               Qty = 2,
-                                              ChangeState = "PROPOS"
+                                              ChangeState = "LIVE"
                                           }
                                   }
                 });
@@ -67,7 +67,8 @@
             this.deletedDetail = new BomDetail
                                      {
                                          PartNumber = "ASS 1", 
-                                         Qty = 2, ChangeState = "PROPOS",
+                                         Qty = 2, 
+                                         ChangeState = "LIVE",
                                          DetailId = 4567,
                                          AddChange = new BomChange { ChangeId = 123 }
                                      };
