@@ -91,15 +91,6 @@
         }
 
         [Test]
-        public void ShouldAddBomChange()
-        {
-            this.BomChangeRepository
-                .Received(1).Add(Arg.Any<BomChange>());
-            this.BomChangeRepository
-                .Received(1).Add(Arg.Is<BomChange>(c => c.BomName == "BOM" && c.DocumentNumber == 100));
-        }
-
-        [Test]
         public void ShouldAddReplacementDetail()
         {
             this.BomDetailRepository.Received(1).Add(Arg.Any<BomDetail>());

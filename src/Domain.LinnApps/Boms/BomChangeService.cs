@@ -124,10 +124,10 @@
 
                 var isDeletion = child.ToDelete.GetValueOrDefault();
 
-                var isDeletionUndo = new[] { "ACCEPT", "PROPOS" }.Contains(child.ChangeState)
+                var isDeletionUndo = !child.IsReplaced && new[] { "ACCEPT", "PROPOS" }.Contains(child.ChangeState)
                                             && child.DeleteChangeDocumentNumber.HasValue;
 
-                var isExistingNodeUpdate = bom.Details != null && string.IsNullOrEmpty(child.ReplacedBy)
+                var isExistingNode = bom.Details != null && string.IsNullOrEmpty(child.ReplacedBy)
                                                     && bom.Details.Select(x => x.DetailId.ToString())
                                                         .Contains(child.Id);
 
@@ -147,9 +147,9 @@
                     {
                         this.AddNode(child, change, ref replacementSeq);
                     }
-                    else if (isExistingNodeUpdate)
+                    else if (isExistingNode)
                     {
-                        this.UpdateNode(child, change);
+                        this.MaybeUpdateNode(child, change);
                     }
 
                     if (isReplacement)
@@ -189,7 +189,7 @@
             });
         }
 
-        private void UpdateNode(BomTreeNode node, BomChange change)
+        private void MaybeUpdateNode(BomTreeNode node, BomChange change)
         {
             var detail = this.bomDetailRepository.FindById(int.Parse(node.Id));
             if (detail.Qty != node.Qty || detail.GenerateRequirement != node.Requirement)
