@@ -110,14 +110,14 @@
 
         private void ProcessBomChange(BomTreeNode current, BomChange change, Bom bom)
         {
+            var detailsOnChange = this.bomDetailRepository
+                .FilterBy(x => x.BomId == change.BomId && x.AddChangeId == change.ChangeId);
+
+            var replacementSeq = detailsOnChange == null || !detailsOnChange.Any() ? 0
+                                     : detailsOnChange.Max(d => d.AddReplaceSeq.GetValueOrDefault());
+
             foreach (var child in current.Children)
             {
-                var detailsOnChange = this.bomDetailRepository
-                    .FilterBy(x => x.BomId == change.BomId && x.AddChangeId == change.ChangeId);
-
-                var replacementSeq = detailsOnChange == null || !detailsOnChange.Any() ? 0
-                                         : detailsOnChange.Max(d => d.AddReplaceSeq.GetValueOrDefault());
-
                 var isAddition = bom.Details
                                  == null || bom.Details.Count == 0
                                          || bom.Details.All(d => d.DetailId.ToString() != child.Id);
@@ -145,7 +145,7 @@
                 {
                     if (isAddition)
                     {
-                        this.AddNode(child, change, replacementSeq);
+                        this.AddNode(child, change, ref replacementSeq);
                     }
                     else if (isExistingNodeUpdate)
                     {
@@ -161,7 +161,7 @@
             }
         }
 
-        private void AddNode(BomTreeNode node, BomChange change, int? replacementSeq)
+        private void AddNode(BomTreeNode node, BomChange change, ref int replacementSeq)
         {
             this.CheckPart(node.Name, node.ParentName);
 
@@ -182,7 +182,7 @@
                 ChangeState = change.ChangeState,
                 AddChangeId = change.ChangeId,
                 AddReplaceSeq = string.IsNullOrEmpty(node.ReplacementFor)
-                                                     ? null : replacementSeq + 1,
+                                                     ? null : replacementSeq += 1,
                 DeleteChangeId = null,
                 DeleteReplaceSeq = null,
                 PcasLine = "N"

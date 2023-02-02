@@ -123,31 +123,9 @@
                                        };
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { DecrementRule = "YES", BomType = "C" });
-            var first = new List<BomDetail>
-                            {
-                                new BomDetail
-                                    {
-                                        PartNumber = "CAP 1 OLD", 
-                                        Qty = 2, ChangeState = "LIVE", 
-                                        DetailId = 4567
-                                    },
-                                new BomDetail
-                                    {
-                                        PartNumber = "CAP 2 OLD", 
-                                        Qty = 2, 
-                                        ChangeState = "LIVE", 
-                                        DetailId = 4568
-                                    }
-                            };
-            var arr = new BomDetail[2];
-            first.CopyTo(arr);
-            var second = arr.Append(new BomDetail
-                           {
-                               PartNumber = "CAP 1 NEW", Qty = 2, ChangeState = "LIVE", AddReplaceSeq = 1
-                           });
-
+            
             this.BomDetailRepository.FilterBy(Arg.Any<Expression<Func<BomDetail, bool>>>())
-                .Returns(first.AsQueryable(), first.AsQueryable(), second.AsQueryable());
+                .Returns(new List<BomDetail>().AsQueryable());
             this.BomDetailRepository.FindById(4567)
                 .Returns(this.replacedDetail1);
             this.BomDetailRepository.FindById(4568)
