@@ -174,11 +174,11 @@
         {
             this.replacedDetail1.DeleteReplaceSeq.Should().Be(1);
             this.replacedDetail1.DeleteChangeId.Should().Be(6666);
-            this.replacedDetail1.ChangeState.Should().Be("PROPOS");
+            this.replacedDetail1.ChangeState.Should().Be("LIVE");
 
             this.replacedDetail2.DeleteReplaceSeq.Should().Be(2);
             this.replacedDetail2.DeleteChangeId.Should().Be(6666);
-            this.replacedDetail2.ChangeState.Should().Be("PROPOS");
+            this.replacedDetail2.ChangeState.Should().Be("LIVE");
         }
     }
 }

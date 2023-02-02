@@ -250,6 +250,7 @@
             }
 
             node.DeleteChangeDocumentNumber = null;
+            node.ChangeState = "LIVE"; // todo - check this is right - add to test if so
             this.bomDetailRepository.FindById(int.Parse(node.Id)).DeleteChangeId = null;
         }
 
@@ -277,7 +278,6 @@
 
             replacedDetail.DeleteChangeId = change.ChangeId;
             replacedDetail.DeleteReplaceSeq = seq + 1;
-            replacedDetail.ChangeState = change.ChangeState;
         }
 
         private Bom GetOrCreateBom(string name)

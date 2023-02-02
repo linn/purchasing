@@ -164,7 +164,7 @@ function BomUtility() {
             field: 'type',
             headerName: 'Type',
             editable: false,
-            width: 100,
+            width: 75,
             renderCell: params =>
                 params.row.isReplaced || params.row.toDelete ? (
                     <s>{params.row.type}</s>
@@ -175,7 +175,7 @@ function BomUtility() {
         {
             field: 'name',
             headerName: 'Part',
-            width: 180,
+            width: 150,
             editable: false,
             renderCell: partLookUpCell,
             align: 'right'
@@ -183,7 +183,7 @@ function BomUtility() {
         {
             field: 'description',
             headerName: 'Description',
-            width: 500,
+            width: 250,
             editable: false,
             renderCell: params =>
                 params.row.isReplaced || params.row.toDelete ? (
@@ -195,13 +195,13 @@ function BomUtility() {
         {
             field: 'safetyCritical',
             headerName: 'Safety',
-            width: 100,
+            width: 75,
             editable: false
         },
         {
             field: 'qty',
             headerName: 'Qty',
-            width: 100,
+            width: 75,
             editable: true,
             type: 'number',
             renderCell: params =>
@@ -214,20 +214,15 @@ function BomUtility() {
         {
             field: 'requirement',
             headerName: 'Req',
+            width: 75,
             editable: true,
             type: 'singleSelect',
             valueOptions: ['Y', 'N']
         },
         {
-            field: 'drawingReference',
-            headerName: 'Drawing Ref',
-            width: 200,
-            editable: false
-        },
-        {
             field: 'addChangeDocumentNumber',
             headerName: 'Add CRF',
-            width: 150,
+            width: 100,
             hide: !showChanges,
             editable: false,
             renderCell: params => (
@@ -237,9 +232,15 @@ function BomUtility() {
             )
         },
         {
+            field: 'addReplaceSeq',
+            headerName: 'Seq',
+            width: 75,
+            editable: false
+        },
+        {
             field: 'deleteChangeDocumentNumber',
             headerName: 'Del CRF',
-            width: 150,
+            width: 100,
             hide: !showChanges,
             editable: false,
             renderCell: params =>
@@ -252,6 +253,18 @@ function BomUtility() {
                 ) : (
                     <span>{params.row.deleteChangeDocumentNumber}</span>
                 )
+        },
+        {
+            field: 'deleteReplaceSeq',
+            headerName: 'Seq',
+            width: 75,
+            editable: false
+        },
+        {
+            field: 'drawingReference',
+            headerName: 'Drawing Ref',
+            width: 200,
+            editable: false
         },
         {
             field: 'replacementFor',
