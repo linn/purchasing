@@ -29,7 +29,7 @@ function ChangeRequest() {
     const reduxDispatch = useDispatch();
 
     const [item, loading] = useInitialise(() => changeRequestActions.fetch(id), changeRequest.item);
-    const statusChangeLoadingLoading = useSelector(reduxState =>
+    const statusChangeLoading = useSelector(reduxState =>
         itemSelectorHelpers.getItemLoading(reduxState[changeRequestStatusChange.item])
     );
 
@@ -143,7 +143,7 @@ function ChangeRequest() {
 
     return (
         <Page history={history}>
-            {loading || statusChangeLoadingLoading ? (
+            {loading || statusChangeLoading ? (
                 <Loading />
             ) : (
                 <Grid container spacing={2} justifyContent="center">
