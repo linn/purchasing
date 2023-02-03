@@ -93,8 +93,10 @@ function BomUtility() {
     const itemError = useSelector(reduxState => getItemError(reduxState, 'bomTree'));
 
     const [partSearchTerm, setPartSearchTerm] = useState();
+    const [partMessage, setPartMessage] = useState();
 
     const openPartLookUp = forRow => {
+        setPartMessage();
         setPartLookUp({ open: true, forRow });
         setPartSearchTerm(null);
     };
@@ -456,6 +458,10 @@ function BomUtility() {
     const [bomToCopy, setBomToCopy] = useState();
 
     const handlePartSelect = newValue => {
+        if (selected.children.find(x => x.name === newValue.partNumber)) {
+            setPartMessage('Part already on BOM!');
+            return;
+        }
         setPartLookUp(p => ({ ...p, selectedPart: newValue, open: false }));
         if (newValue.bomType !== 'C') {
             const subAssemblyUrl = `/purchasing/boms/tree?bomName=${
@@ -517,6 +523,11 @@ function BomUtility() {
                     onResultSelect={handlePartSelect}
                     clearSearch={() => {}}
                 />
+                {partMessage && (
+                    <Typography color="secondary" variant="subtitle2">
+                        {partMessage}
+                    </Typography>
+                )}
             </DialogContent>
             <DialogActions>
                 <Button
