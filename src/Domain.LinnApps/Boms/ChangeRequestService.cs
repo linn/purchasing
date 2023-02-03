@@ -45,7 +45,8 @@
                 return null;
             }
 
-            var part = this.partRepository.FindBy(p => p.PartNumber == partNumber);
+            var part = this.partRepository.FindBy(
+                p => p.PartNumber == partNumber.Trim().ToUpper());
             if (part == null)
             {
                 throw new DomainException("invalid part number");

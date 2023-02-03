@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import {
     InputField,
-    Typeahead,
+    Search,
     collectionSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
@@ -26,27 +26,28 @@ function AssemblyChange({ item, creating, handleFieldChange }) {
         collectionSelectorHelpers.getSearchLoading(state.parts)
     );
 
-    const handlePartChange = selectedPart => {
-        handleFieldChange('newPartNumber', selectedPart.partNumber);
+    const handlePartChange = partNumber => {
+        handleFieldChange('newPartNumber', partNumber);
     };
 
     return (
         <>
             {creating ? (
                 <Grid item xs={12}>
-                    <Typeahead
+                    <Search
+                        propertyName="newPartNumber"
                         label="Part"
-                        title="Search for a part"
-                        onSelect={handlePartChange}
-                        items={partsSearchResults}
+                        helperText="use Enter to search"
+                        handleValueChange={(_, newVal) => handlePartChange(newVal)}
+                        onResultSelect={newValue => {
+                            handlePartChange(newValue.partNumber);
+                        }}
+                        clearSearch={() => dispatch(partsActions.clearSearch())}
+                        searchResults={partsSearchResults}
                         loading={partsSearchLoading}
-                        fetchItems={searchTerm => dispatch(partsActions.search(searchTerm))}
-                        clearSearch={() => dispatch(partsActions.clearSearch)}
+                        search={searchTerm => dispatch(partsActions.search(searchTerm))}
                         value={item?.newPartNumber}
-                        modal
-                        links={false}
-                        debounce={1000}
-                        minimumSearchTermLength={2}
+                        resultsInModal
                     />
                 </Grid>
             ) : (

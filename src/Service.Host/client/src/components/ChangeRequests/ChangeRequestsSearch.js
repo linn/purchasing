@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Page,
@@ -47,6 +47,10 @@ function ChangeRequestSearch() {
     const searchRequestsLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.changeRequests)
     );
+
+    useEffect(() => {
+        dispatch(changeRequestsActions.clearSearch());
+    }, [dispatch]);
 
     const columns = [
         {
