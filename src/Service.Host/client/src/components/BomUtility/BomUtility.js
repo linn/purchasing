@@ -148,7 +148,12 @@ function BomUtility() {
                 <IconButton
                     onClick={() => openPartLookUp(params.row)}
                     data-testid="part-lookup-button"
-                    disabled={!crNumber || subAssemblyLoading || params.row.isReplaced}
+                    disabled={
+                        !crNumber ||
+                        subAssemblyLoading ||
+                        params.row.isReplaced ||
+                        crNumber !== params.row.addChangeDocumentNumber.toString()
+                    }
                 >
                     <ManageSearchIcon />
                 </IconButton>
@@ -434,7 +439,8 @@ function BomUtility() {
                     qty: 1,
                     requirement: 'Y'
                 },
-                true
+                true,
+                crNumber
             )
         );
     };
@@ -473,9 +479,8 @@ function BomUtility() {
     // add the new subAssembly to the bom tree when it arrives
     useEffect(() => {
         if (subAssembly?.name && partLookUp.forRow?.id) {
-            const parent = getNode(treeView, partLookUp.forRow?.parentName, 'name');
-
-            if (!parent.children.find(x => x.id === subAssembly.id)) {
+            const parent = getNode(treeView, partLookUp.forRow?.parentId);
+            if (parent?.children && !parent.children.find(x => x.id === subAssembly.id)) {
                 processRowUpdate({
                     ...partLookUp.forRow,
                     name: subAssembly.name,
