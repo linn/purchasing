@@ -70,6 +70,7 @@ function ChangeRequest() {
     };
 
     if (item && statusChange && changedState(statusChange, item)) {
+        console.log(statusChange, item);
         reduxDispatch(changeRequestActions.fetch(id));
     }
 
@@ -87,6 +88,7 @@ function ChangeRequest() {
     };
 
     const approve = request => {
+        reduxDispatch(changeRequestStatusChangeActions.clearItem());
         if (request?.changeState === 'PROPOS') {
             reduxDispatch(changeRequestStatusChangeActions.add({ id, status: 'ACCEPT' }));
         }
@@ -110,6 +112,7 @@ function ChangeRequest() {
     };
 
     const makeLive = request => {
+        reduxDispatch(changeRequestStatusChangeActions.clearItem());
         if (request?.changeState === 'ACCEPT') {
             reduxDispatch(
                 changeRequestStatusChangeActions.add({
