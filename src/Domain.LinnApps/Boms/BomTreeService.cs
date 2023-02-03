@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -97,12 +96,11 @@
                     current.Children = current.Children?.Select(
                         child =>
                             {
-
                                 var children = child.Type != "C" ? this.detailViewRepository
-                                    .FilterBy(x => x.BomName == child.Name)
-                                    .Where(x => showChanges || x.ChangeState == "LIVE")
-                                    .Where(c => !requirementOnly
-                                                || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0))
+                                                       .FilterBy(x => x.BomName == child.Name)
+                                                       .Where(x => showChanges || x.ChangeState == "LIVE")
+                                                       .Where(c => !requirementOnly
+                                                                   || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0))
                                                    :null;
 
                                 var node = new BomTreeNode
@@ -128,7 +126,6 @@
                                         .OrderBy(x => x.Part.PartNumber)
                                         .Select(
                                             detail =>
-
                                                 new BomTreeNode
                                                     {
                                                         Name = detail.Part.PartNumber,
@@ -137,9 +134,9 @@
                                                         Type = detail.Part.BomType,
                                                         ParentName = detail.BomPartNumber,
                                                         ParentId = detail.BomId.ToString(),
-                                                        Requirement = child.Requirement,
-                                                        SafetyCritical = child.SafetyCritical,
-                                                        DrawingReference = child.DrawingReference,
+                                                        Requirement = detail.GenerateRequirement,
+                                                        SafetyCritical = detail.Part.SafetyCritical,
+                                                        DrawingReference = detail.Part.DrawingReference,
                                                         AddChangeDocumentNumber = detail.AddChange.DocumentNumber,
                                                         DeleteChangeDocumentNumber = detail.DeleteChange != null ?
                                                             detail.DeleteChange.DocumentNumber : null,

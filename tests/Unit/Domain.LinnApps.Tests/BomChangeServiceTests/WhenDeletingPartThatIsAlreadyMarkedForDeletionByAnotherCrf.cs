@@ -56,7 +56,8 @@
                                           {
                                               PartNumber = "ASS 1",
                                               Qty = 2,
-                                              ChangeState = "LIVE"
+                                              ChangeState = "LIVE",
+                                              DetailId = 4567
                                           }
                                   }
             });
@@ -77,7 +78,7 @@
                 .Returns(this.deletedDetail);
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { PartNumber = "ASS 1" });
-            this.action = () => this.Sut.CreateBomChanges(this.newTree, 100, 33087);
+            this.action = () => this.Sut.ProcessTreeUpdate(this.newTree, 100, 33087);
         }
 
         [Test]

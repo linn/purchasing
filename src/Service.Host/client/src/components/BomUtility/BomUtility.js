@@ -51,7 +51,7 @@ function BomUtility() {
     const { search } = useLocation();
     const { bomName, changeRequest } = queryString.parse(search);
 
-    const [crNumber, setCrNumber] = useState(changeRequest);
+    const [crNumber, setCrNumber] = useState(changeRequest === 'null' ? null : changeRequest);
     const [changeRequests, changeRequestsLoading] = useInitialise(
         () => changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True'),
         changeRequestsItemType.item,
@@ -119,14 +119,19 @@ function BomUtility() {
     const onContextMenu = e => {
         e.preventDefault();
         const { target } = e;
-        const detail = selected.children.find(x => x.name === target.innerText);
+        const detail = selected.children.find(x => x.id === target.id);
         setContextMenu(
             crNumber && contextMenu === null
                 ? {
                       mouseX: e.clientX + 2,
                       mouseY: e.clientY - 6,
                       part: target.innerText,
-                      canReplace: Number(crNumber) !== detail.addChangeDocumentNumber,
+                      canDelete: !detail.deleteReplaceSeq,
+                      canReplace:
+                          Number(crNumber) !== detail.addChangeDocumentNumber &&
+                          !detail.addReplaceSeq &&
+                          !detail.deleteReplaceSeq &&
+                          !detail.replacementFor,
                       detail: { ...detail, parentId: selected.id }
                   }
                 : null
@@ -135,9 +140,9 @@ function BomUtility() {
 
     const partLookUpCell = params => (
         <>
-            <span onContextMenu={crNumber ? onContextMenu : null}>
+            <span id={params.row.id} onContextMenu={crNumber ? onContextMenu : null}>
                 {params.row.isReplaced || params.row.toDelete ? (
-                    <s>{params.row.name}</s>
+                    <s id={params.row.id}>{params.row.name}</s>
                 ) : (
                     params.row.name
                 )}
@@ -158,7 +163,7 @@ function BomUtility() {
             field: 'type',
             headerName: 'Type',
             editable: false,
-            width: 100,
+            width: 75,
             renderCell: params =>
                 params.row.isReplaced || params.row.toDelete ? (
                     <s>{params.row.type}</s>
@@ -169,7 +174,7 @@ function BomUtility() {
         {
             field: 'name',
             headerName: 'Part',
-            width: 180,
+            width: 175,
             editable: false,
             renderCell: partLookUpCell,
             align: 'right'
@@ -177,7 +182,8 @@ function BomUtility() {
         {
             field: 'description',
             headerName: 'Description',
-            width: 500,
+            hide: true,
+            width: 250,
             editable: false,
             renderCell: params =>
                 params.row.isReplaced || params.row.toDelete ? (
@@ -189,13 +195,13 @@ function BomUtility() {
         {
             field: 'safetyCritical',
             headerName: 'Safety',
-            width: 100,
+            width: 75,
             editable: false
         },
         {
             field: 'qty',
             headerName: 'Qty',
-            width: 100,
+            width: 75,
             editable: true,
             type: 'number',
             renderCell: params =>
@@ -208,20 +214,15 @@ function BomUtility() {
         {
             field: 'requirement',
             headerName: 'Req',
+            width: 75,
             editable: true,
             type: 'singleSelect',
             valueOptions: ['Y', 'N']
         },
         {
-            field: 'drawingReference',
-            headerName: 'Drawing Ref',
-            width: 200,
-            editable: false
-        },
-        {
             field: 'addChangeDocumentNumber',
-            headerName: 'Add CRF',
-            width: 150,
+            headerName: 'Add',
+            width: 75,
             hide: !showChanges,
             editable: false,
             renderCell: params => (
@@ -231,9 +232,15 @@ function BomUtility() {
             )
         },
         {
+            field: 'addReplaceSeq',
+            headerName: 'In',
+            width: 75,
+            editable: false
+        },
+        {
             field: 'deleteChangeDocumentNumber',
-            headerName: 'Del CRF',
-            width: 150,
+            headerName: 'Del',
+            width: 75,
             hide: !showChanges,
             editable: false,
             renderCell: params =>
@@ -248,25 +255,17 @@ function BomUtility() {
                 )
         },
         {
-            field: 'replacementFor',
-            headerName: 'Replacing',
-            width: 180,
-            editable: false,
-            hide: true // useful for debugging, but hidden generally
+            field: 'deleteReplaceSeq',
+            headerName: 'Out',
+            width: 75,
+            editable: false
         },
         {
-            field: 'replacedBy',
-            headerName: 'Replaced By',
-            width: 180,
+            field: 'drawingReference',
+            headerName: 'Drawing Ref',
+            width: 150,
             editable: false,
-            hide: true // useful for debugging, but hidden generally,
-        },
-        {
-            field: 'parentId',
-            headerName: 'Parent',
-            width: 180,
-            editable: false,
-            hide: true // useful for debugging, but hidden generally
+            hide: true
         }
     ];
     const initialise = useCallback(() => {
@@ -289,8 +288,7 @@ function BomUtility() {
     const [changesMade, setChangesMade] = useState(false);
 
     // updates the tree with changes passed via a 'newNode' object
-    const updateTree = (tree, newNode, addNode) => {
-        console.log(newNode, addNode);
+    const updateTree = (tree, newNode, addNode, addChangeDocumentNumber) => {
         setChangesMade(true);
         const newTree = { ...tree };
         const q = [];
@@ -303,10 +301,14 @@ function BomUtility() {
                 if (current.id === newNode.parentId) {
                     current.hasChanged = true;
                     if (addNode) {
-                        current.children = [...current.children, newNode];
+                        current.children = [
+                            ...current.children,
+                            { ...newNode, addChangeDocumentNumber }
+                        ];
                     } else {
                         let replacedIndex = null;
                         let replacementFor = null;
+                        let replacedNode = null;
                         current.children = current.children.map((x, index) => {
                             if (x.id !== newNode.id) {
                                 if (
@@ -327,16 +329,19 @@ function BomUtility() {
                             if (newNode.isReplaced) {
                                 replacedIndex = index;
                                 replacementFor = x.id;
+                                replacedNode = newNode;
                             }
-                            return { ...newNode, changeState: 'PROPOS' };
+                            return { ...newNode };
                         });
                         if (replacedIndex !== null) {
                             current.children.splice(replacedIndex + 1, 0, {
+                                ...replacedNode,
                                 id: uid(),
-                                type: 'C',
                                 parentId: current.id,
                                 changeState: 'PROPOS',
-                                replacementFor
+                                replacementFor,
+                                isReplaced: false,
+                                addChangeDocumentNumber
                             });
                         }
                     }
@@ -404,11 +409,14 @@ function BomUtility() {
         return null;
     };
 
-    const processRowUpdate = useCallback(newRow => {
-        setDisableChangesButton(true);
-        setTreeView(tr => updateTree(tr, newRow, false));
-        return newRow;
-    }, []);
+    const processRowUpdate = useCallback(
+        newRow => {
+            setDisableChangesButton(true);
+            setTreeView(tr => updateTree(tr, newRow, false, crNumber));
+            return newRow;
+        },
+        [crNumber]
+    );
 
     // add a new line to the children list of the selected node
     const addLine = () => {
@@ -552,6 +560,7 @@ function BomUtility() {
                     variant="contained"
                     onClick={() => {
                         setExplodeSubAssemblyDialogOpen(false);
+                        setCopyBomDialogOpen(false);
                         setPartSearchTerm(null);
                         if (copyBomDialogOpen) {
                             reduxDispatch(
@@ -930,7 +939,6 @@ function BomUtility() {
                         hideFooter
                         autoHeight
                         experimentalFeatures={{ newEditingApi: true }}
-                        checkboxSelection
                         disableSelectionOnClick
                         columns={columns}
                         getRowClassName={params => params.row.changeState?.toLowerCase()}
@@ -952,7 +960,9 @@ function BomUtility() {
                             >
                                 REPLACE
                             </MenuItem>
-                            <MenuItem onClick={handleDeleteClick}>DELETE</MenuItem>
+                            <MenuItem disabled={!contextMenu.canDelete} onClick={handleDeleteClick}>
+                                DELETE
+                            </MenuItem>
                         </Menu>
                     )}
                     <Grid item xs={1}>

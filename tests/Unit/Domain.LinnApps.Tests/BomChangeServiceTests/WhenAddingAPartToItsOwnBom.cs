@@ -38,9 +38,10 @@
                         BomId = 123, 
                         Details = new List<BomDetailViewEntry>()
                     });
+            this.BomDetailRepository.FindById(Arg.Any<int>()).Returns(new BomDetail());
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { DecrementRule = "YES", BomType = "C" });
-            this.action = () => this.Sut.CreateBomChanges(tree, 100, 33087);
+            this.action = () => this.Sut.ProcessTreeUpdate(tree, 100, 33087);
         }
 
         [Test]

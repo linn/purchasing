@@ -32,11 +32,19 @@
                                               { 
                                                   new BomTreeNode
                                                     {
-                                                        Name = "CAP 530", ParentName = "BOM", Id = "123", Type = "C"
+                                                        Name = "CAP 530", 
+                                                        ParentName = "BOM", 
+                                                        Id = "123", 
+                                                        Type = "C"
                                                     }
                                               },
                            };
-            this.BomDetailRepository.FindById(123).Returns(new BomDetail { DetailId = 123, Qty = 1, AddChangeId = 666 });
+            this.BomDetailRepository.FindById(123).Returns(new BomDetail
+                                                               {
+                                                                   DetailId = 123, Qty = 1, 
+                                                                   AddChangeId = 666, 
+                                                                   AddChange = new BomChange()
+                                                               });
             this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(
                 new Bom
                     {
@@ -47,7 +55,7 @@
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(111);
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { DecrementRule = "YES", BomType = "C" });
-            this.action = () => this.Sut.CreateBomChanges(tree, 100, 33087);
+            this.action = () => this.Sut.ProcessTreeUpdate(tree, 100, 33087);
         }
 
         [Test]

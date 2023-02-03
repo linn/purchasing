@@ -83,15 +83,16 @@
                                           Qty = 2, 
                                           ChangeState = "LIVE", 
                                           PcasLine = "Y",
+                                          DetailId = 4567,
                                           AddChange = new BomChange { DocumentNumber = 999 }
                                       };
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { DecrementRule = "YES", BomType = "C" });
 
-            this.BomDetailRepository.FindById(10023)
+            this.BomDetailRepository.FindById(4567)
                 .Returns(this.replacedDetail);
 
-            this.action = () => this.Sut.CreateBomChanges(this.newTree, 100, 33087);
+            this.action = () => this.Sut.ProcessTreeUpdate(this.newTree, 100, 33087);
         }
 
         [Test]
