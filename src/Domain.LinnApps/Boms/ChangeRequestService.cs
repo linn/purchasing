@@ -201,6 +201,24 @@
             return request;
         }
 
+        public ChangeRequest UndoChanges(
+            int documentNumber,
+            int undoneById,
+            IEnumerable<int> selectedBomChangeIds,
+            IEnumerable<int> selectedPcasChangeIds,
+            IEnumerable<string> privileges = null)
+        {
+            var request = this.repository.FindById(documentNumber);
+            if (request == null)
+            {
+                throw new ItemNotFoundException("Change Request not found");
+            }
+
+            // undo changes
+
+            return request;
+        }
+
         public Expression<Func<ChangeRequest, bool>> SearchExpression(string searchTerm, bool? outstanding, int? lastMonths)
         {
             var fromDate = (lastMonths == null)

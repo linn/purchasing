@@ -20,6 +20,13 @@
 
         ChangeRequest PhaseInChanges(int documentNumber, int? linnWeekNumber, DateTime? linnWeekStartDate, IEnumerable<int> selectedBomChangeIds, IEnumerable<string> privileges = null);
 
+        ChangeRequest UndoChanges(
+            int documentNumber,
+            int undoneById,
+            IEnumerable<int> selectedBomChangeIds,
+            IEnumerable<int> selectedPcasChangeIds,
+            IEnumerable<string> privileges = null);
+
         Expression<Func<ChangeRequest, bool>> SearchExpression(string searchTerm, bool? outstanding, int? lastMonths);
     }
 }

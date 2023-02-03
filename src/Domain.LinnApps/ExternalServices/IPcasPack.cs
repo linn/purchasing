@@ -3,5 +3,7 @@
     public interface IPcasPack
     {
         string DiscrepanciesOnChange(string boardCode, string revisionCode, int changeId);
+
+        void UndoPcasChange(int changeId, int undoneBy);
     }
 }
