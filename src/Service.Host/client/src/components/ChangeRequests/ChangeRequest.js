@@ -21,19 +21,26 @@ import BomChangesTab from './Tabs/BomChangesTab';
 import PcasChangesTab from './Tabs/PcasChangesTab';
 import history from '../../history';
 import useInitialise from '../../hooks/useInitialise';
+import { changeRequest, changeRequestStatusChange } from '../../itemTypes';
 
 function ChangeRequest() {
     const { id } = useParams();
 
     const reduxDispatch = useDispatch();
 
-    const [item, loading] = useInitialise(() => changeRequestActions.fetch(id), 'changeRequest');
+    const [item, loading] = useInitialise(() => changeRequestActions.fetch(id), changeRequest.item);
+    const statusChangeLoading = useSelector(reduxState =>
+        itemSelectorHelpers.getItemLoading(reduxState[changeRequestStatusChange.item])
+    );
 
     const statusChange = useSelector(reduxState =>
         itemSelectorHelpers.getItem(reduxState.changeRequestStatusChange)
     );
 
     const changedState = (changereq, origreq) => {
+        if (changereq?.documentNumber !== origreq?.documentNumber) {
+            return false;
+        }
         if (changereq?.changeState !== origreq?.changeState) {
             return true;
         }
@@ -87,6 +94,7 @@ function ChangeRequest() {
     };
 
     const approve = request => {
+        reduxDispatch(changeRequestStatusChangeActions.clearItem());
         if (request?.changeState === 'PROPOS') {
             reduxDispatch(changeRequestStatusChangeActions.add({ id, status: 'ACCEPT' }));
         }
@@ -110,6 +118,7 @@ function ChangeRequest() {
     };
 
     const makeLive = request => {
+        reduxDispatch(changeRequestStatusChangeActions.clearItem());
         if (request?.changeState === 'ACCEPT') {
             reduxDispatch(
                 changeRequestStatusChangeActions.add({
@@ -134,7 +143,7 @@ function ChangeRequest() {
 
     return (
         <Page history={history}>
-            {loading ? (
+            {loading || statusChangeLoading ? (
                 <Loading />
             ) : (
                 <Grid container spacing={2} justifyContent="center">

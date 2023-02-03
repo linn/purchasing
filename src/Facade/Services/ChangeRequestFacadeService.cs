@@ -228,7 +228,7 @@
                            EnteredById = (int)resource.EnteredBy.Id,
                            ProposedById = (int)resource.ProposedBy.Id,
                            OldPartNumber = resource.OldPartNumber,
-                           NewPartNumber = resource.NewPartNumber,
+                           NewPartNumber = newPart.PartNumber,
                            BoardCode = resource.BoardCode,
                            RevisionCode = resource.RevisionCode,
                            ReasonForChange = resource.ReasonForChange,
