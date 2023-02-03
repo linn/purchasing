@@ -59,6 +59,7 @@ function BoardComponents() {
 
     const [findDialogOpen, setFindDialogOpen] = useState(false);
     const [loadDialogOpen, setLoadDialogOpen] = useState(false);
+    const [resultsDialogOpen, setResultsDialogOpen] = useState(false);
     const [findField, setFindField] = useState('partNumber');
     const [findValue, setFindValue] = useState(null);
     const searchBoardsResults = useSelector(state =>
@@ -176,12 +177,12 @@ function BoardComponents() {
 
     const uploadError = useSelector(reduxState => getItemError(reduxState, uploadBoardFile.item));
 
-    const uploadSnackbarVisible = useSelector(reduxState =>
-        processSelectorHelpers.getMessageVisible(reduxState[uploadBoardFile.item])
-    );
-
-    const setUploadSnackbarVisible = () =>
-        reduxDispatch(uploadBoardFileActions.setMessageVisible(false));
+    useEffect(() => {
+        if (uploadResult?.message) {
+            setLoadDialogOpen(false);
+            setResultsDialogOpen(true);
+        }
+    }, [uploadResult?.message]);
 
     const handlePartSelect = newValue => {
         dispatch({
@@ -517,14 +518,34 @@ function BoardComponents() {
                             loading={uploadLoading}
                             result={uploadResult}
                             error={uploadError}
-                            snackbarVisible={uploadSnackbarVisible}
-                            setSnackbarVisible={setUploadSnackbarVisible}
+                            snackbarVisible={false}
+                            setSnackbarVisible={() => {}}
                             initiallyExpanded
                             helperText="Upload a board file."
                         />
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={() => setLoadDialogOpen(false)}>Close</Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog open={resultsDialogOpen} fullWidth maxWidth="lg">
+                    <DialogTitle>
+                        Load File
+                        <IconButton
+                            className={classes.pullRight}
+                            aria-label="Close"
+                            onClick={() => setResultsDialogOpen(false)}
+                        >
+                            <Close />
+                        </IconButton>
+                    </DialogTitle>
+                    <DialogContent dividers>
+                        <Typography variant="body1" style={{ whiteSpace: 'pre-line' }}>
+                            {uploadResult?.message}
+                        </Typography>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setResultsDialogOpen(false)}>Close</Button>
                     </DialogActions>
                 </Dialog>
                 <Grid item xs={3}>
