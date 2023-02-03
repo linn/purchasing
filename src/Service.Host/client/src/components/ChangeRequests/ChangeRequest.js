@@ -38,6 +38,9 @@ function ChangeRequest() {
     );
 
     const changedState = (changereq, origreq) => {
+        if (changereq?.documentNumber !== origreq?.documentNumber) {
+            return false;
+        }
         if (changereq?.changeState !== origreq?.changeState) {
             return true;
         }
