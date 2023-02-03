@@ -31,7 +31,7 @@
                     Arg.Any<bool>())
                 .Returns(new ProcessResult(true, "ok"));
             this.Response = this.Client.Post(
-                "/purchasing/purchase-orders/boms/upload-board-file",
+                $"/purchasing/purchase-orders/boms/upload-board-file?boardCode={this.BoardCode}&revisionCode={this.revisionCode}",
                 "\"C001\", \"CAP 401\"",
                 with =>
                     {
