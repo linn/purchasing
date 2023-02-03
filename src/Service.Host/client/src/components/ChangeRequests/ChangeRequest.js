@@ -21,13 +21,17 @@ import BomChangesTab from './Tabs/BomChangesTab';
 import PcasChangesTab from './Tabs/PcasChangesTab';
 import history from '../../history';
 import useInitialise from '../../hooks/useInitialise';
+import { changeRequest, changeRequestStatusChange } from '../../itemTypes';
 
 function ChangeRequest() {
     const { id } = useParams();
 
     const reduxDispatch = useDispatch();
 
-    const [item, loading] = useInitialise(() => changeRequestActions.fetch(id), 'changeRequest');
+    const [item, loading] = useInitialise(() => changeRequestActions.fetch(id), changeRequest.item);
+    const statusChangeLoadingLoading = useSelector(reduxState =>
+        itemSelectorHelpers.getItemLoading(reduxState[changeRequestStatusChange.item])
+    );
 
     const statusChange = useSelector(reduxState =>
         itemSelectorHelpers.getItem(reduxState.changeRequestStatusChange)
@@ -70,7 +74,6 @@ function ChangeRequest() {
     };
 
     if (item && statusChange && changedState(statusChange, item)) {
-        console.log(statusChange, item);
         reduxDispatch(changeRequestActions.fetch(id));
     }
 
@@ -137,7 +140,7 @@ function ChangeRequest() {
 
     return (
         <Page history={history}>
-            {loading ? (
+            {loading || statusChangeLoadingLoading ? (
                 <Loading />
             ) : (
                 <Grid container spacing={2} justifyContent="center">
