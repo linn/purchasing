@@ -358,10 +358,10 @@ function BomUtility() {
     };
 
     // find a node in the tree
-    const getNode = (searchTerm, fieldName = 'id') => {
-        if (treeView == null) return null;
+    const getNode = (tree, searchTerm, fieldName = 'id') => {
+        if (tree == null) return null;
         const q = [];
-        q.push(treeView);
+        q.push(tree);
         while (q.length !== 0) {
             let n = q.length;
             while (n > 0) {
@@ -439,7 +439,7 @@ function BomUtility() {
 
     const getRows = () => {
         if (selected) {
-            const node = getNode(selected.id);
+            const node = getNode(treeView, selected.id);
             if (node?.children) return node.children;
         }
         return [];
@@ -471,20 +471,24 @@ function BomUtility() {
     // add the new subAssembly to the bom tree when it arrives
     useEffect(() => {
         if (subAssembly?.name && partLookUp.forRow?.id) {
-            processRowUpdate({
-                ...partLookUp.forRow,
-                name: subAssembly.name,
-                type: subAssembly.type,
-                safetyCritical: subAssembly.safetyCritical,
-                drawingReference: subAssembly.drawingReference,
-                description: subAssembly.description,
-                children: subAssembly.children,
-                changeState: 'PROPOS'
-            });
+            const parent = getNode(treeView, partLookUp.forRow?.parentName, 'name');
+
+            if (!parent.children.find(x => x.id === subAssembly.id)) {
+                processRowUpdate({
+                    ...partLookUp.forRow,
+                    name: subAssembly.name,
+                    type: subAssembly.type,
+                    safetyCritical: subAssembly.safetyCritical,
+                    drawingReference: subAssembly.drawingReference,
+                    description: subAssembly.description,
+                    children: subAssembly.children,
+                    changeState: 'PROPOS'
+                });
+            }
             reduxDispatch(subAssemblyActions.clearItem());
             setPartLookUp({ open: false, forRow: null, selectedPart: null });
         }
-    }, [subAssembly, partLookUp.forRow, reduxDispatch, processRowUpdate]);
+    }, [subAssembly, partLookUp.forRow, reduxDispatch, processRowUpdate, treeView]);
 
     const PartLookUp = () => (
         <Dialog open={partLookUp.open}>
@@ -749,7 +753,7 @@ function BomUtility() {
     const doSearch = () => {
         const node = searchTree(searchBomTerm?.toUpperCase?.());
         if (node) {
-            const parent = getNode(node.parentName, 'name');
+            const parent = getNode(treeView, node.parentName, 'name');
             setSelected(parent);
             document.getElementById(parent.id).scrollIntoView();
             (() => new Promise(resolve => setTimeout(resolve, 500)))().then(() => {
