@@ -123,8 +123,8 @@
             string fileString,
             IEnumerable<string> getPrivileges)
         {
-            var result = this.circuitBoardService.UpdateFromFile(boardCode, revisionCode, fileType, fileString);
-            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "ok"));
+            var result = this.circuitBoardService.UpdateFromFile(boardCode, revisionCode, fileType, fileString, true);
+            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
         }
 
         protected override CircuitBoard CreateFromResource(

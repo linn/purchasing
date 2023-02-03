@@ -27,7 +27,8 @@
                     this.BoardCode,
                     this.revisionCode,
                     this.fileType,
-                    Arg.Any<string>())
+                    Arg.Any<string>(),
+                    Arg.Any<bool>())
                 .Returns(new ProcessResult(true, "ok"));
             this.Response = this.Client.Post(
                 "/purchasing/purchase-orders/boms/upload-board-file",

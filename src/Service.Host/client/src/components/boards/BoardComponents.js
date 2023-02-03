@@ -176,16 +176,12 @@ function BoardComponents() {
 
     const uploadError = useSelector(reduxState => getItemError(reduxState, uploadBoardFile.item));
 
-    const uploadMessage = useSelector(reduxState =>
-        processSelectorHelpers.getMessageText(reduxState[uploadBoardFile.item])
-    );
-
     const uploadSnackbarVisible = useSelector(reduxState =>
         processSelectorHelpers.getMessageVisible(reduxState[uploadBoardFile.item])
     );
 
     const setUploadSnackbarVisible = () =>
-        dispatch(uploadBoardFileActions.setMessageVisible(false));
+        reduxDispatch(uploadBoardFileActions.setMessageVisible(false));
 
     const handlePartSelect = newValue => {
         dispatch({
@@ -523,7 +519,6 @@ function BoardComponents() {
                             error={uploadError}
                             snackbarVisible={uploadSnackbarVisible}
                             setSnackbarVisible={setUploadSnackbarVisible}
-                            message={uploadMessage}
                             initiallyExpanded
                             helperText="Upload a board file."
                         />

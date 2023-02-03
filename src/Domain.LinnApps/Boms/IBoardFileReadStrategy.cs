@@ -4,6 +4,6 @@
 
     public interface IBoardFileReadStrategy
     {
-        IEnumerable<BoardComponent> ReadFile(string boardFile);
+        (IList<BoardComponent>, string) ReadFile(string boardFile);
     }
 }

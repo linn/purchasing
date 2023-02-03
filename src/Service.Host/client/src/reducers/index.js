@@ -111,6 +111,7 @@ import boardComponentSummaries from './boardComponentSummaries';
 import boardComponents from './boardComponents';
 import changeRequestPhaseIns from './changeRequestPhaseIns';
 import bomVerificationHistory from './bomVerificationHistory';
+import uploadBoardFile from './uploadBoardFile';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -219,6 +220,7 @@ const rootReducer = history =>
         tqmsJobrefs,
         unacknowledgedOrdersReport,
         unitsOfMeasure,
+        uploadBoardFile,
         vendorManagers,
         whatsDueInReport,
         whatsInInspectionReport,

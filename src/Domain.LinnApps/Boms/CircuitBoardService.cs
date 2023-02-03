@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -131,7 +130,7 @@
             return board;
         }
 
-        public ProcessResult UpdateFromFile(string boardCode, string revisionCode, string fileType, string fileString)
+        public ProcessResult UpdateFromFile(string boardCode, string revisionCode, string fileType, string fileString, bool makeChanges)
         {
             if (fileType != "TSB")
             {
@@ -139,9 +138,39 @@
                     $"File type {fileType} has no supporting strategy and cannot be processed");
             }
 
+            var board = this.boardRepository.FindById(boardCode);
+            var revision = board.Layouts.SelectMany(a => a.Revisions).First(a => a.RevisionCode == revisionCode);
             var strategy = new TabSeparatedReadStrategy();
-            var fileContents = strategy.ReadFile(fileString);
-            return new ProcessResult(true, "ok");
+            var (fileContents, pcbPartNumber) = strategy.ReadFile(fileString);
+
+            var message = string.Empty;
+            if (revision.PcbPartNumber != pcbPartNumber)
+            {
+                message =
+                    $"Pcb part number on revision is {revision.PcbPartNumber} but found {pcbPartNumber} in the file. \n";
+            }
+
+            var existingComponents = board.ComponentsOnRevision(revision.LayoutSequence, revision.VersionNumber);
+            foreach (var fileComponent in fileContents)
+            {
+                var existing = existingComponents.FirstOrDefault(a => a.CRef == fileComponent.CRef);
+                if (existing == null)
+                {
+                    message += $"Adding {fileComponent.PartNumber} at {fileComponent.CRef}. \n";
+                } 
+                else if (fileComponent.PartNumber != existing.PartNumber)
+                {
+                    message += $"Replacing {existing.PartNumber} with {fileComponent.PartNumber} at {existing.CRef}. \n";
+                }
+            }
+
+            var missingComponents = existingComponents.Select(a => a.CRef).Except(fileContents.Select(b => b.CRef));
+            foreach (var cRef in missingComponents)
+            {
+                message += $"Removing {existingComponents.First(a => a.CRef == cRef).PartNumber} from {cRef}. \n";
+            }
+
+            return new ProcessResult(true, message);
         }
 
         private void MaybeAddComponentPriorToCrfRevision(
