@@ -129,7 +129,6 @@ function BomUtility() {
                       canDelete: !detail.deleteReplaceSeq,
                       canReplace:
                           Number(crNumber) !== detail.addChangeDocumentNumber &&
-                          !detail.addReplaceSeq &&
                           !detail.deleteReplaceSeq &&
                           !detail.replacementFor,
                       detail: { ...detail, parentId: selected.id }
@@ -182,7 +181,7 @@ function BomUtility() {
         {
             field: 'description',
             headerName: 'Description',
-            hide: true,
+            hide: showChanges,
             width: 250,
             editable: false,
             renderCell: params =>
@@ -235,6 +234,8 @@ function BomUtility() {
             field: 'addReplaceSeq',
             headerName: 'In',
             width: 75,
+            hide: !showChanges,
+
             editable: false
         },
         {
@@ -257,6 +258,7 @@ function BomUtility() {
         {
             field: 'deleteReplaceSeq',
             headerName: 'Out',
+            hide: !showChanges,
             width: 75,
             editable: false
         },
@@ -265,7 +267,7 @@ function BomUtility() {
             headerName: 'Drawing Ref',
             width: 150,
             editable: false,
-            hide: true
+            hide: showChanges
         }
     ];
     const initialise = useCallback(() => {
