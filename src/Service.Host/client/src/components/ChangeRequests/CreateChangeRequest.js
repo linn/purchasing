@@ -182,7 +182,7 @@ function CreateChangeRequest() {
                             >
                                 Create
                             </Button>
-                        </Grid>{' '}
+                        </Grid>
                     </>
                 )}
             </Grid>
