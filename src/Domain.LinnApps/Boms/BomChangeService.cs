@@ -147,7 +147,7 @@
                     {
                         this.AddNode(child, change, ref replacementSeq);
                     }
-                    else if (isExistingNode)
+                    else if (isExistingNode && child.HasChanged.GetValueOrDefault())
                     {
                         this.MaybeUpdateNode(child, change);
                     }

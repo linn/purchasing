@@ -331,7 +331,7 @@ function BomUtility() {
                                 replacementFor = x.id;
                                 replacedNode = newNode;
                             }
-                            return { ...newNode };
+                            return { ...newNode, hasChanged: true };
                         });
                         if (replacedIndex !== null) {
                             current.children.splice(replacedIndex + 1, 0, {
