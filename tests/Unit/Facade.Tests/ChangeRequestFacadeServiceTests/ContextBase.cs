@@ -6,6 +6,7 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
@@ -30,6 +31,10 @@
 
         protected IRepository<LinnWeek, int> WeekRepository { get; private set; }
 
+        protected IBomPack BomPack { get; private set; }
+
+        protected IPcasPack PcasPack { get; private set; }
+
         protected ILog Logger { get; set; }
 
         protected IBomTreeService BomTreeService { get; private set; }
@@ -47,6 +52,8 @@
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
             this.WeekRepository = Substitute.For<IRepository<LinnWeek, int>>();
             this.BomTreeService = Substitute.For<IBomTreeService>();
+            this.BomPack = Substitute.For<IBomPack>();
+            this.PcasPack = Substitute.For<IPcasPack>();
             this.Logger = Substitute.For<ILog>();
 
             this.Sut = new ChangeRequestFacadeService(
@@ -61,7 +68,9 @@
                 this.Repository,
                 this.PartRepository,
                 this.EmployeeRepository,
-                this.WeekRepository),
+                this.WeekRepository,
+                this.BomPack,
+                this.PcasPack),
                 this.DatabaseService, 
                 this.BomTreeService,
                 this.Logger);

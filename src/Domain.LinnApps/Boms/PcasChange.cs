@@ -42,6 +42,8 @@
 
         public bool CanMakeLive() => this.ChangeState == "ACCEPT";
 
+        public bool CanUndo() => this.ChangeState == "LIVE";
+
         public void Cancel(Employee cancelledBy)
         {
             if (this.CanCancel() && cancelledBy != null)

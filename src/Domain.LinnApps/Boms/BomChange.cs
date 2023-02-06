@@ -89,6 +89,8 @@
             }
         }
 
+        public bool CanUndo() => this.ChangeState == "LIVE";
+
         public string LifecycleText()
         {
             if (this.ChangeState == "CANCEL")
