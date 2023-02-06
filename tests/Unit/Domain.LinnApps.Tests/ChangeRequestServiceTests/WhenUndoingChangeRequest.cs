@@ -27,12 +27,14 @@
                                                        new BomChange
                                                            {
                                                                ChangeId = 1,
-                                                               ChangeState = "LIVE"
+                                                               ChangeState = "LIVE",
+                                                               PcasChange = "N"
                                                            },
                                                        new BomChange
                                                            {
                                                                ChangeId = 2,
-                                                               ChangeState = "CANCEL"
+                                                               ChangeState = "CANCEL",
+                                                               PcasChange = "N"
                                                            }
                                                    }
                               };

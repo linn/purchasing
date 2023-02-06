@@ -26,9 +26,9 @@
                                ChangeState = "LIVE",
                                BomChanges = new List<BomChange>
                                                 {
-                                                    new BomChange { ChangeId = 1, ChangeState = "LIVE", BomName = "ABOM" },
-                                                    new BomChange { ChangeId = 2, ChangeState = "LIVE", BomName = "BBOM" },
-                                                    new BomChange { ChangeId = 3, ChangeState = "LIVE", BomName = "CBOM" }
+                                                    new BomChange { ChangeId = 1, ChangeState = "LIVE", BomName = "ABOM", PcasChange = "N" },
+                                                    new BomChange { ChangeId = 2, ChangeState = "LIVE", BomName = "BBOM", PcasChange = "N"  },
+                                                    new BomChange { ChangeId = 3, ChangeState = "LIVE", BomName = "CBOM", PcasChange = "N"  }
                                                 },
                                PcasChanges = new List<PcasChange>
                                                  {

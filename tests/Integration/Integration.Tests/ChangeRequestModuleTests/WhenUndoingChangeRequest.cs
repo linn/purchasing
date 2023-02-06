@@ -37,7 +37,7 @@
                                                 {
                                                     new BomChange
                                                         {
-                                                            ChangeId = 1, BomName = "TOAST 001", ChangeState = "LIVE"
+                                                            ChangeId = 1, BomName = "TOAST 001", ChangeState = "LIVE", PcasChange = "N"
                                                         }
                                                 },
                 PcasChanges = new List<PcasChange>
@@ -67,7 +67,7 @@
                                                       {
                                                           new BomChange
                                                               {
-                                                                  ChangeId = 1, BomName = "TOAST 001", ChangeState = "ACCEPT"
+                                                                  ChangeId = 1, BomName = "TOAST 001", ChangeState = "ACCEPT", PcasChange = "N"
                                                               },
                                                           new BomChange
                                                               {

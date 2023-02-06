@@ -89,7 +89,7 @@
             }
         }
 
-        public bool CanUndo() => this.ChangeState == "LIVE";
+        public bool CanUndo() => this.ChangeState == "LIVE" && this.PcasChange == "N";
 
         public string LifecycleText()
         {

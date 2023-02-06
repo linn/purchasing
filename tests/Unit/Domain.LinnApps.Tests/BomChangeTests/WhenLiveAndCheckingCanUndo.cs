@@ -14,7 +14,8 @@
             this.Sut = new BomChange
                            {
                                DocumentNumber = 1,
-                               ChangeState = "LIVE"
+                               ChangeState = "LIVE",
+                               PcasChange = "N"
                            };
         }
 
