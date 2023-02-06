@@ -387,3 +387,9 @@ export const bomVerificationHistory = new ItemType(
     'BOM_VERIFICATION_HISTORY',
     '/purchasing/bom-verification'
 );
+
+export const bomStandardPrices = new ItemType(
+    'bomStandardPrices',
+    'BOMS_PRICE_VARIANCE_INFO',
+    '/purchasing/boms/prices'
+);

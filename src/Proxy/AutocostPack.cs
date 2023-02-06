@@ -58,5 +58,10 @@
 
             return decimal.Parse(result.Value.ToString() ?? string.Empty);
         }
+
+        public void AutoCostAssembly(string partNumber, string changeType, int changedBy, string remarks)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

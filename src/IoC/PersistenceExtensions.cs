@@ -234,7 +234,10 @@
                         ?.PcasChanges))
                 .AddTransient<IRepository<BomVerificationHistory, int>, EntityFrameworkRepository<BomVerificationHistory, int>>(
                     r => new EntityFrameworkRepository<BomVerificationHistory, int>(r.GetService<ServiceDbContext>()
-                        ?.BomVerificationHistory));
+                        ?.BomVerificationHistory))
+                .AddTransient<IQueryRepository<BomStandardPrice>, EntityFrameworkQueryRepository<BomStandardPrice>>(
+                    r => new EntityFrameworkQueryRepository<BomStandardPrice>(r.GetService<ServiceDbContext>()
+                        ?.BomPriceVariances));
         }
     }
 }

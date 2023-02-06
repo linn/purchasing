@@ -212,6 +212,8 @@
 
         public DbSet<BomVerificationHistory> BomVerificationHistory { get; set; }
 
+        public DbSet<BomStandardPrice> BomPriceVariances { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -327,6 +329,7 @@
             this.BuildBomDetails(builder);
             this.BuildBomCostDetails(builder);
             this.BuildBomVerificationHistory(builder);
+            this.BuildBomPriceVariances(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -344,7 +347,7 @@
             optionsBuilder.UseOracle(connectionString, options => options.UseOracleSQLCompatibility("11"));
 
             // below line commented due to causing crashing during local dev. Uncomment if want to see sql in debug window
-            // optionsBuilder.UseLoggerFactory(MyLoggerFactory);
+            optionsBuilder.UseLoggerFactory(MyLoggerFactory);
             // optionsBuilder.EnableSensitiveDataLogging(true);
             base.OnConfiguring(optionsBuilder);
         }
@@ -2197,6 +2200,18 @@
             entity.Property(a => a.DocumentType).HasColumnName("DOCUMENT_TYPE").HasMaxLength(6);
             entity.Property(a => a.DocumentNumber).HasColumnName("DOCUMENT_NUMBER").HasMaxLength(10);
             entity.Property(a => a.Remarks).HasColumnName("REMARKS").HasMaxLength(255);
+        }
+
+        private void BuildBomPriceVariances(ModelBuilder builder)
+        {
+            var entity = builder.Entity<BomStandardPrice>().ToTable("T_STANDARDS_SET_VIEW").HasNoKey();
+            entity.Property(a => a.Depth).HasColumnName("DEPTH");
+            entity.Property(a => a.BomName).HasColumnName("BOM_NAME").HasColumnType("VARCHAR2");
+            entity.Property(a => a.MaterialPrice).HasColumnName("MAT_PRICE");
+            entity.Property(a => a.StandardPrice).HasColumnName("STD_PRICE");
+            entity.Property(a => a.StockMaterialVariance).HasColumnName("STOCK_MATVAR");
+            entity.Property(a => a.LoanMaterialVariance).HasColumnName("LOAN_MATVAR");
+            entity.Property(a => a.AllocLines).HasColumnName("ALLOC_LINES");
         }
     }
 }
