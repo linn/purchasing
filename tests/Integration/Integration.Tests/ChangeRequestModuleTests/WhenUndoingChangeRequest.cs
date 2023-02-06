@@ -81,7 +81,7 @@
                                                                             ChangeId = 1,
                                                                             BoardCode = "TOAST",
                                                                             RevisionCode = "BREAD",
-                                                                            ChangeState = "ACCEPT"
+                                                                            ChangeState = "LIVE"
                                                                         }
                                                                 }
                                           };

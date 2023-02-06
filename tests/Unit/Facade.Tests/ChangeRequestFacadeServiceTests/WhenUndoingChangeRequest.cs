@@ -70,7 +70,7 @@
                                                       {
                                                           new BomChange
                                                               {
-                                                                  ChangeId = 1, BomName = "TOAST 001", ChangeState = "ACCEPT"
+                                                                  ChangeId = 1, BomName = "TOAST 001", ChangeState = "LIVE"
                                                               },
                                                           new BomChange
                                                               {
@@ -84,7 +84,7 @@
                                                                             ChangeId = 1,
                                                                             BoardCode = "TOAST",
                                                                             RevisionCode = "BREAD",
-                                                                            ChangeState = "ACCEPT"
+                                                                            ChangeState = "LIVE"
                                                                         }
                                                                 }
             };
