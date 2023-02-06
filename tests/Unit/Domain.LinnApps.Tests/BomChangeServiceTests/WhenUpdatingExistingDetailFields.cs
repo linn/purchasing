@@ -34,6 +34,7 @@
                                                     {
                                                         Name = "CAP 530", 
                                                         ParentName = "BOM", 
+                                                        HasChanged = true,
                                                         Id = "123", 
                                                         Qty = 2
                                                     }

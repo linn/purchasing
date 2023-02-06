@@ -93,8 +93,10 @@ function BomUtility() {
     const itemError = useSelector(reduxState => getItemError(reduxState, 'bomTree'));
 
     const [partSearchTerm, setPartSearchTerm] = useState();
+    const [partMessage, setPartMessage] = useState();
 
     const openPartLookUp = forRow => {
+        setPartMessage();
         setPartLookUp({ open: true, forRow });
         setPartSearchTerm(null);
     };
@@ -129,7 +131,6 @@ function BomUtility() {
                       canDelete: !detail.deleteReplaceSeq,
                       canReplace:
                           Number(crNumber) !== detail.addChangeDocumentNumber &&
-                          !detail.addReplaceSeq &&
                           !detail.deleteReplaceSeq &&
                           !detail.replacementFor,
                       detail: { ...detail, parentId: selected.id }
@@ -149,7 +150,12 @@ function BomUtility() {
                 <IconButton
                     onClick={() => openPartLookUp(params.row)}
                     data-testid="part-lookup-button"
-                    disabled={!crNumber || subAssemblyLoading || params.row.isReplaced}
+                    disabled={
+                        !crNumber ||
+                        subAssemblyLoading ||
+                        params.row.isReplaced ||
+                        crNumber !== params.row.addChangeDocumentNumber.toString()
+                    }
                 >
                     <ManageSearchIcon />
                 </IconButton>
@@ -182,7 +188,7 @@ function BomUtility() {
         {
             field: 'description',
             headerName: 'Description',
-            hide: true,
+            hide: showChanges,
             width: 250,
             editable: false,
             renderCell: params =>
@@ -235,6 +241,8 @@ function BomUtility() {
             field: 'addReplaceSeq',
             headerName: 'In',
             width: 75,
+            hide: !showChanges,
+
             editable: false
         },
         {
@@ -257,6 +265,7 @@ function BomUtility() {
         {
             field: 'deleteReplaceSeq',
             headerName: 'Out',
+            hide: !showChanges,
             width: 75,
             editable: false
         },
@@ -265,7 +274,7 @@ function BomUtility() {
             headerName: 'Drawing Ref',
             width: 150,
             editable: false,
-            hide: true
+            hide: showChanges
         }
     ];
     const initialise = useCallback(() => {
@@ -331,7 +340,7 @@ function BomUtility() {
                                 replacementFor = x.id;
                                 replacedNode = newNode;
                             }
-                            return { ...newNode };
+                            return { ...newNode, hasChanged: true };
                         });
                         if (replacedIndex !== null) {
                             current.children.splice(replacedIndex + 1, 0, {
@@ -358,10 +367,10 @@ function BomUtility() {
     };
 
     // find a node in the tree
-    const getNode = (searchTerm, fieldName = 'id') => {
-        if (treeView == null) return null;
+    const getNode = (tree, searchTerm, fieldName = 'id') => {
+        if (tree == null) return null;
         const q = [];
-        q.push(treeView);
+        q.push(tree);
         while (q.length !== 0) {
             let n = q.length;
             while (n > 0) {
@@ -432,14 +441,15 @@ function BomUtility() {
                     qty: 1,
                     requirement: 'Y'
                 },
-                true
+                true,
+                crNumber
             )
         );
     };
 
     const getRows = () => {
         if (selected) {
-            const node = getNode(selected.id);
+            const node = getNode(treeView, selected.id);
             if (node?.children) return node.children;
         }
         return [];
@@ -448,6 +458,10 @@ function BomUtility() {
     const [bomToCopy, setBomToCopy] = useState();
 
     const handlePartSelect = newValue => {
+        if (selected.children.find(x => x.name === newValue.partNumber)) {
+            setPartMessage('Part already on BOM!');
+            return;
+        }
         setPartLookUp(p => ({ ...p, selectedPart: newValue, open: false }));
         if (newValue.bomType !== 'C') {
             const subAssemblyUrl = `/purchasing/boms/tree?bomName=${
@@ -471,20 +485,23 @@ function BomUtility() {
     // add the new subAssembly to the bom tree when it arrives
     useEffect(() => {
         if (subAssembly?.name && partLookUp.forRow?.id) {
-            processRowUpdate({
-                ...partLookUp.forRow,
-                name: subAssembly.name,
-                type: subAssembly.type,
-                safetyCritical: subAssembly.safetyCritical,
-                drawingReference: subAssembly.drawingReference,
-                description: subAssembly.description,
-                children: subAssembly.children,
-                changeState: 'PROPOS'
-            });
+            const parent = getNode(treeView, partLookUp.forRow?.parentId);
+            if (parent?.children && !parent.children.find(x => x.id === subAssembly.id)) {
+                processRowUpdate({
+                    ...partLookUp.forRow,
+                    name: subAssembly.name,
+                    type: subAssembly.type,
+                    safetyCritical: subAssembly.safetyCritical,
+                    drawingReference: subAssembly.drawingReference,
+                    description: subAssembly.description,
+                    children: subAssembly.children,
+                    changeState: 'PROPOS'
+                });
+            }
             reduxDispatch(subAssemblyActions.clearItem());
             setPartLookUp({ open: false, forRow: null, selectedPart: null });
         }
-    }, [subAssembly, partLookUp.forRow, reduxDispatch, processRowUpdate]);
+    }, [subAssembly, partLookUp.forRow, reduxDispatch, processRowUpdate, treeView]);
 
     const PartLookUp = () => (
         <Dialog open={partLookUp.open}>
@@ -506,6 +523,11 @@ function BomUtility() {
                     onResultSelect={handlePartSelect}
                     clearSearch={() => {}}
                 />
+                {partMessage && (
+                    <Typography color="secondary" variant="subtitle2">
+                        {partMessage}
+                    </Typography>
+                )}
             </DialogContent>
             <DialogActions>
                 <Button
@@ -749,7 +771,7 @@ function BomUtility() {
     const doSearch = () => {
         const node = searchTree(searchBomTerm?.toUpperCase?.());
         if (node) {
-            const parent = getNode(node.parentName, 'name');
+            const parent = getNode(treeView, node.parentName, 'name');
             setSelected(parent);
             document.getElementById(parent.id).scrollIntoView();
             (() => new Promise(resolve => setTimeout(resolve, 500)))().then(() => {

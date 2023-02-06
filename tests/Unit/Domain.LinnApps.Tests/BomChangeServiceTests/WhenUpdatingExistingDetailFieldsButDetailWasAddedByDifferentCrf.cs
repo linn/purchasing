@@ -35,7 +35,8 @@
                                                         Name = "CAP 530", 
                                                         ParentName = "BOM", 
                                                         Id = "123", 
-                                                        Type = "C"
+                                                        Type = "C",
+                                                        HasChanged = true
                                                     }
                                               },
                            };
