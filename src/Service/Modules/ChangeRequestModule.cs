@@ -47,8 +47,7 @@
             {
                 await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
             }
-
-            if (includeAllForBom.GetValueOrDefault())
+            else if (includeAllForBom.GetValueOrDefault())
             {
                 await res.Negotiate(facadeService.GetChangeRequestsRelevantToBom(searchTerm));
             }
