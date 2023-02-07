@@ -48,7 +48,7 @@ const SetBomStandardPriceUtility = () => {
                 <SnackbarMessage
                     visible={result?.message}
                     onClose={() => reduxDispatch(bomStandardPricesActions.clearItem())}
-                    message={result.message}
+                    message={result?.message}
                     timeOut={3000}
                 />
                 {loading && <Loading />}
