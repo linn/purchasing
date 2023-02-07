@@ -22,7 +22,7 @@
             this.functionResource 
                 = new BomFunctionResource
                       {
-                          SrcPartNumber = "SRC", DestPartNumber = "DEST", CrfNumber = 123
+                          SrcPartNumber = "SRC", DestPartNumber = "BOM", CrfNumber = 123, RootName = "DEST"
                       };
             this.BomTreeService.BuildBomTree("DEST", null, false, true)
                 .Returns(new BomTreeNode { Name = "DEST" });
