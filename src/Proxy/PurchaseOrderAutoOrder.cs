@@ -31,7 +31,8 @@
               decimal qty,
               DateTime? dateRequired,
               decimal ourUnitPrice,
-              bool authAllowed)
+              bool authAllowed,
+              string internalRemarksForOrder)
         {
             using (var connection = this.databaseService.GetConnection())
             {
@@ -100,7 +101,11 @@
                 cmd.Parameters.Add(qQuoteRef);
                 cmd.Parameters.Add(p_remarks);
                 cmd.Parameters.Add(pAuthBy);
-
+                cmd.Parameters.Add(
+                    new OracleParameter("p_internal_remarks", OracleDbType.Varchar2)
+                        {
+                            Direction = ParameterDirection.Input, Size = 300, Value = internalRemarksForOrder
+                        });
                 cmd.ExecuteNonQuery();
 
                 var createCmd = new OracleCommand("pl_auto_order.Create_Auto_Order_Wrapper", connection)

@@ -19,7 +19,8 @@
             decimal qty,
             DateTime? dateRequired,
             decimal ourUnitPrice,
-            bool authAllowed);
+            bool authAllowed,
+            string internalRemarksForOrder);
         
         CreateOrderFromReqResult CreateAutoOrder(
             string partNumber,
