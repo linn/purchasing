@@ -10,6 +10,7 @@
 
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Integration.Tests.Extensions;
+    using Linn.Purchasing.Resources.Boms;
 
     using NSubstitute;
 
@@ -54,9 +55,9 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resources = this.Response.DeserializeBody<IEnumerable<BomStandardPrice>>()?.ToArray();
-            resources.Should().NotBeNull();
-            resources.Should().HaveCount(2);
+            var resource = this.Response.DeserializeBody<BomStandardPricesResource>();
+            resource.Should().NotBeNull();
+            resource.Lines.Should().HaveCount(2);
         }
     }
 }

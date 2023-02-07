@@ -5,6 +5,7 @@
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+    using Linn.Purchasing.Resources.Boms;
 
     public class BomStandardPriceFacadeService : IBomStandardPriceFacadeService
     {
@@ -15,10 +16,13 @@
             this.domainService = domainService;
         }
 
-        public IResult<IEnumerable<BomStandardPrice>> GetData(string searchTerm)
+        public IResult<BomStandardPricesResource> GetData(string searchTerm)
         {
-            return new SuccessResult<IEnumerable<BomStandardPrice>>(
-                this.domainService.GetPriceVarianceInfo(searchTerm));
+            return new SuccessResult<BomStandardPricesResource>(
+                new BomStandardPricesResource
+                    {
+                        Lines = this.domainService.GetPriceVarianceInfo(searchTerm)
+                    });
         }
     }
 }
