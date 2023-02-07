@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Proxy
 {
+    using System;
     using System.Data;
 
     using Linn.Common.Proxy.LinnApps;
@@ -91,7 +92,7 @@
                 {
                     Direction = ParameterDirection.Input,
                     Size = 50,
-                    Value = null
+                    Value = DBNull.Value
                 });
                 cmd.Parameters.Add(new OracleParameter("p_remarks", OracleDbType.Varchar2)
                 {
@@ -99,18 +100,6 @@
                     Size = 50,
                     Value = remarks
                 });
-                cmd.Parameters.Add(new OracleParameter("p_autocost_parents", OracleDbType.Boolean)
-                                       {
-                                           Direction = ParameterDirection.Input,
-                                           Size = 50,
-                                           Value = false
-                                       });
-                cmd.Parameters.Add(new OracleParameter("p_new_labour_price", OracleDbType.Int32)
-                                       {
-                                           Direction = ParameterDirection.Input,
-                                           Size = 50,
-                                           Value = 0
-                                       });
                 cmd.ExecuteNonQuery();
                 connection.Close();
             }

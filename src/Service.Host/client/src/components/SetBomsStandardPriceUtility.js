@@ -1,4 +1,4 @@
-import { InputField, Loading, Page } from '@linn-it/linn-form-components-library';
+import { InputField, Loading, Page, SnackbarMessage } from '@linn-it/linn-form-components-library';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import queryString from 'query-string';
@@ -24,9 +24,10 @@ const SetBomStandardPriceUtility = () => {
         'item',
         bomStandardPricesActions.clearErrorsForItem
     );
+
     const columns = [
         { field: 'depth', headerName: 'Depth', width: 100 },
-        { field: 'bomName', headerName: 'bom', width: 100 },
+        { field: 'bomName', headerName: 'bom', width: 250 },
         { field: 'materialPrice', headerName: 'Mat Price', width: 100 },
         { field: 'standardPrice', headerName: 'Std Price', width: 100 },
         { field: 'stockMaterialVariance', headerName: 'Stock Mat Var', width: 100 },
@@ -35,12 +36,21 @@ const SetBomStandardPriceUtility = () => {
     ];
 
     const handleSelectRow = selected => {
-        setRequestBody(b => ({ ...b, lines: result.lines.filter(x => selected.includes(x.id)) }));
+        setRequestBody(b => ({
+            ...b,
+            lines: result.lines.filter(x => selected.includes(x.bomName))
+        }));
     };
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
+                <SnackbarMessage
+                    visible={result?.message}
+                    onClose={() => reduxDispatch(bomStandardPricesActions.clearItem())}
+                    message={result.message}
+                    timeOut={3000}
+                />
                 {loading && <Loading />}
                 {result && (
                     <>
@@ -68,10 +78,16 @@ const SetBomStandardPriceUtility = () => {
                         <Grid item xs={12}>
                             <Button
                                 variant="contained"
-                                disabled={!requestBody?.lines}
-                                onClick={() =>
-                                    reduxDispatch(bomStandardPricesActions.add(requestBody))
-                                }
+                                disabled={!requestBody?.lines || requestBody.lines.length === 0}
+                                onClick={() => {
+                                    reduxDispatch(bomStandardPricesActions.clearItem());
+                                    reduxDispatch(
+                                        bomStandardPricesActions.postByHref(
+                                            '/purchasing/boms/prices',
+                                            requestBody
+                                        )
+                                    );
+                                }}
                             >
                                 MAKE CHANGES
                             </Button>

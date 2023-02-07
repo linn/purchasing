@@ -41,13 +41,13 @@
             if (searchExpression.StartsWith("*"))
             {
                 var expr = searchExpression.Substring(1);
-                result = result.Where(x => x.BomName.StartsWith(expr));
+                result = result.Where(x => x.BomName.EndsWith(expr));
             }
 
             if (searchExpression.EndsWith("*"))
             {
                 var expr = searchExpression.Split("*")[0];
-                result = result.Where(x => x.BomName.EndsWith(expr));
+                result = result.Where(x => x.BomName.StartsWith(expr));
             }
 
             return result;
@@ -62,8 +62,8 @@
 
             try
             {
-
-                foreach (var line in lines)
+                var bomStandardPrices = lines as BomStandardPrice[] ?? lines.ToArray();
+                foreach (var line in bomStandardPrices)
                 {
                     line.StockMaterialVariance ??= 0;
                     line.LoanMaterialVariance ??= 0;
@@ -86,6 +86,8 @@
                 result.Success = true;
 
                 result.Message = $"{count} records updated.";
+
+                result.Lines = this.repository.FilterBy(x => bomStandardPrices.Select(l => l.BomName).Contains(x.BomName));
 
                 return result;
             }

@@ -14,6 +14,6 @@
 
         public decimal? LoanMaterialVariance { get; set; }
 
-        public string AllocLines { get; set; }
+        public int? AllocLines { get; set; }
     }
 }
