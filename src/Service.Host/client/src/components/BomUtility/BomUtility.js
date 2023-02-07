@@ -642,7 +642,7 @@ function BomUtility() {
             <DialogTitle>Delete All From Bom</DialogTitle>
             <DialogContent dividers>
                 <Typography variant="h6">
-                    {`Clicking confirm will create a change to remove everything from ${selected.name}`}
+                    {`Clicking confirm will create a change to remove everything from ${selected?.name}`}
                 </Typography>
             </DialogContent>
             <DialogActions>
