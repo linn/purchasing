@@ -103,6 +103,7 @@ function ChangeRequest() {
     const cancelUri = utilities.getHref(item, 'cancel');
     const phaseInUri = utilities.getHref(item, 'phase-in');
     const makeLiveUri = utilities.getHref(item, 'make-live');
+    const undoUri = utilities.getHref(item, 'undo');
 
     const cancel = request => {
         if (request?.changeState === 'PROPOS' || request?.changeState === 'ACCEPT') {
@@ -124,6 +125,19 @@ function ChangeRequest() {
                 changeRequestStatusChangeActions.add({
                     id,
                     status: 'LIVE',
+                    selectedBomChangeIds: selectedBomChanges,
+                    selectedPcasChangeIds: selectedPcasChanges
+                })
+            );
+        }
+    };
+
+    const undo = request => {
+        if (request?.changeState === 'ACCEPT' || request?.changeState === 'LIVE') {
+            reduxDispatch(
+                changeRequestStatusChangeActions.add({
+                    id,
+                    status: 'UNDO',
                     selectedBomChangeIds: selectedBomChanges,
                     selectedPcasChangeIds: selectedPcasChanges
                 })
@@ -216,8 +230,12 @@ function ChangeRequest() {
                             variant="outlined"
                             disabled={!cancelUri}
                             onClick={() => cancel(item)}
+                            style={{ marginRight: '30px' }}
                         >
                             Cancel
+                        </Button>
+                        <Button variant="outlined" disabled={!undoUri} onClick={() => undo(item)}>
+                            Undo
                         </Button>
                     </Grid>
                 </Grid>

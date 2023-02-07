@@ -11,5 +11,7 @@
 
         void ExplodeSubAssembly(
             int bomId, int changeId, string changeState, string subAssembly);
+
+        void UndoBomChange(int changeId, int undoneBy);
     }
 }

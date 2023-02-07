@@ -106,5 +106,32 @@
                 connection.Close();
             }
         }
+
+        public void UndoBomChange(int changeId, int undoneBy)
+        {
+            using (var connection = this.databaseService.GetConnection())
+            {
+                connection.Open();
+                var cmd = new OracleCommand("bom_pack.undo_bom_change", connection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+                cmd.Parameters.Add(
+                    new OracleParameter("p_change_id", OracleDbType.Int32)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = changeId
+                        });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_undone_by", OracleDbType.Int32)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = undoneBy
+                        });
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
     }
 }
