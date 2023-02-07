@@ -1,9 +1,11 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
 
@@ -58,31 +60,40 @@
             int? reqNumber = null;
             var count = 0;
 
-            foreach (var line in lines)
+            try
             {
-                line.StockMaterialVariance ??= 0;
-                line.LoanMaterialVariance ??= 0;
 
-                if (line.LoanMaterialVariance + line.StockMaterialVariance != 0 & !reqNumber.HasValue)
+                foreach (var line in lines)
                 {
-                    reqNumber = this.storesMatVarPack.MakeReqHead(who);
+                    line.StockMaterialVariance ??= 0;
+                    line.LoanMaterialVariance ??= 0;
+
+                    if (line.LoanMaterialVariance + line.StockMaterialVariance != 0 & !reqNumber.HasValue)
+                    {
+                        reqNumber = this.storesMatVarPack.MakeReqHead(who);
+                    }
+
+                    if (line.LoanMaterialVariance + line.StockMaterialVariance != 0)
+                    {
+                        this.storesMatVarPack.MakeReqLine(reqNumber.GetValueOrDefault(), line.BomName, who);
+                    }
+
+                    this.autocostPack.AutoCostAssembly(line.BomName, "STANDARD", who, remarks);
+
+                    count++;
                 }
 
-                if (line.LoanMaterialVariance + line.StockMaterialVariance != 0)
-                {
-                    this.storesMatVarPack.MakeReqLine(reqNumber.GetValueOrDefault(), line.BomName, who);
-                }
+                result.Success = true;
 
-                this.autocostPack.AutoCostAssembly(line.BomName, "STANDARD", who, remarks);
+                result.Message = $"{count} records updated.";
 
-                count++;
+                return result;
             }
-
-            result.Success = true;
-
-            result.Message = $"{count} records updated.";
-
-            return result;
+            catch (Exception x)
+            {
+                throw new SetStandardPriceException(
+                    "An Error occurred updating the standard price:", x);
+            }
         }
     }
 }

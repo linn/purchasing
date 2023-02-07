@@ -6,5 +6,7 @@
     public interface IBomStandardPriceFacadeService
     {
         IResult<BomStandardPricesResource> GetData(string searchTerm);
+
+        IResult<BomStandardPricesResource> DoUpdate(BomStandardPricesResource resource);
     }
 }
