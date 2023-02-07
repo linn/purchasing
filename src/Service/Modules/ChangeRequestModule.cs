@@ -43,7 +43,7 @@
             bool? outstanding,
             int? lastMonths)
         {
-            if (string.IsNullOrEmpty(searchTerm))
+            if (string.IsNullOrEmpty(searchTerm) && outstanding == null)
             {
                 await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
             }

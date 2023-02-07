@@ -114,6 +114,12 @@ function ChangeRequestSearch() {
             headerName: 'Proposed By',
             width: 200,
             renderCell: params => <>{params.row.proposedBy?.fullName}</>
+        },
+        {
+            field: 'reasonForChange',
+            headerName: 'Reason',
+            width: 500,
+            renderCell: params => <>{params.row.reasonForChange}</>
         }
     ];
 
