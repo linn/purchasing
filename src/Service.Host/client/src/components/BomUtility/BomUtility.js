@@ -582,7 +582,7 @@ function BomUtility() {
                                 onChange={() => {
                                     setAddOrOverwrite(ao => (ao === 'A' ? 'O' : 'A'));
                                 }}
-                                propertyName="whereUsed"
+                                propertyName="addOrOverwrite"
                             />
                         </DialogContent>
                     </>
