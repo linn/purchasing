@@ -74,7 +74,6 @@
         {
             var resultResource = this.Response.DeserializeBody<AddressResource>();
             resultResource.Should().NotBeNull();
-
             resultResource.CountryCode.Should().Be("NC");
         }
     }
