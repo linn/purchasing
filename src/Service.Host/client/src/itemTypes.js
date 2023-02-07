@@ -390,6 +390,6 @@ export const bomVerificationHistory = new ItemType(
 
 export const bomStandardPrices = new ItemType(
     'bomStandardPrices',
-    'BOMS_PRICE_VARIANCE_INFO',
+    'BOM_STANDARD_PRICES',
     '/purchasing/boms/prices'
 );
