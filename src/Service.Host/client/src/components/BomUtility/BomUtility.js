@@ -616,7 +616,8 @@ function BomUtility() {
                                     srcPartNumber: bomToCopy,
                                     destPartNumber: selected.name,
                                     crfNumber: crNumber,
-                                    addOrOverwrite
+                                    addOrOverwrite,
+                                    rootName: bomName
                                 })
                             );
                         } else {
@@ -624,7 +625,8 @@ function BomUtility() {
                                 bomTreeActions.postByHref('/purchasing/boms/explode', {
                                     destPartNumber: selected.name,
                                     crfNumber: crNumber,
-                                    subAssembly: bomToCopy
+                                    subAssembly: bomToCopy,
+                                    rootName: bomName
                                 })
                             );
                         }
@@ -660,7 +662,8 @@ function BomUtility() {
                         reduxDispatch(
                             bomTreeActions.postByHref('/purchasing/boms/delete', {
                                 destPartNumber: selected.name,
-                                crfNumber: crNumber
+                                crfNumber: crNumber,
+                                rootName: bomName
                             })
                         );
                     }}
