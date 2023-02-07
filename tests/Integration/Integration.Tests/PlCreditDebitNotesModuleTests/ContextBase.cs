@@ -2,6 +2,7 @@
 {
     using System.Net.Http;
 
+    using Linn.Common.Authorisation;
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -37,6 +38,8 @@
 
         protected IPlCreditDebitNoteEmailService MockEmailService { get; private set; }
 
+        protected IAuthorisationService MockAuthService { get; private set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -44,10 +47,11 @@
             this.MockTransactionManager = Substitute.For<ITransactionManager>();
             this.MockDomainService = Substitute.For<IPlCreditDebitNoteService>();
             this.MockEmailService = Substitute.For<IPlCreditDebitNoteEmailService>();
+            this.MockAuthService = Substitute.For<IAuthorisationService>();
             this.FacadeService = new PlCreditDebitNoteFacadeService(
                 this.MockPlCreditDebitNoteRepository,
                 this.MockTransactionManager,
-                new PlCreditDebitNoteResourceBuilder(),
+                new PlCreditDebitNoteResourceBuilder(this.MockAuthService),
                 this.MockDomainService);
 
             this.Client = TestClient.With<PlCreditDebitNotesModule>(

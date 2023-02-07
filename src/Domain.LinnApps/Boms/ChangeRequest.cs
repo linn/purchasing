@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
     public class ChangeRequest
@@ -236,6 +237,51 @@
                     }
                 }
             }
+        }
+
+        public bool CanUndo() => (this.ChangeState == "ACCEPT" || this.ChangeState == "LIVE");
+
+        public bool UndoChanges(
+            Employee undoneBy,
+            IEnumerable<int> selectedBomChangeIds,
+            IEnumerable<int> selectedPcasChangeIds,
+            IBomPack bomPack,
+            IPcasPack pcasPack)
+        {
+            var changesUndone = false;
+            if (this.CanUndo())
+            {
+                if (selectedBomChangeIds != null && this.BomChanges != null)
+                {
+                    foreach (var bomChange in this.BomChanges)
+                    {
+                        if (bomChange.CanUndo())
+                        {
+                            if (selectedBomChangeIds.Contains(bomChange.ChangeId))
+                            {
+                                bomPack.UndoBomChange(bomChange.ChangeId, undoneBy.Id);
+                                changesUndone = true;
+                            }
+                        }
+                    }
+                }
+
+                if (selectedPcasChangeIds != null && this.PcasChanges != null)
+                {
+                    foreach (var pcasChange in this.PcasChanges)
+                    {
+                        if (pcasChange.CanUndo())
+                        {
+                            if (selectedPcasChangeIds.Contains(pcasChange.ChangeId))
+                            {
+                                pcasPack.UndoPcasChange(pcasChange.ChangeId, undoneBy.Id);
+                                changesUndone = true;
+                            }
+                        }
+                    }
+                }
+            }
+            return changesUndone;
         }
     }
 }

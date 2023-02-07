@@ -87,16 +87,7 @@
                 .Returns(this.replacedDetail);
             this.BomDetailRepository.FilterBy(Arg.Any<Expression<Func<BomDetail, bool>>>())
                 .Returns(new List<BomDetail> { new BomDetail { AddReplaceSeq = 2 } }.AsQueryable());
-            this.Sut.CreateBomChanges(this.newTree, 100, 33087);
-        }
-
-        [Test]
-        public void ShouldAddBomChange()
-        {
-            this.BomChangeRepository
-                .Received(1).Add(Arg.Any<BomChange>());
-            this.BomChangeRepository
-                .Received(1).Add(Arg.Is<BomChange>(c => c.BomName == "BOM" && c.DocumentNumber == 100));
+            this.Sut.ProcessTreeUpdate(this.newTree, 100, 33087);
         }
 
         [Test]
@@ -120,7 +111,7 @@
         {
             this.replacedDetail.DeleteReplaceSeq.Should().Be(3);
             this.replacedDetail.DeleteChangeId.Should().Be(6666);
-            this.replacedDetail.ChangeState.Should().Be("PROPOS");
+            this.replacedDetail.ChangeState.Should().Be("LIVE");
         }
     }
 }

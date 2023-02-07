@@ -8,6 +8,7 @@
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
 
     public class PlCreditDebitNoteFacadeService 
@@ -29,7 +30,32 @@
             PlCreditDebitNoteResource resource, 
             IEnumerable<string> privileges = null)
         {
-            throw new NotImplementedException();
+            var note = new PlCreditDebitNote
+                           {
+                               PartNumber = resource.PartNumber.ToUpper(), 
+                               OrderQty = resource.OrderQty, 
+                               ReturnsOrderNumber = resource.ReturnsOrderNumber,
+                               ReturnsOrderLine = resource.ReturnsOrderLine,
+                               OriginalOrderLine = resource.ReturnsOrderLine,
+                               NetTotal = resource.NetTotal,
+                               Total = resource.Total,
+                               OrderUnitPrice = resource.OrderUnitPrice,
+                               OrderUnitOfMeasure = resource.OrderUnitOfMeasure,
+                               VatTotal = resource.VatTotal,
+                               Notes = resource.Notes,
+                               Supplier = new Supplier { SupplierId = resource.SupplierId.GetValueOrDefault() },
+                               SuppliersDesignation = resource.SuppliersDesignation,
+                               PurchaseOrder = new PurchaseOrder
+                                                   {
+                                                       OrderNumber = resource.OriginalOrderNumber.GetValueOrDefault()
+                                                   },
+                               Currency = new Currency { Code = resource.Currency },
+                               VatRate = resource.VatRate,
+                               CreditOrReplace = resource.CreditOrReplace,
+                               OriginalOrderNumber = resource.OriginalOrderNumber,
+                               CreatedBy = resource.Who.GetValueOrDefault()
+                           };
+            return this.domainService.CreateCreditNote(note, privileges);
         }
 
         protected override void UpdateFromResource(

@@ -37,7 +37,7 @@
                     });
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { BomType = string.Empty, DecrementRule = "YES" });
-            this.action = () => this.Sut.CreateBomChanges(tree, 100, 33087);
+            this.action = () => this.Sut.ProcessTreeUpdate(tree, 100, 33087);
         }
 
         [Test]

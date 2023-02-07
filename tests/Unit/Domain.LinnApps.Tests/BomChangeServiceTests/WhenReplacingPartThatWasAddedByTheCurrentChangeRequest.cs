@@ -91,7 +91,7 @@
             this.BomDetailRepository.FindById(4567)
                 .Returns(this.replacedDetail);
 
-            this.action = () => this.Sut.CreateBomChanges(this.newTree, 100, 33087);
+            this.action = () => this.Sut.ProcessTreeUpdate(this.newTree, 100, 33087);
         }
 
         [Test]

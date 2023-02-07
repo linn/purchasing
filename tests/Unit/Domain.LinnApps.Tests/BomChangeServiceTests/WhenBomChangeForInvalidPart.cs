@@ -9,6 +9,8 @@
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+
     using NSubstitute;
 
     using NUnit.Framework;
@@ -28,10 +30,9 @@
                                HasChanged = true,
                                Children = new List<BomTreeNode> { new BomTreeNode { Name = "CAP 001", ParentName = "BOM" } }
                            };
-
             this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(
                 new Bom { BomName = "BOM", BomId = 123, Details = new List<BomDetailViewEntry>() });
-            this.action = () => this.Sut.CreateBomChanges(tree, 100, 33087);
+            this.action = () => this.Sut.ProcessTreeUpdate(tree, 100, 33087);
         }
 
         [Test]

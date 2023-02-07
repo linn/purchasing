@@ -3,6 +3,7 @@
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NSubstitute;
@@ -22,6 +23,10 @@
 
         protected IRepository<LinnWeek, int> WeekRepository { get; private set; }
 
+        protected IBomPack BomPack { get; private set; }
+
+        protected IPcasPack PcasPack { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -30,12 +35,16 @@
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
             this.WeekRepository = Substitute.For<IRepository<LinnWeek, int>>();
+            this.BomPack = Substitute.For<IBomPack>();
+            this.PcasPack = Substitute.For<IPcasPack>();
             this.Sut = new ChangeRequestService(
                 this.AuthService,
                 this.Repository,
                 this.PartRepository,
                 this.EmployeeRepository,
-                this.WeekRepository);
+                this.WeekRepository,
+                this.BomPack,
+                this.PcasPack);
         }
     }
 }

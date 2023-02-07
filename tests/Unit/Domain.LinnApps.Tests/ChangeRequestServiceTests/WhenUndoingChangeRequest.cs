@@ -3,8 +3,11 @@
     using System;
     using System.Collections.Generic;
 
+<<<<<<< HEAD
     using FluentAssertions;
 
+=======
+>>>>>>> afc2e0cb96d7201251fe02fb5cc1c97e4f7f6c74
     using Linn.Purchasing.Domain.LinnApps.Boms;
 
     using NSubstitute;
@@ -29,12 +32,14 @@
                                                        new BomChange
                                                            {
                                                                ChangeId = 1,
-                                                               ChangeState = "LIVE"
+                                                               ChangeState = "LIVE",
+                                                               PcasChange = "N"
                                                            },
                                                        new BomChange
                                                            {
                                                                ChangeId = 2,
-                                                               ChangeState = "CANCEL"
+                                                               ChangeState = "CANCEL",
+                                                               PcasChange = "N"
                                                            }
                                                    }
                               };
@@ -53,10 +58,16 @@
         }
 
         [Test]
+<<<<<<< HEAD
         public void ShouldMakeLiveChangeRequest()
         {
             this.result.Should().NotBeNull();
             this.result.ChangeState.Should().Be("LIVE");
+=======
+        public void ShouldHaveCalledUndoBomChanges()
+        {
+            this.BomPack.Received().UndoBomChange(1,7);
+>>>>>>> afc2e0cb96d7201251fe02fb5cc1c97e4f7f6c74
         }
     }
 }

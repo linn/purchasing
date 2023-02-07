@@ -21,8 +21,6 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
 
         private BomDetail deletedDetail;
 
-        private BomTreeNode result;
-
         [SetUp]
         public void SetUp()
         {
@@ -54,7 +52,8 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
                                           {
                                               PartNumber = "ASS 1",
                                               Qty = 2,
-                                              ChangeState = "LIVE"
+                                              ChangeState = "LIVE",
+                                              DetailId = 4567
                                           }
                                   }
             });
@@ -74,19 +73,13 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
                 .Returns(this.deletedDetail);
             this.BomChangeRepository.FindBy(Arg.Any<Expression<Func<BomChange, bool>>>())
                 .Returns(new BomChange { ChangeId = 999, DocumentNumber = 666 });
-            this.result = this.Sut.CreateBomChanges(this.newTree, 666, 33087);
+            this.Sut.ProcessTreeUpdate(this.newTree, 666, 33087);
         }
 
         [Test]
         public void ShouldUpdateDetail()
         {
             this.deletedDetail.DeleteChangeId.Should().Be(999);
-        }
-
-        [Test]
-        public void SHouldReturnUpdatedTree()
-        {
-            this.result.Children.First().DeleteChangeDocumentNumber.Should().Be(666);
         }
     }
 }

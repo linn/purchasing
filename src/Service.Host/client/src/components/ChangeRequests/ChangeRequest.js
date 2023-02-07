@@ -21,19 +21,26 @@ import BomChangesTab from './Tabs/BomChangesTab';
 import PcasChangesTab from './Tabs/PcasChangesTab';
 import history from '../../history';
 import useInitialise from '../../hooks/useInitialise';
+import { changeRequest, changeRequestStatusChange } from '../../itemTypes';
 
 function ChangeRequest() {
     const { id } = useParams();
 
     const reduxDispatch = useDispatch();
 
-    const [item, loading] = useInitialise(() => changeRequestActions.fetch(id), 'changeRequest');
+    const [item, loading] = useInitialise(() => changeRequestActions.fetch(id), changeRequest.item);
+    const statusChangeLoading = useSelector(reduxState =>
+        itemSelectorHelpers.getItemLoading(reduxState[changeRequestStatusChange.item])
+    );
 
     const statusChange = useSelector(reduxState =>
         itemSelectorHelpers.getItem(reduxState.changeRequestStatusChange)
     );
 
     const changedState = (changereq, origreq) => {
+        if (changereq?.documentNumber !== origreq?.documentNumber) {
+            return false;
+        }
         if (changereq?.changeState !== origreq?.changeState) {
             return true;
         }
@@ -87,6 +94,7 @@ function ChangeRequest() {
     };
 
     const approve = request => {
+        reduxDispatch(changeRequestStatusChangeActions.clearItem());
         if (request?.changeState === 'PROPOS') {
             reduxDispatch(changeRequestStatusChangeActions.add({ id, status: 'ACCEPT' }));
         }
@@ -95,6 +103,7 @@ function ChangeRequest() {
     const cancelUri = utilities.getHref(item, 'cancel');
     const phaseInUri = utilities.getHref(item, 'phase-in');
     const makeLiveUri = utilities.getHref(item, 'make-live');
+    const undoUri = utilities.getHref(item, 'undo');
 
     const cancel = request => {
         if (request?.changeState === 'PROPOS' || request?.changeState === 'ACCEPT') {
@@ -110,11 +119,25 @@ function ChangeRequest() {
     };
 
     const makeLive = request => {
+        reduxDispatch(changeRequestStatusChangeActions.clearItem());
         if (request?.changeState === 'ACCEPT') {
             reduxDispatch(
                 changeRequestStatusChangeActions.add({
                     id,
                     status: 'LIVE',
+                    selectedBomChangeIds: selectedBomChanges,
+                    selectedPcasChangeIds: selectedPcasChanges
+                })
+            );
+        }
+    };
+
+    const undo = request => {
+        if (request?.changeState === 'ACCEPT' || request?.changeState === 'LIVE') {
+            reduxDispatch(
+                changeRequestStatusChangeActions.add({
+                    id,
+                    status: 'UNDO',
                     selectedBomChangeIds: selectedBomChanges,
                     selectedPcasChangeIds: selectedPcasChanges
                 })
@@ -134,7 +157,7 @@ function ChangeRequest() {
 
     return (
         <Page history={history}>
-            {loading ? (
+            {loading || statusChangeLoading ? (
                 <Loading />
             ) : (
                 <Grid container spacing={2} justifyContent="center">
@@ -207,8 +230,12 @@ function ChangeRequest() {
                             variant="outlined"
                             disabled={!cancelUri}
                             onClick={() => cancel(item)}
+                            style={{ marginRight: '30px' }}
                         >
                             Cancel
+                        </Button>
+                        <Button variant="outlined" disabled={!undoUri} onClick={() => undo(item)}>
+                            Undo
                         </Button>
                     </Grid>
                 </Grid>

@@ -1,18 +1,21 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PlCreditDebitNotesTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PlCreditDebitNoteServiceTests
 {
     using System;
     using System.Collections.Generic;
 
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using NSubstitute;
 
     using NUnit.Framework;
 
-    public class WhenCancellingADebitNote : ContextBase
+    public class WhenCancellingADebitNoteAndUserNotAuthorised : ContextBase
     {
+        private Action action;
+
         private PlCreditDebitNote note;
 
         [SetUp]
@@ -21,22 +24,19 @@
             this.note = new PlCreditDebitNote { DateCreated = DateTime.UnixEpoch, NoteNumber = 1 };
             this.MockAuthService.HasPermissionFor(
                 AuthorisedAction.PlCreditDebitNoteCancel,
-                Arg.Is<List<string>>(x => x.Contains(AuthorisedAction.PlCreditDebitNoteCancel))).Returns(true);
+                Arg.Is<List<string>>(x => !x.Contains(AuthorisedAction.PlCreditDebitNoteClose))).Returns(false);
 
-            this.Sut.CancelDebitNote(
+            this.action = () => this.Sut.CancelDebitNote(
                 this.note,
                 "REASON",
                 33087,
-                new List<string> { AuthorisedAction.PlCreditDebitNoteCancel });
+                new List<string>());
         }
 
         [Test]
-        public void ShouldReturnCancelled()
+        public void ShouldThrowUnauthorisedActionException()
         {
-            this.note.NoteNumber.Should().Be(1);
-            this.note.DateCancelled.Should().Be(DateTime.Today);
-            this.note.ReasonCancelled.Should().Be("REASON");
-            this.note.CancelledBy.Should().Be(33087);
+            this.action.Should().Throw<UnauthorisedActionException>();
         }
     }
 }

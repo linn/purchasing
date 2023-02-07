@@ -27,6 +27,13 @@
             IEnumerable<int> selectedPcasChangeIds, 
             IEnumerable<string> privileges = null);
 
+        IResult<ChangeRequestResource> UndoChangeRequest(
+            int documentNumber,
+            int undoneById,
+            IEnumerable<int> selectedBomChangeIds,
+            IEnumerable<int> selectedPcasChangeIds,
+            IEnumerable<string> privileges = null);
+
         IResult<ChangeRequestResource> ChangeStatus(
             ChangeRequestStatusChangeResource request, int changedById, IEnumerable<string> privileges = null);
 

@@ -69,8 +69,8 @@
         [Test]
         public void ShouldReturnCorrectHeaderLinks()
         {
-            this.result = this.Response.DeserializeBody<BomVerificationHistoryResource>();
-            this.result.Links.First(a => a.Rel == "self").Href.Should().Be($"/purchasing/bom-verification/654321");
+            result = this.Response.DeserializeBody<BomVerificationHistoryResource>();
+            result.Links.First(a => a.Rel == "self").Href.Should().Be($"/purchasing/bom-verification/123");
         }
     }
 }

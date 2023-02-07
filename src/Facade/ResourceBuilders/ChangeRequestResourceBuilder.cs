@@ -98,6 +98,11 @@
                 yield return new LinkResource { Rel = "phase-in", Href = $"/purchasing/change-requests/phase-ins" };
             }
 
+            if (model.CanUndo() && this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges))
+            {
+                yield return new LinkResource { Rel = "undo", Href = $"/purchasing/change-requests/phase-ins" };
+            }
+
             yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
         }
     }

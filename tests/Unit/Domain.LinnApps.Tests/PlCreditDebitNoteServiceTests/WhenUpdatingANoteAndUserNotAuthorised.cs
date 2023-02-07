@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PlCreditDebitNotesTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PlCreditDebitNoteServiceTests
 {
     using System;
     using System.Collections.Generic;
@@ -12,7 +12,7 @@
 
     using NUnit.Framework;
 
-    public class WhenClosingADebitNoteAndUserNotAuthorised : ContextBase
+    public class WhenUpdatingANoteAndUserNotAuthorised : ContextBase
     {
         private Action action;
 
@@ -23,13 +23,12 @@
         {
             this.note = new PlCreditDebitNote { DateCreated = DateTime.UnixEpoch, NoteNumber = 1 };
             this.MockAuthService.HasPermissionFor(
-                AuthorisedAction.PlCreditDebitNoteClose,
-                Arg.Is<List<string>>(x => !x.Contains(AuthorisedAction.PlCreditDebitNoteClose))).Returns(false);
+                AuthorisedAction.PlCreditDebitNoteUpdate,
+                Arg.Is<List<string>>(x => !x.Contains(AuthorisedAction.PlCreditDebitNoteUpdate))).Returns(false);
 
-            this.action = () => this.Sut.CloseDebitNote(
+            this.action = () => this.Sut.UpdatePlCreditDebitNote(
                 this.note,
-                "REASON",
-                33087,
+                new PlCreditDebitNote(),
                 new List<string>());
         }
 

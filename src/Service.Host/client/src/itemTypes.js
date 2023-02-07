@@ -381,3 +381,9 @@ export const boardComponentSummaries = new ItemType(
     'BOARD_COMPONENT_SUMMARIES',
     '/purchasing/boms/boards-summary'
 );
+
+export const bomVerificationHistory = new ItemType(
+    'bomVerificationHistory',
+    'BOM_VERIFICATION_HISTORY',
+    '/purchasing/bom-verification'
+);

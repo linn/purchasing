@@ -77,7 +77,7 @@
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(6666);
             this.DatabaseService.GetIdSequence("BOMDET_SEQ").Returns(10023);
             this.BomChangeRepository.FindBy(Arg.Any<Expression<Func<BomChange, bool>>>())
-                .Returns(new BomChange { DocumentNumber = 666 });
+                .Returns(new BomChange { DocumentNumber = 666, BomName = "BOM" });
             this.replacedDetail = new BomDetail
                                       {
                                           PartNumber = "CAP OLD", 
@@ -92,7 +92,7 @@
             this.BomDetailRepository.FindById(4567)
                 .Returns(this.replacedDetail);
 
-            this.action = () => this.Sut.CreateBomChanges(this.newTree, 100, 33087);
+            this.action = () => this.Sut.ProcessTreeUpdate(this.newTree, 100, 33087);
         }
 
         [Test]

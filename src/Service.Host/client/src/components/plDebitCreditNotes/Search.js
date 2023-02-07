@@ -13,6 +13,7 @@ import Grid from '@mui/material/Grid';
 import plCreditDebitNotesActions from '../../actions/plCreditDebitNotesActions';
 import history from '../../history';
 import config from '../../config';
+import useApplicationState from '../../hooks/useApplicationState';
 
 function Search() {
     const dispatch = useDispatch();
@@ -31,11 +32,12 @@ function Search() {
         collectionSelectorHelpers.getSearchLoading(state.plCreditDebitNotes)
     );
 
-    const item = useSelector(state =>
-        collectionSelectorHelpers.getApplicationState(state.plCreditDebitNotes)
+    const [appState, loading] = useApplicationState(
+        () => plCreditDebitNotesActions.fetchState(),
+        'plCreditDebitNotes'
     );
 
-    const createUrl = utilities.getHref(item, 'create');
+    const createUrl = !loading && utilities.getHref(appState, 'create');
 
     const searchResultsTable = {
         totalItemCount: searchResults.length,

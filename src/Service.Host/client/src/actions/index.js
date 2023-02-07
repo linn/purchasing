@@ -350,3 +350,7 @@ export const boardComponentSummariesActionTypes = makeActionTypes(
 export const changeRequestPhaseInsActionTypes = makeActionTypes(
     itemTypes.changeRequestPhaseIns.actionType
 );
+
+export const bomVerificationHistoryActionTypes = makeActionTypes(
+    itemTypes.bomVerificationHistory.actionType
+);

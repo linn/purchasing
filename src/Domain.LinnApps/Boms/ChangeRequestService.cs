@@ -10,6 +10,7 @@
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
     public class ChangeRequestService : IChangeRequestService
@@ -24,18 +25,26 @@
 
         private readonly IRepository<LinnWeek, int> weekRepository;
 
+        private readonly IBomPack bomPack;
+
+        private readonly IPcasPack pcasPack;
+
         public ChangeRequestService(
             IAuthorisationService authService,
             IRepository<ChangeRequest, int> repository,
             IQueryRepository<Part> partRepository,
             IRepository<Employee, int> employeeRepository,
-            IRepository<LinnWeek, int> weekRepository)
+            IRepository<LinnWeek, int> weekRepository,
+            IBomPack bomPack,
+            IPcasPack pcasPack)
         {
             this.authService = authService;
             this.repository = repository;
             this.partRepository = partRepository;
             this.employeeRepository = employeeRepository;
             this.weekRepository = weekRepository;
+            this.bomPack = bomPack;
+            this.pcasPack = pcasPack;
         }
 
         public Part ValidPartNumber(string partNumber)
@@ -45,7 +54,8 @@
                 return null;
             }
 
-            var part = this.partRepository.FindBy(p => p.PartNumber == partNumber);
+            var part = this.partRepository.FindBy(
+                p => p.PartNumber == partNumber.Trim().ToUpper());
             if (part == null)
             {
                 throw new DomainException("invalid part number");
@@ -208,13 +218,45 @@
             IEnumerable<int> selectedPcasChangeIds,
             IEnumerable<string> privileges = null)
         {
+            var changesUndone = false;
+
+            if (!this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges))
+            {
+                throw new UnauthorisedActionException(
+                    "You are not authorised to undo change requests");
+            }
+
             var request = this.repository.FindById(documentNumber);
             if (request == null)
             {
                 throw new ItemNotFoundException("Change Request not found");
             }
+			
+            var employee = this.employeeRepository.FindById(undoneById);
+            if (employee == null)
+            {
+                throw new ItemNotFoundException("Employee not found");
+            }
 
-            // undo changes
+            changesUndone = request.UndoChanges(
+                employee,
+                selectedBomChangeIds,
+                selectedPcasChangeIds,
+                this.bomPack,
+                this.pcasPack);
+
+            // undo change
+            if (changesUndone)
+            {
+                var updatedRequest = this.repository.FindById(documentNumber);
+                if (updatedRequest == null)
+                {
+                    throw new ItemNotFoundException("Change Request not found");
+                }
+
+                return updatedRequest;
+            }
+>>>>>>> afc2e0cb96d7201251fe02fb5cc1c97e4f7f6c74
 
             return request;
         }

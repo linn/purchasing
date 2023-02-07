@@ -23,6 +23,7 @@
         public void CopyBom(
             string srcPartNumber, int destBomId, int destChangeId, string destChangeState, string addOrOverWrite)
         {
+            this.transactionManager.Commit();
             using (var connection = this.databaseService.GetConnection())
             {
                 connection.Open();

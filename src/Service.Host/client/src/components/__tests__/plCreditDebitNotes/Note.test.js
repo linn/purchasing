@@ -182,6 +182,8 @@ describe('When sending email...', () => {
 
         const emailButton = screen.getByRole('button', { name: 'email' });
         fireEvent.click(emailButton);
+        const confirmButton = screen.getByRole('button', { name: 'Confirm' });
+        fireEvent.click(confirmButton);
     });
 
     test('should call email pdf function', () => {
