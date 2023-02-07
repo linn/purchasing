@@ -9,7 +9,8 @@ import {
     SnackbarMessage,
     getItemError,
     ErrorCard,
-    InputField
+    InputField,
+    OnOffSwitch
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -544,6 +545,7 @@ function BomUtility() {
     const [undoReplacementDialogOpen, setUndoReplacementDialogOpen] = useState(false);
     const [explodeSubAssemblyDialogOpen, setExplodeSubAssemblyDialogOpen] = useState(false);
     const [undoDeletionDialogOpen, setUndoDeletionDialogOpen] = useState(false);
+    const [addOrOverwrite, setAddOrOverwrite] = useState('A');
 
     const CopyExplodeBomDialog = () => (
         <Dialog
@@ -551,24 +553,48 @@ function BomUtility() {
             onClose={() => setPartSearchTerm(null)}
         >
             <DialogTitle>{copyBomDialogOpen ? 'Copy BOM' : 'Explode Sub Assembly'}</DialogTitle>
-            <DialogContent dividers>
-                <Search
-                    visible={copyBomDialogOpen || explodeSubAssemblyDialogOpen}
-                    autoFocus
-                    propertyName="partNumber"
-                    label="Part Number"
-                    resultsInModal
-                    resultLimit={100}
-                    value={bomToCopy ?? partSearchTerm}
-                    handleValueChange={(_, newVal) => setPartSearchTerm(newVal)}
-                    search={searchParts}
-                    searchResults={partsSearchResults.filter(x => x.bomType !== 'C')}
-                    loading={partsSearchLoading}
-                    priorityFunction="closestMatchesFirst"
-                    onResultSelect={newVal => setBomToCopy(newVal.partNumber)}
-                    clearSearch={() => {}}
-                />
-            </DialogContent>
+            <>
+                <DialogContent dividers>
+                    <Search
+                        visible={copyBomDialogOpen || explodeSubAssemblyDialogOpen}
+                        autoFocus
+                        propertyName="partNumber"
+                        label="Part Number"
+                        resultsInModal
+                        resultLimit={100}
+                        value={bomToCopy ?? partSearchTerm}
+                        handleValueChange={(_, newVal) => setPartSearchTerm(newVal)}
+                        search={searchParts}
+                        searchResults={partsSearchResults.filter(x => x.bomType !== 'C')}
+                        loading={partsSearchLoading}
+                        priorityFunction="closestMatchesFirst"
+                        onResultSelect={newVal => setBomToCopy(newVal.partNumber)}
+                        clearSearch={() => {}}
+                    />
+                </DialogContent>
+
+                {copyBomDialogOpen && (
+                    <>
+                        <DialogContent dividers>
+                            <OnOffSwitch
+                                label="Overwrite / Add"
+                                value={addOrOverwrite === 'A'}
+                                onChange={() => {
+                                    setAddOrOverwrite(ao => (ao === 'A' ? 'O' : 'A'));
+                                }}
+                                propertyName="whereUsed"
+                            />
+                        </DialogContent>
+                    </>
+                )}
+                {explodeSubAssemblyDialogOpen && (
+                    <DialogContent dividers>
+                        <Typography variant="subtitle2">
+                            {`Clicking confirm will replace the chosen part with all its components on ${selected.name}`}
+                        </Typography>
+                    </DialogContent>
+                )}
+            </>
             <DialogActions>
                 <Button
                     onClick={() => {
@@ -588,14 +614,15 @@ function BomUtility() {
                             reduxDispatch(
                                 bomTreeActions.postByHref('/purchasing/boms/copy', {
                                     srcPartNumber: bomToCopy,
-                                    destPartNumber: bomName,
-                                    crfNumber: crNumber
+                                    destPartNumber: selected.name,
+                                    crfNumber: crNumber,
+                                    addOrOverwrite
                                 })
                             );
                         } else {
                             reduxDispatch(
                                 bomTreeActions.postByHref('/purchasing/boms/explode', {
-                                    destPartNumber: bomName,
+                                    destPartNumber: selected.name,
                                     crfNumber: crNumber,
                                     subAssembly: bomToCopy
                                 })
@@ -615,7 +642,7 @@ function BomUtility() {
             <DialogTitle>Delete All From Bom</DialogTitle>
             <DialogContent dividers>
                 <Typography variant="h6">
-                    Clicking confirm will create a change to remove everything from this bom!
+                    {`Clicking confirm will create a change to remove everything from ${selected.name}`}
                 </Typography>
             </DialogContent>
             <DialogActions>
@@ -632,7 +659,7 @@ function BomUtility() {
                         setDeleteAllFromBomDialogOpen(false);
                         reduxDispatch(
                             bomTreeActions.postByHref('/purchasing/boms/delete', {
-                                destPartNumber: bomName,
+                                destPartNumber: selected.name,
                                 crfNumber: crNumber
                             })
                         );

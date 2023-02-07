@@ -9,7 +9,7 @@
         IResult<BomTreeNode> PostBom(PostBomResource node);
 
         IResult<BomTreeNode> CopyBom(
-            string srcPartNumber, string destPartNumber, int changedBy, int crfNumber);
+            string srcPartNumber, string destPartNumber, int changedBy, int crfNumber, string addOrOverwrite);
 
         IResult<BomTreeNode> DeleteBom(string bomName, int crfNumber, int changedBy);
 

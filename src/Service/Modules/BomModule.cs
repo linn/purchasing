@@ -269,7 +269,8 @@
                 functionResource.SrcPartNumber, 
                 functionResource.DestPartNumber, 
                 req.HttpContext.User.GetEmployeeNumber(), 
-                functionResource.CrfNumber);
+                functionResource.CrfNumber,
+                functionResource.AddOrOverwrite);
 
             await res.Negotiate(result);
         }

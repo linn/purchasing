@@ -9,5 +9,7 @@
         public int CrfNumber { get; set; }
 
         public string SubAssembly { get; set; }
+
+        public string AddOrOverwrite { get; set; }
     }
 }
