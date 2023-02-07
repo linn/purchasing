@@ -212,6 +212,8 @@
 
         public DbSet<BomVerificationHistory> BomVerificationHistory { get; set; }
 
+        public DbSet<BomFrequencyWeeks> BomFrequencyWeeks { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -327,6 +329,7 @@
             this.BuildBomDetails(builder);
             this.BuildBomCostDetails(builder);
             this.BuildBomVerificationHistory(builder);
+            this.BuildBomFreqWeeks(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -2197,6 +2200,13 @@
             entity.Property(a => a.DocumentType).HasColumnName("DOCUMENT_TYPE").HasMaxLength(6);
             entity.Property(a => a.DocumentNumber).HasColumnName("DOCUMENT_NUMBER").HasMaxLength(10);
             entity.Property(a => a.Remarks).HasColumnName("REMARKS").HasMaxLength(255);
+        }
+
+        private void BuildBomFreqWeeks(ModelBuilder builder)
+        {
+            var entity = builder.Entity<BomFrequencyWeeks>().ToTable("BOMFREQWEEKS_K").HasNoKey();
+            entity.Property(a => a.FreqWeeks).HasColumnName("BOM_VERIFY_FREQ_WEEKS").HasMaxLength(4);
+            entity.Property(a => a.PartNumber).HasColumnName("DATE_VERIFIED").HasMaxLength(14);
         }
     }
 }

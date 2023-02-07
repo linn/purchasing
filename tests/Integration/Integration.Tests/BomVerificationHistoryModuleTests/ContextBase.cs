@@ -24,7 +24,11 @@
 
         protected IFacadeResourceService<BomVerificationHistory, int, BomVerificationHistoryResource, BomVerificationHistoryResource> BomVerificationHistoryFacadeService { get; private set; }
 
+        protected IFacadeResourceService<BomFrequencyWeeks, string, BomFrequencyWeeksResource, BomFrequencyWeeksResource> BomFrequencyFacadeService { get; private set; }
+
         protected IRepository<BomVerificationHistory, int> BomVerificationHistoryRepository { get; private set; }
+
+        protected IRepository<BomFrequencyWeeks, string> BomFrequencyRepository { get; private set; }
 
         protected ITransactionManager TransactionManager { get; private set; }
 
@@ -34,6 +38,7 @@
         public void EstablishContext()
         {
             this.BomVerificationHistoryRepository = Substitute.For<IRepository<BomVerificationHistory, int>>();
+            this.BomFrequencyRepository = Substitute.For<IRepository<BomFrequencyWeeks, string>>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.DatabaseService= Substitute.For<IDatabaseService>();
 
@@ -42,10 +47,18 @@
                 this.TransactionManager,
                 new BomVerificationHistoryResourceBuilder(),
                 this.DatabaseService);
+
+            this.BomFrequencyFacadeService = new BomFrequencyFacadeService(
+                this.BomFrequencyRepository,
+                this.TransactionManager,
+                new BomFrequencyWeeksResourceBuilder(),
+                this.DatabaseService);
+
             this.Client = TestClient.With<BomVerificationHistoryModule>(
                 services =>
                     {
                         services.AddSingleton(this.BomVerificationHistoryFacadeService);
+                        services.AddSingleton(this.BomFrequencyFacadeService);
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);

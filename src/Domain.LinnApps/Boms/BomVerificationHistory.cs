@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
 {
-    using Linn.Common.Resources;
     using System;
 
     public class BomVerificationHistory
