@@ -186,7 +186,8 @@
                 entity.Qty,
                 entity.DateRequired,
                 entity.UnitPrice,
-                authAllowed);
+                authAllowed,
+                entity.InternalNotes);
 
             if (createMiniOrderResult.Success)
             {
