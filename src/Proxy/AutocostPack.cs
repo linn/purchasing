@@ -61,7 +61,59 @@
 
         public void AutoCostAssembly(string partNumber, string changeType, int changedBy, string remarks)
         {
-            throw new System.NotImplementedException();
+            using (var connection = this.databaseService.GetConnection())
+            {
+                connection.Open();
+                var cmd = new OracleCommand("autocost_pack.autocost_assembly", connection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+                cmd.Parameters.Add(new OracleParameter("p_part_number", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Size = 50,
+                    Value = partNumber
+                });
+                cmd.Parameters.Add(new OracleParameter("p_change_type", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Size = 50,
+                    Value = changeType
+                });
+
+                cmd.Parameters.Add(new OracleParameter("p_changed_by", OracleDbType.Int32)
+                {
+                    Direction = ParameterDirection.Input,
+                    Size = 50,
+                    Value = changedBy
+                });
+                cmd.Parameters.Add(new OracleParameter("p_bom_change_id", OracleDbType.Int32)
+                {
+                    Direction = ParameterDirection.Input,
+                    Size = 50,
+                    Value = null
+                });
+                cmd.Parameters.Add(new OracleParameter("p_remarks", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Size = 50,
+                    Value = remarks
+                });
+                cmd.Parameters.Add(new OracleParameter("p_autocost_parents", OracleDbType.Boolean)
+                                       {
+                                           Direction = ParameterDirection.Input,
+                                           Size = 50,
+                                           Value = false
+                                       });
+                cmd.Parameters.Add(new OracleParameter("p_new_labour_price", OracleDbType.Int32)
+                                       {
+                                           Direction = ParameterDirection.Input,
+                                           Size = 50,
+                                           Value = 0
+                                       });
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
         }
     }
 }
