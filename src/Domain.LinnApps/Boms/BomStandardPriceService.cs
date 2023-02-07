@@ -87,8 +87,6 @@
 
                 result.Message = $"{count} records updated.";
 
-                result.Lines = this.repository.FilterBy(x => bomStandardPrices.Select(l => l.BomName).Contains(x.BomName));
-
                 return result;
             }
             catch (Exception x)
