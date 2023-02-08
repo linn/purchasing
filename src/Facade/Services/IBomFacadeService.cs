@@ -9,11 +9,17 @@
         IResult<BomTreeNode> PostBom(PostBomResource node);
 
         IResult<BomTreeNode> CopyBom(
-            string srcPartNumber, string destPartNumber, int changedBy, int crfNumber);
+            string srcPartNumber, 
+            string destPartNumber, 
+            int changedBy, 
+            int crfNumber, 
+            string addOrOverwrite, 
+            string rootName);
 
-        IResult<BomTreeNode> DeleteBom(string bomName, int crfNumber, int changedBy);
+        IResult<BomTreeNode> DeleteBom(
+            string bomName, int crfNumber, int changedBy, string rootName);
 
         IResult<BomTreeNode> ExplodeSubAssembly(
-            string bomName, int crfNumber, string subAssembly, int changedBy);
+            string bomName, int crfNumber, string subAssembly, int changedBy, string rootName);
     }
 }

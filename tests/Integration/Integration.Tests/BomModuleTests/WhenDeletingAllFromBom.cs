@@ -19,7 +19,12 @@
         [SetUp]
         public void SetUp()
         {
-            this.functionResource = new BomFunctionResource { DestPartNumber = "DEST", CrfNumber = 123 };
+            this.functionResource = new BomFunctionResource
+                                        {
+                                            DestPartNumber = "DEST", 
+                                            CrfNumber = 123,
+                                            RootName = "DEST"
+                                        };
             this.BomTreeService.BuildBomTree("DEST", null, false, true)
                 .Returns(new BomTreeNode { Name = "DEST" });
             this.Response = this.Client.PostAsJsonAsync(

@@ -269,7 +269,9 @@
                 functionResource.SrcPartNumber, 
                 functionResource.DestPartNumber, 
                 req.HttpContext.User.GetEmployeeNumber(), 
-                functionResource.CrfNumber);
+                functionResource.CrfNumber,
+                functionResource.AddOrOverwrite,
+                functionResource.RootName);
 
             await res.Negotiate(result);
         }
@@ -283,7 +285,8 @@
             var result = bomFacadeService.DeleteBom(
                 functionResource.DestPartNumber,
                 functionResource.CrfNumber,
-                req.HttpContext.User.GetEmployeeNumber());
+                req.HttpContext.User.GetEmployeeNumber(),
+                functionResource.RootName);
 
             await res.Negotiate(result);
         }
@@ -298,7 +301,8 @@
                 functionResource.DestPartNumber,
                 functionResource.CrfNumber,
                 functionResource.SubAssembly,
-                req.HttpContext.User.GetEmployeeNumber());
+                req.HttpContext.User.GetEmployeeNumber(),
+                functionResource.RootName);
 
             await res.Negotiate(result);
         }
