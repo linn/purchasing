@@ -25,7 +25,7 @@ jest.mock('react-router', () => ({
 }));
 
 const fetchSpy = jest.spyOn(bomTreeActions, 'fetchByHref');
-const addSpy = jest.spyOn(bomTreeActions, 'add');
+const postSpy = jest.spyOn(bomTreeActions, 'postByHref');
 const fetchChangeRequestsSpy = jest.spyOn(changeRequestsActions, 'searchWithOptions');
 const fetchSubAssemblySpy = jest.spyOn(subAssemblyActions, 'fetchByHref');
 
@@ -199,7 +199,8 @@ describe('When adding a component to the bom...', () => {
 
         const saveButton = screen.getByRole('button', { name: 'Save' });
         fireEvent.click(saveButton);
-        expect(addSpy).toHaveBeenCalledWith(
+        expect(postSpy).toHaveBeenCalledWith(
+            '/purchasing/boms/tree',
             expect.objectContaining({
                 treeRoot: expect.objectContaining({
                     name: 'PCAS LEWIS3',
