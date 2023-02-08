@@ -3,11 +3,8 @@
     using System;
     using System.Collections.Generic;
 
-<<<<<<< HEAD
     using FluentAssertions;
-
-=======
->>>>>>> afc2e0cb96d7201251fe02fb5cc1c97e4f7f6c74
+    
     using Linn.Purchasing.Domain.LinnApps.Boms;
 
     using NSubstitute;
@@ -57,17 +54,10 @@
             this.result = this.Sut.UndoChanges(1, 7, selectedBomChangeIds, null );
         }
 
-        [Test]
-<<<<<<< HEAD
-        public void ShouldMakeLiveChangeRequest()
-        {
-            this.result.Should().NotBeNull();
-            this.result.ChangeState.Should().Be("LIVE");
-=======
+        [Test] 
         public void ShouldHaveCalledUndoBomChanges()
         {
             this.BomPack.Received().UndoBomChange(1,7);
->>>>>>> afc2e0cb96d7201251fe02fb5cc1c97e4f7f6c74
         }
     }
 }
