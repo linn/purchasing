@@ -1041,7 +1041,12 @@ function BomUtility() {
                         saveClick={() => {
                             setChangesMade(false);
                             reduxDispatch(bomTreeActions.clearErrorsForItem());
-                            reduxDispatch(bomTreeActions.add({ treeRoot: treeView, crNumber }));
+                            reduxDispatch(
+                                bomTreeActions.postByHref('/purchasing/boms/tree', {
+                                    treeRoot: treeView,
+                                    crNumber
+                                })
+                            );
                         }}
                         cancelClick={initialise}
                         backClick={() => {
