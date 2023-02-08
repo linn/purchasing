@@ -559,7 +559,7 @@ function BomUtility() {
                         visible={copyBomDialogOpen || explodeSubAssemblyDialogOpen}
                         autoFocus
                         propertyName="partNumber"
-                        label="Part Number"
+                        label="Search for a BOM"
                         resultsInModal
                         resultLimit={100}
                         value={bomToCopy ?? partSearchTerm}
@@ -585,12 +585,20 @@ function BomUtility() {
                                 propertyName="addOrOverwrite"
                             />
                         </DialogContent>
+                        <DialogContent dividers>
+                            <Typography variant="subtitle2">
+                                {addOrOverwrite === 'A' &&
+                                    `Clicking confirm will append the components on the selected BOM to ${selected.name}`}
+                                {addOrOverwrite === 'O' &&
+                                    `Clicking confirm will replace all components on ${selected.name} with the components on the selected BOM`}
+                            </Typography>
+                        </DialogContent>
                     </>
                 )}
                 {explodeSubAssemblyDialogOpen && (
                     <DialogContent dividers>
                         <Typography variant="subtitle2">
-                            {`Clicking confirm will replace the chosen part with all its components on ${selected.name}`}
+                            {`Clicking confirm will replace the chosen subassembly with all its components on ${selected.name}`}
                         </Typography>
                     </DialogContent>
                 )}
