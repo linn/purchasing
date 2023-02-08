@@ -6,7 +6,6 @@
 
     using Linn.Common.Authorisation;
     using Linn.Common.Configuration;
-    using Linn.Common.Domain.Exceptions;
     using Linn.Common.Email;
     using Linn.Common.Logging;
     using Linn.Common.Pdf;
@@ -505,6 +504,22 @@
             }
 
             return order;
+        }
+
+        public string GetOrderNotesForBuyer(PurchaseOrder order)
+        {
+            var notes = $"{order.Supplier?.NotesForBuyer} {Environment.NewLine}";
+            foreach (var purchaseOrderDetail in order.Details)
+            {
+                var partSupplier = this.partSupplierRepository.FindById(
+                    new PartSupplierKey { PartNumber = purchaseOrderDetail.PartNumber, SupplierId = order.SupplierId });
+                if (partSupplier != null && !string.IsNullOrEmpty(partSupplier.NotesForBuyer))
+                {
+                    notes += $"{partSupplier.NotesForBuyer} {Environment.NewLine}";
+                }
+            }
+
+            return notes;
         }
 
         public static DateTime NextOccurrenceOfDay(DateTime from, string deliveryDay)
