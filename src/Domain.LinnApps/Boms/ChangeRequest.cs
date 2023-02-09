@@ -93,6 +93,26 @@
             return false;
         }
 
+        public bool CanReplace(bool adminPrivs)
+        {
+            if (this.ChangeRequestType != "REPLACE")
+            {
+                return false;
+            }
+
+            if (this.ChangeState == "PROPOS")
+            {
+                return true;
+            }
+
+            if (this.ChangeState == "ACCEPT")
+            {
+                return adminPrivs;
+            }
+
+            return false;
+        }
+
         public void Approve()
         {
             if (this.CanApprove())

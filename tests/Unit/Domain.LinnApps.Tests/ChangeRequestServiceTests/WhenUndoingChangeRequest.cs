@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
 
+    using FluentAssertions;
+    
     using Linn.Purchasing.Domain.LinnApps.Boms;
 
     using NSubstitute;
@@ -52,7 +54,7 @@
             this.result = this.Sut.UndoChanges(1, 7, selectedBomChangeIds, null );
         }
 
-        [Test]
+        [Test] 
         public void ShouldHaveCalledUndoBomChanges()
         {
             this.BomPack.Received().UndoBomChange(1,7);

@@ -21,6 +21,7 @@
         {
             app.MapPost("/purchasing/change-requests", this.CreateChangeRequest);
             app.MapGet("/purchasing/change-requests/create", this.GetApp);
+            app.MapGet("/purchasing/change-requests/replace", this.GetApp);
             app.MapGet("/purchasing/change-requests", this.GetChangeRequests);
             app.MapGet("/purchasing/change-requests/{id:int}", this.GetChangeRequest);
             app.MapPost("/purchasing/change-requests/status", this.ChangeStatus);

@@ -73,6 +73,7 @@ import BomTreeOptions from './BomTreeOptions';
 import ChangeRequestSearch from './ChangeRequests/ChangeRequestsSearch';
 import CreateChangeRequest from './ChangeRequests/CreateChangeRequest';
 import ChangeRequest from './ChangeRequests/ChangeRequest';
+import ChangeRequestReplace from './ChangeRequests/ChangeRequestReplace';
 import BomTypeChange from './BomTypeChange';
 import Board from './boards/Board';
 import BoardSearch from './boards/BoardSearch';
@@ -481,6 +482,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/change-requests/create"
                                     component={CreateChangeRequest}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/change-requests/replace"
+                                    component={ChangeRequestReplace}
                                 />
                                 <Route
                                     exact
