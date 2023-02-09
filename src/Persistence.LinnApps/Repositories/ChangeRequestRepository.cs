@@ -21,18 +21,22 @@
 
         public override ChangeRequest FindById(int key)
         {
-            return this.serviceDbContext
+            var request = this.serviceDbContext
                 .ChangeRequests
                 .Include(c => c.BomChanges).ThenInclude(c => c.PhaseInWeek)
                 .Include(c => c.BomChanges).ThenInclude(c => c.AddedBomDetails)
                 .Include(c => c.BomChanges).ThenInclude(c => c.DeletedBomDetails)
-                .Include(c => c.PcasChanges)
                 .Include(x => x.ProposedBy)
                 .Include(x => x.EnteredBy)
                 .Include(x => x.OldPart)
                 .Include(x => x.NewPart)
                 .Include(c => c.CircuitBoard)
                 .First(c => c.DocumentNumber == key && c.DocumentType == "CRF");
+
+            // explicit loading to avoid cartesian load of bomchanges x pcaschanges
+            this.serviceDbContext.Entry(request).Collection(x => x.PcasChanges).Load();
+            
+            return request;
         }
 
         public override IQueryable<ChangeRequest> FilterBy (Expression<Func<ChangeRequest, bool>> expression)
