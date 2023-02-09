@@ -17,6 +17,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import AssemblyChange from './ChangeTypes/AssemblyChange';
 import BoardChange from './ChangeTypes/BoardChange';
+import ReplaceChange from './ChangeTypes/ReplaceChange';
 import employeesActions from '../../actions/employeesActions';
 import changeRequestActions from '../../actions/changeRequestActions';
 import history from '../../history';
@@ -79,6 +80,9 @@ function CreateChangeRequest() {
         }
         if (item.changeType === 'BOARDEDIT') {
             return item.boardCode?.length > 0 && item.revisionCode?.length > 0;
+        }
+        if (item.changeType === 'REPLACE') {
+            return item.oldPartNumber && item.newPartNumber;
         }
         return false;
     };
@@ -149,7 +153,13 @@ function CreateChangeRequest() {
                                             handleFieldChange={handleFieldChange}
                                         />
                                     ),
-                                    REPLACE: <Typography>Coming Soon...</Typography>
+                                    REPLACE: (
+                                        <ReplaceChange
+                                            item={item}
+                                            creating
+                                            handleFieldChange={handleFieldChange}
+                                        />
+                                    )
                                 }[item?.changeType]
                             }
                         </>

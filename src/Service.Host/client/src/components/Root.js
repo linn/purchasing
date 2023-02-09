@@ -73,6 +73,7 @@ import BomTreeOptions from './BomTreeOptions';
 import ChangeRequestSearch from './ChangeRequests/ChangeRequestsSearch';
 import CreateChangeRequest from './ChangeRequests/CreateChangeRequest';
 import ChangeRequest from './ChangeRequests/ChangeRequest';
+import ChangeRequestReplace from './ChangeRequests/ChangeRequestReplace';
 import BomTypeChange from './BomTypeChange';
 import Board from './boards/Board';
 import BoardSearch from './boards/BoardSearch';
@@ -86,6 +87,7 @@ import BomUtilitySearch from './BomUtility/BomUtilitySearch';
 import CreateCreditNote from './plDebitCreditNotes/CreateCreditNote';
 import CreateBomVerificationHistory from './BomVerificationHistoryUtility/CreateBomVerificationHistory';
 import BomVerificationHistory from './BomVerificationHistoryUtility/BomVerificationHistory';
+import SetBomStandardPriceUtility from './SetBomsStandardPriceUtility';
 
 const Root = ({ store }) => (
     <div>
@@ -483,6 +485,11 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
+                                    path="/purchasing/change-requests/replace"
+                                    component={ChangeRequestReplace}
+                                />
+                                <Route
+                                    exact
                                     path="/purchasing/change-requests/:id"
                                     component={ChangeRequest}
                                 />
@@ -521,6 +528,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/bom-verification/:id"
                                     component={BomVerificationHistory}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/boms/standards-set"
+                                    component={SetBomStandardPriceUtility}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

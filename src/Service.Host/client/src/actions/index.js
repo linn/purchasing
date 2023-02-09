@@ -354,3 +354,5 @@ export const changeRequestPhaseInsActionTypes = makeActionTypes(
 export const bomVerificationHistoryActionTypes = makeActionTypes(
     itemTypes.bomVerificationHistory.actionType
 );
+
+export const bomStandardPricesActionTypes = makeActionTypes(itemTypes.bomStandardPrices.actionType);

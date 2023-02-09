@@ -33,7 +33,7 @@
                               };
             this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(this.destBom);
             this.BomChangeRepository.FindBy(Arg.Any<Expression<Func<BomChange, bool>>>()).Returns(this.change);
-            this.Sut.CopyBom("SRC", this.destBom.BomName, 33087, 666);
+            this.Sut.CopyBom("SRC", this.destBom.BomName, 33087, 666, "O");
         }
 
         [Test]

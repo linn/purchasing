@@ -79,11 +79,12 @@
             }
         }
 
-        public void CopyBom(string srcPartNumber, string destBomPartNumber, int changedBy, int crfNumber)
+        public void CopyBom(
+            string srcPartNumber, string destBomPartNumber, int changedBy, int crfNumber, string addOrOverwrite)
         {
             var change = this.GetOrCreateBomChange(
                 destBomPartNumber, crfNumber, changedBy, this.GetOrCreateBom(destBomPartNumber));
-            this.bomPack.CopyBom(srcPartNumber, change.BomId, change.ChangeId, change.ChangeState, "O");
+            this.bomPack.CopyBom(srcPartNumber, change.BomId, change.ChangeId, change.ChangeState, addOrOverwrite);
         }
 
         public void DeleteAllFromBom(string bomName, int crfNumber, int changedBy)

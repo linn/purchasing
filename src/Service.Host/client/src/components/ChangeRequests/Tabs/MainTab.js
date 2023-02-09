@@ -10,6 +10,7 @@ import {
 import Button from '@mui/material/Button';
 import AssemblyChange from '../ChangeTypes/AssemblyChange';
 import BoardChange from '../ChangeTypes/BoardChange';
+import ReplaceChange from '../ChangeTypes/ReplaceChange';
 import ChangeState from '../ChangeState';
 import changeRequestActions from '../../../actions/changeRequestActions';
 import history from '../../../history';
@@ -49,7 +50,7 @@ function MainTab({ item, approve }) {
                     {
                         PARTEDIT: <AssemblyChange item={item} />,
                         BOARDEDIT: <BoardChange item={item} />,
-                        REPLACE: <>Replace</>
+                        REPLACE: <ReplaceChange item={item} />
                     }[item?.changeType]
                 }
             </>

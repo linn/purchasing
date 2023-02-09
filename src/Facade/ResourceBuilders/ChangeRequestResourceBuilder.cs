@@ -103,6 +103,11 @@
                 yield return new LinkResource { Rel = "undo", Href = $"/purchasing/change-requests/phase-ins" };
             }
 
+            if (model.CanReplace(adminPrivs))
+            {
+                yield return new LinkResource { Rel = "replace", Href = $"/purchasing/change-requests/replace" };
+            }
+
             yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
         }
     }

@@ -6,7 +6,8 @@
     {
         void ProcessTreeUpdate(BomTreeNode tree, int changeRequestNumber, int enteredBy);
 
-        void CopyBom(string srcPartNumber, string destBomPartNumber, int changedBy, int crfNumber);
+        void CopyBom(
+            string srcPartNumber, string destBomPartNumber, int changedBy, int crfNumber, string addOrOverwrite);
 
         void DeleteAllFromBom(string bomName, int crfNumber, int changedBy);
 

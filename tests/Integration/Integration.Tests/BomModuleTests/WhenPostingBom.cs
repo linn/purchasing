@@ -44,7 +44,7 @@
                 .Returns(this.tree);
 
             this.Response = this.Client.PostAsJsonAsync(
-                $"/purchasing/boms/tree",
+                "/purchasing/boms/tree",
                 this.resource).Result;
         }
 

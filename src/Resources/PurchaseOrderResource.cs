@@ -71,5 +71,7 @@
         public string DateCancelled { get; set; }
 
         public IEnumerable<PurchaseLedgerResource> LedgerEntries { get; set; }
+
+        public string NotesForBuyer { get; set; }
     }
 }
