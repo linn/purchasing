@@ -82,7 +82,7 @@ function CreateChangeRequest() {
             return item.boardCode?.length > 0 && item.revisionCode?.length > 0;
         }
         if (item.changeType === 'REPLACE') {
-            return item.oldPartNumber?.length > 0 && item.newPartNumber?.length > 0;
+            return item.oldPartNumber && item.newPartNumber;
         }
         return false;
     };
