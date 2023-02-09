@@ -19,7 +19,7 @@
                 var items = line.Split('\t').Select(a => a.Trim('"')).ToList();
                 if (!items[1].StartsWith("PCB") && !string.IsNullOrWhiteSpace(items[1]))
                 {
-                    components.Add(new BoardComponent { CRef = items[0], PartNumber = this.PadPartNumber(items[1]) });
+                    components.Add(new BoardComponent { CRef = items[0], PartNumber = this.PadPartNumber(items[1]), Quantity = 1 });
                 }
                 else
                 {

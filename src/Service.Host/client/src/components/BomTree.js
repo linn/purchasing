@@ -120,6 +120,10 @@ export default function BomTree({
                 (renderComponents || nodes.children.some(x => x.type !== 'C'))
                     ? nodes.children.map(node => {
                           if (!renderComponents) {
+                              if (node.replacementFor) {
+                                  return <></>;
+                              }
+
                               return node.type === 'C' ? <></> : renderTree(node);
                           }
                           return renderTree(node);

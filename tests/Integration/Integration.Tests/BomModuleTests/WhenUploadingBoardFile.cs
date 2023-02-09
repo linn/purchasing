@@ -1,10 +1,13 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.BomModuleTests
 {
+    using System;
+    using System.Linq.Expressions;
     using System.Net;
 
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -18,20 +21,29 @@
 
         private string fileType;
 
+        private int pcasChangeId;
+
         [SetUp]
         public void SetUp()
         {
             this.revisionCode = "L1R1";
             this.fileType = "TSB";
+            this.pcasChangeId = 678;
+            this.PcasChangeRepository.FindBy(Arg.Any<Expression<Func<PcasChange, bool>>>()).Returns(
+                new PcasChange
+                    {
+                        ChangeId = this.pcasChangeId, ChangeRequest = new ChangeRequest { BoardCode = this.BoardCode }
+                    });
             this.CircuitBoardService.UpdateFromFile(
                     this.BoardCode,
                     this.revisionCode,
                     this.fileType,
                     Arg.Any<string>(),
-                    Arg.Any<bool>())
+                    Arg.Is<PcasChange>(a => a.ChangeId == this.pcasChangeId),
+                    true)
                 .Returns(new ProcessResult(true, "ok"));
             this.Response = this.Client.Post(
-                $"/purchasing/purchase-orders/boms/upload-board-file?boardCode={this.BoardCode}&revisionCode={this.revisionCode}",
+                $"/purchasing/purchase-orders/boms/upload-board-file?boardCode={this.BoardCode}&revisionCode={this.revisionCode}&makeChanges=true&changeRequestId={this.pcasChangeId}",
                 "\"C001\", \"CAP 401\"",
                 with =>
                     {

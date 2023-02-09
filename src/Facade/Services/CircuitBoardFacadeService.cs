@@ -58,35 +58,11 @@
             CircuitBoardComponentsUpdateResource updateResource,
             IEnumerable<string> privileges = null)
         {
-            var pcasChange = this.pcasChangeRepository.FindBy(
-                a => a.BoardCode == id && a.RevisionCode == updateResource.ChangeRequestRevisionCode
-                                              && a.ChangeRequest.DocumentNumber == updateResource.ChangeRequestId);
-            if (pcasChange == null)
-            {
-                var nextChangeId = this.databaseService.GetIdSequence("CHG_SEQ");
-
-                pcasChange = new PcasChange
-                                 {
-                                     ChangeId = nextChangeId,
-                                     BoardCode = id,
-                                     RevisionCode = updateResource.ChangeRequestRevisionCode,
-                                     ChangeRequest = null,
-                                     DocumentType = null,
-                                     DocumentNumber = updateResource.ChangeRequestId,
-                                     DateEntered = DateTime.Now,
-                                     EnteredById = updateResource.UserNumber,
-                                     EnteredBy = null,
-                                     DateApplied = null,
-                                     AppliedById = null,
-                                     AppliedBy = null,
-                                     DateCancelled = null,
-                                     CancelledById = null,
-                                     CancelledBy = null,
-                                     ChangeState = null,
-                                     Comments = null
-                                 };
-                this.pcasChangeRepository.Add(pcasChange);
-            }
+            var pcasChange = this.GetPcasChangeDetails(
+                id,
+                updateResource.ChangeRequestId,
+                updateResource.ChangeRequestRevisionCode,
+                updateResource.UserNumber);
 
             CircuitBoard result;
             try
@@ -121,9 +97,29 @@
             string revisionCode,
             string fileType,
             string fileString,
+            int? changeRequestId,
+            bool makeChanges,
             IEnumerable<string> getPrivileges)
         {
-            var result = this.circuitBoardService.UpdateFromFile(boardCode, revisionCode, fileType, fileString, true);
+            PcasChange pcasChange = null;
+            if (makeChanges && changeRequestId.HasValue)
+            {
+                pcasChange = this.GetPcasChangeDetails(boardCode, changeRequestId.Value, revisionCode, 100);
+            }
+
+            var result = this.circuitBoardService.UpdateFromFile(
+                boardCode,
+                revisionCode,
+                fileType,
+                fileString,
+                pcasChange,
+                makeChanges);
+
+            if (makeChanges)
+            {
+                this.transactionManager.Commit();
+            }
+
             return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
         }
 
@@ -191,6 +187,45 @@
         protected override void DeleteOrObsoleteResource(CircuitBoard entity, IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
+        }
+
+        private PcasChange GetPcasChangeDetails(
+            string boardCode,
+            int changeRequestId,
+            string revisionCode,
+            int userNumber)
+        {
+            var pcasChange = this.pcasChangeRepository.FindBy(
+                a => a.BoardCode == boardCode && a.RevisionCode == revisionCode
+                                       && a.ChangeRequest.DocumentNumber == changeRequestId);
+            if (pcasChange == null)
+            {
+                var nextChangeId = this.databaseService.GetIdSequence("CHG_SEQ");
+
+                pcasChange = new PcasChange
+                                 {
+                                     ChangeId = nextChangeId,
+                                     BoardCode = boardCode,
+                                     RevisionCode = revisionCode,
+                                     ChangeRequest = null,
+                                     DocumentType = null,
+                                     DocumentNumber = changeRequestId,
+                                     DateEntered = DateTime.Now,
+                                     EnteredById = userNumber,
+                                     EnteredBy = null,
+                                     DateApplied = null,
+                                     AppliedById = null,
+                                     AppliedBy = null,
+                                     DateCancelled = null,
+                                     CancelledById = null,
+                                     CancelledBy = null,
+                                     ChangeState = null,
+                                     Comments = null
+                                 };
+                this.pcasChangeRepository.Add(pcasChange);
+            }
+
+            return pcasChange;
         }
 
         private void UpdateLayouts(

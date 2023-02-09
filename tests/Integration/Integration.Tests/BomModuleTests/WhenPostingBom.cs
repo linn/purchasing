@@ -40,13 +40,11 @@
                                     TreeRoot = this.tree
                                 };
 
-            this.BomChangeService.CreateBomChanges(
-                Arg.Any<BomTreeNode>(),
-                4567,
-                Arg.Any<int>()).Returns(this.resource.TreeRoot);
+            this.BomTreeService.BuildBomTree(this.resource.TreeRoot.Name, null, false, true)
+                .Returns(this.tree);
 
             this.Response = this.Client.PostAsJsonAsync(
-                $"/purchasing/boms/tree",
+                "/purchasing/boms/tree",
                 this.resource).Result;
         }
 

@@ -154,7 +154,8 @@
                 .AddTransient<IBomTreeReportsService, BomTreeReportService>()
                 .AddTransient<IBomReportsFacadeService, BomReportsFacadeService>()
                 .AddTransient<IQueryFacadeResourceService<BoardComponentSummary, BoardComponentSummaryResource, BoardComponentSummaryResource>, BoardComponentSummaryFacadeService>()
-                .AddTransient<IFacadeResourceService<BomVerificationHistory, int, BomVerificationHistoryResource, BomVerificationHistoryResource>, BomVerificationHistoryFacadeService>();
+                .AddTransient<IFacadeResourceService<BomVerificationHistory, int, BomVerificationHistoryResource, BomVerificationHistoryResource>, BomVerificationHistoryFacadeService>()
+                .AddTransient<IBomStandardPriceFacadeService, BomStandardPriceFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -212,6 +213,7 @@
                 .AddTransient<IBomReportsService, BomReportsService>()
                 .AddTransient<IBomChangeService, BomChangeService>()
                 .AddTransient<ICircuitBoardService, CircuitBoardService>()
+                .AddTransient<IBomStandardPriceService, BomStandardPriceService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
@@ -230,6 +232,7 @@
                 .AddTransient<ISalesTaxPack, SalesTaxPack>()
                 .AddTransient<IBomPack, BomPack>()
                 .AddTransient<IPcasPack, PcasPack>()
+                .AddTransient<IStoresMatVarPack, StoresMatVarPack>()
 
                 // proxy
                 .AddTransient<IHtmlTemplateService<PurchaseOrder>>(x =>

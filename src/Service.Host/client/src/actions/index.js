@@ -355,6 +355,8 @@ export const bomVerificationHistoryActionTypes = makeActionTypes(
     itemTypes.bomVerificationHistory.actionType
 );
 
+export const bomStandardPricesActionTypes = makeActionTypes(itemTypes.bomStandardPrices.actionType);
+
 export const uploadBoardFileActionTypes = makeProcessActionTypes(
     processTypes.uploadBoardFile.actionType
 );

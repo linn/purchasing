@@ -18,40 +18,40 @@
 
         public string DiscrepanciesOnChange(string boardCode, string revisionCode, int changeId)
         {
+            using (var connection = this.databaseService.GetConnection())
             {
-                using var connection = this.databaseService.GetConnection();
 
                 connection.Open();
                 var cmd = new OracleCommand("pcas_pack.discrepancies_on_pcaschange", connection)
-                              {
-                                  CommandType = CommandType.StoredProcedure
-                              };
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
                 var result = new OracleParameter(null, OracleDbType.Varchar2)
-                                 {
-                                     Size = 4000,
-                                     Direction = ParameterDirection.ReturnValue
-                                 };
+                {
+                    Size = 4000,
+                    Direction = ParameterDirection.ReturnValue
+                };
 
                 cmd.Parameters.Add(result);
 
                 cmd.Parameters.Add(
                     new OracleParameter("p_board_code", OracleDbType.Varchar2)
-                        {
-                            Direction = ParameterDirection.Input,
-                            Value = boardCode
-                        });
+                    {
+                        Direction = ParameterDirection.Input,
+                        Value = boardCode
+                    });
                 cmd.Parameters.Add(
                     new OracleParameter("p_revision_code", OracleDbType.Varchar2)
-                        {
-                            Direction = ParameterDirection.Input,
-                            Value = revisionCode
-                        });
+                    {
+                        Direction = ParameterDirection.Input,
+                        Value = revisionCode
+                    });
                 cmd.Parameters.Add(
                     new OracleParameter("p_change_id", OracleDbType.Int32)
-                        {
-                            Direction = ParameterDirection.Input,
-                            Value = changeId
-                        });
+                    {
+                        Direction = ParameterDirection.Input,
+                        Value = changeId
+                    });
                 cmd.ExecuteNonQuery();
                 connection.Close();
 
@@ -62,6 +62,35 @@
                 }
 
                 return result.Value.ToString();
+            }
+        }
+
+        public void UndoPcasChange(int changeId, int undoneBy)
+        {
+            using (var connection = this.databaseService.GetConnection())
+            {
+                connection.Open();
+                var cmd = new OracleCommand("pcas_pack.undo_pcas_change", connection)
+                              {
+                                  CommandType = CommandType.StoredProcedure
+                              };
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_change_id", OracleDbType.Int32)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = changeId
+                        });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_undone_by", OracleDbType.Int32)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = undoneBy
+                        });
+
+                cmd.ExecuteNonQuery();
+                connection.Close();
             }
         }
     }

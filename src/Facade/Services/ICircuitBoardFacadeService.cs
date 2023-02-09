@@ -20,6 +20,8 @@
             string revisionCode,
             string fileType,
             string fileString,
+            int? pcasChangeId,
+            bool makeChanges,
             IEnumerable<string> getPrivileges);
     }
 }

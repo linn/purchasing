@@ -16,6 +16,7 @@
             string revisionCode,
             string fileType,
             string fileString,
+            PcasChange pcasChangeId,
             bool makeChanges);
     }
 }

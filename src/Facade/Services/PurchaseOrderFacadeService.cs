@@ -155,8 +155,10 @@
 
             var generatedOrder = this.domainService.FillOutUnsavedOrder(updated, currentUserId);
 
-            return new SuccessResult<PurchaseOrderResource>(
-                (PurchaseOrderResource)this.resourceBuilder.Build(generatedOrder, privileges));
+            var returnResource = (PurchaseOrderResource)this.resourceBuilder.Build(generatedOrder, privileges);
+            returnResource.NotesForBuyer = this.domainService.GetOrderNotesForBuyer(generatedOrder);
+
+            return new SuccessResult<PurchaseOrderResource>(returnResource);
         }
 
         public IResult<ProcessResultResource> AuthorisePurchaseOrders(

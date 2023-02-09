@@ -86,6 +86,7 @@ import BomUtilitySearch from './BomUtility/BomUtilitySearch';
 import CreateCreditNote from './plDebitCreditNotes/CreateCreditNote';
 import CreateBomVerificationHistory from './BomVerificationHistoryUtility/CreateBomVerificationHistory';
 import BomVerificationHistory from './BomVerificationHistoryUtility/BomVerificationHistory';
+import SetBomStandardPriceUtility from './SetBomsStandardPriceUtility';
 
 const Root = ({ store }) => (
     <div>
@@ -521,6 +522,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/bom-verification/:id"
                                     component={BomVerificationHistory}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/boms/standards-set"
+                                    component={SetBomStandardPriceUtility}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

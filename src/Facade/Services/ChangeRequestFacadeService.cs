@@ -120,6 +120,29 @@
             }
         }
 
+        public IResult<ChangeRequestResource> UndoChangeRequest(
+            int documentNumber,
+            int undoneById,
+            IEnumerable<int> selectedBomChangeIds,
+            IEnumerable<int> selectedPcasChangeIds,
+            IEnumerable<string> privileges = null)
+        {
+            try
+            {
+                var request = this.changeRequestService.UndoChanges(documentNumber, undoneById, selectedBomChangeIds, selectedPcasChangeIds, privileges);
+                var resource = (ChangeRequestResource)this.resourceBuilder.Build(request, privileges);
+                return new SuccessResult<ChangeRequestResource>(resource);
+            }
+            catch (ItemNotFoundException)
+            {
+                return new NotFoundResult<ChangeRequestResource>("Change Request not found");
+            }
+            catch (InvalidStateChangeException)
+            {
+                return new BadRequestResult<ChangeRequestResource>("Cannot undo this Change Request");
+            }
+        }
+
         public IResult<ChangeRequestResource> ChangeStatus(ChangeRequestStatusChangeResource request, int changedById, IEnumerable<string> privileges = null)
         {
             if (request?.Status == "ACCEPT")
@@ -135,6 +158,11 @@
             if (request?.Status == "LIVE")
             {
                 return this.MakeLiveChangeRequest(request.Id, changedById, request.SelectedBomChangeIds, request.SelectedPcasChangeIds, privileges);
+            }
+
+            if (request?.Status == "UNDO")
+            {
+                return this.UndoChangeRequest(request.Id, changedById, request.SelectedBomChangeIds, request.SelectedPcasChangeIds, privileges);
             }
 
             return new BadRequestResult<ChangeRequestResource>($"Cannot change status to {request?.Status}");
@@ -228,7 +256,7 @@
                            EnteredById = (int)resource.EnteredBy.Id,
                            ProposedById = (int)resource.ProposedBy.Id,
                            OldPartNumber = resource.OldPartNumber,
-                           NewPartNumber = resource.NewPartNumber,
+                           NewPartNumber = newPart.PartNumber,
                            BoardCode = resource.BoardCode,
                            RevisionCode = resource.RevisionCode,
                            ReasonForChange = resource.ReasonForChange,

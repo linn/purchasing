@@ -271,7 +271,9 @@
                 functionResource.SrcPartNumber, 
                 functionResource.DestPartNumber, 
                 req.HttpContext.User.GetEmployeeNumber(), 
-                functionResource.CrfNumber);
+                functionResource.CrfNumber,
+                functionResource.AddOrOverwrite,
+                functionResource.RootName);
 
             await res.Negotiate(result);
         }
@@ -285,7 +287,8 @@
             var result = bomFacadeService.DeleteBom(
                 functionResource.DestPartNumber,
                 functionResource.CrfNumber,
-                req.HttpContext.User.GetEmployeeNumber());
+                req.HttpContext.User.GetEmployeeNumber(),
+                functionResource.RootName);
 
             await res.Negotiate(result);
         }
@@ -300,7 +303,8 @@
                 functionResource.DestPartNumber,
                 functionResource.CrfNumber,
                 functionResource.SubAssembly,
-                req.HttpContext.User.GetEmployeeNumber());
+                req.HttpContext.User.GetEmployeeNumber(),
+                functionResource.RootName);
 
             await res.Negotiate(result);
         }
@@ -310,7 +314,9 @@
             HttpResponse res,
             ICircuitBoardFacadeService circuitBoardFacadeService,
             string boardCode,
-            string revisionCode)
+            string revisionCode,
+            int? changeRequestId,
+            bool makeChanges)
         {
             IResult<ProcessResultResource> result;
 
@@ -323,6 +329,8 @@
                     revisionCode,
                     "TSB",
                     reader.Result,
+                    changeRequestId,
+                    makeChanges,
                     req.HttpContext.GetPrivileges());
             }
             else

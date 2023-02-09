@@ -88,7 +88,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
             this.BomDetailRepository.FindById(345).Returns(new BomDetail { Qty = 2, GenerateRequirement = "Y" });
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(1, 2);
             this.DatabaseService.GetIdSequence("BOMDET_SEQ").Returns(1, 2, 3);
-            this.Sut.CreateBomChanges(this.newTree, 100, 33087);
+            this.Sut.ProcessTreeUpdate(this.newTree, 100, 33087);
         }
 
         [Test]
@@ -113,14 +113,6 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
         {
             this.BomDetailRepository.Received(2).Add(Arg.Any<BomDetail>());
             this.BomDetailRepository.Received(1).Add(Arg.Is<BomDetail>(
-                x => x.PartNumber == this.c11.Name
-                     && x.Qty == this.c11.Qty
-                     && x.ChangeState == "PROPOS"
-                     && x.DetailId == 2
-                     && !x.DeleteChangeId.HasValue
-                     && x.BomId == 456
-                     && x.AddChangeId == 2));
-            this.BomDetailRepository.Received(1).Add(Arg.Is<BomDetail>(
                 x => x.PartNumber == this.c12.Name
                      && x.Qty == this.c12.Qty
                      && x.ChangeState == "PROPOS"
@@ -128,6 +120,14 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
                      && !x.DeleteChangeId.HasValue
                      && x.BomId == 123
                      && x.AddChangeId == 1));
+            this.BomDetailRepository.Received(1).Add(Arg.Is<BomDetail>(
+                x => x.PartNumber == this.c11.Name
+                     && x.Qty == this.c11.Qty
+                     && x.ChangeState == "PROPOS"
+                     && x.DetailId == 2
+                     && !x.DeleteChangeId.HasValue
+                     && x.BomId == 456
+                     && x.AddChangeId == 2));
         }
     }
 }

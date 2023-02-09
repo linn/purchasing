@@ -9,7 +9,8 @@ import {
     SnackbarMessage,
     getItemError,
     ErrorCard,
-    InputField
+    InputField,
+    OnOffSwitch
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -51,7 +52,7 @@ function BomUtility() {
     const { search } = useLocation();
     const { bomName, changeRequest } = queryString.parse(search);
 
-    const [crNumber, setCrNumber] = useState(changeRequest);
+    const [crNumber, setCrNumber] = useState(changeRequest === 'null' ? null : changeRequest);
     const [changeRequests, changeRequestsLoading] = useInitialise(
         () => changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True'),
         changeRequestsItemType.item,
@@ -93,8 +94,10 @@ function BomUtility() {
     const itemError = useSelector(reduxState => getItemError(reduxState, 'bomTree'));
 
     const [partSearchTerm, setPartSearchTerm] = useState();
+    const [partMessage, setPartMessage] = useState();
 
     const openPartLookUp = forRow => {
+        setPartMessage();
         setPartLookUp({ open: true, forRow });
         setPartSearchTerm(null);
     };
@@ -119,14 +122,18 @@ function BomUtility() {
     const onContextMenu = e => {
         e.preventDefault();
         const { target } = e;
-        const detail = selected.children.find(x => x.name === target.innerText);
+        const detail = selected.children.find(x => x.id === target.id);
         setContextMenu(
             crNumber && contextMenu === null
                 ? {
                       mouseX: e.clientX + 2,
                       mouseY: e.clientY - 6,
                       part: target.innerText,
-                      canReplace: Number(crNumber) !== detail.addChangeDocumentNumber,
+                      canDelete: !detail.deleteReplaceSeq,
+                      canReplace:
+                          Number(crNumber) !== detail.addChangeDocumentNumber &&
+                          !detail.deleteReplaceSeq &&
+                          !detail.replacementFor,
                       detail: { ...detail, parentId: selected.id }
                   }
                 : null
@@ -135,16 +142,21 @@ function BomUtility() {
 
     const partLookUpCell = params => (
         <>
-            <span onContextMenu={crNumber ? onContextMenu : null}>
+            <span id={params.row.id} onContextMenu={crNumber ? onContextMenu : null}>
                 {params.row.isReplaced || params.row.toDelete ? (
-                    <s>{params.row.name}</s>
+                    <s id={params.row.id}>{params.row.name}</s>
                 ) : (
                     params.row.name
                 )}
                 <IconButton
                     onClick={() => openPartLookUp(params.row)}
                     data-testid="part-lookup-button"
-                    disabled={!crNumber || subAssemblyLoading || params.row.isReplaced}
+                    disabled={
+                        !crNumber ||
+                        subAssemblyLoading ||
+                        params.row.isReplaced ||
+                        crNumber !== params.row.addChangeDocumentNumber.toString()
+                    }
                 >
                     <ManageSearchIcon />
                 </IconButton>
@@ -158,7 +170,7 @@ function BomUtility() {
             field: 'type',
             headerName: 'Type',
             editable: false,
-            width: 100,
+            width: 75,
             renderCell: params =>
                 params.row.isReplaced || params.row.toDelete ? (
                     <s>{params.row.type}</s>
@@ -169,7 +181,7 @@ function BomUtility() {
         {
             field: 'name',
             headerName: 'Part',
-            width: 180,
+            width: 175,
             editable: false,
             renderCell: partLookUpCell,
             align: 'right'
@@ -177,7 +189,8 @@ function BomUtility() {
         {
             field: 'description',
             headerName: 'Description',
-            width: 500,
+            hide: showChanges,
+            width: 250,
             editable: false,
             renderCell: params =>
                 params.row.isReplaced || params.row.toDelete ? (
@@ -189,13 +202,13 @@ function BomUtility() {
         {
             field: 'safetyCritical',
             headerName: 'Safety',
-            width: 100,
+            width: 75,
             editable: false
         },
         {
             field: 'qty',
             headerName: 'Qty',
-            width: 100,
+            width: 75,
             editable: true,
             type: 'number',
             renderCell: params =>
@@ -208,20 +221,15 @@ function BomUtility() {
         {
             field: 'requirement',
             headerName: 'Req',
+            width: 75,
             editable: true,
             type: 'singleSelect',
             valueOptions: ['Y', 'N']
         },
         {
-            field: 'drawingReference',
-            headerName: 'Drawing Ref',
-            width: 200,
-            editable: false
-        },
-        {
             field: 'addChangeDocumentNumber',
-            headerName: 'Add CRF',
-            width: 150,
+            headerName: 'Add',
+            width: 75,
             hide: !showChanges,
             editable: false,
             renderCell: params => (
@@ -231,9 +239,17 @@ function BomUtility() {
             )
         },
         {
+            field: 'addReplaceSeq',
+            headerName: 'In',
+            width: 75,
+            hide: !showChanges,
+
+            editable: false
+        },
+        {
             field: 'deleteChangeDocumentNumber',
-            headerName: 'Del CRF',
-            width: 150,
+            headerName: 'Del',
+            width: 75,
             hide: !showChanges,
             editable: false,
             renderCell: params =>
@@ -248,25 +264,18 @@ function BomUtility() {
                 )
         },
         {
-            field: 'replacementFor',
-            headerName: 'Replacing',
-            width: 180,
-            editable: false,
-            hide: true // useful for debugging, but hidden generally
+            field: 'deleteReplaceSeq',
+            headerName: 'Out',
+            hide: !showChanges,
+            width: 75,
+            editable: false
         },
         {
-            field: 'replacedBy',
-            headerName: 'Replaced By',
-            width: 180,
+            field: 'drawingReference',
+            headerName: 'Drawing Ref',
+            width: 150,
             editable: false,
-            hide: true // useful for debugging, but hidden generally,
-        },
-        {
-            field: 'parentId',
-            headerName: 'Parent',
-            width: 180,
-            editable: false,
-            hide: true // useful for debugging, but hidden generally
+            hide: showChanges
         }
     ];
     const initialise = useCallback(() => {
@@ -289,8 +298,7 @@ function BomUtility() {
     const [changesMade, setChangesMade] = useState(false);
 
     // updates the tree with changes passed via a 'newNode' object
-    const updateTree = (tree, newNode, addNode) => {
-        console.log(newNode, addNode);
+    const updateTree = (tree, newNode, addNode, addChangeDocumentNumber) => {
         setChangesMade(true);
         const newTree = { ...tree };
         const q = [];
@@ -303,10 +311,14 @@ function BomUtility() {
                 if (current.id === newNode.parentId) {
                     current.hasChanged = true;
                     if (addNode) {
-                        current.children = [...current.children, newNode];
+                        current.children = [
+                            ...current.children,
+                            { ...newNode, addChangeDocumentNumber }
+                        ];
                     } else {
                         let replacedIndex = null;
                         let replacementFor = null;
+                        let replacedNode = null;
                         current.children = current.children.map((x, index) => {
                             if (x.id !== newNode.id) {
                                 if (
@@ -327,16 +339,19 @@ function BomUtility() {
                             if (newNode.isReplaced) {
                                 replacedIndex = index;
                                 replacementFor = x.id;
+                                replacedNode = newNode;
                             }
-                            return { ...newNode, changeState: 'PROPOS' };
+                            return { ...newNode, hasChanged: true };
                         });
                         if (replacedIndex !== null) {
                             current.children.splice(replacedIndex + 1, 0, {
+                                ...replacedNode,
                                 id: uid(),
-                                type: 'C',
                                 parentId: current.id,
                                 changeState: 'PROPOS',
-                                replacementFor
+                                replacementFor,
+                                isReplaced: false,
+                                addChangeDocumentNumber
                             });
                         }
                     }
@@ -353,10 +368,10 @@ function BomUtility() {
     };
 
     // find a node in the tree
-    const getNode = (searchTerm, fieldName = 'id') => {
-        if (treeView == null) return null;
+    const getNode = (tree, searchTerm, fieldName = 'id') => {
+        if (tree == null) return null;
         const q = [];
-        q.push(treeView);
+        q.push(tree);
         while (q.length !== 0) {
             let n = q.length;
             while (n > 0) {
@@ -404,11 +419,14 @@ function BomUtility() {
         return null;
     };
 
-    const processRowUpdate = useCallback(newRow => {
-        setDisableChangesButton(true);
-        setTreeView(tr => updateTree(tr, newRow, false));
-        return newRow;
-    }, []);
+    const processRowUpdate = useCallback(
+        newRow => {
+            setDisableChangesButton(true);
+            setTreeView(tr => updateTree(tr, newRow, false, crNumber));
+            return newRow;
+        },
+        [crNumber]
+    );
 
     // add a new line to the children list of the selected node
     const addLine = () => {
@@ -424,14 +442,15 @@ function BomUtility() {
                     qty: 1,
                     requirement: 'Y'
                 },
-                true
+                true,
+                crNumber
             )
         );
     };
 
     const getRows = () => {
         if (selected) {
-            const node = getNode(selected.id);
+            const node = getNode(treeView, selected.id);
             if (node?.children) return node.children;
         }
         return [];
@@ -440,6 +459,10 @@ function BomUtility() {
     const [bomToCopy, setBomToCopy] = useState();
 
     const handlePartSelect = newValue => {
+        if (selected.children.find(x => x.name === newValue.partNumber)) {
+            setPartMessage('Part already on BOM!');
+            return;
+        }
         setPartLookUp(p => ({ ...p, selectedPart: newValue, open: false }));
         if (newValue.bomType !== 'C') {
             const subAssemblyUrl = `/purchasing/boms/tree?bomName=${
@@ -463,20 +486,23 @@ function BomUtility() {
     // add the new subAssembly to the bom tree when it arrives
     useEffect(() => {
         if (subAssembly?.name && partLookUp.forRow?.id) {
-            processRowUpdate({
-                ...partLookUp.forRow,
-                name: subAssembly.name,
-                type: subAssembly.type,
-                safetyCritical: subAssembly.safetyCritical,
-                drawingReference: subAssembly.drawingReference,
-                description: subAssembly.description,
-                children: subAssembly.children,
-                changeState: 'PROPOS'
-            });
+            const parent = getNode(treeView, partLookUp.forRow?.parentId);
+            if (parent?.children && !parent.children.find(x => x.id === subAssembly.id)) {
+                processRowUpdate({
+                    ...partLookUp.forRow,
+                    name: subAssembly.name,
+                    type: subAssembly.type,
+                    safetyCritical: subAssembly.safetyCritical,
+                    drawingReference: subAssembly.drawingReference,
+                    description: subAssembly.description,
+                    children: subAssembly.children,
+                    changeState: 'PROPOS'
+                });
+            }
             reduxDispatch(subAssemblyActions.clearItem());
             setPartLookUp({ open: false, forRow: null, selectedPart: null });
         }
-    }, [subAssembly, partLookUp.forRow, reduxDispatch, processRowUpdate]);
+    }, [subAssembly, partLookUp.forRow, reduxDispatch, processRowUpdate, treeView]);
 
     const PartLookUp = () => (
         <Dialog open={partLookUp.open}>
@@ -498,6 +524,11 @@ function BomUtility() {
                     onResultSelect={handlePartSelect}
                     clearSearch={() => {}}
                 />
+                {partMessage && (
+                    <Typography color="secondary" variant="subtitle2">
+                        {partMessage}
+                    </Typography>
+                )}
             </DialogContent>
             <DialogActions>
                 <Button
@@ -514,6 +545,7 @@ function BomUtility() {
     const [undoReplacementDialogOpen, setUndoReplacementDialogOpen] = useState(false);
     const [explodeSubAssemblyDialogOpen, setExplodeSubAssemblyDialogOpen] = useState(false);
     const [undoDeletionDialogOpen, setUndoDeletionDialogOpen] = useState(false);
+    const [addOrOverwrite, setAddOrOverwrite] = useState('A');
 
     const CopyExplodeBomDialog = () => (
         <Dialog
@@ -521,24 +553,56 @@ function BomUtility() {
             onClose={() => setPartSearchTerm(null)}
         >
             <DialogTitle>{copyBomDialogOpen ? 'Copy BOM' : 'Explode Sub Assembly'}</DialogTitle>
-            <DialogContent dividers>
-                <Search
-                    visible={copyBomDialogOpen || explodeSubAssemblyDialogOpen}
-                    autoFocus
-                    propertyName="partNumber"
-                    label="Part Number"
-                    resultsInModal
-                    resultLimit={100}
-                    value={bomToCopy ?? partSearchTerm}
-                    handleValueChange={(_, newVal) => setPartSearchTerm(newVal)}
-                    search={searchParts}
-                    searchResults={partsSearchResults.filter(x => x.bomType !== 'C')}
-                    loading={partsSearchLoading}
-                    priorityFunction="closestMatchesFirst"
-                    onResultSelect={newVal => setBomToCopy(newVal.partNumber)}
-                    clearSearch={() => {}}
-                />
-            </DialogContent>
+            <>
+                <DialogContent dividers>
+                    <Search
+                        visible={copyBomDialogOpen || explodeSubAssemblyDialogOpen}
+                        autoFocus
+                        propertyName="partNumber"
+                        label="Search for a BOM"
+                        resultsInModal
+                        resultLimit={100}
+                        value={bomToCopy ?? partSearchTerm}
+                        handleValueChange={(_, newVal) => setPartSearchTerm(newVal)}
+                        search={searchParts}
+                        searchResults={partsSearchResults.filter(x => x.bomType !== 'C')}
+                        loading={partsSearchLoading}
+                        priorityFunction="closestMatchesFirst"
+                        onResultSelect={newVal => setBomToCopy(newVal.partNumber)}
+                        clearSearch={() => {}}
+                    />
+                </DialogContent>
+
+                {copyBomDialogOpen && (
+                    <>
+                        <DialogContent dividers>
+                            <OnOffSwitch
+                                label="Overwrite / Add"
+                                value={addOrOverwrite === 'A'}
+                                onChange={() => {
+                                    setAddOrOverwrite(ao => (ao === 'A' ? 'O' : 'A'));
+                                }}
+                                propertyName="addOrOverwrite"
+                            />
+                        </DialogContent>
+                        <DialogContent dividers>
+                            <Typography variant="subtitle2">
+                                {addOrOverwrite === 'A' &&
+                                    `Clicking confirm will append the components on the selected BOM to ${selected.name}`}
+                                {addOrOverwrite === 'O' &&
+                                    `Clicking confirm will replace all components on ${selected.name} with the components on the selected BOM`}
+                            </Typography>
+                        </DialogContent>
+                    </>
+                )}
+                {explodeSubAssemblyDialogOpen && (
+                    <DialogContent dividers>
+                        <Typography variant="subtitle2">
+                            {`Clicking confirm will replace the chosen subassembly with all its components on ${selected.name}`}
+                        </Typography>
+                    </DialogContent>
+                )}
+            </>
             <DialogActions>
                 <Button
                     onClick={() => {
@@ -552,21 +616,25 @@ function BomUtility() {
                     variant="contained"
                     onClick={() => {
                         setExplodeSubAssemblyDialogOpen(false);
+                        setCopyBomDialogOpen(false);
                         setPartSearchTerm(null);
                         if (copyBomDialogOpen) {
                             reduxDispatch(
                                 bomTreeActions.postByHref('/purchasing/boms/copy', {
                                     srcPartNumber: bomToCopy,
-                                    destPartNumber: bomName,
-                                    crfNumber: crNumber
+                                    destPartNumber: selected.name,
+                                    crfNumber: crNumber,
+                                    addOrOverwrite,
+                                    rootName: bomName
                                 })
                             );
                         } else {
                             reduxDispatch(
                                 bomTreeActions.postByHref('/purchasing/boms/explode', {
-                                    destPartNumber: bomName,
+                                    destPartNumber: selected.name,
                                     crfNumber: crNumber,
-                                    subAssembly: bomToCopy
+                                    subAssembly: bomToCopy,
+                                    rootName: bomName
                                 })
                             );
                         }
@@ -584,7 +652,7 @@ function BomUtility() {
             <DialogTitle>Delete All From Bom</DialogTitle>
             <DialogContent dividers>
                 <Typography variant="h6">
-                    Clicking confirm will create a change to remove everything from this bom!
+                    {`Clicking confirm will create a change to remove everything from ${selected?.name}`}
                 </Typography>
             </DialogContent>
             <DialogActions>
@@ -601,8 +669,9 @@ function BomUtility() {
                         setDeleteAllFromBomDialogOpen(false);
                         reduxDispatch(
                             bomTreeActions.postByHref('/purchasing/boms/delete', {
-                                destPartNumber: bomName,
-                                crfNumber: crNumber
+                                destPartNumber: selected.name,
+                                crfNumber: crNumber,
+                                rootName: bomName
                             })
                         );
                     }}
@@ -740,7 +809,7 @@ function BomUtility() {
     const doSearch = () => {
         const node = searchTree(searchBomTerm?.toUpperCase?.());
         if (node) {
-            const parent = getNode(node.parentName, 'name');
+            const parent = getNode(treeView, node.parentName, 'name');
             setSelected(parent);
             document.getElementById(parent.id).scrollIntoView();
             (() => new Promise(resolve => setTimeout(resolve, 500)))().then(() => {
@@ -930,7 +999,6 @@ function BomUtility() {
                         hideFooter
                         autoHeight
                         experimentalFeatures={{ newEditingApi: true }}
-                        checkboxSelection
                         disableSelectionOnClick
                         columns={columns}
                         getRowClassName={params => params.row.changeState?.toLowerCase()}
@@ -952,7 +1020,9 @@ function BomUtility() {
                             >
                                 REPLACE
                             </MenuItem>
-                            <MenuItem onClick={handleDeleteClick}>DELETE</MenuItem>
+                            <MenuItem disabled={!contextMenu.canDelete} onClick={handleDeleteClick}>
+                                DELETE
+                            </MenuItem>
                         </Menu>
                     )}
                     <Grid item xs={1}>
@@ -971,7 +1041,12 @@ function BomUtility() {
                         saveClick={() => {
                             setChangesMade(false);
                             reduxDispatch(bomTreeActions.clearErrorsForItem());
-                            reduxDispatch(bomTreeActions.add({ treeRoot: treeView, crNumber }));
+                            reduxDispatch(
+                                bomTreeActions.postByHref('/purchasing/boms/tree', {
+                                    treeRoot: treeView,
+                                    crNumber
+                                })
+                            );
                         }}
                         cancelClick={initialise}
                         backClick={() => {

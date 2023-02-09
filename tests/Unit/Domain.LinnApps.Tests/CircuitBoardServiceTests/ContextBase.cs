@@ -15,7 +15,7 @@
         protected ICircuitBoardService Sut { get; private set; }
         
         protected IRepository<ChangeRequest, int> ChangeRequestRepository { get; private set; }
-        
+
         protected IRepository<CircuitBoard, string> BoardRepository { get; private set; }
         
         protected IQueryRepository<Part> PartRepository { get; private set; }
@@ -122,7 +122,10 @@
             
             this.BoardRepository.FindById(this.BoardCode).Returns(this.Board);
 
-            this.Sut = new CircuitBoardService(this.ChangeRequestRepository, this.BoardRepository, this.PartRepository);
+            this.Sut = new CircuitBoardService(
+                this.ChangeRequestRepository,
+                this.BoardRepository,
+                this.PartRepository);
         }
     }
 }

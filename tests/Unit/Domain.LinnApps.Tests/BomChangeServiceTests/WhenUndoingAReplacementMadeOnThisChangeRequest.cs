@@ -29,8 +29,6 @@
 
         private BomChange bomChange;
 
-        private BomTreeNode result;
-
         [SetUp]
         public void SetUp()
         {
@@ -131,7 +129,7 @@
             this.BomDetailRepository
                 .FindBy(Arg.Any<Expression<Func<BomDetail, bool>>>()).Returns(this.replacedToUndo);
 
-            this.result = this.Sut.CreateBomChanges(this.newTree, 48451, 33879);
+            this.Sut.ProcessTreeUpdate(this.newTree, 48451, 33879);
         }
 
         [Test]
@@ -145,14 +143,6 @@
         {
             this.replacedToUndo.DeleteReplaceSeq.Should().BeNull();
             this.replacedToUndo.DeleteChangeId.Should().BeNull();
-        }
-
-        [Test]
-        public void ShouldReturnUpdatedTree()
-        {
-            this.result.Children.Count().Should().Be(1);
-            this.result.Children.First().DeleteChangeDocumentNumber.Should().BeNull();
-            this.result.Children.First().DeleteReplaceSeq.Should().BeNull();
         }
     }
 }

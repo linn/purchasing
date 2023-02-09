@@ -103,7 +103,9 @@
                 this.entity.Qty,
                 this.entity.DateRequired,
                 this.entity.UnitPrice,
-                true).Returns(new CreateOrderFromReqResult { OrderNumber = 101137, Success = true });
+                true,
+                this.entity.InternalNotes)
+                .Returns(new CreateOrderFromReqResult { OrderNumber = 101137, Success = true });
 
             this.EmployeeRepository.FindById(this.authoriserUserNumber).Returns(
                 new Employee { FullName = "Big Jimbo", Id = this.authoriserUserNumber });

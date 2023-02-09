@@ -21,10 +21,13 @@
         {
             this.functionResource = new BomFunctionResource
                                         {
-                                            DestPartNumber = "DEST", CrfNumber = 123, SubAssembly = "SUB ASSEMBLY"
+                                            DestPartNumber = "DEST", 
+                                            CrfNumber = 123, 
+                                            SubAssembly = "SUB ASSEMBLY", 
+                                            RootName = "BOM"
                                         };
-            this.BomTreeService.BuildBomTree("DEST", null, false, true)
-                .Returns(new BomTreeNode { Name = "DEST" });
+            this.BomTreeService.BuildBomTree("BOM", null, false, true)
+                .Returns(new BomTreeNode { Name = "BOM" });
             this.Response = this.Client.PostAsJsonAsync(
                 $"/purchasing/boms/explode",
                 this.functionResource).Result;
@@ -53,7 +56,7 @@
         public void ShouldBuildResource()
         {
             var result = this.Response.DeserializeBody<BomTreeNode>();
-            result.Name.Should().Be("DEST");
+            result.Name.Should().Be("BOM");
         }
     }
 }

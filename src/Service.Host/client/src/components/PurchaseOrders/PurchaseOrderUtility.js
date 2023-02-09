@@ -16,6 +16,9 @@ import PrintIcon from '@mui/icons-material/Print';
 import Tooltip from '@mui/material/Tooltip';
 import Close from '@mui/icons-material/Close';
 import Email from '@mui/icons-material/Email';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 import moment from 'moment';
 import Send from '@mui/icons-material/Send';
 import { makeStyles } from '@mui/styles';
@@ -165,6 +168,7 @@ function PurchaseOrderUtility({ creating }) {
         email: '',
         bcc: false
     });
+    const [supplierNotesOpen, setSupplierNotesOpen] = useState(false);
 
     useEffect(() => {
         if (!creating && item?.supplier?.id) {
@@ -180,6 +184,10 @@ function PurchaseOrderUtility({ creating }) {
         } else if (creating && suggestedValues) {
             reduxDispatch(purchaseOrderActions.clearErrorsForItem());
             dispatch({ type: 'initialise', payload: suggestedValues });
+            if (suggestedValues.notesForBuyer) {
+                setSupplierNotesOpen(true);
+            }
+
             if (utilities.getHref(applicationState, 'create-for-other-user')) {
                 reduxDispatch(vendorManagersActions.fetch());
             }
@@ -251,7 +259,6 @@ function PurchaseOrderUtility({ creating }) {
         itemSelectorHelpers.getItemEditStatus(state[purchaseOrder.item])
     );
     const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
-
     const [invRecDialogOpen, setInvRecDialogOpen] = useState(
         !!queryString.parse(loc.search).invRecDialogOpen
     );
@@ -592,6 +599,36 @@ function PurchaseOrderUtility({ creating }) {
                                         inDialog
                                     />
                                 )}
+                                <Dialog
+                                    open={supplierNotesOpen}
+                                    onClose={() => setSupplierNotesOpen(false)}
+                                    fullWidth
+                                    maxWidth="md"
+                                >
+                                    <DialogTitle>
+                                        Notes For Buyer
+                                        <IconButton
+                                            className={classes.pullRight}
+                                            aria-label="Close"
+                                            onClick={() => setSupplierNotesOpen(false)}
+                                        >
+                                            <Close />
+                                        </IconButton>
+                                    </DialogTitle>
+                                    <DialogContent dividers>
+                                        <Typography
+                                            variant="body1"
+                                            style={{ whiteSpace: 'pre-line' }}
+                                        >
+                                            {suggestedValues?.notesForBuyer}
+                                        </Typography>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={() => setSupplierNotesOpen(false)}>
+                                            Close
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
                                 <Dialog open={authEmailDialogOpen} fullWidth maxWidth="md">
                                     <div className={classes.centerTextInDialog}>
                                         <IconButton

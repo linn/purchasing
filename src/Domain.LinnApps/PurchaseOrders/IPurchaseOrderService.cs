@@ -21,6 +21,8 @@
 
         PurchaseOrder FillOutUnsavedOrder(PurchaseOrder order, int userId);
 
+        string GetOrderNotesForBuyer(PurchaseOrder order);
+
         ProcessResult AuthorisePurchaseOrder(
             PurchaseOrder order, int userNumber, IEnumerable<string> privileges);
 

@@ -58,7 +58,7 @@ function BoardComponents() {
     const clearSearchBoards = () => reduxDispatch(boardsActions.clearSearch());
 
     const [findDialogOpen, setFindDialogOpen] = useState(false);
-    const [loadDialogOpen, setLoadDialogOpen] = useState(false);
+    const [loadDialogOpen, setLoadDialogOpen] = useState({ open: false, makeChanges: false });
     const [resultsDialogOpen, setResultsDialogOpen] = useState(false);
     const [findField, setFindField] = useState('partNumber');
     const [findValue, setFindValue] = useState(null);
@@ -179,10 +179,14 @@ function BoardComponents() {
 
     useEffect(() => {
         if (uploadResult?.message) {
-            setLoadDialogOpen(false);
+            if (loadDialogOpen?.makeChanges) {
+                reduxDispatch(boardComponentsActions.fetch(board));
+            }
+
+            setLoadDialogOpen({ open: false, makeChanges: false });
             setResultsDialogOpen(true);
         }
-    }, [uploadResult?.message]);
+    }, [board, loadDialogOpen?.makeChanges, reduxDispatch, uploadResult?.message]);
 
     const handlePartSelect = newValue => {
         dispatch({
@@ -492,13 +496,13 @@ function BoardComponents() {
                         <Button onClick={() => setFindDialogOpen(false)}>Close</Button>
                     </DialogActions>
                 </Dialog>
-                <Dialog open={loadDialogOpen} fullWidth maxWidth="lg">
+                <Dialog open={loadDialogOpen?.open} fullWidth maxWidth="lg">
                     <DialogTitle>
-                        Load File
+                        {loadDialogOpen?.makeChanges ? 'Load File' : 'Check File'}
                         <IconButton
                             className={classes.pullRight}
                             aria-label="Close"
-                            onClick={() => setLoadDialogOpen(false)}
+                            onClick={() => setLoadDialogOpen({ open: false, makeChanges: false })}
                         >
                             <Close />
                         </IconButton>
@@ -511,7 +515,9 @@ function BoardComponents() {
                                 reduxDispatch(
                                     uploadBoardFileActions.requestProcessStart(data, {
                                         boardCode: state.board.boardCode,
-                                        revisionCode: state.selectedRevision.revisionCode
+                                        revisionCode: state.selectedRevision.revisionCode,
+                                        makeChanges: loadDialogOpen?.makeChanges,
+                                        changeRequestId: crfNumber || 0
                                     })
                                 );
                             }}
@@ -521,16 +527,24 @@ function BoardComponents() {
                             snackbarVisible={false}
                             setSnackbarVisible={() => {}}
                             initiallyExpanded
-                            helperText="Upload a board file."
+                            helperText={
+                                loadDialogOpen?.makeChanges
+                                    ? 'Upload a board file.'
+                                    : 'Check a board file against pcas details'
+                            }
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={() => setLoadDialogOpen(false)}>Close</Button>
+                        <Button
+                            onClick={() => setLoadDialogOpen({ open: false, makeChanges: false })}
+                        >
+                            Close
+                        </Button>
                     </DialogActions>
                 </Dialog>
                 <Dialog open={resultsDialogOpen} fullWidth maxWidth="lg">
                     <DialogTitle>
-                        Load File
+                        File Processing Results
                         <IconButton
                             className={classes.pullRight}
                             aria-label="Close"
@@ -600,8 +614,23 @@ function BoardComponents() {
                         />
                         <Button
                             variant="outlined"
-                            onClick={() => setLoadDialogOpen(true)}
+                            onClick={() => {
+                                reduxDispatch(uploadBoardFileActions.clearProcessData());
+                                setLoadDialogOpen({ open: true, makeChanges: false });
+                            }}
                             size="small"
+                            style={{ marginBottom: '25px' }}
+                        >
+                            Check File
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            onClick={() => {
+                                reduxDispatch(uploadBoardFileActions.clearProcessData());
+                                setLoadDialogOpen({ open: true, makeChanges: true });
+                            }}
+                            size="small"
+                            disabled={!crfNumber}
                             style={{ marginBottom: '25px' }}
                         >
                             Load File

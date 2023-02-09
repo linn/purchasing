@@ -35,7 +35,7 @@
                 .First(c => c.DocumentNumber == key && c.DocumentType == "CRF");
         }
 
-        public override IQueryable<ChangeRequest> FilterBy (Expression<Func<ChangeRequest, bool>> expression)
+        public override IQueryable<ChangeRequest> FilterBy(Expression<Func<ChangeRequest, bool>> expression)
         {
             return this.serviceDbContext.ChangeRequests
                 .Include(x => x.ProposedBy)
