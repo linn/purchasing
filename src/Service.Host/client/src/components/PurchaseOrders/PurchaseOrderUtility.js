@@ -184,7 +184,7 @@ function PurchaseOrderUtility({ creating }) {
         } else if (creating && suggestedValues) {
             reduxDispatch(purchaseOrderActions.clearErrorsForItem());
             dispatch({ type: 'initialise', payload: suggestedValues });
-            if (suggestedValues.notesForBuyer) {
+            if (suggestedValues?.notesForBuyer?.replace('\r', '').replace('\n', '').trim()) {
                 setSupplierNotesOpen(true);
             }
 
@@ -291,7 +291,6 @@ function PurchaseOrderUtility({ creating }) {
                 d.partNumber &&
                 d.ourQty &&
                 d.ourUnitOfMeasure &&
-                d.orderPosting?.nominalAccount?.department?.departmentCode &&
                 d.orderPosting?.nominalAccount?.nominal?.nominalCode
         ) &&
         order.currency.code &&
@@ -317,7 +316,7 @@ function PurchaseOrderUtility({ creating }) {
         dispatch({ payload: { ...detail, [propertyName]: newValue }, type: 'detailFieldChange' });
     };
 
-    const handleCurrencyChange = (propertyName, newCurrencyCode) => {
+    const handleCurrencyChange = (_, newCurrencyCode) => {
         reduxDispatch(purchaseOrderActions.setEditStatus('edit'));
 
         const name = currencies.find(x => x.code === newCurrencyCode)?.name;
@@ -1711,8 +1710,15 @@ function PurchaseOrderUtility({ creating }) {
                                                     onSelect={newValue => {
                                                         handleNominalUpdate(newValue, detail.line);
                                                     }}
+                                                    handleFieldChange={(_, newValue) => {
+                                                        handleNominalUpdate(
+                                                            { nominalCode: newValue },
+                                                            detail.line
+                                                        );
+                                                    }}
                                                     label="Search Nominals"
                                                     modal
+                                                    openModalOnClick={false}
                                                     propertyName="nominalCode"
                                                     items={nominalSearchResults.filter(
                                                         x =>

@@ -213,6 +213,20 @@
                     throw new PurchaseOrderException("Cannot Order Non-Live Part!");
                 }
 
+                var nominalCode = detail.OrderPosting.NominalAccount.NominalCode;
+
+                var nominalAccount = this.nominalAccountRepository.FindBy(
+                                         x => x.NominalCode == nominalCode) 
+                                     ?? this.nominalAccountRepository.FindBy(
+                                         x => x.NominalCode.EndsWith(nominalCode));
+
+                if (nominalAccount == null)
+                {
+                    throw new ItemNotFoundException("Invalid nominal code: " + nominalCode);
+                }
+
+                detail.OrderPosting.NominalAccount = nominalAccount;
+
                 this.SetDetailFieldsForCreation(detail, newOrderNumber);
 
                 this.PerformDetailCalculations(
