@@ -22,6 +22,8 @@
 
         public bool? HasChanged { get; set; }
 
+        public bool? AssemblyHasChanges { get; set; }
+
         public string ChangeState { get; set; }
 
         public int AddChangeDocumentNumber { get; set; }
