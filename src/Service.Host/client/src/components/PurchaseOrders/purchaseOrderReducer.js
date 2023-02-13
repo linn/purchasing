@@ -107,6 +107,48 @@ export default function purchaseOrderReducer(state = initialState, action) {
                     })
                 ]
             };
+        case 'departmentCodeChange':
+            return {
+                ...state,
+                details: [
+                    ...state.details.map(detail => {
+                        if (detail.line !== action.lineNumber) {
+                            return detail;
+                        }
+                        return {
+                            ...detail,
+                            orderPosting: {
+                                ...detail.orderPosting,
+                                nominalAccount: {
+                                    ...detail.orderPosting.nominalAccount,
+                                    department: { departmentCode: action.payload }
+                                }
+                            }
+                        };
+                    })
+                ]
+            };
+        case 'nominalCodeChange':
+            return {
+                ...state,
+                details: [
+                    ...state.details.map(detail => {
+                        if (detail.line !== action.lineNumber) {
+                            return detail;
+                        }
+                        return {
+                            ...detail,
+                            orderPosting: {
+                                ...detail.orderPosting,
+                                nominalAccount: {
+                                    ...detail.orderPosting.nominalAccount,
+                                    nominal: { nominalCode: action.payload }
+                                }
+                            }
+                        };
+                    })
+                ]
+            };
         case 'supplierChange':
             return {
                 ...state,

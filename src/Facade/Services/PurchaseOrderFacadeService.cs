@@ -541,8 +541,9 @@
                                                                        LineNumber = x.OrderPosting.LineNumber,
                                                                        NominalAccount = new NominalAccount
                                                                            {
-                                                                               NominalCode = x.OrderPosting.NominalAccount.Nominal.NominalCode
-                                                                           },
+                                                                               NominalCode = x.OrderPosting.NominalAccount.Nominal.NominalCode,
+                                                                               DepartmentCode = x.OrderPosting.NominalAccount.Department.DepartmentCode
+                                                                       },
                                                                        Notes = x.OrderPosting.Notes,
                                                                        OrderNumber = x.OrderNumber,
                                                                        Person = x.OrderPosting.Person,

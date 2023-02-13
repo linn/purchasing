@@ -41,7 +41,8 @@
                                                       NominalAccount =
                                                           new NominalAccountResource
                                                               {
-                                                                  Nominal = new NominalResource()
+                                                                  Nominal = new NominalResource(),
+                                                                  Department = new DepartmentResource()
                                                               }
                                                          }
                                     }

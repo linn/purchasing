@@ -213,16 +213,24 @@
                     throw new PurchaseOrderException("Cannot Order Non-Live Part!");
                 }
 
-                var nominalCode = detail.OrderPosting.NominalAccount.NominalCode;
+                var nominal = detail.OrderPosting.NominalAccount;
 
-                var nominalAccount = this.nominalAccountRepository.FindBy(
-                                         x => x.NominalCode == nominalCode) 
-                                     ?? this.nominalAccountRepository.FindBy(
-                                         x => x.NominalCode.EndsWith(nominalCode));
+                var nominalAccounts = this.nominalAccountRepository.FilterBy(x => x.NominalCode == nominal.NominalCode);
+
+                if (!nominalAccounts.Any())
+                {
+                    nominalAccounts = this.nominalAccountRepository.FilterBy(
+                        x => x.NominalCode.EndsWith(nominal.NominalCode));
+                }
+
+                var nominalAccount = nominalAccounts.FirstOrDefault(
+                                         x => x.DepartmentCode == nominal.DepartmentCode)
+                                     ?? nominalAccounts.FirstOrDefault(
+                                         x => x.DepartmentCode.EndsWith(nominal.DepartmentCode));
 
                 if (nominalAccount == null)
                 {
-                    throw new ItemNotFoundException("Invalid nominal code: " + nominalCode);
+                    throw new ItemNotFoundException("Invalid nominal code/dept");
                 }
 
                 detail.OrderPosting.NominalAccount = nominalAccount;

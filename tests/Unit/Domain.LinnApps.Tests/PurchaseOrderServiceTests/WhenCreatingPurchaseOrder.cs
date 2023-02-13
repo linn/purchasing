@@ -133,11 +133,15 @@
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
-            this.NominalAccountRepository.FindBy(Arg.Any<Expression<Func<NominalAccount, bool>>>())
-                .Returns(new NominalAccount
-                             {
-                                 NominalCode = "00009222"
-                             });
+            this.NominalAccountRepository.FilterBy(Arg.Any<Expression<Func<NominalAccount, bool>>>())
+                .Returns(
+                    new List<NominalAccount>
+                        {
+                            new NominalAccount
+                                 {
+                                     NominalCode = "00009222"
+                                 }
+                        }.AsQueryable());
 
             this.PurchaseOrdersPack.GetVatAmountSupplier(Arg.Any<decimal>(), Arg.Any<int>()).Returns(40.55m);
 

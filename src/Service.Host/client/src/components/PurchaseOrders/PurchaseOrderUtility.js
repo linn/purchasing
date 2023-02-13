@@ -76,8 +76,8 @@ function PurchaseOrderUtility({ creating }) {
     const { orderNumber } = useParams();
     const loc = useLocation();
 
-    const [deptCode, setDeptCode] = useState('');
-    const [deptDesc, setDeptDesc] = useState('');
+    // const [deptCode, setDeptCode] = useState('');
+    // const [deptDesc, setDeptDesc] = useState('');
 
     useEffect(() => {
         if (orderNumber) {
@@ -291,7 +291,8 @@ function PurchaseOrderUtility({ creating }) {
                 d.partNumber &&
                 d.ourQty &&
                 d.ourUnitOfMeasure &&
-                d.orderPosting?.nominalAccount?.nominal?.nominalCode
+                d.orderPosting?.nominalAccount?.nominal?.nominalCode &&
+                d.orderPosting?.nominalAccount?.department?.departmentCode
         ) &&
         order.currency.code &&
         order.deliveryAddress?.addressId;
@@ -563,7 +564,7 @@ function PurchaseOrderUtility({ creating }) {
                                     <Grid item xs={12}>
                                         <ErrorCard
                                             errorMessage={
-                                                itemError?.details ?? itemError.statusText
+                                                itemError?.details?.error ?? itemError.statusText
                                             }
                                         />
                                     </Grid>
@@ -1657,14 +1658,21 @@ function PurchaseOrderUtility({ creating }) {
                                             <Grid item xs={4}>
                                                 <Typeahead
                                                     onSelect={newValue => {
-                                                        setDeptCode(newValue.departmentCode);
-                                                        setDeptDesc(newValue.departmentDescription);
+                                                        dispatch({
+                                                            payload: newValue.departmentCode,
+                                                            lineNumber: detail.line,
+                                                            type: 'departmentCodeChange'
+                                                        });
                                                     }}
                                                     label="Search Departments"
                                                     modal
                                                     openModalOnClick={false}
                                                     handleFieldChange={(_, newValue) => {
-                                                        setDeptCode(newValue);
+                                                        dispatch({
+                                                            payload: newValue,
+                                                            lineNumber: detail.line,
+                                                            type: 'departmentCodeChange'
+                                                        });
                                                     }}
                                                     propertyName="deptCode"
                                                     items={[
@@ -1678,7 +1686,10 @@ function PurchaseOrderUtility({ creating }) {
                                                             s => s.departmentCode === r
                                                         )
                                                     }))}
-                                                    value={deptCode}
+                                                    value={
+                                                        detail.orderPosting?.nominalAccount
+                                                            ?.department?.departmentCode
+                                                    }
                                                     loading={nominalsSearchLoading}
                                                     fetchItems={searchTerm =>
                                                         reduxDispatch(
@@ -1698,7 +1709,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     fullWidth
                                                     value={
                                                         detail.orderPosting?.nominalAccount
-                                                            ?.department?.description || deptDesc
+                                                            ?.department?.description
                                                     }
                                                     label="Description"
                                                     disabled
@@ -1711,10 +1722,11 @@ function PurchaseOrderUtility({ creating }) {
                                                         handleNominalUpdate(newValue, detail.line);
                                                     }}
                                                     handleFieldChange={(_, newValue) => {
-                                                        handleNominalUpdate(
-                                                            { nominalCode: newValue },
-                                                            detail.line
-                                                        );
+                                                        dispatch({
+                                                            payload: newValue,
+                                                            lineNumber: detail.line,
+                                                            type: 'nominalCodeChange'
+                                                        });
                                                     }}
                                                     label="Search Nominals"
                                                     modal
@@ -1722,8 +1734,12 @@ function PurchaseOrderUtility({ creating }) {
                                                     propertyName="nominalCode"
                                                     items={nominalSearchResults.filter(
                                                         x =>
-                                                            !deptCode ||
-                                                            x.departmentCode.endsWith(deptCode)
+                                                            !detail.orderPosting?.nominalAccount
+                                                                ?.department?.departmentCode ||
+                                                            x.departmentCode.endsWith(
+                                                                detail.orderPosting?.nominalAccount
+                                                                    ?.department?.departmentCode
+                                                            )
                                                     )}
                                                     value={
                                                         detail.orderPosting?.nominalAccount?.nominal
