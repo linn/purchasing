@@ -69,7 +69,7 @@
                 Name = "BOM",
                 Qty = 1,
                 Type = "A",
-                HasChanged = true,
+                AssemblyHasChanges = true,
                 Children = new List<BomTreeNode> { this.c1, this.c2 }
             };
 

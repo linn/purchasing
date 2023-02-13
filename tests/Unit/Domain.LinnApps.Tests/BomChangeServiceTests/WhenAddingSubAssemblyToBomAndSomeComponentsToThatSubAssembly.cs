@@ -12,7 +12,7 @@
 
     using NUnit.Framework;
 
-    public class WhenAddingToBom : ContextBase
+    public class WhenAddingSubAssemblyToBomAndSomeComponentsToThatSubAssembly : ContextBase
     {
         private BomTreeNode newTree;
 
@@ -45,7 +45,7 @@
                              Qty = 2,
                              Name = "ASS 1",
                              ParentName = "BOM",
-                             HasChanged = true,
+                             AssemblyHasChanges = true,
                              Children = new List<BomTreeNode> { this.c11, this.c12 }
                          };
             this.newTree = new BomTreeNode
@@ -53,7 +53,7 @@
                                    Name = "BOM",
                                    Qty = 1,
                                    Type = "A",
-                                   HasChanged = true,
+                                   AssemblyHasChanges = true,
                                    Children = new List<BomTreeNode> { this.c1 }
                                };
 
