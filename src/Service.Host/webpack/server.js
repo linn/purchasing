@@ -20,7 +20,7 @@ const devServer = new Server(
         host: '127.0.0.1',
         hot: true,
         historyApiFallback: true,
-        port: 3000
+        port: 3001
     },
     webpack(config)
 );
