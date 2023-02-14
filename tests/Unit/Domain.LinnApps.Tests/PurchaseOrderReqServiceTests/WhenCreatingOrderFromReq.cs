@@ -13,7 +13,7 @@
 
     using NUnit.Framework;
 
-    public class WhenTurningIntoMiniOrder : ContextBase
+    public class WhenCreatingOrderFromReq : ContextBase
     {
         private readonly int authoriserUserNumber = 33107;
 
@@ -40,7 +40,6 @@
                                   Description = "Descrip",
                                   Qty = 7,
                                   UnitPrice = 8m,
-                                  Carriage = 99m,
                                   TotalReqPrice = 145m,
                                   CurrencyCode = "SMC",
                                   SupplierId = 111,

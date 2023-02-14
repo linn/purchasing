@@ -165,6 +165,12 @@
 
             var totalInBaseCurr = this.currencyPack.CalculateBaseValueFromCurrencyValue(entity.CurrencyCode, entity.TotalReqPrice.Value);
 
+            if (entity.Carriage.GetValueOrDefault() > 0)
+            {
+                var distributedCarriage = entity.Carriage / entity.Qty;
+                entity.UnitPrice += distributedCarriage.GetValueOrDefault();
+            }
+
             var authAllowed = this.purchaseOrdersPack.OrderCanBeAuthorisedBy(
                 null,
                 null,

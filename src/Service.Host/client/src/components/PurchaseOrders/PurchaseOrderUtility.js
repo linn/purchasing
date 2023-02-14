@@ -25,7 +25,7 @@ import { makeStyles } from '@mui/styles';
 import {
     Page,
     collectionSelectorHelpers,
-    Typeahead,
+    Search,
     InputField,
     SnackbarMessage,
     itemSelectorHelpers,
@@ -42,7 +42,6 @@ import {
 import queryString from 'query-string';
 import currenciesActions from '../../actions/currenciesActions';
 import nominalsActions from '../../actions/nominalsActions';
-import suppliersActions from '../../actions/suppliersActions';
 import history from '../../history';
 import config from '../../config';
 import purchaseOrderActions from '../../actions/purchaseOrderActions';
@@ -75,9 +74,6 @@ function PurchaseOrderUtility({ creating }) {
 
     const { orderNumber } = useParams();
     const loc = useLocation();
-
-    const [deptCode, setDeptCode] = useState('');
-    const [deptDesc, setDeptDesc] = useState('');
 
     useEffect(() => {
         if (orderNumber) {
@@ -156,6 +152,10 @@ function PurchaseOrderUtility({ creating }) {
         itemSelectorHelpers.getItemLoading(state[purchaseOrderDeliveries.item])
     );
 
+    const suggestedValuesError = useSelector(state =>
+        getItemError(state, suggestedPurchaseOrderValues.item)
+    );
+
     const itemError = useSelector(state => getItemError(state, purchaseOrder.item));
 
     const deptEmailError = useSelector(state =>
@@ -184,7 +184,7 @@ function PurchaseOrderUtility({ creating }) {
         } else if (creating && suggestedValues) {
             reduxDispatch(purchaseOrderActions.clearErrorsForItem());
             dispatch({ type: 'initialise', payload: suggestedValues });
-            if (suggestedValues.notesForBuyer) {
+            if (suggestedValues?.notesForBuyer?.replace('\r', '').replace('\n', '').trim()) {
                 setSupplierNotesOpen(true);
             }
 
@@ -205,14 +205,6 @@ function PurchaseOrderUtility({ creating }) {
                 });
         }
     }, [item?.orderNumber, item]);
-
-    const suppliersSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.suppliers, 100, 'id', 'id', 'name')
-    );
-    const suppliersSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.suppliers)
-    );
-    const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
 
     const currencies = useSelector(state => collectionSelectorHelpers.getItems(state.currencies));
     const unitsOfMeasure = useSelector(reduxState =>
@@ -291,8 +283,8 @@ function PurchaseOrderUtility({ creating }) {
                 d.partNumber &&
                 d.ourQty &&
                 d.ourUnitOfMeasure &&
-                d.orderPosting?.nominalAccount?.department?.departmentCode &&
-                d.orderPosting?.nominalAccount?.nominal?.nominalCode
+                d.orderPosting?.nominalAccount?.nominal?.nominalCode &&
+                d.orderPosting?.nominalAccount?.department?.departmentCode
         ) &&
         order.currency.code &&
         order.deliveryAddress?.addressId;
@@ -317,7 +309,7 @@ function PurchaseOrderUtility({ creating }) {
         dispatch({ payload: { ...detail, [propertyName]: newValue }, type: 'detailFieldChange' });
     };
 
-    const handleCurrencyChange = (propertyName, newCurrencyCode) => {
+    const handleCurrencyChange = (_, newCurrencyCode) => {
         reduxDispatch(purchaseOrderActions.setEditStatus('edit'));
 
         const name = currencies.find(x => x.code === newCurrencyCode)?.name;
@@ -564,7 +556,17 @@ function PurchaseOrderUtility({ creating }) {
                                     <Grid item xs={12}>
                                         <ErrorCard
                                             errorMessage={
-                                                itemError?.details ?? itemError.statusText
+                                                itemError?.details?.error ?? itemError.statusText
+                                            }
+                                        />
+                                    </Grid>
+                                )}
+                                {suggestedValuesError && (
+                                    <Grid item xs={12}>
+                                        <ErrorCard
+                                            errorMessage={
+                                                suggestedValuesError?.details?.error ??
+                                                suggestedValuesError.statusText
                                             }
                                         />
                                     </Grid>
@@ -859,22 +861,14 @@ function PurchaseOrderUtility({ creating }) {
                                     </Button>
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <Typeahead
+                                    <InputField
                                         label="Supplier"
-                                        modal
                                         propertyName="supplierId"
-                                        items={suppliersSearchResults}
-                                        value={order.supplier ? order.supplier.id : null}
-                                        loading={suppliersSearchLoading}
-                                        fetchItems={searchSuppliers}
-                                        links={false}
-                                        text
-                                        clearSearch={() => {}}
-                                        placeholder="Search Suppliers"
-                                        minimumSearchTermLength={3}
+                                        value={order.supplier?.id}
                                         fullWidth
                                         disabled
                                         required
+                                        onChange={() => {}}
                                     />
                                 </Grid>
                                 <Grid item xs={6}>
@@ -883,7 +877,7 @@ function PurchaseOrderUtility({ creating }) {
                                         value={order.supplier?.name}
                                         label="Supplier Name"
                                         number
-                                        propertyName="supplierContact"
+                                        propertyName="supplierName"
                                         disabled
                                     />
                                 </Grid>
@@ -1656,19 +1650,28 @@ function PurchaseOrderUtility({ creating }) {
                                                 )}
                                             </Grid>
                                             <Grid item xs={4}>
-                                                <Typeahead
-                                                    onSelect={newValue => {
-                                                        setDeptCode(newValue.departmentCode);
-                                                        setDeptDesc(newValue.departmentDescription);
-                                                    }}
-                                                    label="Search Departments"
-                                                    modal
-                                                    openModalOnClick={false}
-                                                    handleFieldChange={(_, newValue) => {
-                                                        setDeptCode(newValue);
-                                                    }}
+                                                <Search
                                                     propertyName="deptCode"
-                                                    items={[
+                                                    label="Search Departments"
+                                                    resultsInModal
+                                                    resultLimit={100}
+                                                    value={
+                                                        detail.orderPosting?.nominalAccount
+                                                            ?.department?.departmentCode
+                                                    }
+                                                    handleValueChange={(_, newValue) => {
+                                                        dispatch({
+                                                            payload: newValue,
+                                                            lineNumber: detail.line,
+                                                            type: 'departmentCodeChange'
+                                                        });
+                                                    }}
+                                                    search={searchTerm =>
+                                                        reduxDispatch(
+                                                            nominalsActions.search(searchTerm)
+                                                        )
+                                                    }
+                                                    searchResults={[
                                                         ...new Set(
                                                             deptSearchResults.map(
                                                                 n => n.departmentCode
@@ -1679,18 +1682,16 @@ function PurchaseOrderUtility({ creating }) {
                                                             s => s.departmentCode === r
                                                         )
                                                     }))}
-                                                    value={deptCode}
                                                     loading={nominalsSearchLoading}
-                                                    fetchItems={searchTerm =>
-                                                        reduxDispatch(
-                                                            nominalsActions.search(searchTerm)
-                                                        )
-                                                    }
-                                                    links={false}
-                                                    title="Search Departments"
+                                                    priorityFunction="closestMatchesFirst"
+                                                    onResultSelect={newValue => {
+                                                        dispatch({
+                                                            payload: newValue.departmentCode,
+                                                            lineNumber: detail.line,
+                                                            type: 'departmentCodeChange'
+                                                        });
+                                                    }}
                                                     clearSearch={() => {}}
-                                                    placeholder="Enter Dept Code or click search icon to look up"
-                                                    minimumSearchTermLength={3}
                                                 />
                                             </Grid>
 
@@ -1699,7 +1700,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     fullWidth
                                                     value={
                                                         detail.orderPosting?.nominalAccount
-                                                            ?.department?.description || deptDesc
+                                                            ?.department?.description
                                                     }
                                                     label="Description"
                                                     disabled
@@ -1707,33 +1708,42 @@ function PurchaseOrderUtility({ creating }) {
                                                 />
                                             </Grid>
                                             <Grid item xs={4}>
-                                                <Typeahead
-                                                    onSelect={newValue => {
-                                                        handleNominalUpdate(newValue, detail.line);
-                                                    }}
-                                                    label="Search Nominals"
-                                                    modal
+                                                <Search
                                                     propertyName="nominalCode"
-                                                    items={nominalSearchResults.filter(
-                                                        x =>
-                                                            !deptCode ||
-                                                            x.departmentCode.endsWith(deptCode)
-                                                    )}
+                                                    label="Search Nominals"
+                                                    resultsInModal
+                                                    resultLimit={100}
                                                     value={
                                                         detail.orderPosting?.nominalAccount?.nominal
                                                             ?.nominalCode
                                                     }
-                                                    loading={nominalsSearchLoading}
-                                                    fetchItems={searchTerm =>
+                                                    handleValueChange={(_, newValue) => {
+                                                        dispatch({
+                                                            payload: newValue,
+                                                            lineNumber: detail.line,
+                                                            type: 'nominalCodeChange'
+                                                        });
+                                                    }}
+                                                    search={searchTerm =>
                                                         reduxDispatch(
                                                             nominalsActions.search(searchTerm)
                                                         )
                                                     }
-                                                    links={false}
-                                                    title="Search Nominals"
+                                                    searchResults={nominalSearchResults.filter(
+                                                        x =>
+                                                            !detail.orderPosting?.nominalAccount
+                                                                ?.department?.departmentCode ||
+                                                            x.departmentCode.endsWith(
+                                                                detail.orderPosting?.nominalAccount
+                                                                    ?.department?.departmentCode
+                                                            )
+                                                    )}
+                                                    loading={nominalsSearchLoading}
+                                                    priorityFunction="closestMatchesFirst"
+                                                    onResultSelect={newValue => {
+                                                        handleNominalUpdate(newValue, detail.line);
+                                                    }}
                                                     clearSearch={() => {}}
-                                                    placeholder="Search Nominals"
-                                                    minimumSearchTermLength={3}
                                                 />
                                             </Grid>
 
