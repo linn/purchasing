@@ -75,9 +75,6 @@ function PurchaseOrderUtility({ creating }) {
     const { orderNumber } = useParams();
     const loc = useLocation();
 
-    // const [deptCode, setDeptCode] = useState('');
-    // const [deptDesc, setDeptDesc] = useState('');
-
     useEffect(() => {
         if (orderNumber) {
             reduxDispatch(sendPurchaseOrderDeptEmailActions.clearErrorsForItem());
