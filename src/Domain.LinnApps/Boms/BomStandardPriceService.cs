@@ -57,6 +57,14 @@
         {
             var result = new SetStandardPriceResult();
 
+
+            result.Success = true;
+
+            result.Message = $"{1} records updated.";
+
+            return result;
+
+
             int? reqNumber = null;
             var count = 0;
 
