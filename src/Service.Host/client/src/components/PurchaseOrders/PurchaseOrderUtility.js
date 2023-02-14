@@ -152,6 +152,10 @@ function PurchaseOrderUtility({ creating }) {
         itemSelectorHelpers.getItemLoading(state[purchaseOrderDeliveries.item])
     );
 
+    const suggestedValuesError = useSelector(state =>
+        getItemError(state, suggestedPurchaseOrderValues.item)
+    );
+
     const itemError = useSelector(state => getItemError(state, purchaseOrder.item));
 
     const deptEmailError = useSelector(state =>
@@ -553,6 +557,16 @@ function PurchaseOrderUtility({ creating }) {
                                         <ErrorCard
                                             errorMessage={
                                                 itemError?.details?.error ?? itemError.statusText
+                                            }
+                                        />
+                                    </Grid>
+                                )}
+                                {suggestedValuesError && (
+                                    <Grid item xs={12}>
+                                        <ErrorCard
+                                            errorMessage={
+                                                suggestedValuesError?.details?.error ??
+                                                suggestedValuesError.statusText
                                             }
                                         />
                                     </Grid>
