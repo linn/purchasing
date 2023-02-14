@@ -55,12 +55,12 @@
                 {
                     var current = q.Dequeue();
 
-                    if (current.HasChanged.GetValueOrDefault() && current.Children != null)
+                    if (current.AssemblyHasChanges.GetValueOrDefault() && current.Children != null)
                     {
                         var bom = this.GetOrCreateBom(current.Name);
                         var change = this.GetOrCreateBomChange(current.Name, changeRequestNumber, enteredBy, bom);
                         this.ProcessBomChange(current, change, bom);
-                        current.HasChanged = false;
+                        current.AssemblyHasChanges = false;
                     }
 
                     if (current.Children != null)

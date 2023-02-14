@@ -309,7 +309,7 @@ function BomUtility() {
                 const current = q[0];
                 q.shift();
                 if (current.id === newNode.parentId) {
-                    current.hasChanged = true;
+                    current.assemblyHasChanges = true;
                     if (addNode) {
                         current.children = [
                             ...current.children,

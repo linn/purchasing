@@ -38,7 +38,7 @@
             this.Sut.ProcessTreeUpdate(
                 new BomTreeNode
                     {
-                        Name = "NEW BOM", HasChanged = true, Children = new List<BomTreeNode>()
+                        Name = "NEW BOM", AssemblyHasChanges = true, Children = new List<BomTreeNode>()
                     }, 
                 666, 
                 33087);

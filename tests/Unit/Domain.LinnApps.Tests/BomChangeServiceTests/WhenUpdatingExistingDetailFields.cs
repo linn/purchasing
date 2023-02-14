@@ -27,7 +27,7 @@
                 Name = "BOM",
                 Qty = 2,
                 Type = "A",
-                HasChanged = true,
+                AssemblyHasChanges = true,
                 Children = new List<BomTreeNode>
                                               {
                                                   new BomTreeNode
@@ -45,7 +45,7 @@
                                   DetailId = 123,
                                   Qty = 1,
                                   AddChangeId = 666,
-                                  AddChange = new BomChange {DocumentNumber = 100}
+                                  AddChange = new BomChange { DocumentNumber = 100 }
                               };
             this.BomDetailRepository.FindById(123).Returns(this.detail);
             this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(

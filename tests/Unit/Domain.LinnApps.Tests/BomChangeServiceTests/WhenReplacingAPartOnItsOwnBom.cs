@@ -35,7 +35,7 @@
                 Type = "C",
                 Qty = 2,
                 Name = "CAP OLD",
-                HasChanged = true,
+                AssemblyHasChanges = true,
                 ReplacedBy = "CAP NEW",
                 Id = "4567",
                 ParentName = "BOM"
@@ -46,7 +46,7 @@
                 Type = "C",
                 Qty = 2,
                 Name = "BOM",
-                HasChanged = true,
+                AssemblyHasChanges = true,
                 ReplacementFor = "4567",
                 ParentName = "BOM",
                 Id = "123"
@@ -57,7 +57,7 @@
                 Name = "BOM",
                 Qty = 1,
                 Type = "A",
-                HasChanged = true,
+                AssemblyHasChanges = true,
                 Children = new List<BomTreeNode> { this.c1, this.c2 }
             };
             this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(new Bom
