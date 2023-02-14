@@ -38,7 +38,7 @@ const SetBomStandardPriceUtility = () => {
     const handleSelectRow = selected => {
         setRequestBody(b => ({
             ...b,
-            lines: result.lines.filter(x => selected.includes(x.bomName))
+            lines: result?.lines.filter(x => selected.includes(x.bomName))
         }));
     };
 
@@ -52,48 +52,46 @@ const SetBomStandardPriceUtility = () => {
                     timeOut={3000}
                 />
                 {loading && <Loading />}
-                {result && (
-                    <>
-                        <Grid item xs={12}>
-                            <DataGrid
-                                columns={columns}
-                                loading={loading}
-                                autoHeight
-                                rows={result?.lines.map(l => ({ ...l, id: l.bomName }))}
-                                checkboxSelection
-                                hideFooter
-                                onSelectionModelChange={handleSelectRow}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <InputField
-                                propertyName="remarks"
-                                label="Remarks"
-                                onChange={(_, newVal) =>
-                                    setRequestBody(b => ({ ...b, remarks: newVal }))
-                                }
-                                value={requestBody.remarks}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button
-                                variant="contained"
-                                disabled={!requestBody?.lines || requestBody.lines.length === 0}
-                                onClick={() => {
-                                    reduxDispatch(bomStandardPricesActions.clearItem());
-                                    reduxDispatch(
-                                        bomStandardPricesActions.postByHref(
-                                            '/purchasing/boms/prices',
-                                            requestBody
-                                        )
-                                    );
-                                }}
-                            >
-                                MAKE CHANGES
-                            </Button>
-                        </Grid>
-                    </>
-                )}
+                <>
+                    <Grid item xs={12}>
+                        <DataGrid
+                            columns={columns}
+                            loading={loading}
+                            autoHeight
+                            rows={result?.lines?.map(l => ({ ...l, id: l.bomName })) ?? []}
+                            checkboxSelection
+                            hideFooter
+                            onSelectionModelChange={handleSelectRow}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <InputField
+                            propertyName="remarks"
+                            label="Remarks"
+                            onChange={(_, newVal) =>
+                                setRequestBody(b => ({ ...b, remarks: newVal }))
+                            }
+                            value={requestBody.remarks}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Button
+                            variant="contained"
+                            disabled={!requestBody?.lines || requestBody.lines.length === 0}
+                            onClick={() => {
+                                reduxDispatch(bomStandardPricesActions.clearItem());
+                                reduxDispatch(
+                                    bomStandardPricesActions.postByHref(
+                                        '/purchasing/boms/prices',
+                                        requestBody
+                                    )
+                                );
+                            }}
+                        >
+                            MAKE CHANGES
+                        </Button>
+                    </Grid>
+                </>
             </Grid>
         </Page>
     );
