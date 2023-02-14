@@ -229,9 +229,7 @@
                     r => new EntityFrameworkRepository<BomChange, int>(r.GetService<ServiceDbContext>()
                         ?.BomChanges))
                 .AddTransient<IRepository<BomDetail, int>, BomDetailRepository>()
-                .AddTransient<IRepository<PcasChange, int>, EntityFrameworkRepository<PcasChange, int>>(
-                    r => new EntityFrameworkRepository<PcasChange, int>(r.GetService<ServiceDbContext>()
-                        ?.PcasChanges))
+                .AddTransient<IRepository<PcasChange, int>, PcasChangeRepository>()
                 .AddTransient<IRepository<BomVerificationHistory, int>, EntityFrameworkRepository<BomVerificationHistory, int>>(
                     r => new EntityFrameworkRepository<BomVerificationHistory, int>(r.GetService<ServiceDbContext>()
                         ?.BomVerificationHistory))
