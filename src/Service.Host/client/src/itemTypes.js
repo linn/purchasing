@@ -393,3 +393,15 @@ export const bomStandardPrices = new ItemType(
     'BOM_STANDARD_PRICES',
     '/purchasing/boms/prices'
 );
+
+export const partDataSheetValuesList = new ItemType(
+    'partDataSheetValuesList',
+    'PART_DATA_SHEET_VALUES_LIST',
+    '/purchasing/part-data-sheet-values'
+);
+
+export const partDataSheetValues = new ItemType(
+    'partDataSheetValue',
+    'PART_DATA_SHEET_VALUES',
+    '/purchasing/part-data-sheet-values'
+);
