@@ -235,7 +235,10 @@
                         ?.BomVerificationHistory))
                 .AddTransient<IQueryRepository<BomStandardPrice>, EntityFrameworkQueryRepository<BomStandardPrice>>(
                     r => new EntityFrameworkQueryRepository<BomStandardPrice>(r.GetService<ServiceDbContext>()
-                        ?.BomPriceVariances));
+                        ?.BomPriceVariances))
+                .AddTransient<IRepository<PartDataSheetValues, PartDataSheetValuesKey>, EntityFrameworkRepository<PartDataSheetValues, PartDataSheetValuesKey>>(
+                    r => new EntityFrameworkRepository<PartDataSheetValues, PartDataSheetValuesKey>(
+                        r.GetService<ServiceDbContext>()?.PartDataSheetValues));
         }
     }
 }

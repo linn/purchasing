@@ -35,7 +35,7 @@
         {
             this.BomVerificationHistoryRepository = Substitute.For<IRepository<BomVerificationHistory, int>>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
-            this.DatabaseService= Substitute.For<IDatabaseService>();
+            this.DatabaseService = Substitute.For<IDatabaseService>();
 
             this.BomVerificationHistoryFacadeService = new BomVerificationHistoryFacadeService(
                 this.BomVerificationHistoryRepository,
