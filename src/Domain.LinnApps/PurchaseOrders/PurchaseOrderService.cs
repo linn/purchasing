@@ -1130,9 +1130,9 @@
             miniOrder.Remarks = updatedOrder.Remarks;
             miniOrder.SentByMethod = updatedOrder.SentByMethod;
 
-         //   var nomAcc = this.nominalAccountRepository.FindById(updatedDetail.OrderPosting.NominalAccountId.Value);
-            miniOrder.Nominal = updatedDetail.OrderPosting.NominalAccount.NominalCode;
-            miniOrder.Department = updatedDetail.OrderPosting.NominalAccount.DepartmentCode;
+            var nomAcc = this.nominalAccountRepository.FindById(updatedDetail.OrderPosting.NominalAccountId.Value);
+            miniOrder.Nominal = nomAcc.NominalCode;
+            miniOrder.Department = nomAcc.DepartmentCode;
 
             miniOrder.RequestedDeliveryDate = updatedDetail.PurchaseDeliveries.First().DateRequested;
             miniOrder.InternalComments = updatedDetail.InternalComments;
