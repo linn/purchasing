@@ -10,7 +10,6 @@
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Extensions;
-    using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
@@ -20,15 +19,9 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/purchasing/part-data-sheet-values/create", this.GetApp);
             app.MapGet("/purchasing/part-data-sheet-values/", this.GetAll);
             app.MapPut("/purchasing/part-data-sheet-values/{attributeSet}/{field}/{value}", this.PutPartDataSheetValuesEntry);
             app.MapPost("/purchasing/part-data-sheet-values/", this.CreatePartDataSheetValuesEntry);
-        }
-
-        private async Task GetApp(HttpRequest req, HttpResponse res)
-        {
-            await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
         }
 
         private async Task PutPartDataSheetValuesEntry(
