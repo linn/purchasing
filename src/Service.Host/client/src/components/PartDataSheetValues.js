@@ -80,7 +80,7 @@ function PartDataSheetValues() {
                             rows.filter(x => x.isAddition).forEach(addition => {
                                 dispatch(partDataSheetValuesActions.add(addition));
                             });
-                            rows.filter(x => x.hasChanged).forEach(i => {
+                            rows.filter(x => x.hasChanged && !x.isAddition).forEach(i => {
                                 dispatch(
                                     partDataSheetValuesActions.update(
                                         `${i.attributeSet}/${i.field}/${i.value}`,
