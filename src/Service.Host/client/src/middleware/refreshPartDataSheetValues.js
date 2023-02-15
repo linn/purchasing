@@ -1,5 +1,5 @@
 import * as actionTypes from '../actions';
-import partDataSheetValuesActions from '../actions/partDataSheetValuesActions';
+import partDataSheetValuesListActions from '../actions/partDataSheetValuesListActions';
 
 export default ({ dispatch }) =>
     next =>
@@ -9,7 +9,7 @@ export default ({ dispatch }) =>
         switch (action.type) {
             case actionTypes.partDataSheetValuesActionTypes.RECEIVE_UPDATED_PART_DATA_SHEET_VALUES:
             case actionTypes.signingLimitActionTypes.RECEIVE_NEW_PART_DATA_SHEET_VALUES:
-                dispatch(partDataSheetValuesActions.fetch());
+                dispatch(partDataSheetValuesListActions.fetch());
                 break;
             default:
         }
