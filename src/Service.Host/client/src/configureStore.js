@@ -9,6 +9,7 @@ import refreshSupplier from './middleware/refreshSupplier';
 import updateSigningLimits from './middleware/updateSigningLimits';
 import previousLocationMiddleware from './middleware/previousLocation';
 import refreshPurchaseOrder from './middleware/refreshPurchaseOrder';
+import refreshPartDataSheetValues from './middleware/refreshPartDataSheetValues';
 // eslint-disable-next-line no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -18,6 +19,7 @@ const middleware = [
     thunkMiddleware,
     itemCreated,
     refreshSupplier,
+    refreshPartDataSheetValues,
     updateSigningLimits,
     previousLocationMiddleware,
     refreshPurchaseOrder
