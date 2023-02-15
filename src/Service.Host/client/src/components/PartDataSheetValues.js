@@ -117,7 +117,6 @@ function PartDataSheetValues() {
                         loading={loading}
                         processRowUpdate={processRowUpdate}
                         onProcessRowUpdateError={() => {}}
-                        hideFooter
                         autoHeight
                         isCellEditable={params => params.row.isAddition || params.colDef.editable}
                         experimentalFeatures={{ newEditingApi: true }}
