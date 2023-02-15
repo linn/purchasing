@@ -19,6 +19,7 @@ function MainTab({ item, approve }) {
     const reduxDispatch = useDispatch();
     const approveUri = utilities.getHref(item, 'approve');
     const editUri = utilities.getHref(item, 'approve');
+    const makeLiveUri = utilities.getHref(item, 'make-live');
 
     const [updated, setUpdated] = useState(item);
 
@@ -123,7 +124,7 @@ function MainTab({ item, approve }) {
                         history.push(
                             `/purchasing/boms/bom-utility?bomName=${
                                 item?.newPartNumber
-                            }&changeRequest=${approveUri && item?.documentNumber}`
+                            }&changeRequest=${(approveUri || makeLiveUri) && item?.documentNumber}`
                         );
                     }}
                 >
