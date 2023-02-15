@@ -112,7 +112,7 @@
                 .AddTransient<IRepository<PurchaseOrderReqState, string>, EntityFrameworkRepository<PurchaseOrderReqState, string>>(
                     r => new EntityFrameworkRepository<PurchaseOrderReqState, string>(
                         r.GetService<ServiceDbContext>()?.PurchaseOrderReqStates))
-                .AddTransient<IRepository<OverbookAllowedByLog, int>, OverbookAllowedByLogRespository>()
+                .AddTransient<IRepository<OverbookAllowedByLog, int>, OverbookAllowedByLogRepository>()
                 .AddTransient<IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>, EntityFrameworkRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>>(
                     r => new EntityFrameworkRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>(
                         r.GetService<ServiceDbContext>()?.PurchaseOrderReqStateChanges))
@@ -236,9 +236,7 @@
                 .AddTransient<IQueryRepository<BomStandardPrice>, EntityFrameworkQueryRepository<BomStandardPrice>>(
                     r => new EntityFrameworkQueryRepository<BomStandardPrice>(r.GetService<ServiceDbContext>()
                         ?.BomPriceVariances))
-                .AddTransient<IRepository<PartDataSheetValues, PartDataSheetValuesKey>, EntityFrameworkRepository<PartDataSheetValues, PartDataSheetValuesKey>>(
-                    r => new EntityFrameworkRepository<PartDataSheetValues, PartDataSheetValuesKey>(
-                        r.GetService<ServiceDbContext>()?.PartDataSheetValues));
+                .AddTransient<IRepository<PartDataSheetValues, PartDataSheetValuesKey>, PartDataSheetValuesRepository>();
         }
     }
 }
