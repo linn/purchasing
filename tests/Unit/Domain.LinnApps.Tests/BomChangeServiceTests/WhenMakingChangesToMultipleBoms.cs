@@ -50,7 +50,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
                 Id = "345",
                 ParentName = "BOM",
                 Requirement = "Y",
-                HasChanged = true,
+                AssemblyHasChanges = true,
                 Children = new List<BomTreeNode> { this.c11 }
             };
             this.newTree = new BomTreeNode
@@ -59,7 +59,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
                 Qty = 1,
                 Type = "A",
                 Requirement = "Y",
-                HasChanged = true,
+                AssemblyHasChanges = true,
                 Children = new List<BomTreeNode> { this.c1, this.c12 }
             };
 

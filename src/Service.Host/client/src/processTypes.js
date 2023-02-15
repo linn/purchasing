@@ -11,3 +11,9 @@ export const emailMultiplePurchaseOrders = new ItemType(
     'EMAIL_MULTIPLE_PURCHASE_ORDERS',
     '/purchasing/purchase-orders/email-multiple'
 );
+
+export const uploadBoardFile = new ItemType(
+    'uploadBoardFile',
+    'UPDATE_BOARD_FILE',
+    '/purchasing/purchase-orders/boms/upload-board-file'
+);

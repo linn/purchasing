@@ -79,6 +79,8 @@
                                                                                 new NominalAccount
                                                                                     {
                                                                                         AccountId = 911,
+                                                                                        DepartmentCode =
+                                                                                            "0000911",
                                                                                         Department =
                                                                                             new Department
                                                                                                 {
@@ -132,7 +134,11 @@
 
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
-
+            this.NominalAccountRepository.FilterBy(Arg.Any<Expression<Func<NominalAccount, bool>>>())
+                .Returns(new List<NominalAccount>
+                             {
+                                new NominalAccount { DepartmentCode = "0000911" }
+                             }.AsQueryable());
             this.PurchaseOrdersPack.GetVatAmountSupplier(Arg.Any<decimal>(), Arg.Any<int>()).Returns(0m);
 
             this.MockDatabaseService.GetIdSequence("PLORP_SEQ").Returns(123);

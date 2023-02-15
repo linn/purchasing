@@ -39,7 +39,11 @@
                                             = new PurchaseOrderPostingResource
                                                   {
                                                       NominalAccount =
-                                                          new NominalAccountResource(),
+                                                          new NominalAccountResource
+                                                              {
+                                                                  Nominal = new NominalResource(),
+                                                                  Department = new DepartmentResource()
+                                                              },
                                                          }
                                     }
                               },
@@ -57,7 +61,7 @@
                 .Returns(new Supplier());
 
             this.MockNominalAccountRepository.FindById(Arg.Any<int>())
-                .Returns(new NominalAccount());
+                .Returns(new NominalAccount { Nominal = new Nominal() });
 
             this.MockDomainService.CreateOrder(
                     Arg.Any<PurchaseOrder>(), Arg.Any<IEnumerable<string>>())

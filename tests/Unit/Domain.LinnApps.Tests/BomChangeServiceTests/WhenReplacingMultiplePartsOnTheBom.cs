@@ -39,7 +39,7 @@
                 Type = "C",
                 Qty = 2,
                 Name = "CAP 1 OLD",
-                HasChanged = true,
+                AssemblyHasChanges = true,
                 ReplacedBy = "CAP 1 NEW",
                 Id = "4567"
             };
@@ -49,7 +49,7 @@
                 Type = "C",
                 Qty = 2,
                 Name = "CAP 1 NEW",
-                HasChanged = true,
+                AssemblyHasChanges = true,
                 Id = "4566",
                 ReplacementFor = "4567"
             };
@@ -59,7 +59,7 @@
                               Type = "C",
                               Qty = 2,
                               Name = "CAP 2 OLD",
-                              HasChanged = true,
+                              AssemblyHasChanges = true,
                               ReplacedBy = "CAP 2 NEW",
                               Id = "4568"
                           };
@@ -69,7 +69,7 @@
                               Type = "C",
                               Qty = 2,
                               Name = "CAP 2 NEW",
-                              HasChanged = true,
+                              AssemblyHasChanges = true,
                               Id = "4655",
                               ReplacementFor = "4568"
                           };
@@ -79,7 +79,7 @@
                 Name = "BOM",
                 Qty = 1,
                 Type = "A",
-                HasChanged = true,
+                AssemblyHasChanges = true,
                 Children = new List<BomTreeNode> { this.c1, this.c2, this.c3, this.c4 }
             };
             this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(new Bom

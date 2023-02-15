@@ -46,7 +46,7 @@
                 Name = "ASS 1",
                 ParentName = "BOM",
                 Id = "9876",
-                HasChanged = true,
+                AssemblyHasChanges = true,
                 AddChangeDocumentNumber = 123456,
                 Children = new List<BomTreeNode> { this.c11, this.c12 }
             };
@@ -55,7 +55,7 @@
                 Name = "BOM",
                 Qty = 1,
                 Type = "A",
-                HasChanged = false,
+                AssemblyHasChanges = false,
                 Children = new List<BomTreeNode> { this.c1 }
             };
 
