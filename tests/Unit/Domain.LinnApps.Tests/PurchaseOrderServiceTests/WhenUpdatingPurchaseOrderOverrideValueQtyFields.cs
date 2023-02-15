@@ -289,6 +289,8 @@
                                                                               NominalAccount =
                                                                                   new NominalAccount
                                                                                       {
+                                                                                          NominalCode = "00009222",
+                                                                                          DepartmentCode = "0000911",
                                                                                           AccountId = 911,
                                                                                           Department =
                                                                                               new Department

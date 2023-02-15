@@ -134,10 +134,12 @@
                                                                               Building = "HQ",
                                                                               Id = 1551,
                                                                               LineNumber = 1,
-                                                                              NominalAccount =
+                                                                              NominalAccount = 
                                                                                   new NominalAccount
                                                                                       {
                                                                                           AccountId = 3939,
+                                                                                          NominalCode = "00002222",
+                                                                                          DepartmentCode = "0001111",
                                                                                           Department =
                                                                                               new Department
                                                                                                   {
@@ -290,6 +292,8 @@
                                                                                   new NominalAccount
                                                                                       {
                                                                                           AccountId = 911,
+                                                                                          NominalCode = "00009222",
+                                                                                          DepartmentCode = "0000911",
                                                                                           Department =
                                                                                               new Department
                                                                                                   {

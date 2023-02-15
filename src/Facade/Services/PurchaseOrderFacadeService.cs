@@ -539,6 +539,7 @@
                                                                        Building = x.OrderPosting.Building,
                                                                        Id = x.OrderPosting.Id,
                                                                        LineNumber = x.OrderPosting.LineNumber,
+                                                                       NominalAccountId = x.OrderPosting.NominalAccount.AccountId,
                                                                        NominalAccount = new NominalAccount
                                                                            {
                                                                                NominalCode = x.OrderPosting.NominalAccount.Nominal.NominalCode,
