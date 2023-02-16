@@ -214,6 +214,7 @@
                 .AddTransient<IBomChangeService, BomChangeService>()
                 .AddTransient<ICircuitBoardService, CircuitBoardService>()
                 .AddTransient<IBomStandardPriceService, BomStandardPriceService>()
+                .AddTransient<IBomHistoryReportService, BomHistoryReportService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
