@@ -29,6 +29,7 @@ const BomHistoryReport = () => {
         { field: 'detailId', headerName: 'DET ID', width: 100 },
         { field: 'bomName', headerName: 'Name', width: 150 },
         { field: 'dateApplied', headerName: 'Date', width: 150 },
+        { field: 'appliedBy', headerName: 'By', width: 200 },
         { field: 'documentType', headerName: 'Doc', width: 100 },
         { field: 'documentNumber', headerName: 'Number', width: 150 },
         { field: 'operation', headerName: 'Op', width: 150 },
