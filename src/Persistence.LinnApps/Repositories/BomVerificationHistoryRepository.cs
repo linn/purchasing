@@ -22,7 +22,6 @@
         public override IQueryable<BomVerificationHistory> FilterBy(Expression<Func<BomVerificationHistory, bool>> expression)
         {
             return this.serviceDbContext.BomVerificationHistory
-                .Include(x => x.PartNumber)
                 .Where(expression);
         }
     }

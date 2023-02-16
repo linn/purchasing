@@ -4,11 +4,16 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { useSelector, useDispatch } from 'react-redux';
-import { Page, collectionSelectorHelpers, Search } from '@linn-it/linn-form-components-library';
+import {
+    Page,
+    collectionSelectorHelpers,
+    Search,
+    utilities
+} from '@linn-it/linn-form-components-library';
 import bomVerificationHistoryEntriesSearchActions from '../../actions/bomVerificationHistoryEntriesActions';
 import history from '../../history';
 import config from '../../config';
-import { bomVerificationHistoryEntries as bomVerificationHistoryEntriesItemType } from '../../itemTypes';
+import { bomVerificationHistoryEntries } from '../../itemTypes';
 
 function BomVerificationHistorySearch() {
     const dispatch = useDispatch();
@@ -20,7 +25,7 @@ function BomVerificationHistorySearch() {
 
     const searchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(
-            state[bomVerificationHistoryEntriesItemType.item],
+            state[bomVerificationHistoryEntries.item],
             100,
             'tRef',
             'partNumber',
@@ -32,11 +37,11 @@ function BomVerificationHistorySearch() {
     );
 
     const goToSelectedEntry = selectedEntry => {
-        history.push(`${bomVerificationHistoryEntriesItemType.uri}/${selectedEntry.tRef}`);
+        history.push(utilities.getSelfHref(selectedEntry));
     };
 
     const goToCreate = () => {
-        history.push(`${bomVerificationHistoryEntriesItemType.uri}/create`);
+        history.push(`${bomVerificationHistoryEntries.uri}/create`);
     };
 
     return (
