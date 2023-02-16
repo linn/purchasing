@@ -5,6 +5,7 @@
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
 
     public interface IBomReportsFacadeService
     {
@@ -17,5 +18,7 @@
             bool splitBySubAssembly,
             int levels,
             decimal labourHourlyRate);
+
+        IResult<ReportReturnResource> GetBoardDifferenceReport(BomDifferenceReportRequestResource resource);
     }
 }

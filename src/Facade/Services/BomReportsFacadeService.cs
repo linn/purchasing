@@ -9,6 +9,7 @@
     using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
 
     public class BomReportsFacadeService : IBomReportsFacadeService
     {
@@ -52,6 +53,18 @@
                                               StandardTotal = r.StandardTotal
                                           });
             return new SuccessResult<IEnumerable<BomCostReportResource>>(result);
+        }
+
+        public IResult<ReportReturnResource> GetBoardDifferenceReport(
+            BomDifferenceReportRequestResource resource)
+        {
+            var result = this.domainService.GetBoardDifferenceReport(
+                resource.BoardCode1,
+                resource.RevisionCode1,
+                resource.BoardCode2,
+                resource.RevisionCode2);
+
+            return new SuccessResult<ReportReturnResource>(this.reportReturnResourceBuilder.Build(result));
         }
     }
 }

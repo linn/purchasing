@@ -258,5 +258,14 @@
 
             return results;
         }
+
+        public ResultsModel GetBoardDifferenceReport(
+            string boardCode1,
+            string revisionCode1,
+            string boardCode2,
+            string revisionCode2)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
