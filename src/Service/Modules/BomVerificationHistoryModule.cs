@@ -20,7 +20,7 @@
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/purchasing/bom-verification/{id:int}", this.GetBomVerificationHistoryEntry);
-            app.MapPost("/purchasing/bom-verification/", this.CreateBomVerificationHistoryEntry);
+            app.MapPost("/purchasing/bom-verification/create", this.CreateBomVerificationHistoryEntry);
             app.MapGet("/purchasing/bom-verification/", this.SearchBomVerificationHistoryEntries);
         }
 

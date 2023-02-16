@@ -113,6 +113,7 @@ import changeRequestPhaseIns from './changeRequestPhaseIns';
 import bomVerificationHistory from './bomVerificationHistory';
 import bomStandardPrices from './bomStandardPrices';
 import uploadBoardFile from './uploadBoardFile';
+import bomVerificationHistoryEntries from './bomVerificationHistoryEntries';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -133,6 +134,7 @@ const rootReducer = history =>
         bomTypeChange,
         bomTree,
         bomVerificationHistory,
+        bomVerificationHistoryEntries,
         board,
         boardComponents,
         boardComponentSummaries,
