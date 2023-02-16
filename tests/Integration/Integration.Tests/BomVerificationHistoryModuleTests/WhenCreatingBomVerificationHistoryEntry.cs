@@ -28,7 +28,7 @@
             };
 
             this.Response = this.Client.PostAsJsonAsync(
-                $"/purchasing/bom-verification/",
+                $"/purchasing/bom-verification/create",
                 request).Result;
         }
 

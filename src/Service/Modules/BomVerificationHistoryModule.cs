@@ -19,14 +19,9 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/purchasing/bom-verification/", this.GetApp);
             app.MapGet("/purchasing/bom-verification/{id:int}", this.GetBomVerificationHistoryEntry);
-            app.MapPost("/purchasing/bom-verification/", this.CreateBomVerificationHistoryEntry);
-        }
-
-        private async Task GetApp(HttpRequest req, HttpResponse res)
-        {
-            await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
+            app.MapPost("/purchasing/bom-verification/create", this.CreateBomVerificationHistoryEntry);
+            app.MapGet("/purchasing/bom-verification/", this.SearchBomVerificationHistoryEntries);
         }
 
         private async Task GetBomVerificationHistoryEntry(
@@ -49,6 +44,17 @@
             var result = bomVerificationHistoryFacadeService.Add(
                 resource,
                 req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task SearchBomVerificationHistoryEntries(
+            HttpRequest req,
+            HttpResponse res,
+            string searchTerm,
+            IFacadeResourceService<BomVerificationHistory, int, BomVerificationHistoryResource, BomVerificationHistoryResource> bomVerificationHistoryFacadeService)
+        {
+            var result = bomVerificationHistoryFacadeService.Search(searchTerm);
 
             await res.Negotiate(result);
         }
