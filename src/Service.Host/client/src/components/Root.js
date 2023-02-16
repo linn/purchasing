@@ -88,6 +88,7 @@ import CreateCreditNote from './plDebitCreditNotes/CreateCreditNote';
 import CreateBomVerificationHistory from './BomVerificationHistoryUtility/CreateBomVerificationHistory';
 import BomVerificationHistory from './BomVerificationHistoryUtility/BomVerificationHistory';
 import SetBomStandardPriceUtility from './SetBomsStandardPriceUtility';
+import BomHistoryReport from './BomHistoryReport';
 
 const Root = ({ store }) => (
     <div>
@@ -533,6 +534,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/boms/standards-set"
                                     component={SetBomStandardPriceUtility}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/bom-history"
+                                    component={BomHistoryReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

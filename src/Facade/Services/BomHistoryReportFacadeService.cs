@@ -29,6 +29,7 @@
                         DateTime.Parse(from),
                         DateTime.Parse(to)).Select(BuildResource));
             }
+
             return new SuccessResult<IEnumerable<BomHistoryReportLineResource>>(
                 this.domainService.GetReport(
                 bomName,

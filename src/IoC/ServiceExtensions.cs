@@ -155,7 +155,8 @@
                 .AddTransient<IBomReportsFacadeService, BomReportsFacadeService>()
                 .AddTransient<IQueryFacadeResourceService<BoardComponentSummary, BoardComponentSummaryResource, BoardComponentSummaryResource>, BoardComponentSummaryFacadeService>()
                 .AddTransient<IFacadeResourceService<BomVerificationHistory, int, BomVerificationHistoryResource, BomVerificationHistoryResource>, BomVerificationHistoryFacadeService>()
-                .AddTransient<IBomStandardPriceFacadeService, BomStandardPriceFacadeService>();
+                .AddTransient<IBomStandardPriceFacadeService, BomStandardPriceFacadeService>()
+                .AddTransient<IBomHistoryReportFacadeService, BomHistoryReportFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

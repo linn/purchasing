@@ -393,3 +393,9 @@ export const bomStandardPrices = new ItemType(
     'BOM_STANDARD_PRICES',
     '/purchasing/boms/prices'
 );
+
+export const bomHistoryReport = new ItemType(
+    'bomHistoryReport',
+    'BOM_HISTORY_REPORT',
+    '/purchasing/reports/bom-history'
+);

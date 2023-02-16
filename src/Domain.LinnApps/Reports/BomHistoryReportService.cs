@@ -34,13 +34,14 @@
         public IEnumerable<BomHistoryViewEntry> GetReportWithSubAssemblies(
             string bomName, DateTime from, DateTime to)
         {
-            var subAssemblies = this.treeService.FlattenBomTree(bomName, null, false).Select(x => x.Name);
+            var subAssemblies = this.treeService.FlattenBomTree(bomName, null, false)
+                .Where(x => x.Type != "C").Select(x => x.Name);
 
-            return this.bomHistoryRepository.FilterBy(
-                x => x.DateApplied >= from 
-                     && x.DateApplied <= to
-                     && subAssemblies.Contains(x.BomName))
+            var result = this.bomHistoryRepository.FilterBy(
+                    x => x.DateApplied >= from && x.DateApplied <= to && subAssemblies.Contains(x.BomName))
                 .OrderBy(x => x.ChangeId).ThenBy(x => x.DetailId);
+
+            return result;
         }
     }
 }
