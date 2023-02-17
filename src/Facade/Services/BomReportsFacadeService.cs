@@ -1,14 +1,18 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
+    using Linn.Common.Domain.Exceptions;
     using Linn.Common.Facade;
+    using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
 
     public class BomReportsFacadeService : IBomReportsFacadeService
     {
@@ -52,6 +56,27 @@
                                               StandardTotal = r.StandardTotal
                                           });
             return new SuccessResult<IEnumerable<BomCostReportResource>>(result);
+        }
+
+        public IResult<ReportReturnResource> GetBoardDifferenceReport(
+            BomDifferenceReportRequestResource resource)
+        {
+            ResultsModel result;
+
+            try
+            {
+                result = this.domainService.GetBoardDifferenceReport(
+                    resource.BoardCode1,
+                    resource.RevisionCode1,
+                    resource.BoardCode2,
+                    resource.RevisionCode2);
+            }
+            catch (DomainException exception)
+            {
+                return new BadRequestResult<ReportReturnResource>(exception.Message);
+            }
+
+            return new SuccessResult<ReportReturnResource>(this.reportReturnResourceBuilder.Build(result));
         }
     }
 }

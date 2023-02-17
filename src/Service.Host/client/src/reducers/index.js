@@ -113,6 +113,7 @@ import changeRequestPhaseIns from './changeRequestPhaseIns';
 import bomVerificationHistory from './bomVerificationHistory';
 import bomStandardPrices from './bomStandardPrices';
 import uploadBoardFile from './uploadBoardFile';
+import boardDifferenceReport from './boardDifferenceReport';
 import partDataSheetValues from './partDataSheetValues';
 import partDataSheetValuesList from './partDataSheetValuesList';
 import bomVerificationHistoryEntries from './bomVerificationHistoryEntries';
@@ -131,16 +132,17 @@ const rootReducer = history =>
         automaticPurchaseOrder,
         automaticPurchaseOrderSuggestions,
         batchPurchaseOrderDeliveriesUpload,
-        bomCostReport,
-        bomStandardPrices,
-        bomTypeChange,
-        bomTree,
-        bomVerificationHistory,
-        bomVerificationHistoryEntries,
         board,
         boardComponents,
         boardComponentSummaries,
+        boardDifferenceReport,
         boards,
+        bomCostReport,
+        bomStandardPrices,
+        bomTree,
+        bomTypeChange,
+        bomVerificationHistory,
+        bomVerificationHistoryEntries,
         bulkLeadTimesUpload,
         changeRequest,
         changeRequests,
