@@ -7,9 +7,9 @@ import config from '../../config';
 
 function BoardDifferenceReportOptions() {
     const [boardCode1, setBoardCode1] = useState(null);
-    const [revisionCode1, setRevisionCode1] = useState(null);
+    const [revisionCode1, setRevisionCode1] = useState('L1R1');
     const [boardCode2, setBoardCode2] = useState(null);
-    const [revisionCode2, setRevisionCode2] = useState(null);
+    const [revisionCode2, setRevisionCode2] = useState('L1R2');
 
     const handleClick = () =>
         history.push({

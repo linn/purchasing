@@ -90,6 +90,7 @@ import BomVerificationHistory from './BomVerificationHistoryUtility/BomVerificat
 import SetBomStandardPriceUtility from './SetBomsStandardPriceUtility';
 import BoardDifferenceReportOptions from './reports/BoardDifferenceReportOptions';
 import BoardDifferenceReport from './reports/BoardDifferenceReport';
+import BomVerificationHistorySearch from './BomVerificationHistoryUtility/BomVerificationHistorySearch';
 
 const Root = ({ store }) => (
     <div>
@@ -523,7 +524,7 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
-                                    path="/purchasing/bom-verification"
+                                    path="/purchasing/bom-verification/create"
                                     component={CreateBomVerificationHistory}
                                 />
                                 <Route
@@ -545,6 +546,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/board-difference/report"
                                     component={BoardDifferenceReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/bom-verification"
+                                    component={BomVerificationHistorySearch}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

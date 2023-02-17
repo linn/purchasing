@@ -364,3 +364,7 @@ export const uploadBoardFileActionTypes = makeProcessActionTypes(
 export const boardDifferenceReportActionTypes = makeReportActionTypes(
     reportTypes.boardDifferenceReport.actionType
 );
+
+export const bomVerificationHistoryEntriesActionTypes = makeActionTypes(
+    itemTypes.bomVerificationHistoryEntries.actionType
+);
