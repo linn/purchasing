@@ -401,7 +401,7 @@ export const partDataSheetValuesList = new ItemType(
 );
 
 export const partDataSheetValues = new ItemType(
-    'partDataSheetValue',
+    'partDataSheetValues',
     'PART_DATA_SHEET_VALUES',
     '/purchasing/part-data-sheet-values'
 );
