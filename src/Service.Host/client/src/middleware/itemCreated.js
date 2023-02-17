@@ -14,8 +14,7 @@ export default () => next => action => {
             action.type !==
                 actionTypes.preferredSupplierChangeActionTypes
                     .RECEIVE_NEW_PREFERRED_SUPPLIER_CHANGE &&
-            action.type !== actionTypes.addressActionTypes.RECEIVE_NEW_ADDRESS &&
-            action.type !== actionTypes.addressActionTypes.RECEIVE_NEW_BOM_TREE
+            action.type !== actionTypes.addressActionTypes.RECEIVE_NEW_ADDRESS
         ) {
             history.push(utilities.getSelfHref(action.payload.data));
         }

@@ -97,7 +97,9 @@
                 .AddTransient<IHandler, JsonResultHandler<BomVerificationHistoryResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<BomVerificationHistoryResource>>>()
                 .AddTransient<IHandler, PlCreditDebitNoteApplicationStateResultHandler>()
-                .AddTransient<IHandler, JsonResultHandler<BomStandardPricesResource>>();
+                .AddTransient<IHandler, JsonResultHandler<BomStandardPricesResource>>()
+                .AddTransient<IHandler, JsonResultHandler<PartDataSheetValuesResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PartDataSheetValuesResource>>>();
         }
     }
 }

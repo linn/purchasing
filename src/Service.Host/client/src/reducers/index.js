@@ -114,6 +114,8 @@ import bomVerificationHistory from './bomVerificationHistory';
 import bomStandardPrices from './bomStandardPrices';
 import uploadBoardFile from './uploadBoardFile';
 import boardDifferenceReport from './boardDifferenceReport';
+import partDataSheetValues from './partDataSheetValues';
+import partDataSheetValuesList from './partDataSheetValuesList';
 import bomVerificationHistoryEntries from './bomVerificationHistoryEntries';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
@@ -176,6 +178,8 @@ const rootReducer = history =>
         packagingGroups,
         part,
         partCategories,
+        partDataSheetValues,
+        partDataSheetValuesList,
         partPriceConversions,
         parts,
         partsOnBomReport,

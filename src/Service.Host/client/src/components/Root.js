@@ -90,6 +90,7 @@ import BomVerificationHistory from './BomVerificationHistoryUtility/BomVerificat
 import SetBomStandardPriceUtility from './SetBomsStandardPriceUtility';
 import BoardDifferenceReportOptions from './reports/BoardDifferenceReportOptions';
 import BoardDifferenceReport from './reports/BoardDifferenceReport';
+import PartDataSheetValues from './PartDataSheetValues';
 import BomVerificationHistorySearch from './BomVerificationHistoryUtility/BomVerificationHistorySearch';
 
 const Root = ({ store }) => (
@@ -546,6 +547,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/board-difference/report"
                                     component={BoardDifferenceReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/part-data-sheet-values"
+                                    component={PartDataSheetValues}
                                 />
                                 <Route
                                     exact
