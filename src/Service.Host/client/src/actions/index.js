@@ -368,3 +368,7 @@ export const partDataSheetValuesActionTypes = makeActionTypes(
 export const partDataSheetValuesListActionTypes = makeActionTypes(
     itemTypes.partDataSheetValuesList.actionType
 );
+
+export const bomVerificationHistoryEntriesActionTypes = makeActionTypes(
+    itemTypes.bomVerificationHistoryEntries.actionType
+);

@@ -405,3 +405,9 @@ export const partDataSheetValues = new ItemType(
     'PART_DATA_SHEET_VALUES',
     '/purchasing/part-data-sheet-values'
 );
+
+export const bomVerificationHistoryEntries = new ItemType(
+    'bomVerificationHistoryEntries',
+    'BOM_VERIFICATION_HISTORY_ENTRIES',
+    '/purchasing/bom-verification'
+);
