@@ -7,6 +7,7 @@
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Reports;
+    using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Resources;
 
     public class BomHistoryReportFacadeService : IBomHistoryReportFacadeService
@@ -37,7 +38,7 @@
                 DateTime.Parse(to)).Select(BuildResource));
         }
 
-        private static BomHistoryReportLineResource BuildResource(BomHistoryViewEntry e)
+        private static BomHistoryReportLineResource BuildResource(BomHistoryReportLine e)
         {
             return new BomHistoryReportLineResource
                        {
@@ -45,7 +46,7 @@
                            BomName = e.BomName,
                            DocumentType = e.DocumentType,
                            DocumentNumber = e.DocumentNumber,
-                           DateApplied = e.DateApplied?.ToString("o"),
+                           DateApplied = e.DateApplied?.ToString("dd-MM-yyyy"),
                            AppliedBy = e.AppliedBy,
                            Operation = e.Operation,
                            PartNumber = e.PartNumber,

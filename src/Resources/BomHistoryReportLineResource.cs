@@ -18,12 +18,12 @@
 
         public string PartNumber { get; set; }
 
-        public int? Qty { get; set; }
+        public string Qty { get; set; }
 
         public string GenerateRequirement { get; set; }
 
         public int? ReplaceSeq { get; set; }
 
-        public int? DetailId { get; set; }
+        public string DetailId { get; set; }
     }
 }

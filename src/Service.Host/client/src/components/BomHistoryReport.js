@@ -10,6 +10,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
 import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import queryString from 'query-string';
 import history from '../history';
@@ -25,17 +26,73 @@ const BomHistoryReport = () => {
         collectionSelectorHelpers.getItems(state[bomHistoryReport.item])
     );
     const columns = [
-        { field: 'changeId', headerName: 'CHG ID', width: 100 },
-        { field: 'detailId', headerName: 'DET ID', width: 100 },
+        { field: 'changeId', headerName: 'CHG ID', width: 100, hide: true },
+        {
+            field: 'detailId',
+            headerName: 'DET ID',
+            width: 200,
+            hide: true,
+            renderCell: cellValues => (
+                <TextField
+                    value={cellValues.row.detailId}
+                    InputProps={{ disableUnderline: true }}
+                    multiline
+                />
+            )
+        },
         { field: 'bomName', headerName: 'Name', width: 150 },
         { field: 'dateApplied', headerName: 'Date', width: 150 },
         { field: 'appliedBy', headerName: 'By', width: 200 },
         { field: 'documentType', headerName: 'Doc', width: 100 },
         { field: 'documentNumber', headerName: 'Number', width: 150 },
-        { field: 'operation', headerName: 'Op', width: 150 },
-        { field: 'partNumber', headerName: 'Part', width: 150 },
-        { field: 'qty', headerName: 'Qty', width: 150 },
-        { field: 'generateRequirement', headerName: 'Req', width: 150 }
+        {
+            field: 'operation',
+            headerName: 'Op',
+            width: 150,
+            renderCell: cellValues => (
+                <TextField
+                    value={cellValues.row.operation}
+                    InputProps={{ disableUnderline: true }}
+                    multiline
+                />
+            )
+        },
+        {
+            field: 'partNumber',
+            headerName: 'Part',
+            width: 250,
+            renderCell: cellValues => (
+                <TextField
+                    value={cellValues.row.partNumber}
+                    InputProps={{ disableUnderline: true }}
+                    multiline
+                />
+            )
+        },
+        {
+            field: 'qty',
+            headerName: 'Qty',
+            width: 150,
+            renderCell: cellValues => (
+                <TextField
+                    value={cellValues.row.qty}
+                    InputProps={{ disableUnderline: true }}
+                    multiline
+                />
+            )
+        },
+        {
+            field: 'generateRequirement',
+            headerName: 'Req',
+            width: 150,
+            renderCell: cellValues => (
+                <TextField
+                    value={cellValues.row.generateRequirement}
+                    InputProps={{ disableUnderline: true }}
+                    multiline
+                />
+            )
+        }
     ];
     const defaultStartDate = new Date();
     defaultStartDate.setMonth(defaultStartDate.getMonth() - 1);
@@ -116,7 +173,7 @@ const BomHistoryReport = () => {
                         rows={
                             data?.map(d => ({
                                 ...d,
-                                id: `${d.bomName}/${d.detailId}/${d.changeId}`
+                                id: `${d.bomName}/${d.partNumber}/${d.changeId}`
                             })) ?? []
                         }
                         loading={loading}

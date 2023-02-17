@@ -1,8 +1,8 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
-{
-    using System;
+﻿using System;
 
-    public class BomHistoryViewEntry
+namespace Linn.Purchasing.Domain.LinnApps.Reports.Models
+{
+    public class BomHistoryReportLine
     {
         public int? ChangeId { get; set; }
 
@@ -20,12 +20,12 @@
 
         public string PartNumber { get; set; }
 
-        public decimal? Qty { get; set; }
+        public string Qty { get; set; }
 
         public string GenerateRequirement { get; set; }
 
         public int? ReplaceSeq { get; set; }
 
-        public int? DetailId { get; set; }
+        public string DetailId { get; set; }
     }
 }

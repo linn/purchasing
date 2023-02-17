@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
 
-    using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Integration.Tests.Extensions;
 
     using NSubstitute;
@@ -12,14 +12,14 @@
 
     public class WhenGettingReportIncludingSubAssemblies : ContextBase
     {
-        private IEnumerable<BomHistoryViewEntry> result;
+        private IEnumerable<BomHistoryReportLine> result;
 
         [SetUp]
         public void SetUp()
         {
-            this.result = new List<BomHistoryViewEntry>
+            this.result = new List<BomHistoryReportLine>
                               {
-                                  new BomHistoryViewEntry()
+                                  new BomHistoryReportLine()
                                       {
                                           BomName = "SK HUB"
                                       }

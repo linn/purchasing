@@ -2,17 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
-
-    using Linn.Purchasing.Domain.LinnApps.Boms;
-
-    using Microsoft.VisualBasic;
+    using Linn.Purchasing.Domain.LinnApps.Reports.Models;
 
     public interface IBomHistoryReportService
     {
-        IEnumerable<BomHistoryViewEntry> GetReport(
+        IEnumerable<BomHistoryReportLine> GetReport(
             string bomName, DateTime from, DateTime to);
 
-        IEnumerable<BomHistoryViewEntry> GetReportWithSubAssemblies(
+        IEnumerable<BomHistoryReportLine> GetReportWithSubAssemblies(
             string bomName, DateTime from, DateTime to);
     }
 }

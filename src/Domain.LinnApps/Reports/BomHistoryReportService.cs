@@ -6,6 +6,7 @@
 
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Reports.Models;
 
     public class BomHistoryReportService : IBomHistoryReportService
     {
@@ -21,27 +22,69 @@
             this.bomHistoryRepository = bomHistoryRepository;
         }
 
-        public IEnumerable<BomHistoryViewEntry> GetReport(
+        public IEnumerable<BomHistoryReportLine> GetReport(
             string bomName, DateTime from, DateTime to)
         {
             return this.bomHistoryRepository.FilterBy(
                     x => x.DateApplied >= from
                          && x.DateApplied <= to
-                         && x.BomName == bomName)
-                .OrderBy(x => x.ChangeId).ThenBy(x => x.DetailId);
+                         && x.BomName == bomName).ToList()
+                .OrderBy(x => x.ChangeId).ThenBy(x => x.DetailId).ThenByDescending(x => x.Operation)
+                .GroupBy(x => x.ChangeId).Select(g => new BomHistoryReportLine
+                                                           {
+                                                               ChangeId = g.Key,
+                                                    DetailId = g.First().DetailId + Environment.NewLine + g.ElementAt(1).DetailId,
+                                                    DocumentNumber = g.First().DocumentNumber,
+                                                    BomName = g.First().BomName,
+                                                    DateApplied = g.First().DateApplied,
+                                                    AppliedBy = g.First().AppliedBy,
+                                                    DocumentType = g.First().DocumentType,
+                                                    Operation = g.First().Operation 
+                                                                + Environment.NewLine 
+                                                                + g.ElementAt(1).Operation,
+                                                    PartNumber = g.First().PartNumber 
+                                                                 + Environment.NewLine 
+                                                                 + g.ElementAt(1).PartNumber,
+                                                    Qty = g.First().Qty + Environment.NewLine + g.ElementAt(1).Qty,
+                                                    GenerateRequirement = 
+                                                        g.First().GenerateRequirement 
+                                                        + Environment.NewLine 
+                                                        + g.ElementAt(1).GenerateRequirement
+                                                           });
         }
 
-        public IEnumerable<BomHistoryViewEntry> GetReportWithSubAssemblies(
+        public IEnumerable<BomHistoryReportLine> GetReportWithSubAssemblies(
             string bomName, DateTime from, DateTime to)
         {
             var subAssemblies = this.treeService.FlattenBomTree(bomName, null, false)
                 .Where(x => x.Type != "C").Select(x => x.Name);
 
-            var result = this.bomHistoryRepository.FilterBy(
-                    x => x.DateApplied >= from && x.DateApplied <= to && subAssemblies.Contains(x.BomName))
-                .OrderBy(x => x.ChangeId).ThenBy(x => x.DetailId);
+            var changeGroups = this.bomHistoryRepository.FilterBy(
+                    x => x.DateApplied >= from && x.DateApplied <= to && subAssemblies.Contains(x.BomName)).ToList()
+                .OrderBy(x => x.ChangeId).ThenBy(x => x.DetailId).ThenByDescending(x => x.Operation)
+                .GroupBy(x => x.ChangeId);
 
-            return result;
+            return changeGroups.Select(g => new BomHistoryReportLine
+                                        {
+                                                    ChangeId = g.Key,
+                                                    DetailId = g.First().DetailId + Environment.NewLine + g.ElementAt(1).DetailId,
+                                                    DocumentNumber = g.First().DocumentNumber,
+                                                    BomName = g.First().BomName,
+                                                    DateApplied = g.First().DateApplied,
+                                                    AppliedBy = g.First().AppliedBy,
+                                                    DocumentType = g.First().DocumentType,
+                                                    Operation = g.First().Operation 
+                                                                + Environment.NewLine 
+                                                                + g.ElementAt(1).Operation,
+                                                    PartNumber = g.First().PartNumber 
+                                                                 + Environment.NewLine 
+                                                                 + g.ElementAt(1).PartNumber,
+                                                    Qty = g.First().Qty + Environment.NewLine + g.ElementAt(1).Qty,
+                                                    GenerateRequirement = 
+                                                        g.First().GenerateRequirement 
+                                                        + Environment.NewLine 
+                                                        + g.ElementAt(1).GenerateRequirement
+                                        });
         }
     }
 }
