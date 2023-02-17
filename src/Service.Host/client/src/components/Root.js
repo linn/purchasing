@@ -88,6 +88,8 @@ import CreateCreditNote from './plDebitCreditNotes/CreateCreditNote';
 import CreateBomVerificationHistory from './BomVerificationHistoryUtility/CreateBomVerificationHistory';
 import BomVerificationHistory from './BomVerificationHistoryUtility/BomVerificationHistory';
 import SetBomStandardPriceUtility from './SetBomsStandardPriceUtility';
+import BoardDifferenceReportOptions from './reports/BoardDifferenceReportOptions';
+import BoardDifferenceReport from './reports/BoardDifferenceReport';
 
 const Root = ({ store }) => (
     <div>
@@ -533,6 +535,16 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/boms/standards-set"
                                     component={SetBomStandardPriceUtility}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/board-difference"
+                                    component={BoardDifferenceReportOptions}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/board-difference/report"
+                                    component={BoardDifferenceReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

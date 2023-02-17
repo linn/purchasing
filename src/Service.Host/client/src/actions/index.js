@@ -360,3 +360,7 @@ export const bomStandardPricesActionTypes = makeActionTypes(itemTypes.bomStandar
 export const uploadBoardFileActionTypes = makeProcessActionTypes(
     processTypes.uploadBoardFile.actionType
 );
+
+export const boardDifferenceReportActionTypes = makeReportActionTypes(
+    reportTypes.boardDifferenceReport.actionType
+);

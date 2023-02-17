@@ -113,6 +113,7 @@ import changeRequestPhaseIns from './changeRequestPhaseIns';
 import bomVerificationHistory from './bomVerificationHistory';
 import bomStandardPrices from './bomStandardPrices';
 import uploadBoardFile from './uploadBoardFile';
+import boardDifferenceReport from './boardDifferenceReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -128,15 +129,16 @@ const rootReducer = history =>
         automaticPurchaseOrder,
         automaticPurchaseOrderSuggestions,
         batchPurchaseOrderDeliveriesUpload,
-        bomCostReport,
-        bomStandardPrices,
-        bomTypeChange,
-        bomTree,
-        bomVerificationHistory,
         board,
         boardComponents,
         boardComponentSummaries,
+        boardDifferenceReport,
         boards,
+        bomCostReport,
+        bomStandardPrices,
+        bomTree,
+        bomTypeChange,
+        bomVerificationHistory,
         bulkLeadTimesUpload,
         changeRequest,
         changeRequests,

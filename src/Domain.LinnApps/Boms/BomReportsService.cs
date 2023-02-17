@@ -285,7 +285,7 @@
 
             var results = new ResultsModel
                               {
-                                  ReportTitle = new NameModel($"Board differences between {boardCode1} {revisionCode1} and {boardCode2} {revisionCode2}")
+                                  ReportTitle = new NameModel($"Board differences between board {boardCode1} revision {revisionCode1} and board {boardCode2} revision {revisionCode2}")
                               };
             results.AddSortedColumns(new List<AxisDetailsModel>
                                          {

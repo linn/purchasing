@@ -101,6 +101,9 @@ function App() {
                 <ListItem component={Link} to="/purchasing/reports/shortages" button>
                     <Typography color="primary">Shortages Report</Typography>
                 </ListItem>
+                <ListItem component={Link} to="/purchasing/reports/board-difference" button>
+                    <Typography color="primary">Board Difference Report</Typography>
+                </ListItem>
                 <ListItem component={Link} to="/purchasing/reports/leadtimes" button>
                     <Typography color="primary">Supplier Lead Times Report</Typography>
                 </ListItem>
