@@ -91,7 +91,8 @@
                 .AddTransient<IBuilder<BomTypeChange>, BomTypeChangeResourceBuilder>()
                 .AddTransient<IBuilder<CircuitBoard>, CircuitBoardResourceBuilder>()
                 .AddTransient<IBuilder<BoardComponentSummary>, BoardComponentSummaryResourceBuilder>()
-                .AddTransient<IBuilder<BomVerificationHistory>, BomVerificationHistoryResourceBuilder>();
+                .AddTransient<IBuilder<BomVerificationHistory>, BomVerificationHistoryResourceBuilder>()
+                .AddTransient<IBuilder<PartDataSheetValues>, PartDataSheetValuesResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -155,7 +156,8 @@
                 .AddTransient<IBomReportsFacadeService, BomReportsFacadeService>()
                 .AddTransient<IQueryFacadeResourceService<BoardComponentSummary, BoardComponentSummaryResource, BoardComponentSummaryResource>, BoardComponentSummaryFacadeService>()
                 .AddTransient<IFacadeResourceService<BomVerificationHistory, int, BomVerificationHistoryResource, BomVerificationHistoryResource>, BomVerificationHistoryFacadeService>()
-                .AddTransient<IBomStandardPriceFacadeService, BomStandardPriceFacadeService>();
+                .AddTransient<IBomStandardPriceFacadeService, BomStandardPriceFacadeService>()
+                .AddTransient<IFacadeResourceService<PartDataSheetValues, PartDataSheetValuesKey, PartDataSheetValuesResource, PartDataSheetValuesResource>, PartDataSheetValuesService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
