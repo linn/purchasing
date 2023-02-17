@@ -270,22 +270,29 @@
             string boardCode2,
             string revisionCode2)
         {
-            var board1 = this.boardRepository.FindById(boardCode1);
-            var board2 = boardCode1 == boardCode2 ? board1 : this.boardRepository.FindById(boardCode2);
+            if (string.IsNullOrWhiteSpace(boardCode1) || string.IsNullOrWhiteSpace(revisionCode1)
+                                                      || string.IsNullOrWhiteSpace(boardCode2)
+                                                      || string.IsNullOrWhiteSpace(revisionCode2))
+            {
+                throw new InvalidOptionException("Board or revision not specified");
+            }
+
+            var board1 = this.boardRepository.FindById(boardCode1.ToUpper());
+            var board2 = boardCode1.ToUpper() == boardCode2.ToUpper() ? board1 : this.boardRepository.FindById(boardCode2.ToUpper());
 
             if (board1 == null || board2 == null)
             {
-                throw new ItemNotFoundException($"{board1} or {board2} could not be found");
+                throw new ItemNotFoundException($"{boardCode1.ToUpper()} or {boardCode2.ToUpper()} could not be found");
             }
 
-            var revision1 = board1.Layouts.SelectMany(a => a.Revisions).First(a => a.RevisionCode == revisionCode1);
-            var revision2 = board2.Layouts.SelectMany(a => a.Revisions).First(a => a.RevisionCode == revisionCode2);
+            var revision1 = board1.Layouts.SelectMany(a => a.Revisions).First(a => a.RevisionCode == revisionCode1.ToUpper());
+            var revision2 = board2.Layouts.SelectMany(a => a.Revisions).First(a => a.RevisionCode == revisionCode2.ToUpper());
             var components1 = board1.ComponentsOnRevision(revision1.LayoutSequence, revision1.VersionNumber);
             var components2 = board2.ComponentsOnRevision(revision2.LayoutSequence, revision2.VersionNumber);
 
             var results = new ResultsModel
                               {
-                                  ReportTitle = new NameModel($"Board differences between board {boardCode1} revision {revisionCode1} and board {boardCode2} revision {revisionCode2}")
+                                  ReportTitle = new NameModel($"Board differences between board {boardCode1.ToUpper()} revision {revisionCode1.ToUpper()} and board {boardCode2.ToUpper()} revision {revisionCode2.ToUpper()}")
                               };
             results.AddSortedColumns(new List<AxisDetailsModel>
                                          {
