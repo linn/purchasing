@@ -16,13 +16,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/purchasing/reports/bom-history/options", this.GetApp);
             app.MapGet("/purchasing/reports/bom-history", this.GetReport);
-        }
-
-        private async Task GetApp(HttpRequest req, HttpResponse res)
-        {
-            await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
         }
 
         private async Task GetReport(
@@ -34,9 +28,15 @@
             bool includeSubAssemblies,
             IBomHistoryReportFacadeService service)
         {
-            var results = service.GetReport(bomName, from, to, includeSubAssemblies);
-
-            await res.Negotiate(results);
+            if (string.IsNullOrEmpty(from))
+            {
+                await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
+            }
+            else
+            {
+                var results = service.GetReport(bomName, from, to, includeSubAssemblies);
+                await res.Negotiate(results);
+            }
         }
     }
 }
