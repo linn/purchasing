@@ -22,69 +22,83 @@
             this.bomHistoryRepository = bomHistoryRepository;
         }
 
-        public IEnumerable<BomHistoryReportLine> GetReport(
-            string bomName, DateTime from, DateTime to)
+        public IEnumerable<BomHistoryReportLine> GetReport(string bomName, DateTime from, DateTime to)
         {
-            return this.bomHistoryRepository.FilterBy(
-                    x => x.DateApplied >= from
-                         && x.DateApplied <= to
-                         && x.BomName == bomName).ToList()
-                .OrderBy(x => x.ChangeId).ThenBy(x => x.DetailId).ThenByDescending(x => x.Operation)
-                .GroupBy(x => x.ChangeId).Select(g => new BomHistoryReportLine
-                                                           {
-                                                               ChangeId = g.Key,
-                                                    DetailId = g.First().DetailId + Environment.NewLine + g.ElementAt(1).DetailId,
-                                                    DocumentNumber = g.First().DocumentNumber,
-                                                    BomName = g.First().BomName,
-                                                    DateApplied = g.First().DateApplied,
-                                                    AppliedBy = g.First().AppliedBy,
-                                                    DocumentType = g.First().DocumentType,
-                                                    Operation = g.First().Operation 
-                                                                + Environment.NewLine 
-                                                                + g.ElementAt(1).Operation,
-                                                    PartNumber = g.First().PartNumber 
-                                                                 + Environment.NewLine 
-                                                                 + g.ElementAt(1).PartNumber,
-                                                    Qty = g.First().Qty + Environment.NewLine + g.ElementAt(1).Qty,
-                                                    GenerateRequirement = 
-                                                        g.First().GenerateRequirement 
-                                                        + Environment.NewLine 
-                                                        + g.ElementAt(1).GenerateRequirement
-                                                           });
+            return this.bomHistoryRepository
+                .FilterBy(x => x.DateApplied >= from && x.DateApplied <= to && x.BomName == bomName)
+                .ToList()
+                .OrderBy(x => x.ChangeId)
+                .ThenBy(x => x.DetailId)
+                .ThenByDescending(x => x.Operation)
+                .GroupBy(x => x.ChangeId)
+                .Select(
+                    g => new BomHistoryReportLine
+                             {
+                        ChangeId = g.Key,
+                        DetailId =
+                            g.First().DetailId
+                            + (g.Count() > 1 ? Environment.NewLine + g.ElementAt(1).DetailId : string.Empty),
+                        DocumentNumber = g.First().DocumentNumber,
+                        BomName = g.First().BomName,
+                        DateApplied = g.First().DateApplied,
+                        AppliedBy = g.First().AppliedBy,
+                        DocumentType = g.First().DocumentType,
+                        Operation =
+                            g.First().Operation
+                            + (g.Count() > 1 ? Environment.NewLine + g.ElementAt(1).Operation : string.Empty),
+                        PartNumber =
+                            g.First().PartNumber
+                            + (g.Count() > 1 ? Environment.NewLine + g.ElementAt(1).PartNumber : string.Empty),
+                        Qty = g.First().Qty + (g.Count() > 1
+                                                   ? Environment.NewLine + g.ElementAt(1).Qty
+                                                   : string.Empty),
+                        GenerateRequirement = g.First().GenerateRequirement
+                                              + (g.Count() > 1
+                                                     ? Environment.NewLine + g.ElementAt(1).GenerateRequirement
+                                                     : string.Empty)
+                    });
         }
 
-        public IEnumerable<BomHistoryReportLine> GetReportWithSubAssemblies(
-            string bomName, DateTime from, DateTime to)
+        public IEnumerable<BomHistoryReportLine> GetReportWithSubAssemblies(string bomName, DateTime from, DateTime to)
         {
             var subAssemblies = this.treeService.FlattenBomTree(bomName, null, false)
-                .Where(x => x.Type != "C").Select(x => x.Name);
+                .Where(x => x.Type != "C")
+                .Select(x => x.Name);
 
-            var changeGroups = this.bomHistoryRepository.FilterBy(
-                    x => x.DateApplied >= from && x.DateApplied <= to && subAssemblies.Contains(x.BomName)).ToList()
-                .OrderBy(x => x.ChangeId).ThenBy(x => x.DetailId).ThenByDescending(x => x.Operation)
+            var changeGroups = this.bomHistoryRepository
+                .FilterBy(x => x.DateApplied >= from && x.DateApplied <= to && subAssemblies.Contains(x.BomName))
+                .ToList()
+                .OrderBy(x => x.ChangeId)
+                .ThenBy(x => x.DetailId)
+                .ThenByDescending(x => x.Operation)
                 .GroupBy(x => x.ChangeId);
 
-            return changeGroups.Select(g => new BomHistoryReportLine
-                                        {
-                                                    ChangeId = g.Key,
-                                                    DetailId = g.First().DetailId + Environment.NewLine + g.ElementAt(1).DetailId,
-                                                    DocumentNumber = g.First().DocumentNumber,
-                                                    BomName = g.First().BomName,
-                                                    DateApplied = g.First().DateApplied,
-                                                    AppliedBy = g.First().AppliedBy,
-                                                    DocumentType = g.First().DocumentType,
-                                                    Operation = g.First().Operation 
-                                                                + Environment.NewLine 
-                                                                + g.ElementAt(1).Operation,
-                                                    PartNumber = g.First().PartNumber 
-                                                                 + Environment.NewLine 
-                                                                 + g.ElementAt(1).PartNumber,
-                                                    Qty = g.First().Qty + Environment.NewLine + g.ElementAt(1).Qty,
-                                                    GenerateRequirement = 
-                                                        g.First().GenerateRequirement 
-                                                        + Environment.NewLine 
-                                                        + g.ElementAt(1).GenerateRequirement
-                                        });
+            return changeGroups.Select(
+                g => new BomHistoryReportLine
+                         {
+                             ChangeId = g.Key,
+                             DetailId =
+                                 g.First().DetailId
+                                 + (g.Count() > 1 ? Environment.NewLine + g.ElementAt(1).DetailId : string.Empty),
+                             DocumentNumber = g.First().DocumentNumber,
+                             BomName = g.First().BomName,
+                             DateApplied = g.First().DateApplied,
+                             AppliedBy = g.First().AppliedBy,
+                             DocumentType = g.First().DocumentType,
+                             Operation =
+                                 g.First().Operation
+                                 + (g.Count() > 1 ? Environment.NewLine + g.ElementAt(1).Operation : string.Empty),
+                             PartNumber =
+                                 g.First().PartNumber
+                                 + (g.Count() > 1 ? Environment.NewLine + g.ElementAt(1).PartNumber : string.Empty),
+                             Qty = g.First().Qty + (g.Count() > 1
+                                                        ? Environment.NewLine + g.ElementAt(1).Qty
+                                                        : string.Empty),
+                             GenerateRequirement = g.First().GenerateRequirement
+                                                   + (g.Count() > 1
+                                                          ? Environment.NewLine + g.ElementAt(1).GenerateRequirement
+                                                          : string.Empty)
+                         });
         }
     }
 }
