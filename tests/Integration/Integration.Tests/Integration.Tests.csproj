@@ -36,6 +36,7 @@
     <Folder Include="MrOrderBookReportModuleTests\" />
     <Folder Include="BomStandardPriceModuleTests\" />
     <Folder Include="BomHistoryReportModuleTests\" />
+    <Folder Include="PartDataSheetValuesModuleTests\" />
     <Folder Include="PartsReceivedReportModuleTests\" />
   </ItemGroup>
 

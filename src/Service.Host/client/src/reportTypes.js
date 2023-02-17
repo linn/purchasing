@@ -143,3 +143,9 @@ export const bomCostReport = new ItemType(
     'BOM_COST_REPORT',
     '/purchasing/boms/reports/cost'
 );
+
+export const boardDifferenceReport = new ItemType(
+    'boardDifferenceReport',
+    'BOARD_DIFFERENCE_REPORT',
+    '/purchasing/reports/board-difference/report'
+);

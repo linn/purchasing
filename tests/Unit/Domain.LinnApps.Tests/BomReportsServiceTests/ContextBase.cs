@@ -20,17 +20,21 @@
 
         protected IBomTreeService BomTreeService { get; private set; }
 
+        protected IRepository<CircuitBoard, string> CircuitBoardRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
             this.BomDetailViewRepository = Substitute.For<IBomDetailViewRepository>();
             this.BomTreeService = Substitute.For<IBomTreeService>();
             this.BomCostReportDetailsRepository = Substitute.For<IQueryRepository<BomCostReportDetail>>();
+            this.CircuitBoardRepository = Substitute.For<IRepository<CircuitBoard, string>>();
             this.Sut = new BomReportsService(
                 this.BomDetailViewRepository, 
                 new ReportingHelper(), 
                 this.BomTreeService,
-                this.BomCostReportDetailsRepository);
+                this.BomCostReportDetailsRepository,
+                this.CircuitBoardRepository);
         }
     }
 }

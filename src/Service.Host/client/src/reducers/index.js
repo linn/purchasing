@@ -114,6 +114,10 @@ import bomVerificationHistory from './bomVerificationHistory';
 import bomStandardPrices from './bomStandardPrices';
 import uploadBoardFile from './uploadBoardFile';
 import bomHistoryReport from './bomHistoryReport';
+import boardDifferenceReport from './boardDifferenceReport';
+import partDataSheetValues from './partDataSheetValues';
+import partDataSheetValuesList from './partDataSheetValuesList';
+import bomVerificationHistoryEntries from './bomVerificationHistoryEntries';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -138,7 +142,9 @@ const rootReducer = history =>
         board,
         boardComponents,
         boardComponentSummaries,
+        boardDifferenceReport,
         boards,
+        bomVerificationHistoryEntries,
         bulkLeadTimesUpload,
         changeRequest,
         changeRequests,
@@ -174,6 +180,8 @@ const rootReducer = history =>
         packagingGroups,
         part,
         partCategories,
+        partDataSheetValues,
+        partDataSheetValuesList,
         partPriceConversions,
         parts,
         partsOnBomReport,

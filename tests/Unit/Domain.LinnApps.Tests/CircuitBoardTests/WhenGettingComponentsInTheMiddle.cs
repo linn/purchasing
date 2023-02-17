@@ -197,7 +197,7 @@
                                           new BoardComponent
                                               {
                                                   BoardCode = this.BoardCode,
-                                                  BoardLine = 11,
+                                                  BoardLine = 12,
                                                   CRef = "C011",
                                                   PartNumber = "CAP 123",
                                                   AssemblyTechnology = "SM",
@@ -209,7 +209,23 @@
                                                   AddChangeId = 8763458,
                                                   DeleteChangeId = null,
                                                   Quantity = 1
-                                              }
+                                              },
+                                          new BoardComponent
+                                              {
+                                                  BoardCode = this.BoardCode,
+                                                  BoardLine = 13,
+                                                  CRef = "C010",
+                                                  PartNumber = "CAP 123",
+                                                  AssemblyTechnology = "SM",
+                                                  ChangeState = "HIST",
+                                                  FromLayoutVersion = 2,
+                                                  FromRevisionVersion = 2,
+                                                  ToLayoutVersion = null,
+                                                  ToRevisionVersion = null,
+                                                  AddChangeId = 8763458,
+                                                  DeleteChangeId = null,
+                                                  Quantity = 1
+                                              },
                                       };
             this.results = this.Sut.ComponentsOnRevision(2, 2);
         }

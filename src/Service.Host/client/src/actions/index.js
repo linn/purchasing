@@ -364,3 +364,19 @@ export const uploadBoardFileActionTypes = makeProcessActionTypes(
 export const bomHistoryReportActionTypes = makeReportActionTypes(
     itemTypes.bomHistoryReport.actionType
 );
+
+export const boardDifferenceReportActionTypes = makeReportActionTypes(
+    reportTypes.boardDifferenceReport.actionType
+);
+
+export const partDataSheetValuesActionTypes = makeActionTypes(
+    itemTypes.partDataSheetValues.actionType
+);
+
+export const partDataSheetValuesListActionTypes = makeActionTypes(
+    itemTypes.partDataSheetValuesList.actionType
+);
+
+export const bomVerificationHistoryEntriesActionTypes = makeActionTypes(
+    itemTypes.bomVerificationHistoryEntries.actionType
+);
