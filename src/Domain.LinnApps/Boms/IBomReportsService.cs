@@ -14,5 +14,11 @@
             bool splitBySubAssembly,
             int levels,
             decimal labourHourlyRate);
+
+        ResultsModel GetBoardDifferenceReport(
+            string boardCode1,
+            string revisionCode1,
+            string boardCode2,
+            string revisionCode2);
     }
 }

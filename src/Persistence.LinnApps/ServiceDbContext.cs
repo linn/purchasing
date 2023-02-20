@@ -214,6 +214,8 @@
 
         public DbSet<BomStandardPrice> BomPriceVariances { get; set; }
 
+        public DbSet<PartDataSheetValues> PartDataSheetValues { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -330,6 +332,7 @@
             this.BuildBomCostDetails(builder);
             this.BuildBomVerificationHistory(builder);
             this.BuildBomPriceVariances(builder);
+            this.BuildPartDataSheetValues(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -350,6 +353,19 @@
             // optionsBuilder.UseLoggerFactory(MyLoggerFactory);
             // optionsBuilder.EnableSensitiveDataLogging(true);
             base.OnConfiguring(optionsBuilder);
+        }
+
+        private void BuildPartDataSheetValues(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PartDataSheetValues>().ToTable("PART_DATA_SHEET_VALUES");
+            entity.HasKey(e => new { e.AttributeSet, e.Field, e.Value });
+            entity.Property(e => e.AttributeSet).HasColumnName("ATTRIBUTE_SET").HasMaxLength(14);
+            entity.Property(e => e.Field).HasColumnName("FIELD").HasMaxLength(14);
+            entity.Property(e => e.Value).HasColumnName("VALUE").HasMaxLength(14);
+            entity.Property(e => e.AssemblyTechnology).HasColumnName("ASSEMBLY_TECHNOLOGY").HasMaxLength(4);
+            entity.Property(e => e.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
+            entity.Property(e => e.ImdsNumber).HasColumnName("IMDS_ID_NUMBER");
+            entity.Property(e => e.ImdsWeight).HasColumnName("IMDS_WEIGHT_G");
         }
 
         private void BuildPriceChangeReasons(ModelBuilder builder)

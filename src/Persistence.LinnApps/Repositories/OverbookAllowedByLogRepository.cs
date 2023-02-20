@@ -4,12 +4,12 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
-    public class OverbookAllowedByLogRespository : EntityFrameworkRepository<OverbookAllowedByLog, int>
+    public class OverbookAllowedByLogRepository : EntityFrameworkRepository<OverbookAllowedByLog, int>
     {
         private readonly ServiceDbContext serviceDbContext;
         private readonly IDatabaseService databaseService;
 
-        public OverbookAllowedByLogRespository(ServiceDbContext serviceDbContext, IDatabaseService databaseService)
+        public OverbookAllowedByLogRepository(ServiceDbContext serviceDbContext, IDatabaseService databaseService)
             : base(serviceDbContext.AllowOverbookLogs)
         {
             this.serviceDbContext = serviceDbContext;

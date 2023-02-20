@@ -51,7 +51,7 @@
 
         protected override Expression<Func<BomVerificationHistory, bool>> SearchExpression(string searchTerm)
         {
-            throw new NotImplementedException();
+            return x => x.PartNumber.Contains(searchTerm.ToUpper()) || x.TRef.ToString().Contains(searchTerm.ToUpper());
         }
 
         protected override void SaveToLogTable(
