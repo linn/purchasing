@@ -531,6 +531,7 @@
             entity.Property(a => a.SafetyCritical).HasColumnName("SAFETY_CRITICAL_PART");
             entity.Property(a => a.AssemblyTechnology).HasColumnName("ASSEMBLY_TECHNOLOGY").HasMaxLength(4);
             entity.Property(a => a.DateLive).HasColumnName("DATE_LIVE");
+            entity.Property(a => a.ExpectedUnitPrice).HasColumnName("EXPECTED_UNIT_PRICE");
         }
 
         private void BuildSuppliers(ModelBuilder builder)

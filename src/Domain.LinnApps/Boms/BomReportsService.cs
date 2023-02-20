@@ -408,10 +408,10 @@
 
         public ResultsModel GetBomDifferencesReport(string bom1, string bom2)
         {
-            var first = this.bomTreeService.FlattenBomTree(bom1, 1, false, false).ToList();
-            first.RemoveAt(0);
-            var second = this.bomTreeService.FlattenBomTree(bom2, 1, false, false).ToList();
-            second.RemoveAt(0);
+            var first = this.bomDetailViewRepository
+                .FilterBy(x => x.ChangeState == "LIVE" && x.BomPartNumber == bom1).ToList();
+            var second = this.bomDetailViewRepository
+                .FilterBy(x => x.ChangeState == "LIVE" && x.BomPartNumber == bom2).ToList();
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
 
@@ -419,12 +419,12 @@
                 null,
                 new List<AxisDetailsModel>
                     {
-                        new("PartNumber1", "PartNumber", GridDisplayType.TextValue),
-                        new("Qty1", "Qty",  GridDisplayType.Value) { DecimalPlaces = 5 },
-                        new("Cost1", "Cost",  GridDisplayType.Value) { DecimalPlaces = 5 },
-                        new("PartNumber2", "PartNumber", GridDisplayType.TextValue),
-                        new("Qty2", "Qty",  GridDisplayType.Value) { DecimalPlaces = 5 },
-                        new("Cost2", "Cost",  GridDisplayType.Value) { DecimalPlaces = 5 },
+                        new("PartNumber1", bom1, GridDisplayType.TextValue),
+                        new("Qty1", "Qty", GridDisplayType.TextValue),
+                        new("Cost1", "Cost", GridDisplayType.TextValue),
+                        new("PartNumber2", bom2, GridDisplayType.TextValue),
+                        new("Qty2", "Qty",  GridDisplayType.TextValue),
+                        new("Cost2", "Cost",  GridDisplayType.TextValue),
                         new("Diff", "Diff", GridDisplayType.Value) { DecimalPlaces = 5 }
                     });
 
@@ -434,54 +434,55 @@
 
             foreach (var detail in first)
             {
-                var inSecond = second.SingleOrDefault(x => x.Name == detail.Name);
+                var inSecond = second.SingleOrDefault(x => x.PartNumber == detail.PartNumber);
                 if (inSecond == null)
                 {
                     values.Add(
                         new CalculationValueModel
                             {
-                                RowId = detail.Name,
+                                RowId = detail.PartNumber,
                                 ColumnId = "PartNumber1",
-                                TextDisplay = detail.Name
+                                TextDisplay = detail.PartNumber
                             });
                     values.Add(
                         new CalculationValueModel
                             {
-                                RowId = detail.Name,
+                                RowId = detail.PartNumber,
                                 ColumnId = "Qty1",
-                                Value = detail.Qty
+                                TextDisplay = detail.Qty.ToString("0.#####")
                             });
                     values.Add(
                         new CalculationValueModel
                             {
-                                RowId = detail.Name,
+                                RowId = detail.PartNumber,
                                 ColumnId = "Cost1",
-                                Value = 0 // todo
-                            });
+                                TextDisplay 
+                                    = (detail.Qty * detail.Part.ExpectedUnitPrice.GetValueOrDefault()).ToString("0.#####")
+                        });
                     values.Add(
                         new CalculationValueModel
                             {
-                                RowId = detail.Name,
+                                RowId = detail.PartNumber,
                                 ColumnId = "PartNumber2"
                             });
                     values.Add(
                         new CalculationValueModel
                             {
-                                RowId = detail.Name,
+                                RowId = detail.PartNumber,
                                 ColumnId = "Qty2"
                             });
                     values.Add(
                         new CalculationValueModel
                             {
-                                RowId = detail.Name,
+                                RowId = detail.PartNumber,
                                 ColumnId = "Cost2"
                             });
                     values.Add(
                         new CalculationValueModel
                             {
-                                RowId = detail.Name,
+                                RowId = detail.PartNumber,
                                 ColumnId = "Diff",
-                                Value = 0 // todo (0 = cost1)
+                                Value = 0 - detail.Qty * detail.Part.ExpectedUnitPrice.GetValueOrDefault()
                             });
                 }
                 else if (inSecond.Qty == detail.Qty)
@@ -490,108 +491,111 @@
                 }
                 else
                 {
+                    var cost1 = detail.Part.ExpectedUnitPrice.GetValueOrDefault() * detail.Qty;
+                    var cost2 = inSecond.Part.ExpectedUnitPrice.GetValueOrDefault() * detail.Qty;
                     values.Add(
                         new CalculationValueModel
                             {
-                                RowId = detail.Name,
+                                RowId = detail.PartNumber,
                                 ColumnId = "PartNumber1",
-                                TextDisplay = detail.Name
+                                TextDisplay = detail.PartNumber
                             });
                     values.Add(
                         new CalculationValueModel
                             {
-                                RowId = detail.Name,
+                                RowId = detail.PartNumber,
                                 ColumnId = "Qty1",
-                                Value = detail.Qty
-                            });
-                    values.Add(
-                        new CalculationValueModel
-                            {
-                                RowId = detail.Name,
-                                ColumnId = "Cost1",
-                                Value = 0 // todo
-                            });
-                    values.Add(
-                        new CalculationValueModel
-                            {
-                                RowId = detail.Name,
-                                ColumnId = "PartNumber2",
-                                TextDisplay = detail.Name
-                            });
-                    values.Add(
-                        new CalculationValueModel
-                            {
-                                RowId = detail.Name,
-                                ColumnId = "Qty2",
-                                Value = inSecond.Qty
-                            });
-                    values.Add(
-                        new CalculationValueModel
-                            {
-                                RowId = detail.Name,
-                                ColumnId = "Cost2",
-                                Value = 0 // todo 
+                                TextDisplay = detail.Qty.ToString("0.#####")
                         });
                     values.Add(
                         new CalculationValueModel
                             {
-                                RowId = detail.Name,
+                                RowId = detail.PartNumber,
+                                ColumnId = "Cost1",
+                                TextDisplay = cost1.ToString("0.#####")
+                        });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = detail.PartNumber,
+                                ColumnId = "PartNumber2",
+                                TextDisplay = detail.PartNumber
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = detail.PartNumber,
+                                ColumnId = "Qty2",
+                                TextDisplay = inSecond.Qty.ToString("0.#####")
+                        });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = detail.PartNumber,
+                                ColumnId = "Cost2",
+                                TextDisplay 
+                                    = inSecond.Part.ExpectedUnitPrice.GetValueOrDefault().ToString("0.#####")
+                        });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = detail.PartNumber,
                                 ColumnId = "Diff",
-                                Value = 0 // todo (cost2 - cost1)
+                                Value = cost2 - cost1
                             });
                 }
             }
 
             foreach (var detail in second)
             {
-                var inFirst = first.SingleOrDefault(x => x.Name == detail.Name);
+                var inFirst = first.SingleOrDefault(x => x.PartNumber == detail.PartNumber);
                 if (inFirst == null)
                 {
                     values.Add(
                         new CalculationValueModel
                         {
-                            RowId = detail.Name,
+                            RowId = detail.PartNumber,
                             ColumnId = "PartNumber1"
                         });
                     values.Add(
                         new CalculationValueModel
                         {
-                            RowId = detail.Name,
+                            RowId = detail.PartNumber,
                             ColumnId = "Qty1"
                         });
                     values.Add(
                         new CalculationValueModel
                         {
-                            RowId = detail.Name,
+                            RowId = detail.PartNumber,
                             ColumnId = "Cost1"
                         });
                     values.Add(
                         new CalculationValueModel
                         {
-                            RowId = detail.Name,
+                            RowId = detail.PartNumber,
                             ColumnId = "PartNumber2",
-                            TextDisplay = detail.Name
+                            TextDisplay = detail.PartNumber
                         });
                     values.Add(
                         new CalculationValueModel
                         {
-                            RowId = detail.Name,
+                            RowId = detail.PartNumber,
                             ColumnId = "Qty2",
-                            Value = detail.Qty
+                            TextDisplay = detail.Qty.ToString("0.#####")
                         });
                     values.Add(
                         new CalculationValueModel
                         {
-                            RowId = detail.Name,
+                            RowId = detail.PartNumber,
                             ColumnId = "Cost2",
-                            Value = 0 // todo
+                            TextDisplay = detail.Part.ExpectedUnitPrice.GetValueOrDefault().ToString("0.#####")
                         });
                     values.Add(
                         new CalculationValueModel
                         {
-                            RowId = detail.Name,
+                            RowId = detail.PartNumber,
                             ColumnId = "Diff",
-                            Value = 0 // todo (cost2 - cost 1)
+                            Value = 0 - detail.Part.ExpectedUnitPrice.GetValueOrDefault()
                         });
                 }
             }

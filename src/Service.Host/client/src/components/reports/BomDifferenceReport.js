@@ -78,8 +78,6 @@ function BomDifferenceReport() {
                                 showTitle
                                 title={reportData?.title}
                                 showTotals={false}
-                                showRowCount
-                                showRowTitles
                                 placeholderRows={4}
                                 placeholderColumns={4}
                             />
