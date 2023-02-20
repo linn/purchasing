@@ -9,6 +9,7 @@
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     public class BomReportsService : IBomReportsService
     {
@@ -22,18 +23,22 @@
 
         private readonly IBomTreeService bomTreeService;
 
+        private readonly IQueryRepository<Part> partRepository;
+
         public BomReportsService(
             IBomDetailViewRepository bomDetailViewRepository, 
             IReportingHelper reportingHelper, 
             IBomTreeService bomTreeService,
             IQueryRepository<BomCostReportDetail> bomCostReportDetails,
-            IRepository<CircuitBoard, string> boardRepository)
+            IRepository<CircuitBoard, string> boardRepository,
+            IQueryRepository<Part> partRepository)
         {
             this.bomDetailViewRepository = bomDetailViewRepository;
             this.reportingHelper = reportingHelper;
             this.bomTreeService = bomTreeService;
             this.bomCostReportDetails = bomCostReportDetails;
             this.boardRepository = boardRepository;
+            this.partRepository = partRepository;
         }
 
         public ResultsModel GetPartsOnBomReport(string bomName)
@@ -148,7 +153,7 @@
         {
             var results = new List<BomCostReport>();
 
-            var partsOnBom = this.bomTreeService.FlattenBomTree(bomName, levels);
+            var partsOnBom = this.bomTreeService.FlattenBomTree(bomName, levels, false);
 
             var treeNodes = partsOnBom as BomTreeNode[] ?? partsOnBom.ToArray();
 
@@ -254,9 +259,9 @@
                 reportResult.MaterialTotal = Math.Round(
                     group.Sum(
                         x => x.Qty.GetValueOrDefault() * x.MaterialPrice.GetValueOrDefault()), 5);
-                reportResult.StandardTotal = Math.Round(
-                    group.Sum(
-                        x => x.Qty.GetValueOrDefault() *  x.StandardPrice.GetValueOrDefault()), 5);
+                var part = this.partRepository.FindBy(p => p.PartNumber == group.Key);
+                reportResult.StandardTotal = part
+                    .MaterialPrice.GetValueOrDefault();
 
                 results.Add(reportResult);
             }

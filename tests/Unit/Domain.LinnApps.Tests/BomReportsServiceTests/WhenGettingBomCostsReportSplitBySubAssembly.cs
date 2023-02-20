@@ -8,6 +8,7 @@
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NSubstitute;
 
@@ -33,7 +34,7 @@
                                   new BomTreeNode { Id = "9" },
                                   new BomTreeNode { Id = "10" }
                               };
-            this.BomTreeService.FlattenBomTree("SK HUB", 999).Returns(flatBom);
+            this.BomTreeService.FlattenBomTree("SK HUB", 999, false).Returns(flatBom);
             var details 
                 = new List<BomCostReportDetail>
                       {
@@ -53,7 +54,13 @@
                       }.AsQueryable();
             this.BomCostReportDetailsRepository.FilterBy(Arg.Any<Expression<Func<BomCostReportDetail, bool>>>())
                 .Returns(details);
-
+            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
+                .Returns(
+                    new Part { MaterialPrice = 1617.30m },
+                    new Part { MaterialPrice = 3117.30m },
+                    new Part { MaterialPrice = 723.00m },
+                    new Part { MaterialPrice = 923.46m },
+                    new Part { MaterialPrice = 40m });
             this.results = this.Sut.GetBomCostReport("SK HUB", true, 999, 15);
         }
 
@@ -88,11 +95,14 @@
             this.results.ElementAt(1).MaterialTotal.Should().Be(3117.25m);
             this.results.ElementAt(1).StandardTotal.Should().Be(3117.30m);
 
+            this.results.ElementAt(2).MaterialTotal.Should().Be(723.45m);
+            this.results.ElementAt(2).StandardTotal.Should().Be(723.0m);
+
             this.results.ElementAt(3).MaterialTotal.Should().Be(823.45m);
             this.results.ElementAt(3).StandardTotal.Should().Be(923.46m);
 
             this.results.ElementAt(4).MaterialTotal.Should().Be(36.9m);
-            this.results.ElementAt(4).StandardTotal.Should().Be(36.92m);
+            this.results.ElementAt(4).StandardTotal.Should().Be(40.0m);
         }
     }
 }
