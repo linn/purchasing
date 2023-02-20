@@ -19,6 +19,7 @@
         {
             app.MapGet("/purchasing/reports/board-difference", this.GetApp);
             app.MapGet("/purchasing/reports/board-difference/report", this.GetBoardDifferenceReport);
+            app.MapGet("/purchasing/boms/reports/diff", this.GetBomDifferenceReport);
         }
 
         private async Task GetBoardDifferenceReport(
@@ -39,6 +40,18 @@
                                };
 
             var results = bomReportsFacadeService.GetBoardDifferenceReport(resource);
+
+            await response.Negotiate(results);
+        }
+
+        private async Task GetBomDifferenceReport(
+            HttpRequest request,
+            HttpResponse response,
+            string bom1,
+            string bom2,
+            IBomReportsFacadeService bomReportsFacadeService)
+        {
+            var results = bomReportsFacadeService.GetBomDifferencesReport(bom1, bom2);
 
             await response.Negotiate(results);
         }
