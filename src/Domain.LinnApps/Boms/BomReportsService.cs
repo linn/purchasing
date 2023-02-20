@@ -436,6 +436,7 @@
             reportLayout.ReportTitle = $"Single Level BOM differences between {bom1.ToUpper()} and {bom2.ToUpper()}";
 
             var values = new List<CalculationValueModel>();
+            var diffTotal = 0m;
 
             foreach (var detail in first)
             {
@@ -482,13 +483,15 @@
                                 RowId = detail.PartNumber,
                                 ColumnId = "Cost2"
                             });
+                    var diff = 0 - detail.Qty * detail.Part.ExpectedUnitPrice.GetValueOrDefault();
                     values.Add(
                         new CalculationValueModel
                             {
                                 RowId = detail.PartNumber,
                                 ColumnId = "Diff",
-                                Value = 0 - detail.Qty * detail.Part.ExpectedUnitPrice.GetValueOrDefault()
+                                Value = diff
                             });
+                    diffTotal += diff;
                 }
                 else if (inSecond.Qty == detail.Qty)
                 {
@@ -541,13 +544,7 @@
                                 TextDisplay 
                                     = inSecond.Part.ExpectedUnitPrice.GetValueOrDefault().ToString("0.#####")
                         });
-                    values.Add(
-                        new CalculationValueModel
-                            {
-                                RowId = detail.PartNumber,
-                                ColumnId = "Diff",
-                                Value = cost2 - cost1
-                            });
+                    diffTotal += cost2 - cost1;
                 }
             }
 
@@ -595,15 +592,68 @@
                             ColumnId = "Cost2",
                             TextDisplay = detail.Part.ExpectedUnitPrice.GetValueOrDefault().ToString("0.#####")
                         });
+                    var diff = 0 - detail.Part.ExpectedUnitPrice.GetValueOrDefault();
                     values.Add(
                         new CalculationValueModel
                         {
                             RowId = detail.PartNumber,
                             ColumnId = "Diff",
-                            Value = 0 - detail.Part.ExpectedUnitPrice.GetValueOrDefault()
+                            Value = diff
                         });
+                    diffTotal += diff;
                 }
             }
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = "DiffTotal",
+                        ColumnId = "Diff",
+                        Value = diffTotal
+                    });
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = "Totals",
+                        ColumnId = "PartNumber1",
+                        TextDisplay = "Mat Price"
+                    });
+            var part1 = this.partRepository.FindBy(p => p.PartNumber == bom1);
+            var part2 = this.partRepository.FindBy(p => p.PartNumber == bom2);
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = "Totals",
+                        ColumnId = "Cost1",
+                        TextDisplay = part1.MaterialPrice.GetValueOrDefault().ToString("0.#####")
+                    });
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = "Totals",
+                        ColumnId = "PartNumber2",
+                        TextDisplay = "Mat Price"
+                    });
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = "Totals",
+                        ColumnId = "Cost2",
+                        TextDisplay = part2.MaterialPrice.GetValueOrDefault().ToString("0.#####")
+                    });
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = "Totals",
+                        ColumnId = "Diff",
+                        Value = part2.MaterialPrice.GetValueOrDefault() 
+                                - part1.MaterialPrice.GetValueOrDefault()
+                    });
 
             reportLayout.SetGridData(values);
             return reportLayout.GetResultsModel();
