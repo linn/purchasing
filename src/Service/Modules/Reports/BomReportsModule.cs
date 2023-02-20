@@ -51,9 +51,16 @@
             string bom2,
             IBomReportsFacadeService bomReportsFacadeService)
         {
-            var results = bomReportsFacadeService.GetBomDifferencesReport(bom1, bom2);
+            if (string.IsNullOrEmpty(bom1))
+            {
+                await response.Negotiate(new ViewResponse { ViewName = "Index.html" });
+            }
+            else
+            {
+                var results = bomReportsFacadeService.GetBomDifferencesReport(bom1, bom2);
 
-            await response.Negotiate(results);
+                await response.Negotiate(results);
+            }
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)

@@ -117,6 +117,7 @@ import boardDifferenceReport from './boardDifferenceReport';
 import partDataSheetValues from './partDataSheetValues';
 import partDataSheetValuesList from './partDataSheetValuesList';
 import bomVerificationHistoryEntries from './bomVerificationHistoryEntries';
+import bomDifferenceReport from './bomDifferenceReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -138,6 +139,7 @@ const rootReducer = history =>
         boardDifferenceReport,
         boards,
         bomCostReport,
+        bomDifferenceReport,
         bomStandardPrices,
         bomTree,
         bomTypeChange,
