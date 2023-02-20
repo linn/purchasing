@@ -92,6 +92,7 @@ import BoardDifferenceReportOptions from './reports/BoardDifferenceReportOptions
 import BoardDifferenceReport from './reports/BoardDifferenceReport';
 import PartDataSheetValues from './PartDataSheetValues';
 import BomVerificationHistorySearch from './BomVerificationHistoryUtility/BomVerificationHistorySearch';
+import BomDifferenceReport from './reports/BomDifferenceReport';
 
 const Root = ({ store }) => (
     <div>
@@ -557,6 +558,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/bom-verification"
                                     component={BomVerificationHistorySearch}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/boms/reports/diff"
+                                    component={BomDifferenceReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

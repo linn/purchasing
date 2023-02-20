@@ -409,7 +409,9 @@
         public ResultsModel GetBomDifferencesReport(string bom1, string bom2)
         {
             var first = this.bomTreeService.FlattenBomTree(bom1, 1, false, false).ToList();
+            first.RemoveAt(0);
             var second = this.bomTreeService.FlattenBomTree(bom2, 1, false, false).ToList();
+            second.RemoveAt(0);
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
 

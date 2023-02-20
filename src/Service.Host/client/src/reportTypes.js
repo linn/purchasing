@@ -153,5 +153,5 @@ export const boardDifferenceReport = new ItemType(
 export const bomDifferenceReport = new ItemType(
     'bomDifferenceReport',
     'BOM_DIFFERENCE_REPORT',
-    '/purchasing/reports/boms/diff'
+    '/purchasing/boms/reports/diff'
 );
