@@ -20,5 +20,7 @@
             string revisionCode1,
             string boardCode2,
             string revisionCode2);
+
+        ResultsModel GetBomDifferencesReport(string bom1, string bom2);
     }
 }
