@@ -113,6 +113,7 @@ import changeRequestPhaseIns from './changeRequestPhaseIns';
 import bomVerificationHistory from './bomVerificationHistory';
 import bomStandardPrices from './bomStandardPrices';
 import uploadBoardFile from './uploadBoardFile';
+import bomHistoryReport from './bomHistoryReport';
 import boardDifferenceReport from './boardDifferenceReport';
 import partDataSheetValues from './partDataSheetValues';
 import partDataSheetValuesList from './partDataSheetValuesList';
@@ -140,9 +141,10 @@ const rootReducer = history =>
         boards,
         bomCostReport,
         bomDifferenceReport,
+        bomHistoryReport,
         bomStandardPrices,
-        bomTree,
         bomTypeChange,
+        bomTree,
         bomVerificationHistory,
         bomVerificationHistoryEntries,
         bulkLeadTimesUpload,

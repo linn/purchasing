@@ -157,6 +157,7 @@
                 .AddTransient<IQueryFacadeResourceService<BoardComponentSummary, BoardComponentSummaryResource, BoardComponentSummaryResource>, BoardComponentSummaryFacadeService>()
                 .AddTransient<IFacadeResourceService<BomVerificationHistory, int, BomVerificationHistoryResource, BomVerificationHistoryResource>, BomVerificationHistoryFacadeService>()
                 .AddTransient<IBomStandardPriceFacadeService, BomStandardPriceFacadeService>()
+                .AddTransient<IBomHistoryReportFacadeService, BomHistoryReportFacadeService>()
                 .AddTransient<IFacadeResourceService<PartDataSheetValues, PartDataSheetValuesKey, PartDataSheetValuesResource, PartDataSheetValuesResource>, PartDataSheetValuesService>();
         }
 
@@ -216,6 +217,7 @@
                 .AddTransient<IBomChangeService, BomChangeService>()
                 .AddTransient<ICircuitBoardService, CircuitBoardService>()
                 .AddTransient<IBomStandardPriceService, BomStandardPriceService>()
+                .AddTransient<IBomHistoryReportService, BomHistoryReportService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

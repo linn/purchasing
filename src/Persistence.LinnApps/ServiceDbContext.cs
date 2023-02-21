@@ -214,6 +214,8 @@
 
         public DbSet<BomStandardPrice> BomPriceVariances { get; set; }
 
+        public DbSet<BomHistoryViewEntry> BomHistoryView { get; set; }
+        
         public DbSet<PartDataSheetValues> PartDataSheetValues { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -332,6 +334,7 @@
             this.BuildBomCostDetails(builder);
             this.BuildBomVerificationHistory(builder);
             this.BuildBomPriceVariances(builder);
+            this.BuildBomHistoryView(builder);
             this.BuildPartDataSheetValues(builder);
         }
 
@@ -355,6 +358,23 @@
             base.OnConfiguring(optionsBuilder);
         }
 
+        private void BuildBomHistoryView(ModelBuilder builder)
+        {
+            var q = builder.Entity<BomHistoryViewEntry>().ToTable("BOM_HISTORY_VIEW").HasNoKey();
+            q.Property(e => e.ChangeId).HasColumnName("CHANGE_ID");
+            q.Property(e => e.BomName).HasColumnName("BOM_NAME").HasMaxLength(14);
+            q.Property(e => e.DocumentType).HasColumnName("DOCUMENT_TYPE").HasMaxLength(6);
+            q.Property(e => e.DocumentNumber).HasColumnName("DOCUMENT_NUMBER");
+            q.Property(e => e.DateApplied).HasColumnName("DATE_APPLIED");
+            q.Property(e => e.AppliedBy).HasColumnName("APPLIED_BY").HasMaxLength(51);
+            q.Property(e => e.Operation).HasColumnName("OPERATION").HasMaxLength(7);
+            q.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            q.Property(e => e.Qty).HasColumnName("QTY");
+            q.Property(e => e.GenerateRequirement).HasColumnName("GENERATE_REQUIREMENT").HasMaxLength(1);
+            q.Property(e => e.ReplaceSeq).HasColumnName("REPLACE_SEQ");
+            q.Property(e => e.DetailId).HasColumnName("DETAIL_ID");
+        }
+        
         private void BuildPartDataSheetValues(ModelBuilder builder)
         {
             var entity = builder.Entity<PartDataSheetValues>().ToTable("PART_DATA_SHEET_VALUES");
