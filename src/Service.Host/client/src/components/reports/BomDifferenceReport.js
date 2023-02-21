@@ -2,25 +2,41 @@ import React, { useState } from 'react';
 import {
     Loading,
     ReportTable,
-    BackButton,
     Page,
     Title,
-    Search
+    Search,
+    collectionSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 
 import Button from '@mui/material/Button';
 
 import { useSelector, useDispatch } from 'react-redux';
-import queryString from 'query-string';
 import history from '../../history';
 import bomDifferenceReportActions from '../../actions/bomDifferenceReportActions';
 import config from '../../config';
 import { bomDifferenceReport } from '../../reportTypes';
+import partsActions from '../../actions/partsActions';
+import { parts } from '../../itemTypes';
 
 function BomDifferenceReport() {
     const loading = useSelector(state => state[bomDifferenceReport.item]?.loading);
     const reportData = useSelector(state => state[bomDifferenceReport.item]?.data);
+
+    const searchResults = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(state[parts.item])
+    )
+        .map?.(c => ({
+            id: c.partNumber,
+            name: c.partNumber,
+            description: c.description,
+            type: c.bomType
+        }))
+        .filter(p => p.type !== 'C');
+
+    const searchLoading = useSelector(state =>
+        collectionSelectorHelpers.getSearchLoading(state[parts.item])
+    );
 
     const [options, setOptions] = useState({});
 
@@ -39,12 +55,16 @@ function BomDifferenceReport() {
                         value={options.bom1}
                         resultsInModal
                         handleValueChange={handleOptionChange}
-                        onResultSelect={selected => handleOptionChange('bom1', selected.partNumber)}
-                        search={() => {}}
-                        clearSearch={() => {}}
+                        onResultSelect={selected => handleOptionChange('bom1', selected.name)}
+                        search={() => {
+                            dispatch(partsActions.search(options.bom1));
+                        }}
+                        clearSearch={() => {
+                            dispatch(partsActions.clearSearch());
+                        }}
                         label="Bom 1"
-                        searchResults={[]}
-                        loading={false}
+                        searchResults={searchResults}
+                        loading={searchLoading}
                     />
                 </Grid>
                 <Grid item xs={6}>
@@ -53,16 +73,21 @@ function BomDifferenceReport() {
                         value={options.bom2}
                         resultsInModal
                         handleValueChange={handleOptionChange}
-                        onResultSelect={selected => handleOptionChange('bom2', selected.partNumber)}
-                        search={() => {}}
-                        clearSearch={() => {}}
+                        onResultSelect={selected => handleOptionChange('bom2', selected.name)}
+                        search={() => {
+                            dispatch(partsActions.search(options.bom2));
+                        }}
+                        clearSearch={() => {
+                            dispatch(partsActions.clearSearch());
+                        }}
                         label="Bom 2"
-                        searchResults={[]}
-                        loading={false}
+                        searchResults={searchResults}
+                        loading={searchLoading}
                     />
                 </Grid>
                 <Grid item xs={12}>
                     <Button
+                        variant="contained"
                         onClick={() => dispatch(bomDifferenceReportActions.fetchReport(options))}
                     >
                         RUN
