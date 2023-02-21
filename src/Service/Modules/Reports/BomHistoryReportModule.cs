@@ -25,7 +25,7 @@
             string bomName,
             string from,
             string to,
-            bool includeSubAssemblies,
+            bool? includeSubAssemblies,
             IBomHistoryReportFacadeService service)
         {
             if (string.IsNullOrEmpty(from))
@@ -34,7 +34,7 @@
             }
             else
             {
-                var results = service.GetReport(bomName, from, to, includeSubAssemblies);
+                var results = service.GetReport(bomName, from, to, includeSubAssemblies.GetValueOrDefault());
                 await res.Negotiate(results);
             }
         }
