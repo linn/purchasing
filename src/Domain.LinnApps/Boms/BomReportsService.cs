@@ -499,8 +499,9 @@
                 }
                 else
                 {
-                    var cost1 = detail.Part.ExpectedUnitPrice.GetValueOrDefault() * detail.Qty;
-                    var cost2 = inSecond.Part.ExpectedUnitPrice.GetValueOrDefault() * detail.Qty;
+                    var inFirst = first.First(x => x.PartNumber == detail.PartNumber);
+                    var cost1 = inFirst.Part.ExpectedUnitPrice.GetValueOrDefault() * inFirst.Qty;
+                    var cost2 = inSecond.Part.ExpectedUnitPrice.GetValueOrDefault() * inSecond.Qty;
                     values.Add(
                         new CalculationValueModel
                             {
@@ -544,6 +545,13 @@
                                 TextDisplay 
                                     = inSecond.Part.ExpectedUnitPrice.GetValueOrDefault().ToString("0.#####")
                         });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = detail.PartNumber,
+                                ColumnId = "Diff",
+                                Value = cost2 - cost1
+                            });
                     diffTotal += cost2 - cost1;
                 }
             }
@@ -592,7 +600,7 @@
                             ColumnId = "Cost2",
                             TextDisplay = detail.Part.ExpectedUnitPrice.GetValueOrDefault().ToString("0.#####")
                         });
-                    var diff = 0 - detail.Part.ExpectedUnitPrice.GetValueOrDefault();
+                    var diff = 0 - detail.Qty * detail.Part.ExpectedUnitPrice.GetValueOrDefault();
                     values.Add(
                         new CalculationValueModel
                         {
