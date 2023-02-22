@@ -108,7 +108,7 @@
         private IEnumerable<BomChange> GetChangesRelevantToHistory(int bomId, DateTime from, DateTime to)
         {
             var result = new List<BomChange>();
-            var fistLevel = this.detailRepository.FilterBy(
+            var firstLevel = this.detailRepository.FilterBy(
                 x => x.BomId == bomId && x.ChangeState == "LIVE" && x.Part.BomType != "C");
 
             var stack = new Stack<BomTreeNode>();
@@ -117,7 +117,7 @@
                 new BomTreeNode
                     {
                         PartBomId = bomId,
-                        Children = fistLevel.Select(
+                        Children = firstLevel.Select(
                             d => new BomTreeNode
                                      {
                                          Name = d.PartNumber,
