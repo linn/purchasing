@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms.Models
 {
+    using System;
     using System.Collections.Generic;
 
     public class BomTreeNode
@@ -47,5 +48,15 @@
         public string DrawingReference { get; set; }
 
         public string SafetyCritical { get; set; }
+
+        public int? AddChangeId { get; set; }
+
+        public int? DeleteChangeId { get; set; }
+
+        public IEnumerable<BomChange> Changes { get; set; }
+
+        public int? BomId { get; set; }
+
+        public int? PartBomId { get; set; }
     }
 }
