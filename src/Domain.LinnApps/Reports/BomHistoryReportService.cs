@@ -68,21 +68,7 @@
                     changes,
                     bomHistoryViewEntry => bomHistoryViewEntry.ChangeId,
                     c => c.ChangeId,
-                    (bomHistoryViewEntry, _) => new BomHistoryViewEntry
-                                  {
-                                      ChangeId = bomHistoryViewEntry.ChangeId,
-                                      BomName = bomHistoryViewEntry.BomName,
-                                      DocumentType = bomHistoryViewEntry.DocumentType,
-                                      DocumentNumber = bomHistoryViewEntry.DocumentNumber,
-                                      DateApplied = bomHistoryViewEntry.DateApplied,
-                                      AppliedBy = bomHistoryViewEntry.AppliedBy,
-                                      Operation = bomHistoryViewEntry.Operation,
-                                      PartNumber = bomHistoryViewEntry.PartNumber,
-                                      Qty = bomHistoryViewEntry.Qty,
-                                      GenerateRequirement = bomHistoryViewEntry.GenerateRequirement,
-                                      ReplaceSeq = bomHistoryViewEntry.ReplaceSeq,
-                                      DetailId = bomHistoryViewEntry.DetailId
-                                  })
+                    (bomHistoryViewEntry, _) => bomHistoryViewEntry)
                 .ToList().OrderBy(x => x.ChangeId).ThenBy(x => x.DetailId).ThenByDescending(x => x.Operation)
                 .GroupBy(x => x.ChangeId).ToList();
 
