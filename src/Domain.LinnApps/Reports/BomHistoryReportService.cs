@@ -66,22 +66,22 @@
             var changeGroups = this.bomHistoryRepository
                 .FilterBy(x => x.DateApplied >= from && x.DateApplied <= to).ToList().Join(
                     changes,
-                    h => h.ChangeId,
+                    bomHistoryViewEntry => bomHistoryViewEntry.ChangeId,
                     c => c.ChangeId,
-                    h => new BomHistoryViewEntry
+                    (bomHistoryViewEntry, _) => new BomHistoryViewEntry
                                   {
-                                      ChangeId = h.ChangeId,
-                                      BomName = h.BomName,
-                                      DocumentType = h.DocumentType,
-                                      DocumentNumber = h.DocumentNumber,
-                                      DateApplied = h.DateApplied,
-                                      AppliedBy = h.AppliedBy,
-                                      Operation = h.Operation,
-                                      PartNumber = h.PartNumber,
-                                      Qty = h.Qty,
-                                      GenerateRequirement = h.GenerateRequirement,
-                                      ReplaceSeq = h.ReplaceSeq,
-                                      DetailId = h.DetailId
+                                      ChangeId = bomHistoryViewEntry.ChangeId,
+                                      BomName = bomHistoryViewEntry.BomName,
+                                      DocumentType = bomHistoryViewEntry.DocumentType,
+                                      DocumentNumber = bomHistoryViewEntry.DocumentNumber,
+                                      DateApplied = bomHistoryViewEntry.DateApplied,
+                                      AppliedBy = bomHistoryViewEntry.AppliedBy,
+                                      Operation = bomHistoryViewEntry.Operation,
+                                      PartNumber = bomHistoryViewEntry.PartNumber,
+                                      Qty = bomHistoryViewEntry.Qty,
+                                      GenerateRequirement = bomHistoryViewEntry.GenerateRequirement,
+                                      ReplaceSeq = bomHistoryViewEntry.ReplaceSeq,
+                                      DetailId = bomHistoryViewEntry.DetailId
                                   })
                 .ToList().OrderBy(x => x.ChangeId).ThenBy(x => x.DetailId).ThenByDescending(x => x.Operation)
                 .GroupBy(x => x.ChangeId).ToList();
