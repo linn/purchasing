@@ -53,8 +53,6 @@
 
         public int? DeleteChangeId { get; set; }
 
-        public IEnumerable<BomChange> Changes { get; set; }
-
         public int? BomId { get; set; }
 
         public int? PartBomId { get; set; }

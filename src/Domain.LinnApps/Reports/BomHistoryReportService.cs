@@ -152,11 +152,6 @@
                     {
                         foreach (var child in current.Children)
                         {
-                            if (child.Name == "MCAS 073")
-                            {
-                                var x = "stop";
-                            }
-
                             var detail = this.detailRepository.FindById(int.Parse(child.Id));
 
                             // does this sub assembly have any changes after it was added to the bom?

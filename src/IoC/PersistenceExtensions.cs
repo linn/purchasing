@@ -236,7 +236,9 @@
                 .AddTransient<IQueryRepository<BomStandardPrice>, EntityFrameworkQueryRepository<BomStandardPrice>>(
                     r => new EntityFrameworkQueryRepository<BomStandardPrice>(r.GetService<ServiceDbContext>()
                         ?.BomPriceVariances))
-                .AddTransient<IQueryRepository<BomHistoryViewEntry>, BomHistoryViewRepository>()
+                .AddTransient<IQueryRepository<BomHistoryViewEntry>, EntityFrameworkQueryRepository<BomHistoryViewEntry>>(
+                    r => new EntityFrameworkQueryRepository<BomHistoryViewEntry>(r.GetService<ServiceDbContext>()
+                        ?.BomHistoryView))
                 .AddTransient<IRepository<PartDataSheetValues, PartDataSheetValuesKey>, PartDataSheetValuesRepository>();
         }
     }
