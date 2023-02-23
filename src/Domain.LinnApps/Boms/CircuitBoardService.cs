@@ -50,7 +50,19 @@
             {
                 foreach (var boardComponent in componentsToAdd)
                 {
-                    this.AddComponent(board, revision, boardComponent, pcasChange);
+                    if (string.IsNullOrWhiteSpace(boardComponent.PartNumber) ||
+                        string.IsNullOrWhiteSpace(boardComponent.CRef))
+                    {
+                        throw new InvalidOptionException($"Part or Cref missing - {boardComponent.PartNumber} at {boardComponent.CRef}");
+                    }
+
+                    var part = this.partRepository.FindBy(a => a.PartNumber == boardComponent.PartNumber.ToUpper());
+                    if (part == null)
+                    {
+                        throw new ItemNotFoundException($"Could not find part {boardComponent.PartNumber.ToUpper()}");
+                    }
+
+                    this.AddComponent(board, revision, boardComponent, part, pcasChange);
                 }
             }
 
@@ -92,33 +104,45 @@
                 }
             }
 
-            var existingComponents = board.ComponentsOnRevision(revision.LayoutSequence, revision.VersionNumber);
+            var componentsOnRevision = board.ComponentsOnRevision(revision.LayoutSequence, revision.VersionNumber);
             foreach (var fileComponent in fileContents)
             {
-                var existing = existingComponents.FirstOrDefault(a => a.CRef == fileComponent.CRef);
+                var existing = componentsOnRevision.FirstOrDefault(a => a.CRef == fileComponent.CRef);
+                var part = this.partRepository.FindBy(a => a.PartNumber == fileComponent.PartNumber.ToUpper());
+
+                if (part == null)
+                {
+                    message += $"******* ERROR {fileComponent.PartNumber} at {fileComponent.CRef} is not valid.  ******* \n";
+                }
+
+                if (string.IsNullOrWhiteSpace(fileComponent.CRef))
+                {
+                    message += $"******* ERROR \"{fileComponent.CRef}\" is not a valid Cref. Part on file line was {fileComponent.PartNumber}  ******* \n";
+                }
+
                 if (existing == null)
                 {
                     message += $"Adding {fileComponent.PartNumber} at {fileComponent.CRef}. \n";
-                    if (makeChanges)
+                    if (makeChanges && part!= null && !string.IsNullOrWhiteSpace(fileComponent.CRef))
                     {
-                        this.AddComponent(board, revision, fileComponent, pcasChange);
+                        this.AddComponent(board, revision, fileComponent, part, pcasChange);
                     }
                 } 
                 else if (fileComponent.PartNumber != existing.PartNumber)
                 {
                     message += $"Replacing {existing.PartNumber} with {fileComponent.PartNumber} at {existing.CRef}. \n";
-                    if (makeChanges)
+                    if (makeChanges && part != null && !string.IsNullOrWhiteSpace(fileComponent.CRef))
                     {
                         this.RemoveComponent(board, revision, fileComponent, pcasChange);
-                        this.AddComponent(board, revision, fileComponent, pcasChange);
+                        this.AddComponent(board, revision, fileComponent, part, pcasChange);
                     }
                 }
             }
 
-            var missingComponents = existingComponents.Select(a => a.CRef).Except(fileContents.Select(b => b.CRef));
+            var missingComponents = componentsOnRevision.Select(a => a.CRef).Except(fileContents.Select(b => b.CRef));
             foreach (var cRef in missingComponents)
             {
-                var componentToRemove = existingComponents.First(a => a.CRef == cRef);
+                var componentToRemove = componentsOnRevision.First(a => a.CRef == cRef);
                 message += $"Removing {componentToRemove.PartNumber} from {cRef}. \n";
                 if (makeChanges)
                 {
@@ -163,6 +187,7 @@
             CircuitBoard board,
             BoardRevision revision,
             BoardComponent boardComponent,
+            Part part,
             PcasChange pcasChange)
         {
             if (string.IsNullOrWhiteSpace(boardComponent.PartNumber) || string.IsNullOrWhiteSpace(boardComponent.CRef)
@@ -172,12 +197,11 @@
                     $"Component at line {boardComponent.BoardLine} cRef {boardComponent.CRef} is malformed");
             }
 
-            var part = this.partRepository.FindBy(a => a.PartNumber == boardComponent.PartNumber.ToUpper());
             boardComponent.AddChangeId = pcasChange.ChangeId;
             boardComponent.AssemblyTechnology = part.AssemblyTechnology;
             boardComponent.FromLayoutVersion = revision.LayoutSequence;
             boardComponent.FromRevisionVersion = revision.VersionNumber;
-            boardComponent.ChangeState = pcasChange.ChangeRequest.ChangeState;
+            boardComponent.ChangeState = pcasChange.ChangeState;
             if (boardComponent.BoardLine == 0 && board.Components.Count > 0)
             {
                 boardComponent.BoardLine = board.Components.Max(a => a.BoardLine) + 1;
