@@ -32,25 +32,9 @@
             IEnumerable<BoardComponent> componentsToAdd,
             IEnumerable<BoardComponent> componentsToRemove)
         {
-            var board = this.boardRepository.FindById(boardCode);
-            if (board == null)
-            {
-                throw new ItemNotFoundException($"Could not find board {boardCode}");
-            }
+            var board = this.GetCircuitBoard(boardCode);
 
-            var changeRequest = this.changeRequestRepository.FindById(changeRequestId);
-            if (changeRequest == null)
-            {
-                throw new ItemNotFoundException($"Could not find change request {changeRequestId}");
-            }
-
-            if (pcasChange.ChangeState is null)
-            {
-                pcasChange.ChangeRequest = changeRequest;
-                pcasChange.ChangeState = changeRequest.ChangeState;
-                pcasChange.DocumentNumber = changeRequestId;
-                pcasChange.DocumentType = changeRequest.DocumentType;
-            }
+            var changeRequest = this.GetChangeRequestAndMaybePopulatePcasChange(pcasChange, changeRequestId);
 
             var revision = board.Layouts.SelectMany(a => a.Revisions).First(r => r.RevisionCode == changeRequest.RevisionCode);
 
@@ -87,7 +71,9 @@
                     $"File type {fileType} has no supporting strategy and cannot be processed");
             }
 
-            var board = this.boardRepository.FindById(boardCode);
+            var board = this.GetCircuitBoard(boardCode);
+            this.GetChangeRequestAndMaybePopulatePcasChange(pcasChange, pcasChange.DocumentNumber);
+
             var revision = board.Layouts.SelectMany(a => a.Revisions).First(a => a.RevisionCode == revisionCode);
             
             var strategy = new TabSeparatedReadStrategy();
@@ -141,6 +127,36 @@
             }
 
             return new ProcessResult(true, message);
+        }
+
+        private CircuitBoard GetCircuitBoard(string boardCode)
+        {
+            var board = this.boardRepository.FindById(boardCode);
+            if (board == null)
+            {
+                throw new ItemNotFoundException($"Could not find board {boardCode}");
+            }
+
+            return board;
+        }
+
+        private ChangeRequest GetChangeRequestAndMaybePopulatePcasChange(PcasChange pcasChange, int changeRequestId)
+        {
+            var changeRequest = this.changeRequestRepository.FindById(changeRequestId);
+            if (changeRequest == null)
+            {
+                throw new ItemNotFoundException($"Could not find change request {changeRequestId}");
+            }
+
+            if (pcasChange.ChangeState is null)
+            {
+                pcasChange.ChangeRequest = changeRequest;
+                pcasChange.ChangeState = changeRequest.ChangeState;
+                pcasChange.DocumentNumber = changeRequestId;
+                pcasChange.DocumentType = changeRequest.DocumentType;
+            }
+
+            return changeRequest;
         }
 
         private void AddComponent(
