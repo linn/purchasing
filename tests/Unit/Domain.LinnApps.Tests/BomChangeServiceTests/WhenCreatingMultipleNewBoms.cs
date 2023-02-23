@@ -30,7 +30,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
 
             this.component = new Part { PartNumber = "C1", DecrementRule = "YES", BomType = "C" };
 
-            // since bom doesn't exist yet
+            // since boms don't exist yet
             this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).ReturnsNull();
 
             this.DatabaseService.GetIdSequence("BOM_SEQ").Returns(123, 124);
