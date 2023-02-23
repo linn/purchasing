@@ -80,6 +80,8 @@ function BomUtility() {
         bomName
     );
 
+    const [newAssemblies, setNewAssemblies] = useState([]);
+
     const [partLookUp, setPartLookUp] = useState({ open: false, forRow: null });
 
     const subAssembly = useSelector(reduxState =>
@@ -464,7 +466,7 @@ function BomUtility() {
             return;
         }
         setPartLookUp(p => ({ ...p, selectedPart: newValue, open: false }));
-        if (newValue.bomType !== 'C') {
+        if (newValue.bomType !== 'C' && newValue.bomId) {
             const subAssemblyUrl = `/purchasing/boms/tree?bomName=${
                 newValue.partNumber
             }&levels=${0}&requirementOnly=${false}&showChanges=${false}&treeType=${'bom'}`;
@@ -472,13 +474,17 @@ function BomUtility() {
             // fetch this subAssembly's bomTree to add it to the tree view
             reduxDispatch(subAssemblyActions.fetchByHref(subAssemblyUrl));
         } else {
+            if (newValue.bomType !== 'C') {
+                setNewAssemblies(n => [...n, { id: partLookUp.forRow.id }]);
+            }
             processRowUpdate({
                 ...partLookUp.forRow,
                 name: newValue.partNumber,
                 safetyCritical: newValue.safetyCriticalPart,
                 drawingReference: newValue.drawingReference,
                 type: newValue.bomType,
-                description: newValue.description
+                description: newValue.description,
+                children: newValue.bomType === 'C' ? null : []
             });
         }
     };
@@ -955,7 +961,9 @@ function BomUtility() {
                             renderComponents={false}
                             renderQties={false}
                             onNodeSelect={id => {
-                                setSelected(nodesWithChildren.find(x => x.id === id));
+                                setSelected(
+                                    [...newAssemblies, ...nodesWithChildren].find(x => x.id === id)
+                                );
                             }}
                             bomName={bomName}
                             bomTree={treeView}
