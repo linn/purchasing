@@ -198,6 +198,16 @@
             }
         }
 
+        public IResult<ChangeRequestResource> ChangeRequestReplace(ChangeRequestReplaceResource request, IEnumerable<string> privileges = null)
+        {
+            if (request == null)
+            {
+                return new BadRequestResult<ChangeRequestResource>("No parameters supplied");
+            }
+
+            throw new NotImplementedException();
+        }
+
         public IResult<IEnumerable<ChangeRequestResource>> GetChangeRequestsRelevantToBom(
             string bomName, IEnumerable<string> privileges = null)
         {

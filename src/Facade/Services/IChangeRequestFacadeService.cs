@@ -41,6 +41,10 @@
             ChangeRequestPhaseInsResource request,
             IEnumerable<string> privileges = null);
 
+        IResult<ChangeRequestResource> ChangeRequestReplace(
+            ChangeRequestReplaceResource request,
+            IEnumerable<string> privileges = null);
+
         IResult<IEnumerable<ChangeRequestResource>> GetChangeRequestsRelevantToBom(
             string bomName, IEnumerable<string> privileges = null);
 
