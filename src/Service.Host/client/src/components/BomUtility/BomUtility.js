@@ -475,7 +475,7 @@ function BomUtility() {
             reduxDispatch(subAssemblyActions.fetchByHref(subAssemblyUrl));
         } else {
             if (newValue.bomType !== 'C') {
-                setNewAssemblies(n => [...n, { id: partLookUp.forRow.id }]);
+                setNewAssemblies(n => [...n, { id: partLookUp.forRow.id, children: [] }]);
             }
             processRowUpdate({
                 ...partLookUp.forRow,

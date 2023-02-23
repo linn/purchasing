@@ -284,10 +284,10 @@
         private Bom GetOrCreateBom(string name)
         {
             var bomLookup = this.bomRepository.FindBy(x => x.BomName == name);
-
+            var id = this.databaseService.GetIdSequence("BOM_SEQ");
             var bom = bomLookup ?? new Bom
                                        {
-                                           BomId = this.databaseService.GetIdSequence("BOM_SEQ"),
+                                           BomId = id,
                                            BomName = name,
                                            Part = this.partRepository.FindBy(x => x.PartNumber == name),
                                            Depth = 1,
