@@ -195,6 +195,8 @@
                                      Name = d.Part.PartNumber,
                                      Description = d.Part.Description,
                                      Qty = d.Qty,
+                                     AddChangeId = d.AddChangeId,
+                                     DeleteChangeId = d.DeleteChangeId,
                                      Type = d.Part.BomType,
                                      ParentName = root.BomName,
                                      Id = d.DetailId.ToString(),
@@ -234,6 +236,9 @@
                                 ParentName = child.ParentName,
                                 Id = child.Id,
                                 Type = child.Type,
+                                AddChangeId = child.AddChangeId,
+                                DeleteChangeId = child.DeleteChangeId,
+                                ParentId = current.Id,
                                 Children = children?
                                         .OrderBy(x => x.Part.PartNumber)
                                         .Select(
@@ -245,6 +250,9 @@
                                                     Qty = detail.Qty,
                                                     Type = detail.Part.BomType,
                                                     ParentName = child.Name,
+                                                    AddChangeId = detail.AddChangeId,
+                                                    DeleteChangeId = detail.DeleteChangeId,
+                                                    ParentId = child.Id,
                                                     Id = detail.DetailId.ToString()
                                                 })
                             };

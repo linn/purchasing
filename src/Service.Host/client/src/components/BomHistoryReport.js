@@ -10,8 +10,8 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
 import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import queryString from 'query-string';
 import history from '../history';
 import config from '../config';
@@ -33,11 +33,11 @@ const BomHistoryReport = () => {
             width: 200,
             hide: true,
             renderCell: cellValues => (
-                <TextField
-                    value={cellValues.row.detailId}
-                    InputProps={{ disableUnderline: true }}
-                    multiline
-                />
+                <div>
+                    {cellValues.row.detailId.split('\r\n').map(v => (
+                        <Typography>{v}</Typography>
+                    ))}
+                </div>
             )
         },
         { field: 'bomName', headerName: 'Name', width: 150 },
@@ -50,11 +50,11 @@ const BomHistoryReport = () => {
             headerName: 'Op',
             width: 150,
             renderCell: cellValues => (
-                <TextField
-                    value={cellValues.row.operation}
-                    InputProps={{ disableUnderline: true }}
-                    multiline
-                />
+                <div>
+                    {cellValues.row.operation.split('\r\n').map(v => (
+                        <Typography>{v}</Typography>
+                    ))}
+                </div>
             )
         },
         {
@@ -62,11 +62,11 @@ const BomHistoryReport = () => {
             headerName: 'Part',
             width: 250,
             renderCell: cellValues => (
-                <TextField
-                    value={cellValues.row.partNumber}
-                    InputProps={{ disableUnderline: true }}
-                    multiline
-                />
+                <div>
+                    {cellValues.row.partNumber.split('\r\n').map(v => (
+                        <Typography>{v}</Typography>
+                    ))}
+                </div>
             )
         },
         {
@@ -74,11 +74,11 @@ const BomHistoryReport = () => {
             headerName: 'Qty',
             width: 150,
             renderCell: cellValues => (
-                <TextField
-                    value={cellValues.row.qty}
-                    InputProps={{ disableUnderline: true }}
-                    multiline
-                />
+                <div>
+                    {cellValues.row.qty.split('\r\n').map(v => (
+                        <Typography>{v}</Typography>
+                    ))}
+                </div>
             )
         },
         {
@@ -86,19 +86,20 @@ const BomHistoryReport = () => {
             headerName: 'Req',
             width: 150,
             renderCell: cellValues => (
-                <TextField
-                    value={cellValues.row.generateRequirement}
-                    InputProps={{ disableUnderline: true }}
-                    multiline
-                />
+                <div>
+                    {cellValues.row.generateRequirement.split('\r\n').map(v => (
+                        <Typography>{v}</Typography>
+                    ))}
+                </div>
             )
         }
     ];
     const defaultStartDate = new Date();
     defaultStartDate.setMonth(defaultStartDate.getMonth() - 1);
     const [options, setOptions] = useState({
+        bomName: 'SK HUB',
         includeSubAssemblies: true,
-        from: defaultStartDate,
+        from: new Date('2022-11-01T00:00:00'),
         to: new Date()
     });
     const handleOptionChange = (propertyName, newValue) => {
@@ -178,6 +179,7 @@ const BomHistoryReport = () => {
                         }
                         loading={loading}
                         autoHeight
+                        getRowHeight={() => 'auto'}
                         disableSelectionOnClick
                         columns={columns}
                     />
