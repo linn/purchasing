@@ -27,6 +27,8 @@
 
         protected IPcasPack PcasPack { get; private set; }
 
+        protected IBomChangeService BomChangeService { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -37,6 +39,7 @@
             this.WeekRepository = Substitute.For<IRepository<LinnWeek, int>>();
             this.BomPack = Substitute.For<IBomPack>();
             this.PcasPack = Substitute.For<IPcasPack>();
+            this.BomChangeService = Substitute.For<IBomChangeService>();
             this.Sut = new ChangeRequestService(
                 this.AuthService,
                 this.Repository,
@@ -44,7 +47,8 @@
                 this.EmployeeRepository,
                 this.WeekRepository,
                 this.BomPack,
-                this.PcasPack);
+                this.PcasPack,
+                this.BomChangeService);
         }
     }
 }

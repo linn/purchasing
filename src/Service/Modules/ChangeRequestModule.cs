@@ -103,7 +103,8 @@
             ChangeRequestReplaceResource request,
             IChangeRequestFacadeService facadeService)
         {
-            var result = facadeService.ChangeRequestReplace(request, req.HttpContext.GetPrivileges());
+            var employeeId = req.HttpContext.User.GetEmployeeNumber();
+            var result = facadeService.ChangeRequestReplace(request, employeeId, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }

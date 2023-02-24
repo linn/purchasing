@@ -8,6 +8,8 @@
 
         public bool GlobalReplace { get; set; }
 
+        public decimal? NewQty { get; set; }
+
         public IEnumerable<int> SelectedDetailIds { get; set; }
     }
 }

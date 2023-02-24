@@ -43,6 +43,7 @@
 
         IResult<ChangeRequestResource> ChangeRequestReplace(
             ChangeRequestReplaceResource request,
+            int replacedBy,
             IEnumerable<string> privileges = null);
 
         IResult<IEnumerable<ChangeRequestResource>> GetChangeRequestsRelevantToBom(

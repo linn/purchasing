@@ -3,6 +3,7 @@
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NUnit.Framework;
 
@@ -15,7 +16,9 @@
                            {
                                DocumentNumber = 1,
                                ChangeState = "PROPOS",
-                               ChangeRequestType = "REPLACE"
+                               ChangeRequestType = "REPLACE",
+                               OldPart = new Part {PartNumber = "OLD"},
+                               NewPart = new Part {PartNumber = "NEW"}
                            };
         }
 

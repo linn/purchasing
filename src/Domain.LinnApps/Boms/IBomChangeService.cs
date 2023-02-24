@@ -12,5 +12,9 @@
         void DeleteAllFromBom(string bomName, int crfNumber, int changedBy);
 
         void ExplodeSubAssembly(string bomName, int crfNumber, string subAssembly, int changedBy);
+
+        void ReplaceBomDetail(int detailId, ChangeRequest request, int changedBy, decimal? newQty);
+
+        void ReplaceAllBomDetails(ChangeRequest request, int changedBy, decimal? newQty);
     }
 }

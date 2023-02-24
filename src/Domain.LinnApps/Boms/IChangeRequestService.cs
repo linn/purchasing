@@ -27,6 +27,14 @@
             IEnumerable<int> selectedPcasChangeIds,
             IEnumerable<string> privileges = null);
 
+        ChangeRequest Replace(
+            int documentNumber,
+            int replacedBy,
+            bool globalReplace,
+            decimal? newQty,
+            IEnumerable<int> selectedDetailIds,
+            IEnumerable<string> privileges = null);
+
         Expression<Func<ChangeRequest, bool>> SearchExpression(string searchTerm, bool? outstanding, int? lastMonths);
     }
 }

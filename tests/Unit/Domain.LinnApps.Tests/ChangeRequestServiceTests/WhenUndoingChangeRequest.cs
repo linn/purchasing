@@ -3,8 +3,6 @@
     using System;
     using System.Collections.Generic;
 
-    using FluentAssertions;
-    
     using Linn.Purchasing.Domain.LinnApps.Boms;
 
     using NSubstitute;

@@ -52,6 +52,8 @@
 
         protected IPcasPack PcasPack { get; private set; }
 
+        protected IBomChangeService BomChangeService { get; private set; }
+
         protected ILog Logger { get; set; }
 
         [SetUp]
@@ -68,6 +70,7 @@
             this.BomTreeService = Substitute.For<IBomTreeService>();
             this.BomPack = Substitute.For<IBomPack>();
             this.PcasPack = Substitute.For<IPcasPack>();
+            this.BomChangeService = Substitute.For<IBomChangeService>();
 
             this.FacadeService = new ChangeRequestFacadeService(
                 this.Repository,
@@ -81,7 +84,8 @@
                     this.EmployeeRepository,
                     this.WeekRepository,
                     this.BomPack,
-                    this.PcasPack),
+                    this.PcasPack,
+                    this.BomChangeService),
                     this.DatabaseService,
                     this.BomTreeService,
                     this.Logger);

@@ -198,14 +198,28 @@
             }
         }
 
-        public IResult<ChangeRequestResource> ChangeRequestReplace(ChangeRequestReplaceResource request, IEnumerable<string> privileges = null)
+        public IResult<ChangeRequestResource> ChangeRequestReplace(ChangeRequestReplaceResource request, int replacedBy, IEnumerable<string> privileges = null)
         {
             if (request == null)
             {
                 return new BadRequestResult<ChangeRequestResource>("No parameters supplied");
             }
+            else if (request.GlobalReplace == false && request.SelectedDetailIds == null)
+            {
+                return new BadRequestResult<ChangeRequestResource>("No details selected to replace");
+            }
 
-            throw new NotImplementedException();
+            try
+            {
+                var changeRequest = this.changeRequestService.Replace(request.DocumentNumber, replacedBy, request.GlobalReplace, request.NewQty, request.SelectedDetailIds, privileges);
+                this.transactionManager.Commit();
+                var resource = (ChangeRequestResource)this.resourceBuilder.Build(changeRequest, privileges);
+                return new SuccessResult<ChangeRequestResource>(resource);
+            }
+            catch (ItemNotFoundException)
+            {
+                return new NotFoundResult<ChangeRequestResource>("Change Request not found");
+            }
         }
 
         public IResult<IEnumerable<ChangeRequestResource>> GetChangeRequestsRelevantToBom(

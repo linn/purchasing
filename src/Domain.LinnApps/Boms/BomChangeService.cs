@@ -109,6 +109,90 @@
             this.bomPack.ExplodeSubAssembly(change.BomId, change.ChangeId, change.ChangeState, subAssembly);
         }
 
+        public void ReplaceBomDetail(int detailId, ChangeRequest request, int changedBy, decimal? newQty)
+        {
+            if (request == null)
+            {
+                throw new ItemNotFoundException("Change Request not found");
+            }
+
+            var detail = this.bomDetailRepository.FindById(detailId);
+            if (detail == null)
+            {
+                throw new ItemNotFoundException("Bom Detail not found");
+            }
+
+            // check something not already deleting this change request
+            if (detail.DeleteChange != null)
+            {
+                return;
+            }
+
+            if (detail.PcasLine == "Y")
+            {
+                // TODO work out how we cope with doing the PCAS changes maybe call pcas pack
+                return;
+            }
+
+            // check that change request is setup to do this
+            if (!request.CanReplace(true))
+            {
+                return;
+            }
+
+            // see if already a change for that detail's bom id
+            var change = request.BomChanges?.FirstOrDefault(c => c.BomId == detail.BomId);
+            if (change == null)
+            {
+                var bom = this.bomRepository.FindById(detail.BomId);
+
+                change = new BomChange
+                             {
+                                 BomId = detail.BomId,
+                                 ChangeId = this.databaseService.GetIdSequence("CHG_SEQ"),
+                                 BomName = bom.BomName,
+                                 DocumentType = request.DocumentType,
+                                 DocumentNumber = request.DocumentNumber,
+                                 PartNumber = bom.Part.PartNumber,
+                                 DateEntered = DateTime.Today,
+                                 EnteredById = changedBy,
+                                 ChangeState = request.ChangeState,
+                                 Comments = "Replace",
+                                 PcasChange = detail.PcasLine
+                             };
+                this.bomChangeRepository.Add(change);
+            }
+
+            var otherReplaceSeq = change.AddedBomDetails?.Max(d => d.AddReplaceSeq);
+
+            // set bom detail to be deleted by this change 
+            detail.DeleteChange = change;
+            detail.DeleteChangeId = change.ChangeId;
+            detail.DeleteReplaceSeq = otherReplaceSeq == null ? 1 : (int)otherReplaceSeq + 1;
+
+            // now add the second half
+            var id = this.databaseService.GetIdSequence("BOMDET_SEQ");
+            this.bomDetailRepository.Add(new BomDetail
+                                             {
+                                                 DetailId = id,
+                                                 BomId = change.BomId,
+                                                 PartNumber = request.NewPart.PartNumber,
+                                                 Qty = newQty ?? detail.Qty,
+                                                 GenerateRequirement = detail.GenerateRequirement,
+                                                 ChangeState = request.ChangeState,
+                                                 AddChangeId = change.ChangeId,
+                                                 AddReplaceSeq = otherReplaceSeq == null ? 1 : (int)otherReplaceSeq + 1,
+                                                 DeleteChangeId = null,
+                                                 DeleteReplaceSeq = null,
+                                                 PcasLine = detail.PcasLine
+                                             });
+        }
+
+        public void ReplaceAllBomDetails(ChangeRequest request, int changedBy, decimal? newQty)
+        {
+            throw new NotImplementedException();
+        }
+
         private void ProcessBomChange(BomTreeNode current, BomChange change, Bom bom)
         {
             var detailsOnChange = this.bomDetailRepository
