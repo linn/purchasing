@@ -32,25 +32,9 @@
             IEnumerable<BoardComponent> componentsToAdd,
             IEnumerable<BoardComponent> componentsToRemove)
         {
-            var board = this.boardRepository.FindById(boardCode);
-            if (board == null)
-            {
-                throw new ItemNotFoundException($"Could not find board {boardCode}");
-            }
+            var board = this.GetCircuitBoard(boardCode);
 
-            var changeRequest = this.changeRequestRepository.FindById(changeRequestId);
-            if (changeRequest == null)
-            {
-                throw new ItemNotFoundException($"Could not find change request {changeRequestId}");
-            }
-
-            if (pcasChange.ChangeState is null)
-            {
-                pcasChange.ChangeRequest = changeRequest;
-                pcasChange.ChangeState = changeRequest.ChangeState;
-                pcasChange.DocumentNumber = changeRequestId;
-                pcasChange.DocumentType = changeRequest.DocumentType;
-            }
+            var changeRequest = this.GetChangeRequestAndMaybePopulatePcasChange(pcasChange, changeRequestId);
 
             var revision = board.Layouts.SelectMany(a => a.Revisions).First(r => r.RevisionCode == changeRequest.RevisionCode);
 
@@ -66,7 +50,19 @@
             {
                 foreach (var boardComponent in componentsToAdd)
                 {
-                    this.AddComponent(board, revision, boardComponent, pcasChange);
+                    if (string.IsNullOrWhiteSpace(boardComponent.PartNumber) ||
+                        string.IsNullOrWhiteSpace(boardComponent.CRef))
+                    {
+                        throw new InvalidOptionException($"Part or Cref missing - {boardComponent.PartNumber} at {boardComponent.CRef}");
+                    }
+
+                    var part = this.partRepository.FindBy(a => a.PartNumber == boardComponent.PartNumber.ToUpper());
+                    if (part == null)
+                    {
+                        throw new ItemNotFoundException($"Could not find part {boardComponent.PartNumber.ToUpper()}");
+                    }
+
+                    this.AddComponent(board, revision, boardComponent, part, pcasChange);
                 }
             }
 
@@ -87,7 +83,9 @@
                     $"File type {fileType} has no supporting strategy and cannot be processed");
             }
 
-            var board = this.boardRepository.FindById(boardCode);
+            var board = this.GetCircuitBoard(boardCode);
+            this.GetChangeRequestAndMaybePopulatePcasChange(pcasChange, pcasChange.DocumentNumber);
+
             var revision = board.Layouts.SelectMany(a => a.Revisions).First(a => a.RevisionCode == revisionCode);
             
             var strategy = new TabSeparatedReadStrategy();
@@ -106,33 +104,45 @@
                 }
             }
 
-            var existingComponents = board.ComponentsOnRevision(revision.LayoutSequence, revision.VersionNumber);
+            var componentsOnRevision = board.ComponentsOnRevision(revision.LayoutSequence, revision.VersionNumber);
             foreach (var fileComponent in fileContents)
             {
-                var existing = existingComponents.FirstOrDefault(a => a.CRef == fileComponent.CRef);
+                var existing = componentsOnRevision.FirstOrDefault(a => a.CRef == fileComponent.CRef);
+                var part = this.partRepository.FindBy(a => a.PartNumber == fileComponent.PartNumber.ToUpper());
+
+                if (part == null)
+                {
+                    message += $"******* ERROR {fileComponent.PartNumber} at {fileComponent.CRef} is not valid.  ******* \n";
+                }
+
+                if (string.IsNullOrWhiteSpace(fileComponent.CRef))
+                {
+                    message += $"******* ERROR \"{fileComponent.CRef}\" is not a valid Cref. Part on file line was {fileComponent.PartNumber}  ******* \n";
+                }
+
                 if (existing == null)
                 {
                     message += $"Adding {fileComponent.PartNumber} at {fileComponent.CRef}. \n";
-                    if (makeChanges)
+                    if (makeChanges && part!= null && !string.IsNullOrWhiteSpace(fileComponent.CRef))
                     {
-                        this.AddComponent(board, revision, fileComponent, pcasChange);
+                        this.AddComponent(board, revision, fileComponent, part, pcasChange);
                     }
                 } 
                 else if (fileComponent.PartNumber != existing.PartNumber)
                 {
                     message += $"Replacing {existing.PartNumber} with {fileComponent.PartNumber} at {existing.CRef}. \n";
-                    if (makeChanges)
+                    if (makeChanges && part != null && !string.IsNullOrWhiteSpace(fileComponent.CRef))
                     {
                         this.RemoveComponent(board, revision, fileComponent, pcasChange);
-                        this.AddComponent(board, revision, fileComponent, pcasChange);
+                        this.AddComponent(board, revision, fileComponent, part, pcasChange);
                     }
                 }
             }
 
-            var missingComponents = existingComponents.Select(a => a.CRef).Except(fileContents.Select(b => b.CRef));
+            var missingComponents = componentsOnRevision.Select(a => a.CRef).Except(fileContents.Select(b => b.CRef));
             foreach (var cRef in missingComponents)
             {
-                var componentToRemove = existingComponents.First(a => a.CRef == cRef);
+                var componentToRemove = componentsOnRevision.First(a => a.CRef == cRef);
                 message += $"Removing {componentToRemove.PartNumber} from {cRef}. \n";
                 if (makeChanges)
                 {
@@ -143,10 +153,41 @@
             return new ProcessResult(true, message);
         }
 
+        private CircuitBoard GetCircuitBoard(string boardCode)
+        {
+            var board = this.boardRepository.FindById(boardCode);
+            if (board == null)
+            {
+                throw new ItemNotFoundException($"Could not find board {boardCode}");
+            }
+
+            return board;
+        }
+
+        private ChangeRequest GetChangeRequestAndMaybePopulatePcasChange(PcasChange pcasChange, int changeRequestId)
+        {
+            var changeRequest = this.changeRequestRepository.FindById(changeRequestId);
+            if (changeRequest == null)
+            {
+                throw new ItemNotFoundException($"Could not find change request {changeRequestId}");
+            }
+
+            if (pcasChange.ChangeState is null)
+            {
+                pcasChange.ChangeRequest = changeRequest;
+                pcasChange.ChangeState = changeRequest.ChangeState;
+                pcasChange.DocumentNumber = changeRequestId;
+                pcasChange.DocumentType = changeRequest.DocumentType;
+            }
+
+            return changeRequest;
+        }
+
         private void AddComponent(
             CircuitBoard board,
             BoardRevision revision,
             BoardComponent boardComponent,
+            Part part,
             PcasChange pcasChange)
         {
             if (string.IsNullOrWhiteSpace(boardComponent.PartNumber) || string.IsNullOrWhiteSpace(boardComponent.CRef)
@@ -156,12 +197,11 @@
                     $"Component at line {boardComponent.BoardLine} cRef {boardComponent.CRef} is malformed");
             }
 
-            var part = this.partRepository.FindBy(a => a.PartNumber == boardComponent.PartNumber.ToUpper());
             boardComponent.AddChangeId = pcasChange.ChangeId;
             boardComponent.AssemblyTechnology = part.AssemblyTechnology;
             boardComponent.FromLayoutVersion = revision.LayoutSequence;
             boardComponent.FromRevisionVersion = revision.VersionNumber;
-            boardComponent.ChangeState = pcasChange.ChangeRequest.ChangeState;
+            boardComponent.ChangeState = pcasChange.ChangeState;
             if (boardComponent.BoardLine == 0 && board.Components.Count > 0)
             {
                 boardComponent.BoardLine = board.Components.Max(a => a.BoardLine) + 1;

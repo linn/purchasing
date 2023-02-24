@@ -11,7 +11,7 @@
 
     using NUnit.Framework;
 
-    public class WhenCheckingBoardFile : ContextBase
+    public class WhenCheckingBoardFileAndInvalidCRef : ContextBase
     {
         private ProcessResult result;
 
@@ -25,11 +25,11 @@
             this.revision = "L1R1";
             this.file = @"Designator	Part No	Part Description	Footprint	Tolerance	Negative Tolerance	Positive Tolerance	Technology	Value	Voltage	DIELECTRIC	Qty
 
-""BR100""	""MISS266""	""D15XB60H 15A 600V BRIDGE DIODE SINGLE IN LINE PACKAGE""	""D15XBXXHV""	""""	""""	""""	""TH""	""""	""""	""""	""""";
+""""	""MISS266""	""D15XB60H 15A 600V BRIDGE DIODE SINGLE IN LINE PACKAGE""	""D15XBXXHV""	""""	""""	""""	""TH""	""""	""""	""""	""""";
+
 
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part());
-
             this.result = this.Sut.UpdateFromFile(
                 this.BoardCode,
                 this.revision,
@@ -44,9 +44,9 @@
         {
             this.result.Message.Should().Contain("Changes proposed (not made) for board 123 revision L1R1");
             this.result.Message.Should().Contain("Pcb part number on revision is  but found  in the file.");
-            this.result.Message.Should().Contain("Adding MISS 266 at BR100.");
+            this.result.Message.Should().Contain("Adding MISS 266 at .");
+            this.result.Message.Should().Contain("******* ERROR \"\" is not a valid Cref. Part on file line was MISS 266  *******");
             this.result.Message.Should().Contain("Removing CAP 123 from C002.");
-            this.result.Message.Should().NotContain("ERROR");
         }
 
         [Test]

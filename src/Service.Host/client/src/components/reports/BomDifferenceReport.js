@@ -8,9 +8,7 @@ import {
     collectionSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
-
 import Button from '@mui/material/Button';
-
 import { useSelector, useDispatch } from 'react-redux';
 import history from '../../history';
 import bomDifferenceReportActions from '../../actions/bomDifferenceReportActions';
