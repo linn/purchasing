@@ -193,6 +193,13 @@
         private void MaybeUpdateNode(BomTreeNode node, BomChange change)
         {
             var detail = this.bomDetailRepository.FindById(int.Parse(node.Id));
+
+            if (detail.PartNumber != node.Name)
+            {
+                this.CheckPart(node.Name, node.ParentName);
+                detail.GenerateRequirement = node.Requirement;
+            }
+
             if (detail.Qty != node.Qty || detail.GenerateRequirement != node.Requirement)
             {
                 if (detail.AddChange.DocumentNumber != change.DocumentNumber)
@@ -201,8 +208,8 @@
                         "Can't directly update details added by a different CRF - Replace them instead!");
                 }
 
+                detail.PartNumber = node.Name;
                 detail.Qty = node.Qty;
-                detail.GenerateRequirement = node.Requirement;
             }
         }
 
@@ -284,7 +291,6 @@
         private Bom GetOrCreateBom(string name)
         {
             var bomLookup = this.bomRepository.FindBy(x => x.BomName == name);
-
             var bom = bomLookup ?? new Bom
                                        {
                                            BomId = this.databaseService.GetIdSequence("BOM_SEQ"),

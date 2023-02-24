@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Linq.Expressions;
 
     using FluentAssertions;
@@ -44,6 +43,7 @@
                               {
                                   DetailId = 123,
                                   Qty = 1,
+                                  PartNumber = "CAP 500",
                                   AddChangeId = 666,
                                   AddChange = new BomChange { DocumentNumber = 100 }
                               };
@@ -66,6 +66,7 @@
         public void ShouldUpdateField()
         {
             this.detail.Qty.Should().Be(2);
+            this.detail.PartNumber.Should().Be("CAP 530");
         }
     }
 }

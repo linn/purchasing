@@ -251,7 +251,8 @@ describe('When adding an assembly to the bom...', () => {
                             partNumber: 'NEW ASSEMBLY',
                             description: 'THE NEW ASSEMBLY',
                             id: 666,
-                            bomType: 'A'
+                            bomType: 'A',
+                            bomId: 110
                         }
                     ]
                 }
