@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link as RouterLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Page,
@@ -12,6 +12,7 @@ import {
 import queryString from 'query-string';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { makeStyles } from '@mui/styles';
 import { DataGrid } from '@mui/x-data-grid';
@@ -30,6 +31,9 @@ function ChangeRequestReplace() {
     const useStyles = makeStyles(() => ({
         gap: {
             marginTop: '20px'
+        },
+        a: {
+            textDecoration: 'none'
         }
     }));
     const classes = useStyles();
@@ -62,16 +66,48 @@ function ChangeRequestReplace() {
 
     const columns = [
         { field: 'qty', headerName: 'Qty', width: 100 },
-        { field: 'name', headerName: 'Name', width: 150 },
-        { field: 'description', headerName: 'Description', width: 200 },
-        { field: 'deleteChangeDocumentNumber', headerName: 'Delete Chg', width: 100 }
+        {
+            field: 'name',
+            headerName: 'Name',
+            width: 150,
+            renderCell: params => (
+                <Link
+                    className={classes.a}
+                    component={RouterLink}
+                    to={`/purchasing/boms/bom-utility?bomName=${params.row.name}&changeRequest=${documentNumber}`}
+                >
+                    {params.row.name}
+                </Link>
+            )
+        },
+        { field: 'description', headerName: 'Description', width: 450 },
+        { field: 'pcasLine', headerName: 'Pcas', width: 80 },
+        {
+            field: 'deleteChangeDocumentNumber',
+            headerName: 'Delete Chg',
+            width: 100,
+            renderCell: params => (
+                <Link
+                    className={classes.a}
+                    component={RouterLink}
+                    to={`/purchasing/change-requests/${params.row.deleteChangeDocumentNumber}`}
+                >
+                    {params.row.deleteChangeDocumentNumber}
+                </Link>
+            )
+        }
     ];
 
     const [selectedDetailIds, setSelectedDetailIds] = useState(null);
+    const [newQty, setNewQty] = useState(null);
     const [globalReplace, setGlobalReplace] = useState(item?.globalReplace);
 
     const handleSelectChange = selected => {
         setSelectedDetailIds(selected);
+    };
+
+    const handleNewQtyChange = (propertyName, newValue) => {
+        setNewQty(newValue);
     };
 
     const replace = request => {
@@ -80,6 +116,7 @@ function ChangeRequestReplace() {
                 changeRequestReplaceActions.add({
                     documentNumber: request.documentNumber,
                     globalReplace: request.globalReplace,
+                    newQty,
                     selectedDetailIds
                 })
             );
@@ -115,19 +152,22 @@ function ChangeRequestReplace() {
                     </Grid>
                     <Grid item xs={4}>
                         <Button
-                            variant="outlined"
+                            variant="contained"
                             disabled={!replaceUri || (!selectedDetailIds && !globalReplace)}
                             onClick={() => replace(item)}
                         >
                             Replace
                         </Button>
                     </Grid>
-                    <Grid item xs={8}>
+                    <Grid item xs={4}>
                         <CheckboxWithLabel
                             label="Global Replace"
                             checked={globalReplace}
                             onChange={() => setGlobalReplace(!globalReplace)}
                         />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <InputField label="New Qty" value={newQty} onChange={handleNewQtyChange} />
                     </Grid>
                     {treeLoading ? (
                         <Loading />
@@ -143,6 +183,9 @@ function ChangeRequestReplace() {
                                     autoHeight
                                     loading={false}
                                     checkboxSelection
+                                    isRowSelectable={params =>
+                                        !params.row.deleteChangeDocumentNumber
+                                    }
                                     onSelectionModelChange={handleSelectChange}
                                     hideFooter
                                 />

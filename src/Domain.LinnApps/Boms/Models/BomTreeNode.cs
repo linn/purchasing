@@ -47,5 +47,7 @@
         public string DrawingReference { get; set; }
 
         public string SafetyCritical { get; set; }
+
+        public string PcasLine { get; set; }
     }
 }
