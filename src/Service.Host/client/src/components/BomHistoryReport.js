@@ -26,7 +26,7 @@ const BomHistoryReport = () => {
         collectionSelectorHelpers.getItems(state[bomHistoryReport.item])
     );
     const columns = [
-        { field: 'changeId', headerName: 'CHG ID', width: 100, hide: true },
+        { field: 'changeId', headerName: 'CHG ID', width: 100 },
         {
             field: 'detailId',
             headerName: 'DET ID',
@@ -97,7 +97,7 @@ const BomHistoryReport = () => {
     const defaultStartDate = new Date();
     defaultStartDate.setMonth(defaultStartDate.getMonth() - 1);
     const [options, setOptions] = useState({
-        bomName: 'ROOTPART2',
+        bomName: 'ROOTPART3',
         includeSubAssemblies: true,
         from: new Date('2022-11-01T00:00:00'),
         to: new Date()

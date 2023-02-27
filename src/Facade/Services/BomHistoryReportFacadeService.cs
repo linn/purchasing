@@ -46,7 +46,7 @@
                            BomName = e.BomName,
                            DocumentType = e.DocumentType,
                            DocumentNumber = e.DocumentNumber,
-                           DateApplied = e.DateApplied?.ToString("dd-MM-yyyy"),
+                           DateApplied = e.DateApplied?.ToString("dd-MMM-yyyy HH:mm"),
                            AppliedBy = e.AppliedBy,
                            Operation = e.Operation,
                            PartNumber = e.PartNumber,

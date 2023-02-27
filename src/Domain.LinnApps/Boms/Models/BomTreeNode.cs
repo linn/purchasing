@@ -61,6 +61,6 @@
 
         public DateTime? AddedOn { get; set; }
 
-        public DateTime? DeleteOn { get; set; }
+        public DateTime? DeletedOn { get; set; }
     }
 }
