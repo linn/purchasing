@@ -277,16 +277,23 @@
         private void MaybeUpdateNode(BomTreeNode node, BomChange change)
         {
             var detail = this.bomDetailRepository.FindById(int.Parse(node.Id));
+
+            if (detail.AddChange.DocumentNumber != change.DocumentNumber)
+            {
+                throw new InvalidBomChangeException(
+                    "Can't directly update details added by a different CRF - Replace them instead!");
+            }
+
+            if (detail.PartNumber != node.Name)
+            {
+                this.CheckPart(node.Name, node.ParentName);
+                detail.PartNumber = node.Name;
+            }
+
             if (detail.Qty != node.Qty || detail.GenerateRequirement != node.Requirement)
             {
-                if (detail.AddChange.DocumentNumber != change.DocumentNumber)
-                {
-                    throw new InvalidBomChangeException(
-                        "Can't directly update details added by a different CRF - Replace them instead!");
-                }
-
-                detail.Qty = node.Qty;
                 detail.GenerateRequirement = node.Requirement;
+                detail.Qty = node.Qty;
             }
         }
 
@@ -368,7 +375,6 @@
         private Bom GetOrCreateBom(string name)
         {
             var bomLookup = this.bomRepository.FindBy(x => x.BomName == name);
-
             var bom = bomLookup ?? new Bom
                                        {
                                            BomId = this.databaseService.GetIdSequence("BOM_SEQ"),

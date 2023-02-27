@@ -1,6 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
 {
-    using System.Collections.Generic;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     public class BomDetail
     {
@@ -29,5 +29,7 @@
         public int? DeleteReplaceSeq { get; set; }
 
         public string PcasLine { get; set; }
+
+        public Part Part { get; set; }
     }
 }

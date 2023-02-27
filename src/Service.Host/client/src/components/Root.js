@@ -88,10 +88,12 @@ import CreateCreditNote from './plDebitCreditNotes/CreateCreditNote';
 import CreateBomVerificationHistory from './BomVerificationHistoryUtility/CreateBomVerificationHistory';
 import BomVerificationHistory from './BomVerificationHistoryUtility/BomVerificationHistory';
 import SetBomStandardPriceUtility from './SetBomsStandardPriceUtility';
+import BomHistoryReport from './BomHistoryReport';
 import BoardDifferenceReportOptions from './reports/BoardDifferenceReportOptions';
 import BoardDifferenceReport from './reports/BoardDifferenceReport';
 import PartDataSheetValues from './PartDataSheetValues';
 import BomVerificationHistorySearch from './BomVerificationHistoryUtility/BomVerificationHistorySearch';
+import BomDifferenceReport from './reports/BomDifferenceReport';
 
 const Root = ({ store }) => (
     <div>
@@ -540,6 +542,11 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
+                                    path="/purchasing/reports/bom-history"
+                                    component={BomHistoryReport}
+                                />
+                                <Route
+                                    exact
                                     path="/purchasing/reports/board-difference"
                                     component={BoardDifferenceReportOptions}
                                 />
@@ -557,6 +564,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/bom-verification"
                                     component={BomVerificationHistorySearch}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/boms/reports/diff"
+                                    component={BomDifferenceReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

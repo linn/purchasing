@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms.Models
 {
+    using System;
     using System.Collections.Generic;
 
     public class BomTreeNode
@@ -49,5 +50,13 @@
         public string SafetyCritical { get; set; }
 
         public string PcasLine { get; set; }
+
+        public int? AddChangeId { get; set; }
+
+        public int? DeleteChangeId { get; set; }
+
+        public int? BomId { get; set; }
+
+        public int? PartBomId { get; set; }
     }
 }
