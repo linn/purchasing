@@ -115,7 +115,7 @@ function ChangeRequestReplace() {
             dispatch(
                 changeRequestReplaceActions.add({
                     documentNumber: request.documentNumber,
-                    globalReplace: request.globalReplace,
+                    globalReplace,
                     newQty,
                     selectedDetailIds
                 })

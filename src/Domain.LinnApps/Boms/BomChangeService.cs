@@ -190,7 +190,12 @@
 
         public void ReplaceAllBomDetails(ChangeRequest request, int changedBy, decimal? newQty)
         {
-            throw new NotImplementedException();
+            var details = this.bomDetailRepository.FilterBy(
+                b => b.PartNumber == request.OldPartNumber && b.ChangeState != "HIST" && b.DeleteChangeId == null);
+            foreach (var detail in details)
+            {
+                this.ReplaceBomDetail(detail.DetailId, request, changedBy, newQty);
+            }
         }
 
         private void ProcessBomChange(BomTreeNode current, BomChange change, Bom bom)

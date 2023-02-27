@@ -48,6 +48,7 @@
                            OldPartDescription = model.OldPart?.Description,
                            NewPartDescription = model.NewPart?.Description,
                            BoardDescription = model.CircuitBoard?.Description,  
+                           GlobalReplace = (model.GlobalReplace == "Y"),
                            ProposedBy = 
                                new EmployeeResource
                                    {
