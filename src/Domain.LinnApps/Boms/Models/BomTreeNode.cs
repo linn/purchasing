@@ -49,6 +49,8 @@
 
         public string SafetyCritical { get; set; }
 
+        public string PcasLine { get; set; }
+
         public int? AddChangeId { get; set; }
 
         public int? DeleteChangeId { get; set; }

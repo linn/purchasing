@@ -85,7 +85,7 @@
                 return true;
             }
 
-            if (this.ChangeState == "ACCEPT")
+            if (this.ChangeState == "ACCEPT" || this.ChangeState == "LIVE")
             {
                 return adminPrivs;
             }
@@ -96,6 +96,11 @@
         public bool CanReplace(bool adminPrivs)
         {
             if (this.ChangeRequestType != "REPLACE")
+            {
+                return false;
+            }
+
+            if (this.OldPart == null || this.NewPart == null)
             {
                 return false;
             }

@@ -292,8 +292,15 @@
                                                             Name = c.BomPart.PartNumber,
                                                             Description = c.BomPart.Description,
                                                             Qty = c.Qty,
-                                                            Id = c.DetailId.ToString()
-                                                        }).OrderBy(c => c.Name)
+                                                            Id = c.DetailId.ToString(),
+                                                            DeleteChangeDocumentNumber =  c.DeleteChange != null ?
+                                                                c.DeleteChange.DocumentNumber : null,
+                                                            AddReplaceSeq = c.AddReplaceSeq,
+                                                            DeleteReplaceSeq = c.DeleteReplaceSeq,
+                                                            ChangeState = c.ChangeState,
+                                                            IsReplaced = c.DeleteChangeId.HasValue,
+                                                            PcasLine = c.PcasLine
+                                       }).OrderBy(c => c.Name)
 
                                };
             var currentDepth = 0;
@@ -326,6 +333,12 @@
                                 Qty = child.Qty,
                                 Type = child.Type,
                                 Id = child.Id,
+                                DeleteChangeDocumentNumber  = child.DeleteChangeDocumentNumber,
+                                AddReplaceSeq = child.AddReplaceSeq,
+                                DeleteReplaceSeq = child.DeleteReplaceSeq,
+                                ChangeState = child.ChangeState,
+                                IsReplaced = child.IsReplaced,
+                                PcasLine = child.PcasLine,
                                 Children =
                                 children?
                                     .Select(
@@ -336,7 +349,14 @@
                                                 Name = detail.BomPart.PartNumber,
                                                 Description = detail.BomPart.Description,
                                                 Qty = detail.Qty,
-                                                Id = detail.DetailId.ToString()
+                                                Id = detail.DetailId.ToString(),
+                                                DeleteChangeDocumentNumber = detail.DeleteChange != null ?
+                                                                                 detail.DeleteChange.DocumentNumber : null,
+                                                AddReplaceSeq = detail.AddReplaceSeq,
+                                                DeleteReplaceSeq = detail.DeleteReplaceSeq,
+                                                ChangeState = detail.ChangeState,
+                                                IsReplaced = detail.DeleteChangeId.HasValue,
+                                                PcasLine = detail.PcasLine
                                             })
                                     .OrderBy(c => c.Name)
                             };
@@ -375,7 +395,14 @@
                                        {
                                            Name = c.BomPart.PartNumber,
                                            Description = c.BomPart.Description,
-                                           Qty = c.Qty
+                                           Qty = c.Qty,
+                                           DeleteChangeDocumentNumber = c.DeleteChange != null ?
+                                                                            c.DeleteChange.DocumentNumber : null,
+                                           AddReplaceSeq = c.AddReplaceSeq,
+                                           DeleteReplaceSeq = c.DeleteReplaceSeq,
+                                           ChangeState = c.ChangeState,
+                                           IsReplaced = c.DeleteChangeId.HasValue,
+                                           PcasLine = c.PcasLine
                                        }).OrderBy(c => c.Name)
 
             };
@@ -408,6 +435,12 @@
                                 Name = child.Name,
                                 Description = child.Description,
                                 Qty = child.Qty,
+                                DeleteChangeDocumentNumber = child.DeleteChangeDocumentNumber,
+                                AddReplaceSeq = child.AddReplaceSeq,
+                                DeleteReplaceSeq = child.DeleteReplaceSeq,
+                                ChangeState = child.ChangeState,
+                                IsReplaced = child.IsReplaced,
+                                PcasLine = child.PcasLine,
                                 Children =
                                 children
                                     .Select(
@@ -417,7 +450,14 @@
                                             {
                                                 Name = detail.BomPart.PartNumber,
                                                 Description = detail.BomPart.Description,
-                                                Qty = detail.Qty
+                                                Qty = detail.Qty,
+                                                DeleteChangeDocumentNumber = detail.DeleteChange != null ?
+                                                                                 detail.DeleteChange.DocumentNumber : null,
+                                                AddReplaceSeq = detail.AddReplaceSeq,
+                                                DeleteReplaceSeq = detail.DeleteReplaceSeq,
+                                                ChangeState = detail.ChangeState,
+                                                IsReplaced = detail.DeleteChangeId.HasValue,
+                                                PcasLine = detail.PcasLine
                                             })
                                     .OrderBy(c => c.Name)
                             };

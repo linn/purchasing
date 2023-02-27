@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import {
     InputField,
+    CheckboxWithLabel,
     Search,
     collectionSelectorHelpers,
     utilities
@@ -102,7 +103,7 @@ function ReplaceChange({ item, creating, handleFieldChange }) {
                         />
                         <Typography>{item?.newPartDescription}</Typography>
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={6}>
                         <Button
                             disabled={!replaceUri}
                             onClick={() => {
@@ -113,6 +114,13 @@ function ReplaceChange({ item, creating, handleFieldChange }) {
                         >
                             Replace / Add
                         </Button>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <CheckboxWithLabel
+                            label="Global Replace"
+                            checked={item?.globalReplace}
+                            disabled
+                        />
                     </Grid>
                 </>
             )}
@@ -126,7 +134,8 @@ ReplaceChange.propTypes = {
         oldPartNumber: PropTypes.string,
         oldPartDescription: PropTypes.string,
         newPartNumber: PropTypes.string,
-        newPartDescription: PropTypes.string
+        newPartDescription: PropTypes.string,
+        globalReplace: PropTypes.bool
     }),
     creating: PropTypes.bool,
     handleFieldChange: PropTypes.func
@@ -138,7 +147,8 @@ ReplaceChange.defaultProps = {
         oldPartNumber: null,
         oldPartDescription: null,
         newPartNumber: null,
-        newPartDescription: null
+        newPartDescription: null,
+        globalReplace: false
     },
     creating: false,
     handleFieldChange: null

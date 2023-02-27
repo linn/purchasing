@@ -417,3 +417,9 @@ export const bomVerificationHistoryEntries = new ItemType(
     'BOM_VERIFICATION_HISTORY_ENTRIES',
     '/purchasing/bom-verification'
 );
+
+export const changeRequestReplace = new ItemType(
+    'changeRequestReplace',
+    'CHANGE_REQUEST_REPLACE',
+    '/purchasing/change-requests/replace'
+);

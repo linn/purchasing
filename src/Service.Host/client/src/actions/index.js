@@ -381,6 +381,10 @@ export const bomVerificationHistoryEntriesActionTypes = makeActionTypes(
     itemTypes.bomVerificationHistoryEntries.actionType
 );
 
+export const changeRequestReplaceActionTypes = makeActionTypes(
+    itemTypes.changeRequestReplace.actionType
+);
+
 export const bomDifferenceReportActionTypes = makeReportActionTypes(
     reportTypes.bomDifferenceReport.actionType
 );

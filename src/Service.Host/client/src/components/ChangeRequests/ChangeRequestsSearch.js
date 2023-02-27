@@ -83,7 +83,7 @@ function ChangeRequestSearch() {
                             ),
                             REPLACE: (
                                 <>
-                                    {params.row.newPartNumber} -{'>'} {params.row.newPartNumber}
+                                    {params.row.oldPartNumber} -{'>'} {params.row.newPartNumber}
                                 </>
                             )
                         }[params.row.changeType]

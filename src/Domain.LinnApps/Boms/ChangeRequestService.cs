@@ -29,6 +29,8 @@
 
         private readonly IPcasPack pcasPack;
 
+        private readonly IBomChangeService bomChangeService;
+
         public ChangeRequestService(
             IAuthorisationService authService,
             IRepository<ChangeRequest, int> repository,
@@ -36,7 +38,8 @@
             IRepository<Employee, int> employeeRepository,
             IRepository<LinnWeek, int> weekRepository,
             IBomPack bomPack,
-            IPcasPack pcasPack)
+            IPcasPack pcasPack,
+            IBomChangeService bomChangeService)
         {
             this.authService = authService;
             this.repository = repository;
@@ -45,6 +48,7 @@
             this.weekRepository = weekRepository;
             this.bomPack = bomPack;
             this.pcasPack = pcasPack;
+            this.bomChangeService = bomChangeService;
         }
 
         public Part ValidPartNumber(string partNumber)
@@ -255,6 +259,42 @@
                 }
 
                 return updatedRequest;
+            }
+
+            return request;
+        }
+
+        public ChangeRequest Replace(
+            int documentNumber,
+            int replacedBy,
+            bool globalReplace,
+            decimal? newQty,
+            IEnumerable<int> selectedDetailIds,
+            IEnumerable<string> privileges = null)
+        {
+            var request = this.repository.FindById(documentNumber);
+            if (request == null)
+            {
+                throw new ItemNotFoundException("Change Request not found");
+            }
+
+            if (request.ChangeState == "ACCEPT" && !this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges))
+            {
+                throw new UnauthorisedActionException(
+                    "You are not authorised to do change requests replace");
+            }
+
+            if (globalReplace)
+            {
+                request.GlobalReplace = globalReplace ? "Y" : "N";
+                this.bomChangeService.ReplaceAllBomDetails(request, replacedBy, null);
+            }
+            else if (selectedDetailIds.Any())
+            {
+                foreach (var detailId in selectedDetailIds)
+                {
+                    this.bomChangeService.ReplaceBomDetail(detailId, request, replacedBy, newQty);
+                }
             }
 
             return request;
