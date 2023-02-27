@@ -17,8 +17,6 @@
 
     public class WhenCreatingNewBom : ContextBase
     {
-        private BomTreeNode result;
-
         private Part part;
 
         [SetUp]

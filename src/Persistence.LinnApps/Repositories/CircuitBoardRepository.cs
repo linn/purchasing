@@ -19,14 +19,25 @@
 
         public override CircuitBoard FindById(string key)
         {
-            return this.serviceDbContext
+            var request = this.serviceDbContext
                 .CircuitBoards
-                .Include(c => c.Components).ThenInclude(a => a.AddChange)
-                .Include(c => c.Components).ThenInclude(a => a.DeleteChange)
                 .Include(a => a.Layouts)
                 .ThenInclude(b => b.Revisions)
                 .ThenInclude(c => c.RevisionType)
                 .FirstOrDefault(c => c.BoardCode == key);
+            
+            if (request != null)
+            {
+                this.serviceDbContext
+                    .Entry(request)
+                    .Collection(x => x.Components)
+                    .Query()
+                    .Include(a => a.AddChange)
+                    .Include(a => a.DeleteChange)
+                    .Load();
+            }
+
+            return request;
         }
     }
 }

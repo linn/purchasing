@@ -36,6 +36,16 @@
             return new SuccessResult<ReportReturnResource>(resource);
         }
 
+        public IResult<ReportReturnResource> GetBomDifferencesReport(string bom1, string bom2)
+        {
+            var resource = 
+                this.reportReturnResourceBuilder
+                    .Build(this.domainService.GetBomDifferencesReport(
+                        bom1.Trim().ToUpper(), bom2.Trim().ToUpper()));
+
+            return new SuccessResult<ReportReturnResource>(resource);
+        }
+
         public IEnumerable<IEnumerable<string>> GetPartsOnBomExport(string bomName)
         {
             return this.domainService

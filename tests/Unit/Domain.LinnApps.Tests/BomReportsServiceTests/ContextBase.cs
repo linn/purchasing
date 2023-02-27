@@ -4,6 +4,7 @@
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NSubstitute;
 
@@ -15,6 +16,7 @@
 
         protected IBomDetailViewRepository BomDetailViewRepository { get; private set; }
 
+        protected IQueryRepository<Part> PartRepository { get; private set; }
 
         protected IQueryRepository<BomCostReportDetail> BomCostReportDetailsRepository { get; private set; }
 
@@ -27,6 +29,7 @@
         {
             this.BomDetailViewRepository = Substitute.For<IBomDetailViewRepository>();
             this.BomTreeService = Substitute.For<IBomTreeService>();
+            this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.BomCostReportDetailsRepository = Substitute.For<IQueryRepository<BomCostReportDetail>>();
             this.CircuitBoardRepository = Substitute.For<IRepository<CircuitBoard, string>>();
             this.Sut = new BomReportsService(
@@ -34,7 +37,8 @@
                 new ReportingHelper(), 
                 this.BomTreeService,
                 this.BomCostReportDetailsRepository,
-                this.CircuitBoardRepository);
+                this.CircuitBoardRepository,
+                this.PartRepository);
         }
     }
 }

@@ -58,6 +58,8 @@
 
         public string AssemblyTechnology { get; set; }
 
+        public decimal? ExpectedUnitPrice { get; set; }
+
         public bool SupplierAssembly()
         {
             if (this.BomType == "A")
