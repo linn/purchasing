@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, Link as RouterLink } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Page,
@@ -11,32 +11,23 @@ import {
 } from '@linn-it/linn-form-components-library';
 import queryString from 'query-string';
 import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
-import { makeStyles } from '@mui/styles';
-import { DataGrid } from '@mui/x-data-grid';
 import changeRequestActions from '../../actions/changeRequestActions';
 import changeRequestReplaceActions from '../../actions/changeRequestReplaceActions';
 import bomTreeActions from '../../actions/bomTreeActions';
 import history from '../../history';
 import useInitialise from '../../hooks/useInitialise';
 import { changeRequest } from '../../itemTypes';
+import BomChangeReplace from './BomChangeReplace';
 
 function ChangeRequestReplace() {
     const dispatch = useDispatch();
     const { search } = useLocation();
     const documentNumber = queryString.parse(search)?.documentNumber;
-
-    const useStyles = makeStyles(() => ({
-        gap: {
-            marginTop: '20px'
-        },
-        a: {
-            textDecoration: 'none'
-        }
-    }));
-    const classes = useStyles();
 
     const [item, loading] = useInitialise(
         () => changeRequestActions.fetch(documentNumber),
@@ -59,48 +50,15 @@ function ChangeRequestReplace() {
     const replaceUri = utilities.getHref(item, 'replace');
 
     const treeLoading = useSelector(reduxState =>
-        itemSelectorHelpers.getItemLoading(reduxState.bomTypeChange)
+        itemSelectorHelpers.getItemLoading(reduxState.bomTree)
     );
 
     const tree = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.bomTree));
 
-    const columns = [
-        { field: 'qty', headerName: 'Qty', width: 100 },
-        {
-            field: 'name',
-            headerName: 'Name',
-            width: 150,
-            renderCell: params => (
-                <Link
-                    className={classes.a}
-                    component={RouterLink}
-                    to={`/purchasing/boms/bom-utility?bomName=${params.row.name}&changeRequest=${documentNumber}`}
-                >
-                    {params.row.name}
-                </Link>
-            )
-        },
-        { field: 'description', headerName: 'Description', width: 450 },
-        { field: 'pcasLine', headerName: 'Pcas', width: 80 },
-        {
-            field: 'deleteChangeDocumentNumber',
-            headerName: 'Delete Chg',
-            width: 100,
-            renderCell: params => (
-                <Link
-                    className={classes.a}
-                    component={RouterLink}
-                    to={`/purchasing/change-requests/${params.row.deleteChangeDocumentNumber}`}
-                >
-                    {params.row.deleteChangeDocumentNumber}
-                </Link>
-            )
-        }
-    ];
-
     const [selectedDetailIds, setSelectedDetailIds] = useState(null);
     const [newQty, setNewQty] = useState(null);
     const [globalReplace, setGlobalReplace] = useState(item?.globalReplace);
+    const [tab, setTab] = useState(0);
 
     const handleSelectChange = selected => {
         setSelectedDetailIds(selected);
@@ -169,30 +127,48 @@ function ChangeRequestReplace() {
                     <Grid item xs={4}>
                         <InputField label="New Qty" value={newQty} onChange={handleNewQtyChange} />
                     </Grid>
-                    {treeLoading ? (
-                        <Loading />
-                    ) : (
-                        <Grid item xs={12}>
-                            {tree ? (
-                                <DataGrid
-                                    getRowId={row => row.id}
-                                    className={classes.gap}
-                                    rows={tree?.children}
-                                    columns={columns}
-                                    getRowHeight={() => 'auto'}
-                                    autoHeight
-                                    loading={false}
-                                    checkboxSelection
-                                    isRowSelectable={params =>
-                                        !params.row.deleteChangeDocumentNumber
-                                    }
-                                    onSelectionModelChange={handleSelectChange}
-                                    hideFooter
-                                />
+                    <Grid item xs={12}>
+                        <Box sx={{ width: '100%' }}>
+                            <Box sx={{ borderBottom: 0, borderColor: 'divider' }}>
+                                <Tabs
+                                    value={tab}
+                                    onChange={(_, newValue) => {
+                                        setTab(newValue);
+                                    }}
+                                >
+                                    <Tab
+                                        label={`Bom WUSED${
+                                            tree?.children?.length
+                                                ? ` (${tree?.children?.length})`
+                                                : ''
+                                        }`}
+                                        disabled={!tree?.children?.length}
+                                    />
+                                    <Tab label="PCAS WUSED" />
+                                </Tabs>
+                            </Box>
+                        </Box>
+                    </Grid>
+
+                    {tab === 0 && (
+                        <Box sx={{ paddingTop: 3, width: '100%' }}>
+                            {treeLoading ? (
+                                <Loading />
                             ) : (
-                                <span>Old Part Not Used Anywhere</span>
+                                <Grid item xs={12}>
+                                    <BomChangeReplace
+                                        wused={tree?.children}
+                                        handleSelectChange={handleSelectChange}
+                                    />
+                                </Grid>
                             )}
-                        </Grid>
+                        </Box>
+                    )}
+
+                    {tab === 1 && (
+                        <Box sx={{ paddingTop: 3, width: '100%' }}>
+                            <span>Coming Soon...</span>
+                        </Box>
                     )}
                 </Grid>
             )}

@@ -141,7 +141,7 @@
             }
 
             // see if already a change for that detail's bom id
-            var change = request.BomChanges?.FirstOrDefault(c => c.BomId == detail.BomId);
+            var change = request.BomChanges?.FirstOrDefault(c => c.BomId == detail.BomId & (c.ChangeState == "ACCEPT" || c.ChangeState == "PROPOS"));
             if (change == null)
             {
                 var bom = this.bomRepository.FindById(detail.BomId);
