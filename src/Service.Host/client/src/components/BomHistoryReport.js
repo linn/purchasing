@@ -97,7 +97,7 @@ const BomHistoryReport = () => {
     const defaultStartDate = new Date();
     defaultStartDate.setMonth(defaultStartDate.getMonth() - 1);
     const [options, setOptions] = useState({
-        bomName: 'SK HUB',
+        bomName: 'ROOTPART2',
         includeSubAssemblies: true,
         from: new Date('2022-11-01T00:00:00'),
         to: new Date()
