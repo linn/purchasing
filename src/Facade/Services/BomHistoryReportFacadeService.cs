@@ -32,9 +32,9 @@
 
             return new SuccessResult<IEnumerable<BomHistoryReportLineResource>>(
                 this.domainService.GetReport(
-                bomName,
-                DateTime.Parse(from),
-                DateTime.Parse(to)).Select(BuildResource));
+                    bomName.Trim().ToUpper(),
+                    DateTime.Parse(from),
+                    DateTime.Parse(to)).Select(BuildResource));
         }
 
         private static BomHistoryReportLineResource BuildResource(BomHistoryReportLine e)
