@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     collectionSelectorHelpers,
+    ErrorCard,
     InputField,
     Page,
     Search,
-    userSelectors
+    userSelectors,
+    getItemError,
+    getRequestErrors
 } from '@linn-it/linn-form-components-library';
 
 import Grid from '@mui/material/Grid';
@@ -57,6 +60,11 @@ function CreateBomVerificationHistory() {
         setItem(r => ({ ...r, [propertyName]: newValue }));
     };
 
+    const setPartWithoutSearch = () => {
+        handleFieldChange('partNumber', partSearchTerm?.toUpperCase());
+        dispatch(partsActions.search(partSearchTerm));
+    };
+
     const inputIsValid = () => item?.partNumber && item?.dateVerified && item?.verifiedBy;
 
     const create = () => {
@@ -71,12 +79,23 @@ function CreateBomVerificationHistory() {
         return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
     };
 
+    const requestErrors = useSelector(reduxState =>
+        getRequestErrors(reduxState)?.filter(error => error.type !== 'FETCH_ERROR')
+    );
+
+    const itemError = useSelector(reduxState => getItemError(reduxState, 'bomVerificationHistory'));
+
     return (
-        <Page history={history}>
+        <Page history={history} requestErrors={requestErrors} showRequestErrors>
             <Grid container>
                 <Grid item xs={12}>
                     <Typography variant="h3">Create BOM Verification</Typography>
                 </Grid>
+                {itemError && (
+                    <Grid item xs={12}>
+                        <ErrorCard errorMessage={itemError.details?.error || itemError.details} />
+                    </Grid>
+                )}
                 <Grid item xs={11}>
                     <Search
                         propertyName="partNumber"
@@ -89,8 +108,9 @@ function CreateBomVerificationHistory() {
                             dispatch(partsActions.search(partNumber));
                         }}
                         searchResults={partsSearchResults}
-                        helperText="Enter a value. Press the enter key if you want to search parts."
+                        helperText="Press ENTER to search or TAB to proceed"
                         loading={partsSearchLoading}
+                        onKeyPressFunctions={[{ keyCode: 9, action: setPartWithoutSearch }]}
                         priorityFunction="closestMatchesFirst"
                         onResultSelect={newValue => {
                             setPartSearchTerm(newValue.partNumber);
