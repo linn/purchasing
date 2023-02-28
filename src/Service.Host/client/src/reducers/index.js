@@ -118,6 +118,7 @@ import boardDifferenceReport from './boardDifferenceReport';
 import partDataSheetValues from './partDataSheetValues';
 import partDataSheetValuesList from './partDataSheetValuesList';
 import bomVerificationHistoryEntries from './bomVerificationHistoryEntries';
+import changeRequestReplace from './changeRequestReplace';
 import bomDifferenceReport from './bomDifferenceReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
@@ -152,6 +153,7 @@ const rootReducer = history =>
         changeRequests,
         changeRequestStatusChange,
         changeRequestPhaseIns,
+        changeRequestReplace,
         countries,
         currencies,
         deliveryAddresses,
