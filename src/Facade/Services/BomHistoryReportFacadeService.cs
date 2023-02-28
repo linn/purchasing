@@ -5,7 +5,6 @@
     using System.Linq;
 
     using Linn.Common.Facade;
-    using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Resources;
@@ -26,16 +25,16 @@
             {
                 return new SuccessResult<IEnumerable<BomHistoryReportLineResource>>(
                     this.domainService.GetReportWithSubAssemblies(
-                        bomName,
+                        bomName.Trim().ToUpper(),
                         DateTime.Parse(from),
                         DateTime.Parse(to)).Select(BuildResource));
             }
 
             return new SuccessResult<IEnumerable<BomHistoryReportLineResource>>(
                 this.domainService.GetReport(
-                bomName,
-                DateTime.Parse(from),
-                DateTime.Parse(to)).Select(BuildResource));
+                    bomName.Trim().ToUpper(),
+                    DateTime.Parse(from),
+                    DateTime.Parse(to)).Select(BuildResource));
         }
 
         private static BomHistoryReportLineResource BuildResource(BomHistoryReportLine e)
@@ -46,7 +45,7 @@
                            BomName = e.BomName,
                            DocumentType = e.DocumentType,
                            DocumentNumber = e.DocumentNumber,
-                           DateApplied = e.DateApplied?.ToString("dd-MM-yyyy"),
+                           DateApplied = e.DateApplied?.ToString("dd-MMM-yyyy HH:mm"),
                            AppliedBy = e.AppliedBy,
                            Operation = e.Operation,
                            PartNumber = e.PartNumber,

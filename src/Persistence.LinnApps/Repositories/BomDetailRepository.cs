@@ -11,12 +11,9 @@
 
     public class BomDetailRepository : EntityFrameworkRepository<BomDetail, int>
     {
-        private readonly ServiceDbContext serviceDbContext;
-
         public BomDetailRepository(ServiceDbContext serviceDbContext)
             : base(serviceDbContext.BomDetails)
         {
-            this.serviceDbContext = serviceDbContext;
         }
 
         public override BomDetail FindById(int key)
@@ -28,7 +25,14 @@
 
         public override IQueryable<BomDetail> FilterBy(Expression<Func<BomDetail, bool>> expression)
         {
-            return base.FilterBy(expression).Include(d => d.Part);
+            return base.FilterBy(expression)
+                .Include(d => d.Part);
+        }
+
+        public override IQueryable<BomDetail> FindAll()
+        {
+            return base.FindAll()
+                .Include(d => d.Part).Include(d => d.AddChange).Include(d => d.DeleteChange);
         }
     }
 }

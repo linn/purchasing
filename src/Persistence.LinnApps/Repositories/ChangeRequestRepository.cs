@@ -43,6 +43,7 @@
         {
             return this.serviceDbContext.ChangeRequests
                 .Include(x => x.ProposedBy)
+
                 .Where(expression);
         }
     }
