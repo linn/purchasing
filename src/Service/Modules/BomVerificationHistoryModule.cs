@@ -19,9 +19,15 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/purchasing/bom-verification/{id:int}", this.GetBomVerificationHistoryEntry);
-            app.MapPost("/purchasing/bom-verification/create", this.CreateBomVerificationHistoryEntry);
+            app.MapGet("/purchasing/bom-verification/create", this.GetApp);
+            app.MapPost("/purchasing/bom-verification/", this.CreateBomVerificationHistoryEntry);
             app.MapGet("/purchasing/bom-verification/", this.SearchBomVerificationHistoryEntries);
+            app.MapGet("/purchasing/bom-verification/{id:int}", this.GetBomVerificationHistoryEntry);
+        }
+
+        private async Task GetApp(HttpRequest req, HttpResponse res)
+        {
+            await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
         }
 
         private async Task GetBomVerificationHistoryEntry(
