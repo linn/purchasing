@@ -53,12 +53,6 @@
 
         public int? DeleteChangeId { get; set; }
 
-        public int? BomId { get; set; }
-
-        public int? PartBomId { get; set; }
-
-        public BomTreeNode Parent { get; set; }
-
         public DateTime? AddedOn { get; set; }
 
         public DateTime? DeletedOn { get; set; }
