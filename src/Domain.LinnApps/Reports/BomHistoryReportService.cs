@@ -101,7 +101,7 @@
                      && x.AddChange.DateApplied <= to
                      && (x.DeleteChange == null || x.DeleteChange.DateApplied >= from)
                      && (x.DeleteChange != null || to >= from));
-
+            
             foreach (var detail in details)
             {
                 if (detail.Part.BomId.HasValue)
@@ -115,8 +115,7 @@
                     {
                         removed = to;
                     }
-
-
+                    
                     if (detail.AddChange.DateApplied < from)
                     {
                         added = from;

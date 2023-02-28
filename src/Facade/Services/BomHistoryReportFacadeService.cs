@@ -5,7 +5,6 @@
     using System.Linq;
 
     using Linn.Common.Facade;
-    using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Resources;
@@ -26,7 +25,7 @@
             {
                 return new SuccessResult<IEnumerable<BomHistoryReportLineResource>>(
                     this.domainService.GetReportWithSubAssemblies(
-                        bomName,
+                        bomName.Trim().ToUpper(),
                         DateTime.Parse(from),
                         DateTime.Parse(to)).Select(BuildResource));
             }

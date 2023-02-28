@@ -28,13 +28,14 @@
                 .FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(
                     new Bom { BomId = 40149 },
                     new Bom { BomId = 40121 },
-                    new Bom { BomId = 40393 });
+                    new Bom { BomId = 40393 },
+                    new Bom { BomId = 40394 });
             var rootSubAssemblies = new List<BomDetail>
                            {
                                new BomDetail
                                    {
                                        BomId = 40149, 
-                                       PartNumber = "PCAS 1008/L2R4",
+                                       PartNumber = "PCAS 1008/L2R2",
                                        ChangeState = "LIVE",
                                        AddChange = new BomChange { DateApplied = 11.November(2022) },
                                        Part = new Part { BomId = 41004 }
@@ -54,8 +55,8 @@
                                        PartNumber = "PCAS 1008/L2R2",
                                        ChangeState = "HIST",
                                        AddChange = new BomChange { DateApplied = 5.May(2022) },
-                                       DeleteChange = new BomChange { DateApplied = 6.May(2022) },
-                                       Part = new Part { BomId = 40522 }
+                                       DeleteChange = new BomChange { DateApplied = 7.May(2022) },
+                                       Part = new Part { BomId = 1008 }
                                    },
                                new BomDetail
                                    {
@@ -64,12 +65,21 @@
                                        ChangeState = "LIVE",
                                        AddChange = new BomChange { DateApplied = 7.October(2022) },
                                        Part = new Part { BomId = 40393 }
+                                   },
+                               new BomDetail
+                                   {
+                                       BomId = 40149,
+                                       PartNumber = "MCAS 074",
+                                       ChangeState = "HIST",
+                                       AddChange = new BomChange { DateApplied = 5.May(2022) },
+                                       DeleteChange = new BomChange { DateApplied = 28.February(2023) },
+                                       Part = new Part { BomId = 40394 } 
                                    }
                            };
 
             var selektDialDetails = new List<BomDetail>
                                               {
-                                                    new BomDetail
+                                                  new BomDetail
                                                         {
                                                             BomId = 40121,
                                                             PartNumber = "SOME COMP",
@@ -95,7 +105,7 @@
                                                         }
                                               };
 
-            var mcasDetails = new List<BomDetail>
+            var mcas073Details = new List<BomDetail>
                                   {
                                         new BomDetail
                                             {
@@ -124,9 +134,47 @@
                                             }
                                   };
 
+            var mcas074Details = new List<BomDetail>
+                                     {
+                                         new BomDetail
+                                             {
+                                                 BomId = 40393,
+                                                 PartNumber = "MCP 100",
+                                                 ChangeState = "LIVE",
+                                                 Part = new Part(),
+                                                 AddChange = new BomChange { DateApplied = 8.October(2022) }
+                                             }
+                                     };
+
+            var pcasDetails = new List<BomDetail>
+                                  {
+                                      new BomDetail
+                                          {
+                                              BomId = 1008,
+                                              PartNumber = "PCSM 100",
+                                              ChangeState = "LIVE",
+                                              Part = new Part { BomId = 600 },
+                                              AddChange = new BomChange { DateApplied = 4.May(2022) }
+                                          }
+                                  };
+
+            var pcsmDetails = new List<BomDetail>
+                                  {
+                                      new BomDetail 
+                                          {
+                                              BomId = 600, 
+                                              PartNumber = "CAP 100", 
+                                              ChangeState = "LIVE",
+                                              Part = new Part(),
+                                              AddChange = new BomChange { DateApplied = 5.May(2022) }
+                                          }
+                                  };
             detailRepoFindAllReturn.AddRange(rootSubAssemblies);
             detailRepoFindAllReturn.AddRange(selektDialDetails);
-            detailRepoFindAllReturn.AddRange(mcasDetails);
+            detailRepoFindAllReturn.AddRange(mcas073Details);
+            detailRepoFindAllReturn.AddRange(mcas074Details);
+            detailRepoFindAllReturn.AddRange(pcasDetails);
+            detailRepoFindAllReturn.AddRange(pcsmDetails);
 
             var historyEntries = new List<BomHistoryViewEntry>
                                      {
@@ -144,7 +192,7 @@
                                                  ChangeId = 2,
                                                  DateApplied = 11.November(2022),
                                                  Operation = "added",
-                                                 PartNumber = "PCAS 1008/L2R4"
+                                                 PartNumber = "PCAS 1008/L2R2"
                                              },
                                          new BomHistoryViewEntry
                                              {
@@ -167,14 +215,14 @@
                                                  BomName = "SK HUB",
                                                  ChangeId = 5,
                                                  DateApplied = 5.May(2022),
-                                                 Operation = "deleted",
+                                                 Operation = "added",
                                                  PartNumber = "PCAS 1008/L2R2"
                                              },
                                          new BomHistoryViewEntry
                                              {
                                                  BomName = "SK HUB",
                                                  ChangeId = 6,
-                                                 DateApplied = 6.May(2022),
+                                                 DateApplied = 7.May(2022),
                                                  Operation = "deleted",
                                                  PartNumber = "PCAS 1008/L2R2"
                                              },
@@ -188,9 +236,25 @@
                                              },
                                          new BomHistoryViewEntry
                                              {
+                                                 BomName = "SK HUB",
+                                                 ChangeId = 98,
+                                                 DateApplied = 5.May(2022),
+                                                 Operation = "added",
+                                                 PartNumber = "MCAS 074"
+                                             },
+                                         new BomHistoryViewEntry
+                                             {
+                                                 BomName = "SK HUB",
+                                                 ChangeId = 99,
+                                                 DateApplied = 28.February(2023),
+                                                 Operation = "deleted",
+                                                 PartNumber = "MCAS 074"
+                                             },
+                                         new BomHistoryViewEntry
+                                             {
                                                  BomName = "SELEKT DIAL/10",
                                                  ChangeId = 8,
-                                                 DateApplied = 1.September(2021),
+                                                 DateApplied = 1.September(2020),
                                                  Operation = "added",
                                                  PartNumber = "SOME COMP1"
                                              },
@@ -241,6 +305,30 @@
                                                  DateApplied = 8.October(2022),
                                                  Operation = "deleted",
                                                  PartNumber = "THING C"
+                                             },
+                                         new BomHistoryViewEntry
+                                             {
+                                                 BomName = "MCAS 074",
+                                                 ChangeId = 1113,
+                                                 DateApplied = 8.October(2022),
+                                                 Operation = "deleted",
+                                                 PartNumber = "MCP 100"
+                                             },
+                                         new BomHistoryViewEntry
+                                             {
+                                                 BomName = "PCAS 1008/L2R2",
+                                                 ChangeId = 1000,
+                                                 DateApplied = 4.May(2022),
+                                                 Operation = "added",
+                                                 PartNumber = "PCSM 100"
+                                             },
+                                         new BomHistoryViewEntry
+                                             {
+                                                 BomName = "PCAS 100",
+                                                 ChangeId = 666,
+                                                 DateApplied = 5.May(2022),
+                                                 Operation = "added",
+                                                 PartNumber = "CAP 100"
                                              }
                                      };
 
@@ -254,11 +342,11 @@
         [Test]
         public void ShouldOnlyIncludeChangesToRootThatOccurredWithinDateRange()
         {
-            this.result.Count(x => x.BomName == "SK HUB").Should().Be(6);
+            this.result.Count(x => x.BomName == "SK HUB").Should().Be(7);
         }
 
         [Test]
-        public void ShouldOnlyIncludeChangesToSubAssembliesThatHappenedWhileTheyWereOnBom()
+        public void ShouldIncludeChangesToSubAssembliesThatHappenedWhileTheyWereOnBom()
         {
             // since SOME COMP1 was added to SELEKT DIAL/10 before it was added to its parent
             this.result.Where(r => r.BomName == "SELEKT DIAL/10")
@@ -273,6 +361,15 @@
             // since LBL 111 was added after SELEKT DIAL/10 was added to its parent, but before SELEKT DIAL/10 was deleted from its parent
             this.result.Where(r => r.BomName == "SELEKT DIAL/10")
                 .Count(x => x.PartNumber == "LBL 111").Should().Be(1);
+
+            // since MCAS 074 was deleted from bom outside the time range
+            // any changes to it in the time range should be included
+            this.result.Where(r => r.BomName == "MCAS 074")
+                .Count(x => x.PartNumber == "MCP 100").Should().Be(1);
+
+            // since PCAS was added to its parent after it had any changes to itself
+            this.result.Any(r => r.BomName == "PCAS 1008/L2R2").Should()
+                .BeFalse();
         }
 
         [Test]
