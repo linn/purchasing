@@ -110,6 +110,7 @@
         "prop-types": "^15.7.2",
         "query-string": "^7.0.1",
         "react": "^18.2.0",
+        "react-csv": "^2.2.2",
         "react-dom": "^18.2.0",
         "react-dropzone": "^12.0.4",
         "react-hot-loader": "^4.13.0",
