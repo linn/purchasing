@@ -58,14 +58,14 @@ function BomChangesTab({ bomChanges, handleSelectChange, phaseInsUri, phaseIn })
         return weekStartDate >= lastSaturday;
     };
 
-    const handleWeekChange = (_, newValue) => {
+    const handleWeekChange = (propertyName, newValue) => {
         setWeekStartDate(newValue);
     };
 
     return (
         <Grid container spacing={3}>
-            {bomChanges ? (
-                <Grid item xs={12}>
+            <Grid item xs={12}>
+                {bomChanges ? (
                     <DataGrid
                         getRowId={row => row.changeId}
                         className={classes.gap}
@@ -78,11 +78,10 @@ function BomChangesTab({ bomChanges, handleSelectChange, phaseInsUri, phaseIn })
                         onSelectionModelChange={handleSelectChange}
                         hideFooter
                     />
-                </Grid>
-            ) : (
-                <span>No Bom Changes</span>
-            )}
-
+                ) : (
+                    <span>No Bom Changes</span>
+                )}
+            </Grid>
             {phaseInsUri && (
                 <Grid item xs={12}>
                     <LinnWeekPicker
