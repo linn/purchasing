@@ -26,7 +26,7 @@
         public override IQueryable<BomDetail> FilterBy(Expression<Func<BomDetail, bool>> expression)
         {
             return base.FilterBy(expression)
-                .Include(d => d.Part).Include(d => d.AddChange).Include(d => d.DeleteChange);
+                .Include(d => d.Part);
         }
 
         public override IQueryable<BomDetail> FindAll()
