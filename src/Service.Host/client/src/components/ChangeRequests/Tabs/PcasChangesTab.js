@@ -44,7 +44,8 @@ function PcasChangesTab({ pcasChanges, handleSelectChange }) {
                         loading={false}
                         checkboxSelection
                         onSelectionModelChange={handleSelectChange}
-                        hideFooter
+                        pageSize={100}
+                        hideFooter={!pcasChanges || pcasChanges.length <= 100}
                     />
                 ) : (
                     <span>No Bom Changes</span>

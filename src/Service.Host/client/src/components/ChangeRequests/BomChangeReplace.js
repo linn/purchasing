@@ -63,7 +63,8 @@ function BomChangeReplace({ wused, handleSelectChange, documentNumber }) {
                         checkboxSelection
                         isRowSelectable={params => !params.row.deleteChangeDocumentNumber}
                         onSelectionModelChange={handleSelectChange}
-                        hideFooter
+                        pageSize={100}
+                        hideFooter={!wused || wused.length <= 100}
                     />
                 ) : (
                     <span>Old Part Not Used Anywhere</span>

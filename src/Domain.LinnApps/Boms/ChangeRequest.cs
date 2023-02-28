@@ -95,24 +95,22 @@
 
         public bool CanReplace(bool adminPrivs)
         {
-            if (this.ChangeRequestType != "REPLACE")
-            {
-                return false;
-            }
-
             if (this.OldPart == null || this.NewPart == null)
             {
                 return false;
             }
 
-            if (this.ChangeState == "PROPOS")
+            if ((this.ChangeRequestType == "REPLACE") || ((this.ChangeRequestType == "BOARDEDIT") && (this.OldPart.PartNumber != this.NewPart.PartNumber)) )
             {
-                return true;
-            }
+                if (this.ChangeState == "PROPOS")
+                {
+                    return true;
+                }
 
-            if (this.ChangeState == "ACCEPT")
-            {
-                return adminPrivs;
+                if (this.ChangeState == "ACCEPT")
+                {
+                    return adminPrivs;
+                }
             }
 
             return false;
