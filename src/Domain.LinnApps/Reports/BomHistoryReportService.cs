@@ -15,18 +15,14 @@
 
         private readonly IRepository<BomDetail, int> detailRepository;
 
-        private readonly IRepository<BomChange, int> changeRepository;
-
         private readonly IQueryRepository<BomHistoryViewEntry> bomHistoryRepository;
 
         public BomHistoryReportService(
             IQueryRepository<BomHistoryViewEntry> bomHistoryRepository,
             IRepository<BomDetail, int> detailRepository,
-            IRepository<BomChange, int> changeRepository,
             IRepository<Bom, int> bomRepository)
         {
             this.bomRepository = bomRepository;
-            this.changeRepository = changeRepository;
             this.bomHistoryRepository = bomHistoryRepository;
             this.detailRepository = detailRepository;
         }
@@ -65,14 +61,14 @@
 
             subAssemblies.Add(new BomTreeNode { Name = bomName, AddedOn = from, DeletedOn = endOfToDate });
 
-            var changeGroups = this.bomHistoryRepository
-                .FilterBy(x => x.DateApplied >= from && x.DateApplied <= endOfToDate)
+            var changeGroups = this.bomHistoryRepository.FindAll()
+                .Where(x => x.DateApplied >= from && x.DateApplied <= endOfToDate)
                 .ToList()
                 .Join(
                     subAssemblies,
                     bomHistoryViewEntry => bomHistoryViewEntry.BomName,
-                    t2 => t2.Name,
-                    (t1, t2) => new { t1, t2 })
+                    subAssembly => subAssembly.Name,
+                    (hist, sub) => new { t1 = hist, t2 = sub })
                 .Where(o => o.t1.BomName == o.t2.Name && o.t1.DateApplied > o.t2.AddedOn && o.t1.DateApplied < o.t2.DeletedOn)
                 .Select(g => g.t1)
                 .OrderBy(x => x.ChangeId).ThenBy(x => x.DetailId).ThenByDescending(x => x.Operation)
@@ -90,16 +86,18 @@
                              DocumentType = g.First().DocumentType,
                              Operation = string.Join(Environment.NewLine, g.Select(d => d.Operation.ToString())),
                              PartNumber = string.Join(Environment.NewLine, g.Select(d => d.PartNumber.ToString())),
-                             Qty = string.Join(Environment.NewLine, g.Select(d => d.Qty.ToString())),
+                             Qty = string.Join(Environment.NewLine, g.Select(d => d.Qty?.ToString())),
                              GenerateRequirement = string.Join(
                                  Environment.NewLine,
-                                 g.Select(d => d.GenerateRequirement.ToString()))
+                                 g.Select(d => d.GenerateRequirement?.ToString()))
                          });
         }
 
-        private void IncludeSubAssemblies(int bomId, DateTime from, DateTime? to, List<BomTreeNode> result)
+        private void IncludeSubAssemblies(int bomId, DateTime from, DateTime? to, ICollection<BomTreeNode> result)
         {
-            var details = this.detailRepository.FilterBy(
+            var details1 = this.detailRepository.FindAll();
+                
+            var details = details1.Where(
                 x => x.BomId == bomId
                      && (x.ChangeState == "LIVE" || x.ChangeState == "HIST")
                      && x.AddChange.DateApplied <= to
@@ -110,15 +108,11 @@
             {
                 if (detail.Part.BomId.HasValue)
                 {
-                    DateTime? removed = detail.DeleteChange?.DateApplied;
-
-                    if (removed == null)
-                    {
-                        removed = to;
-                    }
+                    var removed = detail.DeleteChange?.DateApplied ?? to;
 
                     var added = detail.AddChange.DateApplied.GetValueOrDefault() 
                                 < from ? from : detail.AddChange.DateApplied.GetValueOrDefault();
+                    
                     if (removed > to)
                     {
                         removed = to;
