@@ -95,9 +95,7 @@
 
         private void IncludeSubAssemblies(int bomId, DateTime from, DateTime? to, ICollection<BomTreeNode> result)
         {
-            var details1 = this.detailRepository.FindAll();
-                
-            var details = details1.Where(
+            var details = this.detailRepository.FindAll().Where(
                 x => x.BomId == bomId
                      && (x.ChangeState == "LIVE" || x.ChangeState == "HIST")
                      && x.AddChange.DateApplied <= to
