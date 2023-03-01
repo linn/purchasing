@@ -76,7 +76,8 @@ function BomChangesTab({ bomChanges, handleSelectChange, phaseInsUri, phaseIn })
                         loading={false}
                         checkboxSelection
                         onSelectionModelChange={handleSelectChange}
-                        hideFooter
+                        pageSize={100}
+                        hideFooter={!bomChanges || bomChanges.length <= 100}
                     />
                 ) : (
                     <span>No Bom Changes</span>
