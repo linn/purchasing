@@ -10,6 +10,7 @@ import {
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Tabs from '@mui/material/Tabs';
+import { CSVLink } from 'react-csv';
 import Tab from '@mui/material/Tab';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -155,12 +156,84 @@ function ChangeRequest() {
         );
     };
 
+    const formatDateTime = isoString => {
+        if (!isoString) {
+            return '';
+        }
+
+        const dateTime = new Date(isoString);
+        const formattedDate = dateTime
+            .toLocaleDateString('en-GB', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            })
+            .replace(/ /g, '-');
+        return `${formattedDate} ${dateTime.toLocaleTimeString()}`;
+    };
+
+    const csvData = () => {
+        let prev;
+        return item?.bomChanges
+            ? [
+                  [`${item.documentType}${item.documentNumber}`],
+                  [`${item.newPartNumber} - ${item.newPartDescription}`],
+                  [formatDateTime(item.dateEntered)],
+                  [item.enteredBy.fullName],
+                  [item.descriptionOfChange],
+                  [item.reasonForChange],
+                  [],
+                  [],
+                  ['BOM CHANGES', 'DELETE', 'ADD', 'OLD QTY', 'REQ', 'NEW QTY', 'REQ', 'STATUS'],
+                  ...item.bomChanges
+                      .map(c =>
+                          c.bomChangeDetails.map(d => ({
+                              ...d,
+                              bomName: c.bomName,
+                              dateApplied: c.dateApplied,
+                              changeState: c.changeState
+                          }))
+                      )
+                      .flat()
+                      .map(f => {
+                          const line = [
+                              prev !== f.bomName ? f.bomName : '',
+                              f.deletePartNumber,
+                              f.addPartNumber,
+                              f.deleteQty,
+                              f.deleteGenerateRequirement,
+                              f.addQty,
+                              f.addGenerateRequirement,
+                              prev !== f.bomName
+                                  ? `${f.changeState} ${formatDateTime(f.dateApplied)}`
+                                  : ''
+                          ];
+                          prev = f.bomName;
+                          return line;
+                      })
+              ]
+            : [];
+    };
+
     return (
         <Page history={history}>
             {loading || statusChangeLoading ? (
                 <Loading />
             ) : (
                 <Grid container spacing={2} justifyContent="center">
+                    {item?.bomChanges && (
+                        <>
+                            <Grid item xs={10} />
+                            <Grid item xs={2}>
+                                <CSVLink
+                                    data={csvData()}
+                                    filename={`${item.documentType}${item.documentNumber}`}
+                                >
+                                    <Button variant="contained">Export</Button>
+                                </CSVLink>
+                            </Grid>
+                        </>
+                    )}
                     <Grid item xs={12}>
                         <Typography variant="h6">Change Request {id}</Typography>
                     </Grid>
