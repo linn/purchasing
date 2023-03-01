@@ -181,6 +181,7 @@ function ChangeRequest() {
                   [formatDateTime(item.dateEntered)],
                   [item.enteredBy.fullName],
                   [item.descriptionOfChange],
+                  [item.reasonForChange],
                   [],
                   [],
                   ['BOM CHANGES', 'DELETE', 'ADD', 'OLD QTY', 'REQ', 'NEW QTY', 'REQ', 'STATUS'],
