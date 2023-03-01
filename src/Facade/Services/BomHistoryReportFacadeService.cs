@@ -5,6 +5,7 @@
     using System.Linq;
 
     using Linn.Common.Facade;
+    using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Resources;
@@ -52,7 +53,12 @@
                            Qty = e.Qty,
                            GenerateRequirement = e.GenerateRequirement,
                            ReplaceSeq = e.ReplaceSeq,
-                           DetailId = e.DetailId
+                           DetailId = e.DetailId,
+                           Links = new List<LinkResource>
+                                       {
+                                           new LinkResource { Rel = "bom", Href = $"/purchasing/boms/bom-utility?bomName={e.BomName}" },
+                                           new LinkResource { Rel = "crf", Href = $"/purchasing/change-requests/{e.DocumentNumber}" }
+                                       }.ToArray()
                        };
         }
     }

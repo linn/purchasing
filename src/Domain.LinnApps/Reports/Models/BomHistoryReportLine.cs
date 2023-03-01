@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Linn.Purchasing.Domain.LinnApps.Reports.Models
+﻿namespace Linn.Purchasing.Domain.LinnApps.Reports.Models
 {
+    using System;
+
     public class BomHistoryReportLine
     {
         public int? ChangeId { get; set; }
