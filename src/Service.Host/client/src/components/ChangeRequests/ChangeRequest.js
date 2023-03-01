@@ -156,16 +156,30 @@ function ChangeRequest() {
         );
     };
 
+    const formatDateTime = isoString => {
+        if (!isoString) {
+            return '';
+        }
+
+        const dateTime = new Date(isoString);
+        const formattedDate = dateTime
+            .toLocaleDateString('en-GB', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            })
+            .replace(/ /g, '-');
+        return `${formattedDate} ${dateTime.toLocaleTimeString()}`;
+    };
+
     const csvData = () => {
         let prev;
         return item?.bomChanges
             ? [
-                  [
-                      `${item.documentType}${item.documentNumber}`,
-                      `${item.newPartNumber} - ${item.newPartDescription}`,
-                      item.dateEntered,
-                      item.enteredBy.fullName
-                  ],
+                  [`${item.documentType}${item.documentNumber}`],
+                  [`${item.newPartNumber} - ${item.newPartDescription}`],
+                  [formatDateTime(item.dateEntered)],
+                  [item.enteredBy.fullName],
                   [item.descriptionOfChange],
                   [],
                   [],
@@ -189,7 +203,9 @@ function ChangeRequest() {
                               f.deleteGenerateRequirement,
                               f.addQty,
                               f.addGenerateRequirement,
-                              prev !== f.bomName ? `${f.changeState} on ${f.dateApplied}` : ''
+                              prev !== f.bomName
+                                  ? `${f.changeState} ${formatDateTime(f.dateApplied)}`
+                                  : ''
                           ];
                           prev = f.bomName;
                           return line;
@@ -208,7 +224,10 @@ function ChangeRequest() {
                         <>
                             <Grid item xs={10} />
                             <Grid item xs={2}>
-                                <CSVLink data={csvData()}>
+                                <CSVLink
+                                    data={csvData()}
+                                    filename={`${item.documentType}${item.documentNumber}`}
+                                >
                                     <Button variant="contained">Export</Button>
                                 </CSVLink>
                             </Grid>
