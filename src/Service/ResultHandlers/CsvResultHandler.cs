@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.ResultHandlers
 {
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
     using System.Threading;
@@ -10,6 +9,7 @@
     using CsvHelper;
 
     using Linn.Common.Facade.Carter;
+    using Linn.Purchasing.Facade;
 
     using Microsoft.AspNetCore.Http;
 
@@ -24,33 +24,26 @@
         public async Task Handle(
             HttpRequest req, HttpResponse res, object model, CancellationToken cancellationToken)
         {
+            var result = (CsvResult) model;
             res.ContentType = "text/csv; charset=utf-8";
-            res.Headers.ContentDisposition = "attachment; filename=\"data.csv\"";
+            res.Headers.ContentDisposition = $"attachment; filename=\"{result.Title}\"";
             var sw = new StringWriter();
 
             var writer = new CsvWriter(sw, CultureInfo.InvariantCulture);
 
             // currently only handles lists of lists of strings
-            if (model is IEnumerable<IEnumerable<string>> lines)
+            foreach (var line in result.Data)
             {
-                foreach (var line in lines)
+                foreach (var field in line)
                 {
-                    foreach (var field in line)
-                    {
-                        writer.WriteField(field);
-                    }
-
-                    await writer.NextRecordAsync();
+                    writer.WriteField(field);
                 }
 
-                await writer.FlushAsync();
-                await res.WriteAsync(sw.ToString(), cancellationToken: cancellationToken);
+                await writer.NextRecordAsync();
             }
-            else
-            {
-                // todo - could easily extend this to handle single objects and lists of objects
-                throw new NotImplementedException();
-            }
+
+            await writer.FlushAsync();
+            await res.WriteAsync(sw.ToString(), cancellationToken: cancellationToken);
         }
     }
 }

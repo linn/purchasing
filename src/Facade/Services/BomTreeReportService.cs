@@ -26,22 +26,23 @@
         {
             if (treeType == "bom")
             {
-                return new SuccessResult<BomTreeNode>(this.domainService.BuildBomTree(bomName, levels, requirementOnly, showChanges));
+                return new SuccessResult<BomTreeNode>(
+                    this.domainService.BuildBomTree(bomName, levels, requirementOnly, showChanges));
             }
-            else
-            {
-                return new SuccessResult<BomTreeNode>(this.domainService.BuildWhereUsedTree(bomName, levels, requirementOnly, showChanges));
-            }
+            
+            return new SuccessResult<BomTreeNode>(
+                this.domainService.BuildWhereUsedTree(bomName, levels, requirementOnly, showChanges));
         }
 
-        public IEnumerable<IEnumerable<string>> GetFlatTreeExport(
+        public CsvResult GetFlatTreeExport(
             string bomName, 
             int? levels,
             bool requirementOnly = true,
             bool showChanges = false,
             string treeType = "bom")
         {
-            var flattened = treeType == "bom" ? this.domainService.FlattenBomTree(bomName, levels, requirementOnly, showChanges)
+            var flattened = treeType == "bom" ? this.domainService
+                                    .FlattenBomTree(bomName, levels, requirementOnly, showChanges)
                                 : this.domainService.FlattenWhereUsedTree(bomName, levels, requirementOnly, showChanges);
             var csvData = new List<List<string>>();
             foreach (var node in flattened)
@@ -61,7 +62,10 @@
                 csvData.Insert(0, new List<string> { bomName, "DESCRIPTION", "QTY", "PARENT" });
             }
             
-            return csvData;
+            return new CsvResult(bomName)
+                       {
+                           Data = csvData,
+                       };
         }
     }
 }

@@ -98,7 +98,7 @@
         {
             var result = facadeService.GetFlatTreeExport(
                 bomName.Trim().ToUpper(), levels, requirementOnly, showChanges, treeType);
-
+            
             await res.Negotiate(result);
         }
 
