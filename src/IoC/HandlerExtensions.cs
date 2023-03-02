@@ -2,8 +2,6 @@
 {
     using System.Collections.Generic;
 
-    using Carter;
-
     using Linn.Common.Facade.Carter;
     using Linn.Common.Facade.Carter.Handlers;
     using Linn.Common.Reporting.Resources.ReportResultResources;
@@ -11,7 +9,6 @@
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.Boms;
     using Linn.Purchasing.Resources.MaterialRequirements;
-    using Linn.Purchasing.Service;
     using Linn.Purchasing.Service.ResultHandlers;
 
     using Microsoft.Extensions.DependencyInjection;
