@@ -24,7 +24,7 @@
         public async Task Handle(
             HttpRequest req, HttpResponse res, object model, CancellationToken cancellationToken)
         {
-            var result = (CsvResult) model;
+            var result = (CsvResult)model;
             res.ContentType = "text/csv; charset=utf-8";
             res.Headers.ContentDisposition = $"attachment; filename=\"{result.Title}\"";
             var sw = new StringWriter();
