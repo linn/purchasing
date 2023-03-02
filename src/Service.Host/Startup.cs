@@ -40,7 +40,8 @@ namespace Linn.Purchasing.Service.Host
             services.AddRabbitConfiguration();
             services.AddMessageDispatchers();
 
-            services.AddCarter();
+            services
+                .AddCarter();
             services.AddLinnAuthentication(
                 options =>
                     {

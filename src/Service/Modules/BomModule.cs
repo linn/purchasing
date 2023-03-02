@@ -99,7 +99,7 @@
             var result = facadeService.GetFlatTreeExport(
                 bomName.Trim().ToUpper(), levels, requirementOnly, showChanges, treeType);
 
-            await res.FromCsv(result, $"{bomName}.csv");
+            await res.Negotiate(result);
         }
 
         private async Task GetBoard(
