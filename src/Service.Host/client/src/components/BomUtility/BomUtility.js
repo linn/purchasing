@@ -524,7 +524,7 @@ function BomUtility() {
                     value={partSearchTerm}
                     handleValueChange={(_, newVal) => setPartSearchTerm(newVal)}
                     search={searchParts}
-                    searchResults={partsSearchResults}
+                    searchResults={partsSearchResults.filter(p => p.bomType && !p.datePhasedOut)}
                     loading={partsSearchLoading}
                     priorityFunction="closestMatchesFirst"
                     onResultSelect={handlePartSelect}
@@ -1004,7 +1004,6 @@ function BomUtility() {
                         loading={bomTreeLoading}
                         processRowUpdate={processRowUpdate}
                         onProcessRowUpdateError={err => console.log(err)}
-                        hideFooter
                         autoHeight
                         experimentalFeatures={{ newEditingApi: true }}
                         disableSelectionOnClick

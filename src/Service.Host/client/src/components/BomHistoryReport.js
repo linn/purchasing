@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import {
     Page,
     DatePicker,
-    InputField,
     Title,
     collectionSelectorHelpers,
-    OnOffSwitch
+    OnOffSwitch,
+    utilities,
+    Search
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
+import { Link } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -16,7 +18,8 @@ import queryString from 'query-string';
 import history from '../history';
 import config from '../config';
 import bomHistoryReportActions from '../actions/bomHistoryReportActions';
-import { bomHistoryReport } from '../itemTypes';
+import { bomHistoryReport, parts } from '../itemTypes';
+import partsActions from '../actions/partsActions';
 
 const BomHistoryReport = () => {
     const loading = useSelector(state =>
@@ -24,6 +27,20 @@ const BomHistoryReport = () => {
     );
     const data = useSelector(state =>
         collectionSelectorHelpers.getItems(state[bomHistoryReport.item])
+    );
+    const searchResults = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(state[parts.item])
+    )
+        .map?.(c => ({
+            id: c.partNumber,
+            name: c.partNumber,
+            description: c.description,
+            type: c.bomType
+        }))
+        .filter(p => p.type !== 'C');
+
+    const searchLoading = useSelector(state =>
+        collectionSelectorHelpers.getSearchLoading(state[parts.item])
     );
     const columns = [
         { field: 'changeId', headerName: 'CHG ID', width: 100 },
@@ -40,11 +57,25 @@ const BomHistoryReport = () => {
                 </div>
             )
         },
-        { field: 'bomName', headerName: 'Name', width: 150 },
+        {
+            field: 'bomName',
+            headerName: 'Name',
+            width: 150,
+            renderCell: params => (
+                <Link to={utilities.getHref(params.row, 'bom')}>{params.row.bomName}</Link>
+            )
+        },
         { field: 'dateApplied', headerName: 'Date', width: 150 },
         { field: 'appliedBy', headerName: 'By', width: 200 },
         { field: 'documentType', headerName: 'Doc', width: 100 },
-        { field: 'documentNumber', headerName: 'Number', width: 150 },
+        {
+            field: 'documentNumber',
+            headerName: 'Number',
+            width: 150,
+            renderCell: params => (
+                <Link to={utilities.getHref(params.row, 'crf')}>{params.row.documentNumber}</Link>
+            )
+        },
         {
             field: 'operation',
             headerName: 'Op',
@@ -115,12 +146,21 @@ const BomHistoryReport = () => {
                     <Title text="BOM History Report" />
                 </Grid>
                 <Grid item xs={2}>
-                    <InputField
+                    <Search
                         propertyName="bomName"
                         value={options.bomName}
-                        label="BOM"
-                        fullWidth
-                        onChange={handleOptionChange}
+                        resultsInModal
+                        handleValueChange={handleOptionChange}
+                        onResultSelect={selected => handleOptionChange('bomName', selected.name)}
+                        search={() => {
+                            dispatch(partsActions.search(options.bomName));
+                        }}
+                        clearSearch={() => {
+                            dispatch(partsActions.clearSearch());
+                        }}
+                        label="Bom"
+                        searchResults={searchResults}
+                        loading={searchLoading}
                     />
                 </Grid>
                 <Grid item xs={2}>
@@ -153,6 +193,7 @@ const BomHistoryReport = () => {
                         variant="contained"
                         disabled={!options.bomName}
                         onClick={() => {
+                            dispatch(bomHistoryReportActions.clearItem());
                             dispatch(
                                 bomHistoryReportActions.fetchByHref(
                                     `/purchasing/reports/bom-history?${queryString.stringify({
