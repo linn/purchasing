@@ -15,7 +15,7 @@
     using Microsoft.AspNetCore.Http;
 
     // todo - move to common
-    public class CsvResultHandler : IHandler
+    public class CsvFileResultHandler : IHandler
     {
         public bool CanHandle(object model, string contentType)
         {
