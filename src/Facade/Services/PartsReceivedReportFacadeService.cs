@@ -39,15 +39,16 @@
 
         public CsvResult<IEnumerable<IEnumerable<string>>> GetReportCsv(PartsReceivedReportRequestResource options)
         {
+            var data = this.domainService.GetReport(
+                options.Jobref,
+                options.Supplier,
+                options.FromDate,
+                options.ToDate,
+                options.OrderBy,
+                options.IncludeNegativeValues).ConvertToCsvList();
             return new CsvResult<IEnumerable<IEnumerable<string>>>("parts_received.csv")
                        {
-                           Data = this.domainService.GetReport(
-                               options.Jobref,
-                               options.Supplier,
-                               options.FromDate,
-                               options.ToDate,
-                               options.OrderBy,
-                               options.IncludeNegativeValues).ConvertToCsvList()
+                           Data = data
                        };
         }
     }

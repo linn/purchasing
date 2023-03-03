@@ -68,7 +68,7 @@
         public void ShouldReturnCsvContentType()
         {
             this.Response.Content.Headers.ContentType.Should().NotBeNull();
-            this.Response.Content.Headers.ContentType?.ToString().Should().Be("text/csv");
+            this.Response.Content.Headers.ContentType?.ToString().Should().Be("text/csv; charset=utf-8");
         }
 
         [Test]

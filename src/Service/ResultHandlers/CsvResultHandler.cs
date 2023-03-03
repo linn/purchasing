@@ -35,9 +35,9 @@
 
             var writer = new CsvWriter(sw, CultureInfo.InvariantCulture);
 
-            if (csvResult.Data is CsvResult<IEnumerable<IEnumerable<string>>> csvGrid)
+            if (csvResult.Data is IEnumerable<IEnumerable> csvGrid)
             {
-                foreach (var line in csvGrid.Data)
+                foreach (var line in csvGrid)
                 {
                     foreach (var field in line)
                     {
