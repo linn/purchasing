@@ -1,6 +1,8 @@
 ﻿namespace Linn.Purchasing.Service.ResultHandlers
 {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
     using System.Threading;
@@ -24,23 +26,36 @@
         public async Task Handle(
             HttpRequest req, HttpResponse res, object model, CancellationToken cancellationToken)
         {
-            var result = (CsvResult)model;
+            dynamic csvResult = model;
+
             res.ContentType = "text/csv; charset=utf-8";
-            res.Headers.ContentDisposition = $"attachment; filename=\"{result.Title}\"";
+            res.Headers.ContentDisposition = $"attachment; filename=\"{csvResult.Title}\"";
+
             var sw = new StringWriter();
 
             var writer = new CsvWriter(sw, CultureInfo.InvariantCulture);
 
-            // currently only handles lists of lists of strings
-            foreach (var line in result.Data)
+            if (csvResult.Data is CsvResult<IEnumerable<IEnumerable<string>>> csvGrid)
             {
-                foreach (var field in line)
+                foreach (var line in csvGrid.Data)
                 {
-                    writer.WriteField(field);
-                }
+                    foreach (var field in line)
+                    {
+                        writer.WriteField(field);
+                    }
 
-                await writer.NextRecordAsync();
+                    await writer.NextRecordAsync();
+                }
             }
+            else if (csvResult.Data is IEnumerable arrayModel)
+            {
+                await writer.WriteRecordsAsync(arrayModel, cancellationToken);
+            }
+            else
+            {
+                await writer.WriteRecordsAsync(new[] { csvResult.Data }, cancellationToken);
+            }
+            
 
             await writer.FlushAsync();
             await res.WriteAsync(sw.ToString(), cancellationToken: cancellationToken);

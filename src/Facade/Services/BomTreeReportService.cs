@@ -34,7 +34,7 @@
                 this.domainService.BuildWhereUsedTree(bomName, levels, requirementOnly, showChanges));
         }
 
-        public CsvResult GetFlatTreeExport(
+        public CsvResult<IEnumerable<BomTreeNode>> GetFlatTreeExport(
             string bomName, 
             int? levels,
             bool requirementOnly = true,
@@ -44,27 +44,10 @@
             var flattened = treeType == "bom" ? this.domainService
                                     .FlattenBomTree(bomName, levels, requirementOnly, showChanges)
                                 : this.domainService.FlattenWhereUsedTree(bomName, levels, requirementOnly, showChanges);
-            var csvData = new List<List<string>>();
-            foreach (var node in flattened)
-            {
-                csvData.Add(new List<string>
-                                {
-                                    node.Name,
-                                    node.Description,
-                                    node.Qty.ToString(CultureInfo.InvariantCulture),
-                                    node.ParentName
-                                });
-            }
-
-            if (csvData.Count > 0)
-            {
-                csvData.RemoveAt(0);
-                csvData.Insert(0, new List<string> { bomName, "DESCRIPTION", "QTY", "PARENT" });
-            }
             
-            return new CsvResult(bomName)
+            return new CsvResult<IEnumerable<BomTreeNode>>(bomName)
                        {
-                           Data = csvData,
+                           Data = flattened
                        };
         }
     }

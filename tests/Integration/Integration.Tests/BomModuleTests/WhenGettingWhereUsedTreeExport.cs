@@ -20,7 +20,7 @@
                 new List<BomTreeNode> { new BomTreeNode { Name = "part", Description = "root node" } });
 
             this.Response = this.Client.Get(
-                "/purchasing/boms/tree/export?bomName=part&requirementOnly=true&showChanges=false&treeType=whereUsed",
+                "/purchasing/boms/tree/flat?bomName=part&requirementOnly=true&showChanges=false&treeType=whereUsed",
                 with => { with.Accept("text/csv"); }).Result;
         }
 

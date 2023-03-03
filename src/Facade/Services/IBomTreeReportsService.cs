@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
+    using System.Collections.Generic;
+
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
 
@@ -12,7 +14,7 @@
             bool showChanges = false,
             string treeType = "bom");
 
-        CsvResult GetFlatTreeExport(
+        CsvResult<IEnumerable<BomTreeNode>> GetFlatTreeExport(
             string bomName, 
             int? levels,
             bool requirementOnly = true,
