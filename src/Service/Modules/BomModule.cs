@@ -34,7 +34,7 @@
             app.MapGet("/purchasing/boms/boards/application-state", this.GetBoardApplicationState);
             app.MapGet("/purchasing/boms/boards/{id}", this.GetBoard);
             app.MapGet("/purchasing/boms/board-components/{id}", this.GetBoard);
-            app.MapGet("/purchasing/boms/tree/export", this.GetTreeExport);
+            app.MapGet("/purchasing/boms/tree/flat", this.GetFlatTree);
             app.MapGet("/purchasing/boms/boards", this.GetBoards);
             app.MapGet("/purchasing/boms/board-components", this.GetBoards);
             app.MapGet("/purchasing/boms/boards-summary", this.GetBoardsSummary);
@@ -86,7 +86,7 @@
             await res.Negotiate(result);
         }
 
-        private async Task GetTreeExport(
+        private async Task GetFlatTree(
             HttpRequest req,
             HttpResponse res,
             string bomName,
@@ -98,8 +98,8 @@
         {
             var result = facadeService.GetFlatTreeExport(
                 bomName.Trim().ToUpper(), levels, requirementOnly, showChanges, treeType);
-
-            await res.FromCsv(result, $"{bomName}.csv");
+            
+            await res.Negotiate(result);
         }
 
         private async Task GetBoard(

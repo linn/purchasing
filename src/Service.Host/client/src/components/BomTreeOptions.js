@@ -57,7 +57,7 @@ export default function BomTreeOptions() {
                     <ExportButton
                         href={`${
                             config.appRoot
-                        }/purchasing/boms/tree/export?bomName=${searchTerm}&levels=${
+                        }/purchasing/boms/tree/flat?bomName=${searchTerm}&levels=${
                             explode || 0
                         }&requirementOnly=${requirementOnly}&showChanges=${showChanges}&treeType=${
                             whereUsed ? 'whereUsed' : 'bom'

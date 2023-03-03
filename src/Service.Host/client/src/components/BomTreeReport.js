@@ -30,7 +30,7 @@ export default function BomTreeReport() {
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <ExportButton
-                        href={`${config.appRoot}/purchasing/boms/tree/export?bomName=${bomName}&levels=${levels}&requirementOnly=${requirementOnly}&showChanges=${showChanges}&treeType=${treeType}`}
+                        href={`${config.appRoot}/purchasing/boms/tree/flat?bomName=${bomName}&levels=${levels}&requirementOnly=${requirementOnly}&showChanges=${showChanges}&treeType=${treeType}`}
                     />
                 </Grid>
                 <Grid item xs={2}>

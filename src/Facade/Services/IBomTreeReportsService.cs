@@ -14,7 +14,7 @@
             bool showChanges = false,
             string treeType = "bom");
 
-        IEnumerable<IEnumerable<string>> GetFlatTreeExport(
+        CsvResult<IEnumerable<BomTreeNode>> GetFlatTreeExport(
             string bomName, 
             int? levels,
             bool requirementOnly = true,

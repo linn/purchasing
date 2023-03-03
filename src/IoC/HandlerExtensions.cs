@@ -100,7 +100,8 @@
                 .AddTransient<IHandler, JsonResultHandler<BomStandardPricesResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<BomHistoryReportLineResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<PartDataSheetValuesResource>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PartDataSheetValuesResource>>>();
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PartDataSheetValuesResource>>>()
+                .AddTransient<IHandler, CsvResultHandler>();
         }
     }
 }

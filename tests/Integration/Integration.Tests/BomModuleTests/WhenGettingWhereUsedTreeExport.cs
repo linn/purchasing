@@ -20,8 +20,8 @@
                 new List<BomTreeNode> { new BomTreeNode { Name = "part", Description = "root node" } });
 
             this.Response = this.Client.Get(
-                "/purchasing/boms/tree/export?bomName=part&requirementOnly=true&showChanges=false&treeType=whereUsed",
-                with => { with.Accept("application/json"); }).Result;
+                "/purchasing/boms/tree/flat?bomName=part&requirementOnly=true&showChanges=false&treeType=whereUsed",
+                with => { with.Accept("text/csv"); }).Result;
         }
 
         [Test]
@@ -40,7 +40,7 @@
         public void ShouldReturnCsvContentType()
         {
             this.Response.Content.Headers.ContentType.Should().NotBeNull();
-            this.Response.Content.Headers.ContentType?.ToString().Should().Be("text/csv");
+            this.Response.Content.Headers.ContentType?.ToString().Should().Be("text/csv; charset=utf-8");
         }
     }
 }
