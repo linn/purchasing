@@ -56,7 +56,6 @@
                 await writer.WriteRecordsAsync(new[] { csvResult.Data }, cancellationToken);
             }
             
-
             await writer.FlushAsync();
             await res.WriteAsync(sw.ToString(), cancellationToken: cancellationToken);
         }
