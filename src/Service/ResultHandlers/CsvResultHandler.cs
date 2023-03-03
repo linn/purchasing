@@ -11,7 +11,6 @@
     using CsvHelper;
 
     using Linn.Common.Facade.Carter;
-    using Linn.Purchasing.Facade;
 
     using Microsoft.AspNetCore.Http;
 
@@ -27,9 +26,6 @@
             HttpRequest req, HttpResponse res, object model, CancellationToken cancellationToken)
         {
             dynamic csvResult = model;
-
-            res.ContentType = "text/csv; charset=utf-8";
-            res.Headers.ContentDisposition = $"attachment; filename=\"{csvResult.Title}\"";
 
             var sw = new StringWriter();
 
@@ -57,6 +53,11 @@
             }
             
             await writer.FlushAsync();
+
+            res.StatusCode = 200;
+            res.ContentType = "text/csv; charset=utf-8";
+            res.Headers.ContentDisposition = $"attachment; filename=\"{csvResult.Title}\"";
+
             await res.WriteAsync(sw.ToString(), cancellationToken: cancellationToken);
         }
     }
