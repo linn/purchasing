@@ -155,3 +155,27 @@ export const bomDifferenceReport = new ItemType(
     'BOM_DIFFERENCE_REPORT',
     '/purchasing/boms/reports/diff'
 );
+
+export const changeStatusReport = new ItemType(
+    'changeStatusReport',
+    'CHANGE_STATUS_REPORT',
+    '/purchasing/reports/change-status/report'
+);
+
+export const acceptedChangesReport = new ItemType(
+    'acceptedChangesReport',
+    'ACCEPTED_CHANGES_REPORT',
+    '/purchasing/reports/accepted-changes/report'
+);
+
+export const proposedChangesReport = new ItemType(
+    'proposedChangesReport',
+    'PROPOSED_CHANGES_REPORT',
+    '/purchasing/reports/proposed-changes/report'
+);
+
+export const outstandingChangesReport = new ItemType(
+    'outstandingChangesReport',
+    'OUTSTANDING_CHANGES_REPORT',
+    '/purchasing/reports/outstanding-changes/report'
+);

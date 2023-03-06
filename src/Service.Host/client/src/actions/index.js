@@ -388,3 +388,19 @@ export const changeRequestReplaceActionTypes = makeActionTypes(
 export const bomDifferenceReportActionTypes = makeReportActionTypes(
     reportTypes.bomDifferenceReport.actionType
 );
+
+export const changeStatusReportActionTypes = makeReportActionTypes(
+    reportTypes.changeStatusReport.actionType
+);
+
+export const acceptedChangesReportActionTypes = makeReportActionTypes(
+    reportTypes.acceptedChangesReport.actionType
+);
+
+export const proposedChangesReportActionTypes = makeReportActionTypes(
+    reportTypes.proposedChangesReport.actionType
+);
+
+export const outstandingChangesReportActionTypes = makeReportActionTypes(
+    reportTypes.proposedChangesReport.actionType
+);
