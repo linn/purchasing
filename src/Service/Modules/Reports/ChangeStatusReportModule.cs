@@ -33,7 +33,7 @@ namespace Linn.Purchasing.Service.Modules.Reports
         private async Task GetChangeStatusReport(
             HttpRequest req,
             HttpResponse res,
-            string months,
+            int months,
             IChangeStatusReportsFacadeService facadeService)
         {
             var options = new ChangeStatusReportRequestResource()
@@ -49,7 +49,7 @@ namespace Linn.Purchasing.Service.Modules.Reports
         private async Task GetAcceptedChangesReport(
             HttpRequest req,
             HttpResponse res,
-            string months,
+            int months,
             IChangeStatusReportsFacadeService facadeService)
         {
             var options = new ChangeStatusReportRequestResource()
@@ -65,7 +65,7 @@ namespace Linn.Purchasing.Service.Modules.Reports
         private async Task GetProposedChangesReport(
             HttpRequest req,
             HttpResponse res,
-            string months,
+            int months,
             IChangeStatusReportsFacadeService facadeService)
         {
             var options = new ChangeStatusReportRequestResource()
@@ -81,7 +81,7 @@ namespace Linn.Purchasing.Service.Modules.Reports
         private async Task GetTotalOutstandingChangesReport(
             HttpRequest req,
             HttpResponse res,
-            string months,
+            int months,
             IChangeStatusReportsFacadeService facadeService)
         {
             var options = new ChangeStatusReportRequestResource()
