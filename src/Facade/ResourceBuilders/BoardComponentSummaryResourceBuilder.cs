@@ -22,6 +22,7 @@
                            ChangeState = entity.ChangeState,
                            AddChangeId = entity.AddChangeId,
                            DeleteChangeId = entity.DeleteChangeId,
+                           DeleteChangeRequest = entity.DeleteChangeRequest,
                            FromLayoutVersion = entity.FromLayoutVersion,
                            FromRevisionVersion = entity.FromRevisionVersion,
                            ToLayoutVersion = entity.ToLayoutVersion,

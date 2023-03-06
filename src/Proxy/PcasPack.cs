@@ -93,5 +93,72 @@
                 connection.Close();
             }
         }
+
+        public void ReplaceAll(string partNumber, int documentNumber, string changeState, int replacedBy, string newPartNumber)
+        {
+            /*
+             *  	PROCEDURE REPLACE_ALL	  		  (p_part_number in varchar2,
+                                       p_document_type in varchar2,
+                                       p_document_number in number,
+
+                                       p_change_State in varchar2,
+                                       p_entered_by in number,
+
+                                       p_new_part_number in varchar2);
+             */
+            using (var connection = this.databaseService.GetConnection())
+            {
+                connection.Open();
+                var cmd = new OracleCommand("pcas_pack.replace_all", connection)
+                              {
+                                  CommandType = CommandType.StoredProcedure
+                              };
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_part_number", OracleDbType.Varchar2)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = partNumber
+                    });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_document_type", OracleDbType.Varchar2)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = "CRF"
+                        });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_document_number", OracleDbType.Int32)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = documentNumber
+                    });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_change_state", OracleDbType.Varchar2)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = changeState
+                        });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_entered_by", OracleDbType.Int32)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = replacedBy
+                        });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_new_part_number", OracleDbType.Varchar2)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = newPartNumber
+                        });
+
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
     }
 }

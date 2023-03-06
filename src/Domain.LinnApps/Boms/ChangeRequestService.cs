@@ -268,8 +268,10 @@
             int documentNumber,
             int replacedBy,
             bool globalReplace,
+            bool hasPcasLines,
             decimal? newQty,
             IEnumerable<int> selectedDetailIds,
+            IEnumerable<string> selectedPcasComponents,
             IEnumerable<string> privileges = null)
         {
             var request = this.repository.FindById(documentNumber);
@@ -288,8 +290,21 @@
             {
                 request.GlobalReplace = globalReplace ? "Y" : "N";
                 this.bomChangeService.ReplaceAllBomDetails(request, replacedBy, null);
+
+                if (hasPcasLines && (request.OldPartNumber != request.NewPartNumber))
+                {
+                    this.pcasPack.ReplaceAll(
+                        request.OldPartNumber,
+                        request.DocumentNumber,
+                        request.ChangeState,
+                        replacedBy,
+                        request.NewPartNumber);
+                }
+
+                return request;
             }
-            else if (selectedDetailIds.Any())
+            
+            if (selectedDetailIds.Any())
             {
                 foreach (var detailId in selectedDetailIds)
                 {
