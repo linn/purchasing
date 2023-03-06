@@ -95,6 +95,10 @@ import PartDataSheetValues from './PartDataSheetValues';
 import BomVerificationHistorySearch from './BomVerificationHistoryUtility/BomVerificationHistorySearch';
 import BomDifferenceReport from './reports/BomDifferenceReport';
 import ChangeStatusReportOptions from './reports/ChangeStatusReportOptions';
+import ChangeStatusReport from './reports/ChangeStatusReport';
+import AcceptedChangesReport from './reports/AcceptedChangesReport';
+import ProposedChangesReport from './reports/ProposedChangesReport';
+import OutstandingChangesReport from './reports/OutstandingChangesReport';
 
 const Root = ({ store }) => (
     <div>
@@ -594,7 +598,7 @@ const Root = ({ store }) => (
                                 <Route
                                     exact
                                     path="/purchasing/reports/outstanding-changes/report"
-                                    component={TotalOutstandingChangesReport}
+                                    component={OutstandingChangesReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>
