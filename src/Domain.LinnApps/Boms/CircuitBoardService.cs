@@ -84,7 +84,10 @@
             }
 
             var board = this.GetCircuitBoard(boardCode);
-            this.GetChangeRequestAndMaybePopulatePcasChange(pcasChange, pcasChange.DocumentNumber);
+            if (makeChanges && pcasChange != null)
+            {
+                this.GetChangeRequestAndMaybePopulatePcasChange(pcasChange, pcasChange.DocumentNumber);
+            }
 
             var revision = board.Layouts.SelectMany(a => a.Revisions).First(a => a.RevisionCode == revisionCode);
             
