@@ -24,7 +24,7 @@
         public IResult<ReportReturnResource> GetChangeStatusReport(ChangeStatusReportRequestResource options)
         {
             var resource = this.reportReturnResourceBuilder.Build(
-                this.domainService.GetChangeStatusReport(options.Months));
+                this.domainService.GetChangeStatusReport(int.Parse(options.Months)));
 
             return new SuccessResult<ReportReturnResource>(resource);
         }
@@ -32,7 +32,7 @@
         public IResult<ReportReturnResource> GetAcceptedChangesReport(ChangeStatusReportRequestResource options)
         {
             var resource = this.reportReturnResourceBuilder.Build(
-                this.domainService.GetAcceptedChangesReport(options.Months));
+                this.domainService.GetAcceptedChangesReport(int.Parse(options.Months)));
 
             return new SuccessResult<ReportReturnResource>(resource);
         }
@@ -40,7 +40,7 @@
         public IResult<ReportReturnResource> GetProposedChangesReport(ChangeStatusReportRequestResource options)
         {
             var resource = this.reportReturnResourceBuilder.Build(
-                this.domainService.GetProposedChangesReport(options.Months));
+                this.domainService.GetProposedChangesReport(int.Parse(options.Months)));
 
             return new SuccessResult<ReportReturnResource>(resource);
         }
@@ -48,7 +48,7 @@
         public IResult<ReportReturnResource> GetTotalOutstandingChangesReport(ChangeStatusReportRequestResource options)
         {
             var resource = this.reportReturnResourceBuilder.Build(
-                this.domainService.GetTotalOutstandingChangesReport(options.Months));
+                this.domainService.GetTotalOutstandingChangesReport(int.Parse(options.Months)));
 
             return new SuccessResult<ReportReturnResource>(resource);
         }

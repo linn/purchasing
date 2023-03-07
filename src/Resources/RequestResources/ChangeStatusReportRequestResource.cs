@@ -2,6 +2,6 @@
 {
     public class ChangeStatusReportRequestResource
     {
-        public int Months { get; set; }
+        public string Months { get; set; }
     }
 }

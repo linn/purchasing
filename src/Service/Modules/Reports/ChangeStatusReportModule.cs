@@ -9,6 +9,7 @@ namespace Linn.Purchasing.Service.Modules.Reports
 
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Service.Models;
+    using Linn.Purchasing.Resources.RequestResources;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
@@ -33,7 +34,7 @@ namespace Linn.Purchasing.Service.Modules.Reports
         private async Task GetChangeStatusReport(
             HttpRequest req,
             HttpResponse res,
-            int months,
+            string months,
             IChangeStatusReportsFacadeService facadeService)
         {
             var options = new ChangeStatusReportRequestResource()
@@ -49,7 +50,7 @@ namespace Linn.Purchasing.Service.Modules.Reports
         private async Task GetAcceptedChangesReport(
             HttpRequest req,
             HttpResponse res,
-            int months,
+            string months,
             IChangeStatusReportsFacadeService facadeService)
         {
             var options = new ChangeStatusReportRequestResource()
@@ -65,7 +66,7 @@ namespace Linn.Purchasing.Service.Modules.Reports
         private async Task GetProposedChangesReport(
             HttpRequest req,
             HttpResponse res,
-            int months,
+            string months,
             IChangeStatusReportsFacadeService facadeService)
         {
             var options = new ChangeStatusReportRequestResource()
@@ -81,7 +82,7 @@ namespace Linn.Purchasing.Service.Modules.Reports
         private async Task GetTotalOutstandingChangesReport(
             HttpRequest req,
             HttpResponse res,
-            int months,
+            string months,
             IChangeStatusReportsFacadeService facadeService)
         {
             var options = new ChangeStatusReportRequestResource()
@@ -93,6 +94,5 @@ namespace Linn.Purchasing.Service.Modules.Reports
 
             await res.Negotiate(results);
         }
-
     }
 }
