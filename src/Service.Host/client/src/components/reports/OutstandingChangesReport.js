@@ -15,10 +15,10 @@ function OutstandingChangesReport() {
     const options = useMemo(() => queryString.parse(window.location.search) || {}, []);
 
     const loading = useSelector(state =>
-        reportSelectorHelpers.getReportLoading(state.OutstandingChangesReport)
+        reportSelectorHelpers.getReportLoading(state.outstandingChangesReport)
     );
     const reportData = useSelector(state =>
-        reportSelectorHelpers.getReportData(state.OutstandingChangesReport)
+        reportSelectorHelpers.getReportData(state.outstandingChangesReport)
     );
 
     const dispatch = useDispatch();

@@ -390,17 +390,21 @@ export const bomDifferenceReportActionTypes = makeReportActionTypes(
 );
 
 export const changeStatusReportActionTypes = makeReportActionTypes(
-    reportTypes.changeStatusReport.actionType
+    reportTypes.changeStatusReport.actionType,
+    false
 );
 
 export const acceptedChangesReportActionTypes = makeReportActionTypes(
-    reportTypes.acceptedChangesReport.actionType
+    reportTypes.acceptedChangesReport.actionType,
+    false
 );
 
 export const proposedChangesReportActionTypes = makeReportActionTypes(
-    reportTypes.proposedChangesReport.actionType
+    reportTypes.proposedChangesReport.actionType,
+    false
 );
 
 export const outstandingChangesReportActionTypes = makeReportActionTypes(
-    reportTypes.proposedChangesReport.actionType
+    reportTypes.outstandingChangesReport.actionType,
+    false
 );

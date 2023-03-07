@@ -142,7 +142,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
                     {
                         RowId = rowId,
                         ColumnId = "EnteredBy",
-                        TextDisplay = line.EnteredBy.FullName
+                        TextDisplay = line.EnteredBy?.FullName
                     });
                 values.Add(
                     new CalculationValueModel
@@ -220,7 +220,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
                     {
                         RowId = rowId,
                         ColumnId = "EnteredBy",
-                        TextDisplay = line.EnteredBy.FullName
+                        TextDisplay = line.EnteredBy?.FullName
                     });
                 values.Add(
                     new CalculationValueModel
@@ -298,7 +298,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
                     {
                         RowId = rowId,
                         ColumnId = "EnteredBy",
-                        TextDisplay = line.EnteredBy.FullName
+                        TextDisplay = line.EnteredBy?.FullName
                     });
                 values.Add(
                     new CalculationValueModel

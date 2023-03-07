@@ -15,10 +15,10 @@ function AcceptedChangesReport() {
     const options = useMemo(() => queryString.parse(window.location.search) || {}, []);
 
     const loading = useSelector(state =>
-        reportSelectorHelpers.getReportLoading(state.AcceptedChangesReport)
+        reportSelectorHelpers.getReportLoading(state.acceptedChangesReport)
     );
     const reportData = useSelector(state =>
-        reportSelectorHelpers.getReportData(state.AcceptedChangesReport)
+        reportSelectorHelpers.getReportData(state.acceptedChangesReport)
     );
 
     const dispatch = useDispatch();
