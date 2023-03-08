@@ -42,7 +42,6 @@
 
             dailyTrigger.OnTimeTriggered += () =>
                 {
-                    var del = deliveryRepository.FindAll();
                     var deliveries = deliveryRepository.FindAll().Where(
                         x => x.PurchaseOrderDetail.PurchaseOrder.Supplier.ReceivesOrderReminders == "Y" 
                             && x.DateAdvised.HasValue && x.QuantityOutstanding.GetValueOrDefault() > 0
