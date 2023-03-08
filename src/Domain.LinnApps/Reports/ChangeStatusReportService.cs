@@ -34,14 +34,13 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
             this.reportingHelper = reportingHelper;
         }
 
-        public ResultsModel GetChangeStatusReport(
-            int months)
+        public ResultsModel GetChangeStatusReport(int months)
         {
             var acceptedChangeRequests = this.changeRequests.FilterBy(x =>
                 x.DateAccepted >= DateTime.Today.AddMonths(-months) && x.ChangeState == "ACCEPT").Count();
 
             var proposedChangeRequests = this.changeRequests.FilterBy(x =>
-                x.DateAccepted >= DateTime.Today.AddMonths(-months) && x.ChangeState == "PROPOS").Count();
+                x.DateEntered >= DateTime.Today.AddMonths(-months) && x.ChangeState == "PROPOS").Count();
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
 
