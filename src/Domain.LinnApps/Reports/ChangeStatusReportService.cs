@@ -314,7 +314,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
         public ResultsModel GetTotalOutstandingChangesReport(int months)
         {
             var lines = this.changeRequests.FilterBy(x =>
-                x.DateAccepted >= DateTime.Today.AddMonths(-months) && (x.ChangeState == "PROPOS" || x.ChangeState == "ACCEPT"));
+                x.DateEntered >= DateTime.Today.AddMonths(-months) && (x.ChangeState == "PROPOS" || x.ChangeState == "ACCEPT"));
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
 
