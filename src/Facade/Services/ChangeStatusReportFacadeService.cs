@@ -21,34 +21,34 @@
             this.reportReturnResourceBuilder = reportReturnResourceBuilder;
         }
 
-        public IResult<ReportReturnResource> GetChangeStatusReport(ChangeStatusReportRequestResource options)
+        public IResult<ReportReturnResource> GetChangeStatusReport(int months)
         {
             var resource = this.reportReturnResourceBuilder.Build(
-                this.domainService.GetChangeStatusReport(int.Parse(options.Months)));
+                this.domainService.GetChangeStatusReport(months));
 
             return new SuccessResult<ReportReturnResource>(resource);
         }
 
-        public IResult<ReportReturnResource> GetAcceptedChangesReport(ChangeStatusReportRequestResource options)
+        public IResult<ReportReturnResource> GetAcceptedChangesReport(int months)
         {
             var resource = this.reportReturnResourceBuilder.Build(
-                this.domainService.GetAcceptedChangesReport(int.Parse(options.Months)));
+                this.domainService.GetAcceptedChangesReport(months));
 
             return new SuccessResult<ReportReturnResource>(resource);
         }
 
-        public IResult<ReportReturnResource> GetProposedChangesReport(ChangeStatusReportRequestResource options)
+        public IResult<ReportReturnResource> GetProposedChangesReport(int months)
         {
             var resource = this.reportReturnResourceBuilder.Build(
-                this.domainService.GetProposedChangesReport(int.Parse(options.Months)));
+                this.domainService.GetProposedChangesReport(months));
 
             return new SuccessResult<ReportReturnResource>(resource);
         }
 
-        public IResult<ReportReturnResource> GetTotalOutstandingChangesReport(ChangeStatusReportRequestResource options)
+        public IResult<ReportReturnResource> GetTotalOutstandingChangesReport(int months)
         {
             var resource = this.reportReturnResourceBuilder.Build(
-                this.domainService.GetTotalOutstandingChangesReport(int.Parse(options.Months)));
+                this.domainService.GetTotalOutstandingChangesReport(months));
 
             return new SuccessResult<ReportReturnResource>(resource);
         }

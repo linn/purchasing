@@ -34,15 +34,10 @@ namespace Linn.Purchasing.Service.Modules.Reports
         private async Task GetChangeStatusReport(
             HttpRequest req,
             HttpResponse res,
-            string months,
+            int months,
             IChangeStatusReportsFacadeService facadeService)
         {
-            var options = new ChangeStatusReportRequestResource()
-            {
-                Months = months
-            };
-
-            var results = facadeService.GetChangeStatusReport(options);
+            var results = facadeService.GetChangeStatusReport(months);
 
             await res.Negotiate(results);
         }
@@ -50,15 +45,10 @@ namespace Linn.Purchasing.Service.Modules.Reports
         private async Task GetAcceptedChangesReport(
             HttpRequest req,
             HttpResponse res,
-            string months,
+            int months,
             IChangeStatusReportsFacadeService facadeService)
         {
-            var options = new ChangeStatusReportRequestResource()
-            {
-                Months = months
-            };
-
-            var results = facadeService.GetAcceptedChangesReport(options);
+            var results = facadeService.GetAcceptedChangesReport(months);
 
             await res.Negotiate(results);
         }
@@ -66,15 +56,10 @@ namespace Linn.Purchasing.Service.Modules.Reports
         private async Task GetProposedChangesReport(
             HttpRequest req,
             HttpResponse res,
-            string months,
+            int months,
             IChangeStatusReportsFacadeService facadeService)
         {
-            var options = new ChangeStatusReportRequestResource()
-            {
-                Months = months
-            };
-
-            var results = facadeService.GetProposedChangesReport(options);
+            var results = facadeService.GetProposedChangesReport(months);
 
             await res.Negotiate(results);
         }
@@ -82,15 +67,10 @@ namespace Linn.Purchasing.Service.Modules.Reports
         private async Task GetTotalOutstandingChangesReport(
             HttpRequest req,
             HttpResponse res,
-            string months,
+            int months,
             IChangeStatusReportsFacadeService facadeService)
         {
-            var options = new ChangeStatusReportRequestResource()
-            {
-                Months = months
-            };
-
-            var results = facadeService.GetTotalOutstandingChangesReport(options);
+            var results = facadeService.GetTotalOutstandingChangesReport(months);
 
             await res.Negotiate(results);
         }

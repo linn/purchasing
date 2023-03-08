@@ -6,13 +6,13 @@
 
     public interface IChangeStatusReportsFacadeService
     {
-        IResult<ReportReturnResource> GetChangeStatusReport(ChangeStatusReportRequestResource resource);
+        IResult<ReportReturnResource> GetChangeStatusReport(int months);
 
-        IResult<ReportReturnResource> GetAcceptedChangesReport(ChangeStatusReportRequestResource resource);
+        IResult<ReportReturnResource> GetAcceptedChangesReport(int months);
 
-        IResult<ReportReturnResource> GetProposedChangesReport(ChangeStatusReportRequestResource resource);
+        IResult<ReportReturnResource> GetProposedChangesReport(int months);
 
-        IResult<ReportReturnResource> GetTotalOutstandingChangesReport(ChangeStatusReportRequestResource resource);
+        IResult<ReportReturnResource> GetTotalOutstandingChangesReport(int months);
 
     }
 }
