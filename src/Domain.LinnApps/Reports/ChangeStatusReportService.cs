@@ -95,21 +95,21 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
 
             reportLayout.AddValueDrillDownDetails(
                 "AcceptedChanges", 
-                $"purchasing/reports/accepted-changes/report?months={{months}}", 
+                $"/purchasing/reports/accepted-changes/report?months={months}", 
                 0, 
                 1, 
                 false);
 
             reportLayout.AddValueDrillDownDetails(
-                "ProposedChanges", 
-                $"purchasing/reports/proposed-changes/report?months={{months}}", 
+                "ProposedChanges",
+                $"/reports/proposed-changes/report?months={months}",
                 1, 
                 1, 
                 false);
 
             reportLayout.AddValueDrillDownDetails(
                 "OutstandingChanges", 
-                $"purchasing/reports/outstanding-changes/report?months={{months}}",
+                $"/purchasing/reports/outstanding-changes/report?months={months}",
                 2, 
                 1, 
                 false);
