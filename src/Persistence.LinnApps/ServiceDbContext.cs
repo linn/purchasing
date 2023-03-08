@@ -597,6 +597,7 @@
             entity.HasMany(s => s.SupplierContacts).WithOne().HasForeignKey(c => c.SupplierId);
             entity.Property(s => s.Country).HasColumnName("COUNTRY");
             entity.HasOne(s => s.Group).WithMany().HasForeignKey("SUPPLIER_GROUP");
+            entity.Property(s => s.ReceivesOrderReminders).HasColumnName("RECEIVES_EMAIL_REMINDERS").HasMaxLength(1);
         }
 
         private void BuildOrganisations(ModelBuilder builder)
