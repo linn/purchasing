@@ -1,4 +1,5 @@
 ﻿using Linn.Purchasing.Domain.LinnApps.Boms;
+using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
 
 namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeStatusReportServiceTests
 {
@@ -22,6 +23,10 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeStatusReportServiceTests
 
         protected IQueryRepository<ChangeRequest> ChangeRequestRepository { get; private set; }
 
+        protected IQueryRepository<MrHeader> MrHeaderRepository { get; private set; }
+
+        protected IRepository<Employee, int> EmployeeRepository { get; set; }
+
         protected IEnumerable<ChangeRequest> Data { get; private set; }
 
         [SetUp]
@@ -36,42 +41,43 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeStatusReportServiceTests
                                     DocumentNumber = 1,
                                     ChangeState = "ACCEPT",
                                     DateEntered = new DateTime(2023, 3, 4, 6, 0, 0),
-                                    EnteredBy = new Employee()
                                 },
                                 new ChangeRequest
                                 {
                                     DocumentNumber = 2,
                                     ChangeState = "PROPOS",
                                     DateEntered = new DateTime(2023, 3, 4, 6, 0, 0),
-                                    EnteredBy = new Employee()
                                 },
                                 new ChangeRequest
                                 {
                                     DocumentNumber = 3,
                                     ChangeState = "ACCEPT",
                                     DateEntered = new DateTime(2023, 3, 4, 6, 0, 0),
-                                    EnteredBy = new Employee()
                                 },
                                 new ChangeRequest
                                 {
                                     DocumentNumber = 4,
                                     ChangeState = "PROPOS",
                                     DateEntered = new DateTime(2023, 3, 4, 6, 0, 0),
-                                    EnteredBy = new Employee()
                                 },
                                 new ChangeRequest
                                 {
                                     DocumentNumber = 5,
                                     ChangeState = "ACCEPT",
                                     DateEntered = new DateTime(2023, 3, 4, 6, 0, 0),
-                                    EnteredBy = new Employee()
                                 }
                             };
             this.ChangeRequestRepository = Substitute.For<IQueryRepository<ChangeRequest>>();
+            this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
+            this.MrHeaderRepository = Substitute.For<IQueryRepository<MrHeader>>();
+
             this.ChangeRequestRepository.FilterBy(Arg.Any<Expression<Func<ChangeRequest, bool>>>())
                 .Returns(this.Data.AsQueryable());
 
-            this.Sut = new ChangeStatusReportService(this.ChangeRequestRepository, new ReportingHelper());
+            this.Sut = new ChangeStatusReportService(this.ChangeRequestRepository, 
+                                                     this.EmployeeRepository, 
+                                                     this.MrHeaderRepository, 
+                                                     new ReportingHelper());
         }
     }
 }

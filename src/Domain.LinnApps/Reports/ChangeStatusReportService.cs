@@ -9,6 +9,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
 
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Models;
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
 
     public class ChangeStatusReportService : IChangeStatusReportService
     {
@@ -16,12 +17,20 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
 
         private readonly IQueryRepository<ChangeRequest> changeRequests;
 
+        private readonly IRepository<Employee, int> employeeRepository;
+
+        private readonly IQueryRepository<MrHeader> partMRQueryRepository;
+
         public ChangeStatusReportService(
             IQueryRepository<ChangeRequest> changeRequests,
+            IRepository<Employee, int> employeeRepository,
+            IQueryRepository<MrHeader> queryRepository,
             IReportingHelper reportingHelper
             )
         {
             this.changeRequests = changeRequests;
+            this.employeeRepository = employeeRepository;
+            this.partMRQueryRepository = partMRQueryRepository;
             this.reportingHelper = reportingHelper;
         }
 
@@ -83,12 +92,31 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
                     TextDisplay = "TOTAL OUTSTANDING CHANGES",
                 }
             };
-            reportLayout.AddRowDrillDownDetails("1", "purchasing/reports/accepted-changes/report?months={{months}}");
-            reportLayout.AddRowDrillDownDetails("2", "purchasing/reports/proposed-changes/report?months={{months}}");
-            reportLayout.AddRowDrillDownDetails("3", "purchasing/reports/outstanding-changes/report?months={{months}}");
+
+            reportLayout.AddValueDrillDownDetails(
+                "AcceptedChanges", 
+                $"purchasing/reports/accepted-changes/report?months={{months}}", 
+                0, 
+                1, 
+                false);
+
+            reportLayout.AddValueDrillDownDetails(
+                "ProposedChanges", 
+                $"purchasing/reports/proposed-changes/report?months={{months}}", 
+                1, 
+                1, 
+                false);
+
+            reportLayout.AddValueDrillDownDetails(
+                "OutstandingChanges", 
+                $"purchasing/reports/outstanding-changes/report?months={{months}}",
+                2, 
+                1, 
+                false);
 
             reportLayout.ReportTitle = "Change Status Report";
             reportLayout.SetGridData(values);
+
             return reportLayout.GetResultsModel();
         }
 
@@ -105,23 +133,26 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
                     {
                         new("CRFNo", "CRF No.",  GridDisplayType.TextValue),
                         new("State", "State", GridDisplayType.TextValue),
-                        new("DateEntered", "Date Entered",  GridDisplayType.TextValue),
                         new("EnteredBy", "Entered By",  GridDisplayType.TextValue),
-                        new("Scope", "Scope", GridDisplayType.TextValue),
-                        new("ReasonForChange", "ReasonForChange", GridDisplayType.TextValue)
+                        new("OldPart", "Old Part Number", GridDisplayType.TextValue),
+                        new("NewPart", "New Part Number", GridDisplayType.TextValue),
+                        new("OldPartStock", "Stock of Old Part", GridDisplayType.Value) ,
+                        new("ReasonForChange", "Reason For Change", GridDisplayType.TextValue)
                     });
 
             var values = new List<CalculationValueModel>();
 
             foreach (var line in lines)
             {
+                var employee = this.employeeRepository.FindById(line.EnteredById);
                 var rowId = line.DocumentNumber.ToString();
+
                 values.Add(
                     new CalculationValueModel
                     {
                         RowId = rowId,
                         ColumnId = "CRFNo",
-                        Value = line.DocumentNumber
+                        TextDisplay = line.DocumentNumber.ToString()
                     });
                 values.Add(
                     new CalculationValueModel
@@ -134,22 +165,36 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
                     new CalculationValueModel
                     {
                         RowId = rowId,
-                        ColumnId = "DateEntered",
-                        TextDisplay = line.DateEntered.ToShortDateString()
-                    });
-                values.Add(
-                    new CalculationValueModel
-                    {
-                        RowId = rowId,
                         ColumnId = "EnteredBy",
-                        TextDisplay = line.EnteredBy?.FullName
+                        TextDisplay = employee?.FullName
                     });
                 values.Add(
                     new CalculationValueModel
                     {
                         RowId = rowId,
-                        ColumnId = "Scope",
-                        TextDisplay = line.ChangeRequestType
+                        ColumnId = "OldPart",
+                        TextDisplay = line.OldPartNumber
+                    });
+                values.Add(
+                    new CalculationValueModel
+                    {
+                        RowId = rowId,
+                        ColumnId = "NewPart",
+                        TextDisplay = line.NewPartNumber
+                    });
+                values.Add(
+                    new CalculationValueModel
+                    {
+                        RowId = rowId,
+                        ColumnId = "OldPartStock",
+                        Value = 0
+                    });
+                values.Add(
+                    new CalculationValueModel
+                    {
+                        RowId = rowId,
+                        ColumnId = "NewPart",
+                        TextDisplay = line.NewPartNumber
                     });
                 values.Add(
                     new CalculationValueModel
@@ -167,6 +212,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
                 false);
             reportLayout.ReportTitle = "Change Status : Accepted Changes";
             reportLayout.SetGridData(values);
+
             return reportLayout.GetResultsModel();
         }
 
@@ -183,23 +229,26 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
                     {
                         new("CRFNo", "CRF No.",  GridDisplayType.TextValue),
                         new("State", "State", GridDisplayType.TextValue),
-                        new("DateEntered", "Date Entered",  GridDisplayType.TextValue),
                         new("EnteredBy", "Entered By",  GridDisplayType.TextValue),
-                        new("Scope", "Scope", GridDisplayType.TextValue),
-                        new("ReasonForChange", "ReasonForChange", GridDisplayType.TextValue)
+                        new("OldPart", "Old Part Number", GridDisplayType.TextValue),
+                        new("NewPart", "New Part Number", GridDisplayType.TextValue),
+                        new("OldPartStock", "Stock of Old Part", GridDisplayType.Value) ,
+                        new("ReasonForChange", "Reason For Change", GridDisplayType.TextValue)
                     });
 
             var values = new List<CalculationValueModel>();
 
             foreach (var line in lines)
             {
+                var employee = this.employeeRepository.FindById(line.EnteredById);
                 var rowId = line.DocumentNumber.ToString();
+
                 values.Add(
                     new CalculationValueModel
                     {
                         RowId = rowId,
                         ColumnId = "CRFNo",
-                        Value = line.DocumentNumber
+                        TextDisplay = line.DocumentNumber.ToString()
                     });
                 values.Add(
                     new CalculationValueModel
@@ -212,22 +261,36 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
                     new CalculationValueModel
                     {
                         RowId = rowId,
-                        ColumnId = "DateEntered",
-                        TextDisplay = line.DateEntered.ToShortDateString()
-                    });
-                values.Add(
-                    new CalculationValueModel
-                    {
-                        RowId = rowId,
                         ColumnId = "EnteredBy",
-                        TextDisplay = line.EnteredBy?.FullName
+                        TextDisplay = employee?.FullName
                     });
                 values.Add(
                     new CalculationValueModel
                     {
                         RowId = rowId,
-                        ColumnId = "Scope",
-                        TextDisplay = line.ChangeRequestType
+                        ColumnId = "OldPart",
+                        TextDisplay = line.OldPartNumber
+                    });
+                values.Add(
+                    new CalculationValueModel
+                    {
+                        RowId = rowId,
+                        ColumnId = "NewPart",
+                        TextDisplay = line.NewPartNumber
+                    });
+                values.Add(
+                    new CalculationValueModel
+                    {
+                        RowId = rowId,
+                        ColumnId = "OldPartStock",
+                        Value = 0
+                    });
+                values.Add(
+                    new CalculationValueModel
+                    {
+                        RowId = rowId,
+                        ColumnId = "NewPart",
+                        TextDisplay = line.NewPartNumber
                     });
                 values.Add(
                     new CalculationValueModel
@@ -245,6 +308,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
                 false);
             reportLayout.ReportTitle = "Change Status : Proposed Changes";
             reportLayout.SetGridData(values);
+
             return reportLayout.GetResultsModel();
         }
 
@@ -261,23 +325,26 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
                     {
                         new("CRFNo", "CRF No.",  GridDisplayType.TextValue),
                         new("State", "State", GridDisplayType.TextValue),
-                        new("DateEntered", "Date Entered",  GridDisplayType.TextValue),
                         new("EnteredBy", "Entered By",  GridDisplayType.TextValue),
-                        new("Scope", "Scope", GridDisplayType.TextValue),
-                        new("ReasonForChange", "ReasonForChange", GridDisplayType.TextValue)
+                        new("OldPart", "Old Part Number", GridDisplayType.TextValue),
+                        new("NewPart", "New Part Number", GridDisplayType.TextValue),
+                        new("OldPartStock", "Stock of Old Part", GridDisplayType.Value) ,
+                        new("ReasonForChange", "Reason For Change", GridDisplayType.TextValue)
                     });
 
             var values = new List<CalculationValueModel>();
 
             foreach (var line in lines)
             {
+                var employee = this.employeeRepository.FindById(line.EnteredById);
                 var rowId = line.DocumentNumber.ToString();
+
                 values.Add(
                     new CalculationValueModel
                     {
                         RowId = rowId,
                         ColumnId = "CRFNo",
-                        Value = line.DocumentNumber
+                        TextDisplay = line.DocumentNumber.ToString()
                     });
                 values.Add(
                     new CalculationValueModel
@@ -290,22 +357,36 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
                     new CalculationValueModel
                     {
                         RowId = rowId,
-                        ColumnId = "DateEntered",
-                        TextDisplay = line.DateEntered.ToShortDateString()
-                    });
-                values.Add(
-                    new CalculationValueModel
-                    {
-                        RowId = rowId,
                         ColumnId = "EnteredBy",
-                        TextDisplay = line.EnteredBy?.FullName
+                        TextDisplay = employee?.FullName
                     });
                 values.Add(
                     new CalculationValueModel
                     {
                         RowId = rowId,
-                        ColumnId = "Scope",
-                        TextDisplay = line.ChangeRequestType
+                        ColumnId = "OldPart",
+                        TextDisplay = line.OldPartNumber
+                    });
+                values.Add(
+                    new CalculationValueModel
+                    {
+                        RowId = rowId,
+                        ColumnId = "NewPart",
+                        TextDisplay = line.NewPartNumber
+                    });
+                values.Add(
+                    new CalculationValueModel
+                    {
+                        RowId = rowId,
+                        ColumnId = "OldPartStock",
+                        Value = 0
+                    });
+                values.Add(
+                    new CalculationValueModel
+                    {
+                        RowId = rowId,
+                        ColumnId = "NewPart",
+                        TextDisplay = line.NewPartNumber
                     });
                 values.Add(
                     new CalculationValueModel
@@ -323,6 +404,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
                 false);
             reportLayout.ReportTitle = "Change Status : Total Outstanding Changes";
             reportLayout.SetGridData(values);
+
             return reportLayout.GetResultsModel();
         }
     }
