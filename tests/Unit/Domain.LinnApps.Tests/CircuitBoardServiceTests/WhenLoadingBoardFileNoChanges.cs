@@ -12,7 +12,7 @@
 
     using NUnit.Framework;
 
-    public class WhenLoadingBoardFile : ContextBase
+    public class WhenLoadingBoardFileNoChanges : ContextBase
     {
         private ProcessResult result;
 
@@ -24,9 +24,11 @@
         public void SetUp()
         {
             this.revision = "L1R1";
+            this.Board.Layouts.First().Revisions.First().PcbPartNumber = "PCB 1012";
             this.file = @"Designator	Part No	Part Description	Footprint	Tolerance	Negative Tolerance	Positive Tolerance	Technology	Value	Voltage	DIELECTRIC	Qty
 
-""BR100""	""MISS266""	""D15XB60H 15A 600V BRIDGE DIODE SINGLE IN LINE PACKAGE""	""D15XBXXHV""	""""	""""	""""	""TH""	""""	""""	""""	""""";
+""C002""	""CAP123""	""D15XB60H 15A 600V BRIDGE DIODE SINGLE IN LINE PACKAGE""	""D15XBXXHV""	""""	""""	""""	""TH""	""""	""""	""""	""""
+""PCB1""	""PCB1012""	""Klimax 800W Mono Amp""	""""	""""	""""	""""	""""	""""	""""	""""";
 
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>()).Returns(new Part());
             
@@ -42,19 +44,14 @@
         [Test]
         public void ShouldUpdateBoard()
         {
-            this.Board.Components.Should().HaveCount(2);
-            var added = this.Board.Components.First(a => a.BoardLine == 2);
-            added.PartNumber.Should().Be("MISS 266");
-            added.Quantity.Should().Be(1);
+            this.Board.Components.Should().HaveCount(1);
         }
 
         [Test]
         public void ShouldMakeSuggestedChangesMessage()
         {
             this.result.Message.Should().Contain("THE FOLLOWING CHANGES HAVE BEEN MADE FOR BOARD 123 revision L1R1");
-            this.result.Message.Should().Contain("Pcb part number on revision is  but found  in the file.");
-            this.result.Message.Should().Contain("Adding MISS 266 at BR100.");
-            this.result.Message.Should().Contain("Removing CAP 123 from C002.");
+            this.result.Message.Should().Contain("No changes found in selected file.");
         }
 
         [Test]
