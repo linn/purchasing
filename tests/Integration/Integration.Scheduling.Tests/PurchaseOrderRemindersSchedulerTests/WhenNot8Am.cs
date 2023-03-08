@@ -29,7 +29,6 @@
         [Test]
         public void ShouldNotDispatchMessage()
         {
-            // since this delivery has qty outstanding and advised to arrive in two days
             this.Dispatcher.DidNotReceive().Dispatch(Arg.Any<EmailPurchaseOrderReminderMessageResource>());
         }
     }
