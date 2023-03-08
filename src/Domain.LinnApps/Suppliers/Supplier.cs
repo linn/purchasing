@@ -85,5 +85,7 @@
         public string Country { get; set; }
 
         public SupplierGroup Group { get; set; }
+
+        public string ReceivesOrderReminders { get; set; }
     }
 }
