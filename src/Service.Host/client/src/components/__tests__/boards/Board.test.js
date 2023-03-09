@@ -52,7 +52,8 @@ const boardItem = {
     boardsPerSheet: null,
     coreBoard: 'N',
     clusterBoard: 'N',
-    idBoard: 'N'
+    idBoard: 'N',
+    links: [{ rel: 'edit', href: '/' }]
 };
 
 const stateWithBoard = {

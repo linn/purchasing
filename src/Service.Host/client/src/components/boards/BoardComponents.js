@@ -27,6 +27,8 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+import EditOffIcon from '@mui/icons-material/EditOff';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -88,6 +90,8 @@ function BoardComponents() {
     const componentError = useSelector(reduxState =>
         getItemError(reduxState, boardComponents.item)
     );
+
+    const editingAllowed = utilities.getHref(item, 'edit-components');
 
     useEffect(() => {
         if (id && item?.boardCode !== id && !board) {
@@ -605,6 +609,7 @@ function BoardComponents() {
                             allowNoValue
                             loading={changeRequestsLoading}
                             label="CRF"
+                            disabled={!editingAllowed}
                             propertyName="crNumber"
                             helperText="Select a corresponding CRF to start editing"
                             value={crfNumber}
@@ -630,7 +635,7 @@ function BoardComponents() {
                                 setLoadDialogOpen({ open: true, makeChanges: true });
                             }}
                             size="small"
-                            disabled={!crfNumber}
+                            disabled={!crfNumber || !editingAllowed}
                             style={{ marginBottom: '25px' }}
                         >
                             Load File
@@ -664,6 +669,15 @@ function BoardComponents() {
                         >
                             Board Details
                         </Link>
+                        {editingAllowed ? (
+                            <Tooltip title="You can amend components">
+                                <ModeEditIcon color="primary" />
+                            </Tooltip>
+                        ) : (
+                            <Tooltip title="You do not have access to amend components">
+                                <EditOffIcon color="secondary" />
+                            </Tooltip>
+                        )}
                     </Stack>
                 </Grid>
                 {state.board?.discrepancies && (

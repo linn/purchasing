@@ -13,7 +13,8 @@ function LayoutTab({
     okToSave,
     searchParts,
     partsSearchResults,
-    partsSearchLoading
+    partsSearchLoading,
+    editingAllowed
 }) {
     const columns = [{ field: 'layoutCode', headerName: 'Layout', width: 175 }];
     const rows = layouts ? layouts.map(l => ({ ...l, id: l.layoutCode })) : [];
@@ -23,8 +24,10 @@ function LayoutTab({
             ? layouts.find(a => a.layoutCode === selectedLayout[0])
             : null;
     const handleLayoutChange = (propertyName, newValue) => {
-        setEditStatus('edit');
-        dispatch({ type: 'updateLayout', fieldName: propertyName, payload: newValue });
+        if (editingAllowed) {
+            setEditStatus('edit');
+            dispatch({ type: 'updateLayout', fieldName: propertyName, payload: newValue });
+        }
     };
 
     return (
@@ -116,7 +119,7 @@ function LayoutTab({
                     )}
                     <Grid item xs={2}>
                         <Button
-                            disabled={!okToSave()}
+                            disabled={!okToSave() || !editingAllowed}
                             onClick={() => {
                                 setEditStatus('edit');
                                 dispatch({ type: 'newLayout', payload: null });
@@ -140,13 +143,15 @@ LayoutTab.propTypes = {
     okToSave: PropTypes.func.isRequired,
     partsSearchResults: PropTypes.arrayOf(PropTypes.shape({})),
     partsSearchLoading: PropTypes.bool,
+    editingAllowed: PropTypes.string,
     searchParts: PropTypes.func.isRequired
 };
 
 LayoutTab.defaultProps = {
     selectedLayout: [],
     partsSearchResults: [],
-    partsSearchLoading: false
+    partsSearchLoading: false,
+    editingAllowed: null
 };
 
 export default LayoutTab;
