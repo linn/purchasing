@@ -84,7 +84,10 @@
             }
 
             var board = this.GetCircuitBoard(boardCode);
-            this.GetChangeRequestAndMaybePopulatePcasChange(pcasChange, pcasChange.DocumentNumber);
+            if (makeChanges && pcasChange != null)
+            {
+                this.GetChangeRequestAndMaybePopulatePcasChange(pcasChange, pcasChange.DocumentNumber);
+            }
 
             var revision = board.Layouts.SelectMany(a => a.Revisions).First(a => a.RevisionCode == revisionCode);
             
@@ -92,12 +95,14 @@
             var (fileContents, pcbPartNumber) = strategy.ReadFile(fileString);
 
             var message = makeChanges
-                              ? $"CHANGES HAVE BEEN MADE FOR BOARD {boardCode} revision {revisionCode} \n\n"
+                              ? $"THE FOLLOWING CHANGES HAVE BEEN MADE FOR BOARD {boardCode} revision {revisionCode} \n\n"
                               : $"Changes proposed (not made) for board {boardCode} revision {revisionCode} \n\n";
+            var changeCounter = 0;
 
             if (revision.PcbPartNumber != pcbPartNumber)
             {
                 message += $"Pcb part number on revision is {revision.PcbPartNumber} but found {pcbPartNumber} in the file. \n";
+                changeCounter++;
                 if (makeChanges)
                 {
                     revision.PcbPartNumber = pcbPartNumber;
@@ -123,6 +128,7 @@
                 if (existing == null)
                 {
                     message += $"Adding {fileComponent.PartNumber} at {fileComponent.CRef}. \n";
+                    changeCounter++;
                     if (makeChanges && part!= null && !string.IsNullOrWhiteSpace(fileComponent.CRef))
                     {
                         this.AddComponent(board, revision, fileComponent, part, pcasChange);
@@ -131,9 +137,10 @@
                 else if (fileComponent.PartNumber != existing.PartNumber)
                 {
                     message += $"Replacing {existing.PartNumber} with {fileComponent.PartNumber} at {existing.CRef}. \n";
+                    changeCounter++;
                     if (makeChanges && part != null && !string.IsNullOrWhiteSpace(fileComponent.CRef))
                     {
-                        this.RemoveComponent(board, revision, fileComponent, pcasChange);
+                        this.RemoveComponent(board, revision, existing, pcasChange);
                         this.AddComponent(board, revision, fileComponent, part, pcasChange);
                     }
                 }
@@ -143,11 +150,17 @@
             foreach (var cRef in missingComponents)
             {
                 var componentToRemove = componentsOnRevision.First(a => a.CRef == cRef);
+                changeCounter++;
                 message += $"Removing {componentToRemove.PartNumber} from {cRef}. \n";
                 if (makeChanges)
                 {
                     this.RemoveComponent(board, revision, componentToRemove, pcasChange);
                 }
+            }
+
+            if (changeCounter == 0)
+            {
+                message += "No changes found in selected file. \n";
             }
 
             return new ProcessResult(true, message);
@@ -232,7 +245,7 @@
             BoardComponent boardComponent,
             PcasChange pcasChange)
         {
-            var component = board.Components.First(a => a.BoardLine == boardComponent.BoardLine);
+            var component = board.Components.FirstOrDefault(a => a.BoardLine == boardComponent.BoardLine);
             if (component == null)
             {
                 throw new ItemNotFoundException(
