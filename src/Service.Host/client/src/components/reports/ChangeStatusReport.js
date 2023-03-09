@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
     Loading,
     BackButton,
@@ -7,12 +7,12 @@ import {
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import queryString from 'query-string';
 import history from '../../history';
 import changeStatusReportActions from '../../actions/changeStatusReportActions';
 
 function ChangeStatusReport() {
-    const { months } = useParams();
+    const months = useMemo(() => queryString.parse(window.location.search) || {}, []);
     const loading = useSelector(state =>
         reportSelectorHelpers.getReportLoading(state.changeStatusReport)
     );

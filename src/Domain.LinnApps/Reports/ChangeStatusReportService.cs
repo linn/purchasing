@@ -217,7 +217,7 @@
         public ResultsModel GetProposedChangesReport(int months)
         {
             var lines = this.changeRequests.FilterBy(x =>
-                x.DateAccepted >= DateTime.Today.AddMonths(-months) && x.ChangeState == "PROPOS");
+                x.DateEntered >= DateTime.Today.AddMonths(-months) && x.ChangeState == "PROPOS");
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
 

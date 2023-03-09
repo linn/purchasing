@@ -6,11 +6,8 @@ import history from '../../history';
 import config from '../../config';
 
 function ChangeStatusReportOptions() {
-    const [months, setMonths] = useState({
-        months: 3
-    });
-
-    const handleOptionChange = (propertyName, newValue) => {
+    const [months, setMonths] = useState(3);
+    const handleMonthsChange = (propertyName, newValue) => {
         setMonths(o => ({ ...o, [propertyName]: newValue }));
     };
 
@@ -32,7 +29,7 @@ function ChangeStatusReportOptions() {
                             type="number"
                             fullWidth
                             value={months}
-                            onChange={handleOptionChange}
+                            onChange={handleMonthsChange}
                         />
                     </Grid>
                     <Grid item xs={12}>
