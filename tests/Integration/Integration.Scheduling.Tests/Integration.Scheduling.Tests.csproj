@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
@@ -19,6 +19,9 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\src\Scheduling.Host\Scheduling.Host.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="PurchaseOrderRemindersSchedulerTests\" />
 	</ItemGroup>
 
 </Project>

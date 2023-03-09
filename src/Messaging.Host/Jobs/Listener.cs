@@ -28,7 +28,7 @@
         public Listener(
             Handler<EmailMrOrderBookMessage> emailOrderBookMessageHandler,
             Handler<EmailMonthlyForecastReportMessage> emailMonthlyForecastReportMessageHandler,
-
+            Handler<EmailPurchaseOrderReminderMessage> emailPurchaseOrderReminderMessageHandler,
             EventingBasicConsumer consumer,
             ChannelConfiguration channelConfiguration,
             ILog logger)
@@ -48,6 +48,8 @@
                         new EmailMrOrderBookMessage(ea)),
                     EmailMonthlyForecastReportMessage.RoutingKey => emailMonthlyForecastReportMessageHandler.Handle(
                         new EmailMonthlyForecastReportMessage(ea)),
+                    EmailPurchaseOrderReminderMessage.RoutingKey => emailPurchaseOrderReminderMessageHandler.Handle(
+                        new EmailPurchaseOrderReminderMessage(ea)),
                     _ => false
                 };
 
