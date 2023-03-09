@@ -1,7 +1,4 @@
-﻿using Linn.Purchasing.Domain.LinnApps.Boms;
-using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
-
-namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeStatusReportServiceTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeStatusReportServiceTests
 {
     using System;
     using System.Collections.Generic;
@@ -10,8 +7,9 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeStatusReportServiceTests
 
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Models;
+    using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Reports;
-    using Linn.Purchasing.Domain.LinnApps.Reports.Models;
 
     using NSubstitute;
 

@@ -1,7 +1,4 @@
-﻿using Linn.Common.Reporting.Layouts;
-using Linn.Purchasing.Domain.LinnApps.Boms;
-
-namespace Linn.Purchasing.Domain.LinnApps.Reports
+﻿namespace Linn.Purchasing.Domain.LinnApps.Reports
 {
     using System;
     using System.Collections.Generic;
@@ -9,7 +6,9 @@ namespace Linn.Purchasing.Domain.LinnApps.Reports
 
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Models;
+    using Linn.Common.Reporting.Layouts;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
+    using Linn.Purchasing.Domain.LinnApps.Boms;
 
     public class ChangeStatusReportService : IChangeStatusReportService
     {

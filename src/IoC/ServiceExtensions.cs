@@ -221,7 +221,6 @@
                 .AddTransient<IBomHistoryReportService, BomHistoryReportService>()
                 .AddTransient<IChangeStatusReportService, ChangeStatusReportService>()
 
-
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
                 .AddTransient<IAutocostPack, AutocostPack>()

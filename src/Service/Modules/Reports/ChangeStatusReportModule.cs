@@ -1,6 +1,4 @@
-﻿using Linn.Purchasing.Resources.RequestResources;
-
-namespace Linn.Purchasing.Service.Modules.Reports
+﻿namespace Linn.Purchasing.Service.Modules.Reports
 {
     using System.Threading.Tasks;
 
@@ -9,7 +7,6 @@ namespace Linn.Purchasing.Service.Modules.Reports
 
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Service.Models;
-    using Linn.Purchasing.Resources.RequestResources;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;

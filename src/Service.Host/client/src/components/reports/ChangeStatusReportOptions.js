@@ -6,18 +6,18 @@ import history from '../../history';
 import config from '../../config';
 
 function ChangeStatusReportOptions() {
-    const [options, setOptions] = useState({
+    const [months, setMonths] = useState({
         months: 3
     });
 
     const handleOptionChange = (propertyName, newValue) => {
-        setOptions(o => ({ ...o, [propertyName]: newValue }));
+        setMonths(o => ({ ...o, [propertyName]: newValue }));
     };
 
     const handleClick = () =>
         history.push({
             pathname: `/purchasing/reports/change-status/report`,
-            search: `?months=${options.months}`
+            search: `?months=${months}`
         });
 
     return (
@@ -31,7 +31,7 @@ function ChangeStatusReportOptions() {
                             label="Months"
                             type="number"
                             fullWidth
-                            value={options.months}
+                            value={months}
                             onChange={handleOptionChange}
                         />
                     </Grid>

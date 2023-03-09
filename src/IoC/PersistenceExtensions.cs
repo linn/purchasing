@@ -35,8 +35,7 @@
                 .AddTransient<ITransactionManager, TransactionManager>()
                 .AddTransient<IRepository<SigningLimit, int>, SigningLimitRepository>()
                 .AddTransient<IRepository<SigningLimitLog, int>, EntityFrameworkRepository<SigningLimitLog, int>>(
-                    r => new EntityFrameworkRepository<SigningLimitLog, int>(r.GetService<ServiceDbContext>()
-                        ?.SigningLimitLogs))
+                    r => new EntityFrameworkRepository<SigningLimitLog, int>(r.GetService<ServiceDbContext>()?.SigningLimitLogs))
                 .AddTransient<IRepository<PartSupplier, PartSupplierKey>, PartSupplierRepository>()
                 .AddTransient<IQueryRepository<Part>, PartRepository>()
                 .AddTransient<IRepository<Supplier, int>, SupplierRepository>()
@@ -64,21 +63,17 @@
                 .AddTransient<IRepository<MiniOrder, int>, MiniOrderRepository>()
                 .AddTransient<IRepository<PurchaseLedger, int>, PurchaseLedgerRepository>()
                 .AddTransient<IRepository<Employee, int>, EmployeeRepository>()
-                .AddTransient<IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>,
-                    PreferredSupplierChangeRepository>()
-                .AddTransient<IRepository<PriceChangeReason, string>,
-                    EntityFrameworkRepository<PriceChangeReason, string>>(
+                .AddTransient<IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>, PreferredSupplierChangeRepository>()
+                .AddTransient<IRepository<PriceChangeReason, string>, EntityFrameworkRepository<PriceChangeReason, string>>(
                     r => new EntityFrameworkRepository<PriceChangeReason, string>(
                         r.GetService<ServiceDbContext>()?.PriceChangeReasons))
-                .AddTransient<IRepository<PartHistoryEntry, PartHistoryEntryKey>,
-                    EntityFrameworkRepository<PartHistoryEntry, PartHistoryEntryKey>>(
+                .AddTransient<IRepository<PartHistoryEntry, PartHistoryEntryKey>, EntityFrameworkRepository<PartHistoryEntry, PartHistoryEntryKey>>(
                     r => new EntityFrameworkRepository<PartHistoryEntry, PartHistoryEntryKey>(
                         r.GetService<ServiceDbContext>()?.PartHistory))
                 .AddTransient<IRepository<PartCategory, string>, EntityFrameworkRepository<PartCategory, string>>(
                     r => new EntityFrameworkRepository<PartCategory, string>(
                         r.GetService<ServiceDbContext>()?.PartCategories))
-                .AddTransient<IRepository<SupplierOrderHoldHistoryEntry, int>,
-                    EntityFrameworkRepository<SupplierOrderHoldHistoryEntry, int>>(
+                .AddTransient<IRepository<SupplierOrderHoldHistoryEntry, int>, EntityFrameworkRepository<SupplierOrderHoldHistoryEntry, int>>(
                     r => new EntityFrameworkRepository<SupplierOrderHoldHistoryEntry, int>(
                         r.GetService<ServiceDbContext>()?.SupplierOrderHoldHistories))
                 .AddTransient<IRepository<Country, string>, EntityFrameworkRepository<Country, string>>(
@@ -87,16 +82,13 @@
                 .AddTransient<IRepository<VendorManager, string>, VendorManagerRepository>()
                 .AddTransient<IRepository<Planner, int>, PlannerRepository>()
                 .AddTransient<IQueryRepository<SupplierSpend>, SupplierSpendRepository>()
-                .AddTransient<IQueryRepository<UnacknowledgedOrders>,
-                    EntityFrameworkQueryRepository<UnacknowledgedOrders>>(
+                .AddTransient<IQueryRepository<UnacknowledgedOrders>, EntityFrameworkQueryRepository<UnacknowledgedOrders>>(
                     r => new EntityFrameworkQueryRepository<UnacknowledgedOrders>(
                         r.GetService<ServiceDbContext>()?.UnacknowledgedOrders))
-                .AddTransient<IQueryRepository<SuppliersWithUnacknowledgedOrders>,
-                    EntityFrameworkQueryRepository<SuppliersWithUnacknowledgedOrders>>(
+                .AddTransient<IQueryRepository<SuppliersWithUnacknowledgedOrders>, EntityFrameworkQueryRepository<SuppliersWithUnacknowledgedOrders>>(
                     r => new EntityFrameworkQueryRepository<SuppliersWithUnacknowledgedOrders>(
                         r.GetService<ServiceDbContext>()?.SuppliersWithUnacknowledgedOrders))
-                .AddTransient<IQueryRepository<SupplierGroupsWithUnacknowledgedOrders>,
-                    EntityFrameworkQueryRepository<SupplierGroupsWithUnacknowledgedOrders>>(
+                .AddTransient<IQueryRepository<SupplierGroupsWithUnacknowledgedOrders>, EntityFrameworkQueryRepository<SupplierGroupsWithUnacknowledgedOrders>>(
                     r => new EntityFrameworkQueryRepository<SupplierGroupsWithUnacknowledgedOrders>(
                         r.GetService<ServiceDbContext>()?.SupplierGroupsWithUnacknowledgedOrders))
                 .AddTransient<IRepository<SupplierGroup, int>, EntityFrameworkRepository<SupplierGroup, int>>(
@@ -117,29 +109,24 @@
                     r => new EntityFrameworkQueryRepository<PartReceivedRecord>(
                         r.GetService<ServiceDbContext>()?.TqmsView))
                 .AddTransient<IPurchaseOrderDeliveryRepository, PurchaseOrderDeliveryRepository>()
-                .AddTransient<IRepository<PurchaseOrderReqState, string>,
-                    EntityFrameworkRepository<PurchaseOrderReqState, string>>(
+                .AddTransient<IRepository<PurchaseOrderReqState, string>, EntityFrameworkRepository<PurchaseOrderReqState, string>>(
                     r => new EntityFrameworkRepository<PurchaseOrderReqState, string>(
                         r.GetService<ServiceDbContext>()?.PurchaseOrderReqStates))
                 .AddTransient<IRepository<OverbookAllowedByLog, int>, OverbookAllowedByLogRepository>()
-                .AddTransient<IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>,
-                    EntityFrameworkRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>>(
+                .AddTransient<IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>, EntityFrameworkRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>>(
                     r => new EntityFrameworkRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>(
                         r.GetService<ServiceDbContext>()?.PurchaseOrderReqStateChanges))
                 .AddTransient<IRepository<MrpRunLog, int>, EntityFrameworkRepository<MrpRunLog, int>>(
                     r => new EntityFrameworkRepository<MrpRunLog, int>(r.GetService<ServiceDbContext>()?.MrpRunLogs))
                 .AddTransient<IWhatsInInspectionRepository, WhatsInInspectionRepository>()
-                .AddTransient<IQueryRepository<WhatsInInspectionPurchaseOrdersData>,
-                    EntityFrameworkQueryRepository<WhatsInInspectionPurchaseOrdersData>>(
+                .AddTransient<IQueryRepository<WhatsInInspectionPurchaseOrdersData>, EntityFrameworkQueryRepository<WhatsInInspectionPurchaseOrdersData>>(
                     r => new EntityFrameworkQueryRepository<WhatsInInspectionPurchaseOrdersData>(
                         r.GetService<ServiceDbContext>()?.WhatsInInspectionPurchaseOrdersView))
                 .AddTransient<IQueryRepository<ReceiptPrefSupDiff>, ReceiptPrefSupDiffRepository>()
-                .AddTransient<IQueryRepository<WhatsInInspectionStockLocationsData>,
-                    EntityFrameworkQueryRepository<WhatsInInspectionStockLocationsData>>(
+                .AddTransient<IQueryRepository<WhatsInInspectionStockLocationsData>, EntityFrameworkQueryRepository<WhatsInInspectionStockLocationsData>>(
                     r => new EntityFrameworkQueryRepository<WhatsInInspectionStockLocationsData>(
                         r.GetService<ServiceDbContext>()?.WhatsInInspectionStockLocationsView))
-                .AddTransient<IQueryRepository<WhatsInInspectionBackOrderData>,
-                    EntityFrameworkQueryRepository<WhatsInInspectionBackOrderData>>(
+                .AddTransient<IQueryRepository<WhatsInInspectionBackOrderData>, EntityFrameworkQueryRepository<WhatsInInspectionBackOrderData>>(
                     r => new EntityFrameworkQueryRepository<WhatsInInspectionBackOrderData>(
                         r.GetService<ServiceDbContext>()?.WhatsInInspectionBackOrderView))
                 .AddTransient<ISingleRecordRepository<MrMaster>, EntityFrameworkSingleRecordRepository<MrMaster>>(
@@ -152,8 +139,7 @@
                         r.GetService<ServiceDbContext>()?.LedgerPeriods))
                 .AddTransient<IRepository<EdiOrder, int>, EntityFrameworkRepository<EdiOrder, int>>(
                     r => new EntityFrameworkRepository<EdiOrder, int>(r.GetService<ServiceDbContext>()?.EdiOrders))
-                .AddTransient<IRepository<CancelledOrderDetail, int>,
-                    EntityFrameworkRepository<CancelledOrderDetail, int>>(
+                .AddTransient<IRepository<CancelledOrderDetail, int>, EntityFrameworkRepository<CancelledOrderDetail, int>>(
                     r => new EntityFrameworkRepository<CancelledOrderDetail, int>(
                         r.GetService<ServiceDbContext>()?.CancelledPurchaseOrderDetails))
                 .AddTransient<IQueryRepository<StockLocator>, EntityFrameworkQueryRepository<StockLocator>>(
@@ -165,18 +151,15 @@
                 .AddTransient<IQueryRepository<PartAndAssembly>, EntityFrameworkQueryRepository<PartAndAssembly>>(
                     r => new EntityFrameworkQueryRepository<PartAndAssembly>(
                         r.GetService<ServiceDbContext>()?.PartsAndAssemblies))
-                .AddTransient<IRepository<RescheduleReason, string>,
-                    EntityFrameworkRepository<RescheduleReason, string>>(
+                .AddTransient<IRepository<RescheduleReason, string>, EntityFrameworkRepository<RescheduleReason, string>>(
                     r => new EntityFrameworkRepository<RescheduleReason, string>(
                         r.GetService<ServiceDbContext>()?.PlRescheduleReasons))
                 .AddTransient<IQueryRepository<MrHeader>, MrHeaderRepository>()
                 .AddTransient<IQueryRepository<MrPurchaseOrderDetail>, MrPurchaseOrderRepository>()
-                .AddTransient<ISingleRecordRepository<PurchaseLedgerMaster>,
-                    EntityFrameworkSingleRecordRepository<PurchaseLedgerMaster>>(
+                .AddTransient<ISingleRecordRepository<PurchaseLedgerMaster>, EntityFrameworkSingleRecordRepository<PurchaseLedgerMaster>>(
                     r => new EntityFrameworkSingleRecordRepository<PurchaseLedgerMaster>(
                         r.GetService<ServiceDbContext>()?.PurchaseLedgerMaster))
-                .AddTransient<IRepository<MiniOrderDelivery, MiniOrderDeliveryKey>,
-                    EntityFrameworkRepository<MiniOrderDelivery, MiniOrderDeliveryKey>>(
+                .AddTransient<IRepository<MiniOrderDelivery, MiniOrderDeliveryKey>, EntityFrameworkRepository<MiniOrderDelivery, MiniOrderDeliveryKey>>(
                     r => new EntityFrameworkRepository<MiniOrderDelivery, MiniOrderDeliveryKey>(
                         r.GetService<ServiceDbContext>()?.MiniOrdersDeliveries))
                 .AddTransient<IQueryRepository<EdiSupplier>, EntityFrameworkQueryRepository<EdiSupplier>>(
@@ -185,79 +168,61 @@
                 .AddTransient<IQueryRepository<ShortagesEntry>, EntityFrameworkQueryRepository<ShortagesEntry>>(
                     r => new EntityFrameworkQueryRepository<ShortagesEntry>(
                         r.GetService<ServiceDbContext>()?.ShortagesEntries))
-                .AddTransient<IQueryRepository<ShortagesPlannerEntry>,
-                    EntityFrameworkQueryRepository<ShortagesPlannerEntry>>(
+                .AddTransient<IQueryRepository<ShortagesPlannerEntry>, EntityFrameworkQueryRepository<ShortagesPlannerEntry>>(
                     r => new EntityFrameworkQueryRepository<ShortagesPlannerEntry>(
                         r.GetService<ServiceDbContext>()?.ShortagesPlannerEntries))
                 .AddTransient<IRepository<PartNumberList, string>, PartNumberListRepository>()
                 .AddTransient<IRepository<AutomaticPurchaseOrder, int>, AutomaticPurchaseOrderRepository>()
                 .AddTransient<IRepository<NominalAccount, int>, NominalAccountRepository>()
                 .AddTransient<IBomDetailViewRepository, BomDetailViewRepository>()
-                .AddTransient<IRepository<AutomaticPurchaseOrderSuggestion, int>,
-                    EntityFrameworkRepository<AutomaticPurchaseOrderSuggestion, int>>(
-                    r => new EntityFrameworkRepository<AutomaticPurchaseOrderSuggestion, int>(
-                        r.GetService<ServiceDbContext>()?.AutomaticPurchaseOrderSuggestions))
+                .AddTransient<IRepository<AutomaticPurchaseOrderSuggestion, int>, EntityFrameworkRepository<AutomaticPurchaseOrderSuggestion, int>>(
+                    r => new EntityFrameworkRepository<AutomaticPurchaseOrderSuggestion, int>(r.GetService<ServiceDbContext>()?.AutomaticPurchaseOrderSuggestions))
                 .AddTransient<IRepository<SupplierAutoEmails, int>, EntityFrameworkRepository<SupplierAutoEmails, int>>(
-                    r => new EntityFrameworkRepository<SupplierAutoEmails, int>(r.GetService<ServiceDbContext>()
-                        ?.SupplierAutoEmails))
-                .AddTransient<IQueryRepository<SuppliersLeadTimesEntry>,
-                    EntityFrameworkQueryRepository<SuppliersLeadTimesEntry>>(
+                    r => new EntityFrameworkRepository<SupplierAutoEmails, int>(r.GetService<ServiceDbContext>()?.SupplierAutoEmails))
+                .AddTransient<IQueryRepository<SuppliersLeadTimesEntry>, EntityFrameworkQueryRepository<SuppliersLeadTimesEntry>>(
                     r => new EntityFrameworkQueryRepository<SuppliersLeadTimesEntry>(r.GetService<ServiceDbContext>()
                         ?.SuppliersLeadTimesEntries))
-                .AddTransient<IQueryRepository<MonthlyForecastPart>,
-                    EntityFrameworkQueryRepository<MonthlyForecastPart>>(
+                .AddTransient<IQueryRepository<MonthlyForecastPart>, EntityFrameworkQueryRepository<MonthlyForecastPart>>(
                     r => new EntityFrameworkQueryRepository<MonthlyForecastPart>(r.GetService<ServiceDbContext>()
                         ?.MonthlyForecastParts))
-                .AddTransient<IQueryRepository<SupplierDeliveryPerformance>,
-                    EntityFrameworkQueryRepository<SupplierDeliveryPerformance>>(
-                    r => new EntityFrameworkQueryRepository<SupplierDeliveryPerformance>(r
-                        .GetService<ServiceDbContext>()
+                .AddTransient<IQueryRepository<SupplierDeliveryPerformance>, EntityFrameworkQueryRepository<SupplierDeliveryPerformance>>(
+                    r => new EntityFrameworkQueryRepository<SupplierDeliveryPerformance>(r.GetService<ServiceDbContext>()
                         ?.SupplierDeliveryPerformance))
-                .AddTransient<IQueryRepository<DeliveryPerformanceDetail>,
-                    EntityFrameworkQueryRepository<DeliveryPerformanceDetail>>(
+                .AddTransient<IQueryRepository<DeliveryPerformanceDetail>, EntityFrameworkQueryRepository<DeliveryPerformanceDetail>>(
                     r => new EntityFrameworkQueryRepository<DeliveryPerformanceDetail>(r.GetService<ServiceDbContext>()
                         ?.DeliveryPerformanceDetails))
-                .AddTransient<IQueryRepository<MonthlyForecastPartValues>,
-                    EntityFrameworkQueryRepository<MonthlyForecastPartValues>>(
+                .AddTransient<IQueryRepository<MonthlyForecastPartValues>, EntityFrameworkQueryRepository<MonthlyForecastPartValues>>(
                     r => new EntityFrameworkQueryRepository<MonthlyForecastPartValues>(r.GetService<ServiceDbContext>()
                         ?.MonthlyForecastView))
-                .AddTransient<IQueryRepository<ForecastReportMonth>,
-                    EntityFrameworkQueryRepository<ForecastReportMonth>>(
+                .AddTransient<IQueryRepository<ForecastReportMonth>, EntityFrameworkQueryRepository<ForecastReportMonth>>(
                     r => new EntityFrameworkQueryRepository<ForecastReportMonth>(r.GetService<ServiceDbContext>()
                         ?.ForecastReportMonths))
                 .AddTransient<IQueryRepository<ForecastWeekChange>, ForecastWeekChangesRepository>()
                 .AddTransient<IRepository<ChangeRequest, int>, ChangeRequestRepository>()
                 .AddTransient<IRepository<Bom, int>, BomRepository>()
-                .AddTransient<IRepository<CreditDebitNoteType, string>,
-                    EntityFrameworkRepository<CreditDebitNoteType, string>>(
+                .AddTransient<IRepository<CreditDebitNoteType, string>, EntityFrameworkRepository<CreditDebitNoteType, string>>(
                     r => new EntityFrameworkRepository<CreditDebitNoteType, string>(r.GetService<ServiceDbContext>()
                         ?.CreditDebitNoteTypes))
-                .AddTransient<IQueryRepository<PlOrderReceivedViewEntry>,
-                    EntityFrameworkQueryRepository<PlOrderReceivedViewEntry>>(
+                .AddTransient<IQueryRepository<PlOrderReceivedViewEntry>, EntityFrameworkQueryRepository<PlOrderReceivedViewEntry>>(
                     r => new EntityFrameworkQueryRepository<PlOrderReceivedViewEntry>(r.GetService<ServiceDbContext>()
                         ?.PlOrderReceivedView))
-                .AddTransient<IRepository<CancelledOrderDetail, int>,
-                    EntityFrameworkRepository<CancelledOrderDetail, int>>(
+                .AddTransient<IRepository<CancelledOrderDetail, int>, EntityFrameworkRepository<CancelledOrderDetail, int>>(
                     r => new EntityFrameworkRepository<CancelledOrderDetail, int>(r.GetService<ServiceDbContext>()
                         ?.CancelledPurchaseOrderDetails))
                 .AddTransient<IQueryRepository<ImmediateLiability>, EntityFrameworkQueryRepository<ImmediateLiability>>(
                     r => new EntityFrameworkQueryRepository<ImmediateLiability>(r.GetService<ServiceDbContext>()
                         ?.ImmediateLiability))
-                .AddTransient<IQueryRepository<ImmediateLiabilityBase>,
-                    EntityFrameworkQueryRepository<ImmediateLiabilityBase>>(
+                .AddTransient<IQueryRepository<ImmediateLiabilityBase>, EntityFrameworkQueryRepository<ImmediateLiabilityBase>>(
                     r => new EntityFrameworkQueryRepository<ImmediateLiabilityBase>(r.GetService<ServiceDbContext>()
                         ?.ImmediateLiabilityBase))
                 .AddTransient<IRepository<CircuitBoard, string>, CircuitBoardRepository>()
-                .AddTransient<IQueryRepository<BoardComponentSummary>,
-                    EntityFrameworkQueryRepository<BoardComponentSummary>>(
+                .AddTransient<IQueryRepository<BoardComponentSummary>, EntityFrameworkQueryRepository<BoardComponentSummary>>(
                     r => new EntityFrameworkQueryRepository<BoardComponentSummary>(r.GetService<ServiceDbContext>()
                         ?.BoardComponentSummary))
-                .AddTransient<IQueryRepository<BomCostReportDetail>,
-                    EntityFrameworkQueryRepository<BomCostReportDetail>>(
+                .AddTransient<IQueryRepository<BomCostReportDetail>, EntityFrameworkQueryRepository<BomCostReportDetail>>(
                     r => new EntityFrameworkQueryRepository<BomCostReportDetail>(r.GetService<ServiceDbContext>()
                         ?.BomCostDetails))
-                .AddTransient<IRepository<BoardRevisionType, string>,
-                    EntityFrameworkRepository<BoardRevisionType, string>>(
+                .AddTransient<IRepository<BoardRevisionType, string>, EntityFrameworkRepository<BoardRevisionType, string>>(
                     r => new EntityFrameworkRepository<BoardRevisionType, string>(r.GetService<ServiceDbContext>()
                         ?.BoardRevisionTypes))
                 .AddTransient<IRepository<BomChange, int>, EntityFrameworkRepository<BomChange, int>>(
@@ -265,15 +230,13 @@
                         ?.BomChanges))
                 .AddTransient<IRepository<BomDetail, int>, BomDetailRepository>()
                 .AddTransient<IRepository<PcasChange, int>, PcasChangeRepository>()
-                .AddTransient<IRepository<BomVerificationHistory, int>,
-                    EntityFrameworkRepository<BomVerificationHistory, int>>(
+                .AddTransient<IRepository<BomVerificationHistory, int>, EntityFrameworkRepository<BomVerificationHistory, int>>(
                     r => new EntityFrameworkRepository<BomVerificationHistory, int>(r.GetService<ServiceDbContext>()
                         ?.BomVerificationHistory))
                 .AddTransient<IQueryRepository<BomStandardPrice>, EntityFrameworkQueryRepository<BomStandardPrice>>(
                     r => new EntityFrameworkQueryRepository<BomStandardPrice>(r.GetService<ServiceDbContext>()
                         ?.BomPriceVariances))
-                .AddTransient<IQueryRepository<BomHistoryViewEntry>,
-                    EntityFrameworkQueryRepository<BomHistoryViewEntry>>(
+                .AddTransient<IQueryRepository<BomHistoryViewEntry>, EntityFrameworkQueryRepository<BomHistoryViewEntry>>(
                     r => new EntityFrameworkQueryRepository<BomHistoryViewEntry>(r.GetService<ServiceDbContext>()
                         ?.BomHistoryView))
                 .AddTransient<IRepository<PartDataSheetValues, PartDataSheetValuesKey>, PartDataSheetValuesRepository>()
