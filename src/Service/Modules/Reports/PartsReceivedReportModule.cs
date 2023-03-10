@@ -88,7 +88,7 @@
             
             var csv = reportFacadeService.GetReportCsv(options);
 
-            await res.FromCsv(csv, "parts_received.csv");
+            await res.Negotiate(csv);
         }
     }
 }
