@@ -1,15 +1,14 @@
-﻿using Linn.Purchasing.Domain.LinnApps.Boms;
-
+﻿
 namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeStatusReportServiceTests
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Linq.Expressions;
 
     using FluentAssertions;
 
     using Linn.Common.Reporting.Models;
+    using Linn.Purchasing.Domain.LinnApps.Boms;
 
     using NSubstitute;
 
