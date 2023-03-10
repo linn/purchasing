@@ -35,10 +35,10 @@
 
         public ResultsModel GetChangeStatusReport(int months)
         {
-            var acceptedChangeRequests = this.changeRequests.FilterBy(x =>
+            var acceptedChangeRequests = this.changeRequests.FindAll().Where(x =>
                 x.DateAccepted >= DateTime.Today.AddMonths(-months) && x.ChangeState == "ACCEPT").Count();
 
-            var proposedChangeRequests = this.changeRequests.FilterBy(x =>
+            var proposedChangeRequests = this.changeRequests.FindAll().Where(x =>
                 x.DateEntered >= DateTime.Today.AddMonths(-months) && x.ChangeState == "PROPOS").Count();
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
@@ -120,7 +120,7 @@
 
         public ResultsModel GetAcceptedChangesReport(int months)
         {
-            var lines = this.changeRequests.FilterBy(x =>
+            var lines = this.changeRequests.FindAll().Where(x =>
                 (x.DateAccepted >= DateTime.Today.AddMonths(-months)) && x.ChangeState == "ACCEPT");
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
@@ -216,7 +216,7 @@
 
         public ResultsModel GetProposedChangesReport(int months)
         {
-            var lines = this.changeRequests.FilterBy(x =>
+            var lines = this.changeRequests.FindAll().Where(x =>
                 x.DateEntered >= DateTime.Today.AddMonths(-months) && x.ChangeState == "PROPOS");
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
@@ -312,7 +312,7 @@
 
         public ResultsModel GetTotalOutstandingChangesReport(int months)
         {
-            var lines = this.changeRequests.FilterBy(x =>
+            var lines = this.changeRequests.FindAll().Where(x =>
                 x.DateEntered >= DateTime.Today.AddMonths(-months) && (x.ChangeState == "PROPOS" || x.ChangeState == "ACCEPT"));
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
