@@ -120,6 +120,10 @@ import partDataSheetValuesList from './partDataSheetValuesList';
 import bomVerificationHistoryEntries from './bomVerificationHistoryEntries';
 import changeRequestReplace from './changeRequestReplace';
 import bomDifferenceReport from './bomDifferenceReport';
+import changeStatusReport from './changeStatusReport';
+import acceptedChangesReport from './acceptedChangesReport';
+import proposedChangesReport from './proposedChangesReport';
+import outstandingChangesReport from './outstandingChangesReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -127,6 +131,7 @@ const rootReducer = history =>
     combineReducers({
         oidc,
         historyStore,
+        acceptedChangesReport,
         accountingCompanies,
         address,
         addresses,
@@ -154,6 +159,7 @@ const rootReducer = history =>
         changeRequestStatusChange,
         changeRequestPhaseIns,
         changeRequestReplace,
+        changeStatusReport,
         countries,
         currencies,
         deliveryAddresses,
@@ -180,6 +186,7 @@ const rootReducer = history =>
         orderMethods,
         ordersByPart,
         ordersBySupplier,
+        outstandingChangesReport,
         outstandingPoReqsReport,
         packagingGroups,
         part,
@@ -199,6 +206,7 @@ const rootReducer = history =>
         preferredSupplierChange,
         prefSupReceiptsReport,
         priceChangeReasons,
+        proposedChangesReport,
         purchaseOrder,
         purchaseOrderReq,
         purchaseOrderReqs,
