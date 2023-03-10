@@ -1,5 +1,4 @@
-﻿
-namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeStatusReportServiceTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeStatusReportServiceTests
 {
     using System;
     using System.Collections.Generic;
