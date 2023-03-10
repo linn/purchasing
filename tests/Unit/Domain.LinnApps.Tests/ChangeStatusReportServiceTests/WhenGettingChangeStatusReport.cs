@@ -3,6 +3,7 @@
 namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeStatusReportServiceTests
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
 
@@ -21,13 +22,48 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeStatusReportServiceTests
         [SetUp]
         public void SetUp()
         {
-            this.results = this.Sut.GetChangeStatusReport(6);
+            var data = new List<ChangeRequest>
+                           {
+                               new ChangeRequest
+                                   {
+                                       DocumentNumber = 1,
+                                       ChangeState = "ACCEPT",
+                                       DateEntered = new DateTime(2023, 3, 4, 6, 0, 0),
+                                   },
+                               new ChangeRequest
+                                   {
+                                       DocumentNumber = 2,
+                                       ChangeState = "PROPOS",
+                                       DateEntered = new DateTime(2023, 3, 4, 6, 0, 0),
+                                   },
+                               new ChangeRequest
+                                   {
+                                       DocumentNumber = 3,
+                                       ChangeState = "ACCEPT",
+                                       DateEntered = new DateTime(2023, 3, 4, 6, 0, 0),
+                                   },
+                               new ChangeRequest
+                                   {
+                                       DocumentNumber = 4,
+                                       ChangeState = "PROPOS",
+                                       DateEntered = new DateTime(2023, 3, 4, 6, 0, 0),
+                                   },
+                               new ChangeRequest
+                                   {
+                                       DocumentNumber = 5,
+                                       ChangeState = "ACCEPT",
+                                       DateEntered = new DateTime(2023, 3, 4, 6, 0, 0),
+                                   }
+                           };
+
+            this.ChangeRequestsRepository.FindAll().Returns(data.AsQueryable());
+            this.results = this.Sut.GetChangeStatusReport(100);
         }
 
         [Test]
         public void ShouldGetData()
         {
-            this.ChangeRequestRepository.Received().FilterBy(Arg.Any<Expression<Func<ChangeRequest, bool>>>());
+            this.ChangeRequestsRepository.Received().FindAll();
         }
 
         [Test]

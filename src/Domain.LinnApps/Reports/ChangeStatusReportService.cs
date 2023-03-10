@@ -121,7 +121,7 @@
         public ResultsModel GetAcceptedChangesReport(int months)
         {
             var lines = this.changeRequests.FindAll().Where(x =>
-                (x.DateAccepted >= DateTime.Today.AddMonths(-months)) && x.ChangeState == "ACCEPT");
+                x.DateAccepted >= DateTime.Today.AddMonths(-months) && (x.ChangeState == "ACCEPT"));
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
 
