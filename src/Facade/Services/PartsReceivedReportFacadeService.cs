@@ -27,28 +27,25 @@
         {
             var resource = this.resultsModelResourceBuilder.Build(
                 this.domainService.GetReport(
-                            options.Jobref,
-                            options.Supplier,
-                            options.FromDate,
-                            options.ToDate,
-                            options.OrderBy,
-                            options.IncludeNegativeValues));
+                    options.Jobref,
+                    options.Supplier,
+                    options.FromDate,
+                    options.ToDate,
+                    options.OrderBy,
+                    options.IncludeNegativeValues));
 
             return new SuccessResult<ReportReturnResource>(resource);
         }
 
-        public CsvResult<IEnumerable<IEnumerable<string>>> GetReportCsv(PartsReceivedReportRequestResource options)
+        public IEnumerable<IEnumerable<string>> GetReportCsv(PartsReceivedReportRequestResource options)
         {
-            return new CsvResult<IEnumerable<IEnumerable<string>>>("parts_received.csv")
-                       {
-                           Data = this.domainService.GetReport(
-                               options.Jobref,
-                               options.Supplier,
-                               options.FromDate,
-                               options.ToDate,
-                               options.OrderBy,
-                               options.IncludeNegativeValues).ConvertToCsvList()
-                       };
+            return this.domainService.GetReport(
+                options.Jobref,
+                options.Supplier,
+                options.FromDate,
+                options.ToDate,
+                options.OrderBy,
+                options.IncludeNegativeValues).ConvertToCsvList();
         }
     }
 }

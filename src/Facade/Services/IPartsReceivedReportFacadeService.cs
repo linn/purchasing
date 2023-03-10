@@ -10,7 +10,7 @@
     {
         public IResult<ReportReturnResource> GetReport(PartsReceivedReportRequestResource options);
 
-        public CsvResult<IEnumerable<IEnumerable<string>>> GetReportCsv(PartsReceivedReportRequestResource options);
+        public IEnumerable<IEnumerable<string>> GetReportCsv(PartsReceivedReportRequestResource options);
     }
 }
 

@@ -79,8 +79,7 @@
             }
             else
             {
-                result = new BadRequestResult<BatchUpdateProcessResultResource>(
-                    "Unsupported content type.");
+                result = new BadRequestResult<BatchUpdateProcessResultResource>("Unsupported content type.");
             }
             
             await res.Negotiate(result);
