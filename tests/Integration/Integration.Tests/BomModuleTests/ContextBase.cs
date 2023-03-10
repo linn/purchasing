@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Net.Http;
 
+    using Linn.Common.Authorisation;
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
@@ -46,6 +47,8 @@
 
         protected IEdiOrderService MockDomainService { get; set; }
 
+        protected IAuthorisationService AuthorisationService { get; private set; }
+
         protected ITransactionManager TransactionManager { get; set; }
 
         protected IBomTreeService BomTreeService { get; private set; }
@@ -82,6 +85,7 @@
             this.CircuitBoardService = Substitute.For<ICircuitBoardService>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.BomTreeService = Substitute.For<IBomTreeService>();
+            this.AuthorisationService = Substitute.For<IAuthorisationService>();
 
             this.FacadeService = new BomFacadeService(
                 this.BomChangeService, this.TransactionManager, this.BomTreeService);
@@ -107,7 +111,7 @@
             this.CircuitBoardFacadeService = new CircuitBoardFacadeService(
                 this.CircuitBoardRepository,
                 this.TransactionManager,
-                new CircuitBoardResourceBuilder(this.PcasChangeRepository),
+                new CircuitBoardResourceBuilder(this.AuthorisationService),
                 this.BoardRevisionTypeRepository,
                 this.PcasChangeRepository,
                 this.CircuitBoardService,

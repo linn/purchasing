@@ -14,6 +14,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddMessageDispatchers();
         services.AddSingleton<CurrentTime>(() => DateTime.Now);
         services.AddHostedService<SupplierAutoEmailsScheduler>();
+        services.AddHostedService<PurchaseOrderRemindersScheduler>();
     })
     .Build();
 

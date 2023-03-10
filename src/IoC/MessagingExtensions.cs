@@ -17,7 +17,12 @@
         public static IServiceCollection AddRabbitConfiguration(this IServiceCollection services)
         {
             // all the routing keys the Listener cares about need to be registered here:
-            var routingKeys = new[] { EmailMrOrderBookMessage.RoutingKey, EmailMonthlyForecastReportMessage.RoutingKey };
+            var routingKeys = new[]
+                                  {
+                                      EmailMrOrderBookMessage.RoutingKey, 
+                                      EmailMonthlyForecastReportMessage.RoutingKey, 
+                                      EmailPurchaseOrderReminderMessage.RoutingKey
+                                  };
 
             return services.AddSingleton<ChannelConfiguration>(d => new ChannelConfiguration("purchasing", routingKeys))
                 .AddScoped(d => new EventingBasicConsumer(d.GetService<ChannelConfiguration>()?.ConsumerChannel));
@@ -27,7 +32,8 @@
         {
             return services
                 .AddScoped<Handler<EmailMrOrderBookMessage>, EmailMrOrderBookMessageHandler>()
-                .AddScoped<Handler<EmailMonthlyForecastReportMessage>, EmailMonthlyForecastReportMessageHandler>();
+                .AddScoped<Handler<EmailMonthlyForecastReportMessage>, EmailMonthlyForecastReportMessageHandler>()
+                .AddScoped<Handler<EmailPurchaseOrderReminderMessage>, EmailPurchaseOrderReminderMessageHandler>();
         }
 
         public static IServiceCollection AddMessageDispatchers(this IServiceCollection services)
@@ -39,7 +45,10 @@
                         x.GetService<ChannelConfiguration>(), x.GetService<ILog>(), EmailMrOrderBookMessage.RoutingKey))
                 .AddTransient<IMessageDispatcher<EmailMonthlyForecastReportMessageResource>>(
                     x => new RabbitMessageDispatcher<EmailMonthlyForecastReportMessageResource>(
-                        x.GetService<ChannelConfiguration>(), x.GetService<ILog>(), EmailMonthlyForecastReportMessage.RoutingKey));
+                        x.GetService<ChannelConfiguration>(), x.GetService<ILog>(), EmailMonthlyForecastReportMessage.RoutingKey))
+                .AddTransient<IMessageDispatcher<EmailPurchaseOrderReminderMessageResource>>(
+                    x => new RabbitMessageDispatcher<EmailPurchaseOrderReminderMessageResource>(
+                        x.GetService<ChannelConfiguration>(), x.GetService<ILog>(), EmailPurchaseOrderReminderMessage.RoutingKey));
         }
     }
 }

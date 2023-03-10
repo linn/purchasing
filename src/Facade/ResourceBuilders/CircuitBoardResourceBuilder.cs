@@ -3,26 +3,27 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Linn.Common.Authorisation;
     using Linn.Common.Facade;
-    using Linn.Common.Persistence;
     using Linn.Common.Resources;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Resources.Boms;
 
     public class CircuitBoardResourceBuilder : IBuilder<CircuitBoard>
     {
-        private readonly IRepository<PcasChange, int> pcasChangeRepository;
+        private readonly IAuthorisationService authService;
 
-        public CircuitBoardResourceBuilder(IRepository<PcasChange, int> pcasChangeRepository)
+        public CircuitBoardResourceBuilder(IAuthorisationService authService)
         {
-            this.pcasChangeRepository = pcasChangeRepository;
+            this.authService = authService;
         }
 
         public CircuitBoardResource Build(CircuitBoard entity, IEnumerable<string> claims)
         {
             if (entity == null)
             {
-                return new CircuitBoardResource { Links = this.BuildLinks(null, claims).ToArray() };
+                return new CircuitBoardResource { Links = this.BuildLinks(null, claims.ToList()).ToArray() };
             }
 
             return new CircuitBoardResource
@@ -41,7 +42,7 @@
                            IdBoard = entity.IdBoard,
                            Layouts = entity.Layouts?.OrderBy(a => a.LayoutSequence).Select(MakeLayoutResource),
                            Components = entity.Components?.Select(this.MakeComponentResource),
-                           Links = this.BuildLinks(entity, claims).ToArray()
+                           Links = this.BuildLinks(entity, claims?.ToList()).ToArray()
                        };
         }
 
@@ -144,11 +145,22 @@
                        };
         }
 
-        private IEnumerable<LinkResource> BuildLinks(CircuitBoard model, IEnumerable<string> claims)
+        private IEnumerable<LinkResource> BuildLinks(CircuitBoard model, IList<string> claims)
         {
             if (model != null)
             {
                 yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
+
+                if (this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, claims))
+                {
+                    yield return new LinkResource { Rel = "edit", Href = $"/purchasing/boms/boards/{model.BoardCode}" };
+                    yield return new LinkResource { Rel = "edit-components", Href = $"/purchasing/boms/board-components/{model.BoardCode}" };
+                }
+            }
+
+            if (this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, claims))
+            {
+                yield return new LinkResource { Rel = "create", Href = "/purchasing/boms/boards/create" };
             }
         }
     }

@@ -14,7 +14,8 @@ function RevisionTab({
     okToSave,
     searchParts,
     partsSearchResults,
-    partsSearchLoading
+    partsSearchLoading,
+    editingAllowed
 }) {
     const columns = [{ field: 'revisionCode', headerName: 'Revision', width: 175 }];
     const rows =
@@ -35,8 +36,10 @@ function RevisionTab({
             ? layout.revisions.find(a => a.revisionCode === selectedRevision[0])
             : null;
     const handleRevisionChange = (propertyName, newValue) => {
-        setEditStatus('edit');
-        dispatch({ type: 'updateRevision', fieldName: propertyName, payload: newValue });
+        if (editingAllowed) {
+            setEditStatus('edit');
+            dispatch({ type: 'updateRevision', fieldName: propertyName, payload: newValue });
+        }
     };
 
     return (
@@ -163,7 +166,7 @@ function RevisionTab({
                     )}
                     <Grid item xs={2}>
                         <Button
-                            disabled={!okToSave()}
+                            disabled={!okToSave() || !editingAllowed}
                             onClick={() => {
                                 setEditStatus('edit');
                                 dispatch({ type: 'newRevision', payload: null });
@@ -188,14 +191,16 @@ RevisionTab.propTypes = {
     okToSave: PropTypes.func.isRequired,
     partsSearchResults: PropTypes.arrayOf(PropTypes.shape({})),
     partsSearchLoading: PropTypes.bool,
-    searchParts: PropTypes.func.isRequired
+    searchParts: PropTypes.func.isRequired,
+    editingAllowed: PropTypes.string
 };
 
 RevisionTab.defaultProps = {
     selectedLayout: [],
     selectedRevision: [],
     partsSearchResults: [],
-    partsSearchLoading: false
+    partsSearchLoading: false,
+    editingAllowed: null
 };
 
 export default RevisionTab;

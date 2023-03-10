@@ -4,7 +4,10 @@ import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import Tabs from '@mui/material/Tabs';
 import Link from '@mui/material/Link';
+import Tooltip from '@mui/material/Tooltip';
 import Tab from '@mui/material/Tab';
+import EditOffIcon from '@mui/icons-material/EditOff';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Page,
@@ -15,7 +18,8 @@ import {
     InputField,
     getItemError,
     getRequestErrors,
-    collectionSelectorHelpers
+    collectionSelectorHelpers,
+    utilities
 } from '@linn-it/linn-form-components-library';
 import boardActions from '../../actions/boardActions';
 import history from '../../history';
@@ -71,9 +75,13 @@ function Board({ creating }) {
         reduxDispatch(boardActions.fetchState());
     }, [reduxDispatch]);
 
+    const editingAllowed = creating ? 'creating' : utilities.getHref(item, 'edit');
+
     const handleFieldChange = (propertyName, newValue) => {
-        setEditStatus('edit');
-        dispatch({ type: 'fieldChange', fieldName: propertyName, payload: newValue });
+        if (editingAllowed) {
+            setEditStatus('edit');
+            dispatch({ type: 'fieldChange', fieldName: propertyName, payload: newValue });
+        }
     };
 
     const saveBoard = () => {
@@ -183,7 +191,7 @@ function Board({ creating }) {
                             onChange={() => {}}
                         />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
                         <div style={{ paddingTop: '30px', float: 'right' }}>
                             <Link
                                 component={RouterLink}
@@ -193,6 +201,17 @@ function Board({ creating }) {
                                 Board Components
                             </Link>
                         </div>
+                    </Grid>
+                    <Grid item xs={1}>
+                        {editingAllowed ? (
+                            <Tooltip title="You can amend board details">
+                                <ModeEditIcon color="primary" />
+                            </Tooltip>
+                        ) : (
+                            <Tooltip title="You do not have access to amend board">
+                                <EditOffIcon color="secondary" />
+                            </Tooltip>
+                        )}
                     </Grid>
                     <Grid item xs={12}>
                         <Tabs
@@ -217,6 +236,7 @@ function Board({ creating }) {
                                 variantOfBoardCode={state.board.variantOfBoardCode}
                                 splitBom={state.board.splitBom}
                                 creating={creating}
+                                editingAllowed={editingAllowed}
                                 style={{ paddingTop: '40px' }}
                             />
                         )}
@@ -228,6 +248,7 @@ function Board({ creating }) {
                                 selectedLayout={state.selectedLayout}
                                 setEditStatus={setEditStatus}
                                 okToSave={okToSave}
+                                editingAllowed={editingAllowed}
                                 searchParts={searchParts}
                                 partsSearchResults={partsSearchResults}
                                 partsSearchLoading={partsSearchLoading}
@@ -241,6 +262,7 @@ function Board({ creating }) {
                                 selectedLayout={state.selectedLayout}
                                 selectedRevision={state.selectedRevision}
                                 setEditStatus={setEditStatus}
+                                editingAllowed={editingAllowed}
                                 okToSave={okToSave}
                                 searchParts={searchParts}
                                 partsSearchResults={partsSearchResults}
