@@ -33,19 +33,23 @@
         {
             this.log.Info("Supplier Auto Emails Scheduler Running...");
 
-            using IServiceScope scope = this.serviceProvider.CreateScope();
-
-            IPurchaseOrderDeliveryRepository deliveryRepository =
-                scope.ServiceProvider.GetRequiredService<IPurchaseOrderDeliveryRepository>();
-
+          
             var dailyTrigger = new DailyTrigger(this.currentTime, 8);
 
             dailyTrigger.OnTimeTriggered += () =>
                 {
-                    var deliveries = deliveryRepository.FindAll().Where(
-                        x => x.PurchaseOrderDetail.PurchaseOrder.Supplier.ReceivesOrderReminders == "Y" 
-                            && x.DateAdvised.HasValue && x.QuantityOutstanding.GetValueOrDefault() > 0
-                             &&  x.DateAdvised.GetValueOrDefault().Date - this.currentTime().Date - TimeSpan.FromDays(2) == TimeSpan.Zero);
+                    using IServiceScope scope = this.serviceProvider.CreateScope();
+
+                    IPurchaseOrderDeliveryRepository deliveryRepository =
+                        scope.ServiceProvider.GetRequiredService<IPurchaseOrderDeliveryRepository>();
+
+                    var inDateRange = deliveryRepository.FindAll().Where(
+                        x => (x.DateAdvised ?? DateTime.MinValue).Date - this.currentTime().Date - TimeSpan.FromDays(2)
+                             == TimeSpan.Zero);
+
+                    var deliveries = inDateRange.Where(
+                        x => x.PurchaseOrderDetail.PurchaseOrder.Supplier.ReceivesOrderReminders == "Y"
+                             && x.DateAdvised.HasValue && x.QuantityOutstanding.GetValueOrDefault() > 0).ToList();
 
                     foreach (var d in deliveries)
                     {
