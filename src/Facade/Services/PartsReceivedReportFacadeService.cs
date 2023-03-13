@@ -27,12 +27,12 @@
         {
             var resource = this.resultsModelResourceBuilder.Build(
                 this.domainService.GetReport(
-                            options.Jobref,
-                            options.Supplier,
-                            options.FromDate,
-                            options.ToDate,
-                            options.OrderBy,
-                            options.IncludeNegativeValues));
+                    options.Jobref,
+                    options.Supplier,
+                    options.FromDate,
+                    options.ToDate,
+                    options.OrderBy,
+                    options.IncludeNegativeValues));
 
             return new SuccessResult<ReportReturnResource>(resource);
         }

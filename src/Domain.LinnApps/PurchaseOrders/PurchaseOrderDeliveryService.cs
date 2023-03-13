@@ -430,7 +430,9 @@
             var newDeliveries = updatedDeliveriesForOrderLine.Select(
                 del =>
                 {
+
                     var existing = list.FirstOrDefault(x => x.DeliverySeq == del.DeliverySeq);
+
                     var vatAmount = Math.Round(
                         this.purchaseOrdersPack.GetVatAmountSupplier(
                             detail.OrderUnitPriceCurrency.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
@@ -447,10 +449,18 @@
                     // update the existing record if it exists
                     if (existing != null)
                     {
+                        if (existing.QuantityOutstanding == 0 && existing.OurDeliveryQty != del.OurDeliveryQty)
+                        {
+                            throw new PurchaseOrderDeliveryException(
+                                $"Cannot change qty for a delivery that has been received - " 
+                                + $"DEL: {existing.DeliverySeq} QTY: {existing.OurDeliveryQty}");
+                        }
+
                         var seq = existing.DeliverySeq;
                         existing = this.repository.FindBy(
                             d => d.OrderNumber == orderNumber && d.OrderLine == orderLine
                                                               && d.DeliverySeq == seq);
+
                         existing.QuantityOutstanding =
                             existing.QuantityOutstanding - existing.OurDeliveryQty + del.OurDeliveryQty;
                         existing.RescheduleReason = reason;

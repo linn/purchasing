@@ -6,7 +6,6 @@
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
-    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using NSubstitute;

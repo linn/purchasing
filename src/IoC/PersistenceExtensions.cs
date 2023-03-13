@@ -239,7 +239,10 @@
                 .AddTransient<IQueryRepository<BomHistoryViewEntry>, EntityFrameworkQueryRepository<BomHistoryViewEntry>>(
                     r => new EntityFrameworkQueryRepository<BomHistoryViewEntry>(r.GetService<ServiceDbContext>()
                         ?.BomHistoryView))
-                .AddTransient<IRepository<PartDataSheetValues, PartDataSheetValuesKey>, PartDataSheetValuesRepository>();
+                .AddTransient<IRepository<PartDataSheetValues, PartDataSheetValuesKey>, PartDataSheetValuesRepository>()
+                .AddTransient<IQueryRepository<ChangeRequest>, EntityFrameworkQueryRepository<ChangeRequest>>(
+                    r => new EntityFrameworkQueryRepository<ChangeRequest>(r.GetService<ServiceDbContext>()
+                        ?.ChangeRequests));
         }
     }
 }

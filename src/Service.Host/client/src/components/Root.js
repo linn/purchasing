@@ -94,6 +94,11 @@ import BoardDifferenceReport from './reports/BoardDifferenceReport';
 import PartDataSheetValues from './PartDataSheetValues';
 import BomVerificationHistorySearch from './BomVerificationHistoryUtility/BomVerificationHistorySearch';
 import BomDifferenceReport from './reports/BomDifferenceReport';
+import ChangeStatusReportOptions from './reports/ChangeStatusReportOptions';
+import ChangeStatusReport from './reports/ChangeStatusReport';
+import AcceptedChangesReport from './reports/AcceptedChangesReport';
+import ProposedChangesReport from './reports/ProposedChangesReport';
+import OutstandingChangesReport from './reports/OutstandingChangesReport';
 
 const Root = ({ store }) => (
     <div>
@@ -569,6 +574,31 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/boms/reports/diff"
                                     component={BomDifferenceReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/change-status"
+                                    component={ChangeStatusReportOptions}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/change-status/report"
+                                    component={ChangeStatusReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/accepted-changes/report"
+                                    component={AcceptedChangesReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/proposed-changes/report"
+                                    component={ProposedChangesReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/outstanding-changes/report"
+                                    component={OutstandingChangesReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>
