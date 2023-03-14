@@ -21,8 +21,7 @@
 
         private readonly ChannelConfiguration channelConfiguration;
 
-        private readonly IServiceProvider ServiceProvider;
-
+        private readonly IServiceProvider serviceProvider;
 
         public Listener(
             // Handler<EmailMrOrderBookMessage> emailOrderBookMessageHandler,
@@ -35,14 +34,14 @@
         {
             this.queueName = "purchasing";
             this.channelConfiguration = channelConfiguration;
-            this.ServiceProvider = serviceProvider;
+            this.serviceProvider = serviceProvider;
             
             this.channel = this.channelConfiguration.ConsumerChannel;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            using IServiceScope scope = this.ServiceProvider.CreateScope();
+            using IServiceScope scope = this.serviceProvider.CreateScope();
 
             var logger = scope.ServiceProvider.GetRequiredService<ILog>();
             var consumer = scope.ServiceProvider.GetRequiredService<EventingBasicConsumer>();
