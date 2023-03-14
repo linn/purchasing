@@ -33,7 +33,7 @@
             return services
                 .AddScoped<Handler<EmailMrOrderBookMessage>, EmailMrOrderBookMessageHandler>()
                 .AddScoped<Handler<EmailMonthlyForecastReportMessage>, EmailMonthlyForecastReportMessageHandler>()
-                .AddScoped<Handler<EmailPurchaseOrderReminderMessage>, EmailPurchaseOrderReminderMessageHandler>();
+                .AddSingleton<Handler<EmailPurchaseOrderReminderMessage>, EmailPurchaseOrderReminderMessageHandler>();
         }
 
         public static IServiceCollection AddMessageDispatchers(this IServiceCollection services)
