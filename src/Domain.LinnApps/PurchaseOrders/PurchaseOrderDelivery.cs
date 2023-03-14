@@ -61,6 +61,8 @@
 
         public decimal? QtyPassedForPayment { get; set; }
 
+        public string ReminderSent { get; set; }
+
         public IEnumerable<PurchaseOrderDeliveryHistory> DeliveryHistories { get; set; }
     }
 }

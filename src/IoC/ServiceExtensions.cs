@@ -220,6 +220,7 @@
                 .AddTransient<IBomStandardPriceService, BomStandardPriceService>()
                 .AddTransient<IBomHistoryReportService, BomHistoryReportService>()
                 .AddTransient<IChangeStatusReportService, ChangeStatusReportService>()
+                .AddTransient<IPurchaseOrderRemindersMailer, PurchaseOrderRemindersMailer>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

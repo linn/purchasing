@@ -5,6 +5,8 @@
 
     using Linn.Common.Logging;
     using Linn.Common.Messaging.RabbitMQ.Handlers;
+    using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.Mailers;
     using Linn.Purchasing.Messaging.Messages;
     using Linn.Purchasing.Resources.Messages;
 
@@ -12,9 +14,18 @@
 
     public class EmailPurchaseOrderReminderMessageHandler : Handler<EmailPurchaseOrderReminderMessage>
     {
-        public EmailPurchaseOrderReminderMessageHandler(ILog logger)
+        private readonly IPurchaseOrderRemindersMailer mailer;
+
+        private readonly ITransactionManager transactionManager;
+
+        public EmailPurchaseOrderReminderMessageHandler(
+            ILog logger,
+            IPurchaseOrderRemindersMailer mailer,
+            ITransactionManager transactionManager)
             : base(logger)
         {
+            this.mailer = mailer;
+            this.transactionManager = transactionManager;
         }
 
         public override bool Handle(EmailPurchaseOrderReminderMessage message)
@@ -26,7 +37,11 @@
                 var enc = Encoding.UTF8.GetString(body);
                 var resource = JsonConvert.DeserializeObject<EmailPurchaseOrderReminderMessageResource>(enc);
                 this.Logger.Info(
-                        $"Sending Purchase Order Reminder for Order/Line/Deliver: {resource.OrderNumber}/{resource.OrderLine}/{resource.DeliverySeq}");
+                        $"Sending Purchase Order Reminder for Order/Line/Delivery: " 
+                        + $"{resource.OrderNumber}/{resource.OrderLine}/{resource.DeliverySeq}");
+                this.mailer.SendDeliveryReminder(
+                    resource.OrderNumber, resource.OrderLine, resource.DeliverySeq, resource.Test.GetValueOrDefault());
+                this.transactionManager.Commit();
                 return true;
             }
             catch (Exception e)

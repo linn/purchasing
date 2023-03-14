@@ -48,7 +48,9 @@
                              == TimeSpan.Zero);
 
                     var deliveries = inDateRange.Where(
-                        x => x.PurchaseOrderDetail.PurchaseOrder.Supplier.ReceivesOrderReminders == "Y"
+                        x => x.PurchaseOrderDetail.PurchaseOrder.OrderMethodName == "MANUAL"
+                             && x.ReminderSent != "Y"
+                             && x.PurchaseOrderDetail.PurchaseOrder.Supplier.ReceivesOrderReminders == "Y"
                              && x.DateAdvised.HasValue && x.QuantityOutstanding.GetValueOrDefault() > 0).ToList();
 
                     foreach (var d in deliveries)
