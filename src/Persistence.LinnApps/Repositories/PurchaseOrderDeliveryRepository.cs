@@ -56,8 +56,7 @@
                 .Include(d => d.PurchaseOrderDetail).ThenInclude(plod => plod.PurchaseOrder)
                     .ThenInclude(ord => ord.Supplier).ThenInclude(sup => sup.VendorManager)
                 .ThenInclude(v => v.Employee).ThenInclude(e => e.PhoneListEntry)
-                .Include(d => d.PurchaseOrderDetail).ThenInclude(plod => plod.PurchaseOrder)
-                    .ThenInclude(plo => plo.Supplier).FirstOrDefault();
+                .FirstOrDefault();
         }
     }
 }
