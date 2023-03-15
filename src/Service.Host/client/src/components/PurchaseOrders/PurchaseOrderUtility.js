@@ -275,6 +275,9 @@ function PurchaseOrderUtility({ creating }) {
         return false;
     };
 
+    const isCreditOrReturn = () =>
+        order?.documentType?.name === 'CO' || order?.documentType?.name === 'RO';
+
     const allowedToFilCancel = () => !creating && utilities.getHref(order, 'fil-cancel');
 
     const inputIsValid = () =>
@@ -1379,11 +1382,12 @@ function PurchaseOrderUtility({ creating }) {
                                                             );
                                                         }}
                                                         disabled={
-                                                            !creating &&
-                                                            (!allowedToUpdate() ||
-                                                                lineItemsReceived(
-                                                                    detail.lineNumber
-                                                                ))
+                                                            (!creating &&
+                                                                (!allowedToUpdate() ||
+                                                                    lineItemsReceived(
+                                                                        detail.lineNumber
+                                                                    ))) ||
+                                                            isCreditOrReturn()
                                                         }
                                                         type="number"
                                                         required

@@ -10,6 +10,7 @@ import { sendPurchaseOrderDeptEmail, suggestedPurchaseOrderValues } from '../../
 import render from '../../../test-utils';
 import order from '../fakeData/order';
 import detailWithReceived from '../fakeData/detailWithReceived';
+import returnsOrder from '../fakeData/returnsOrder';
 import PurchaseOrderUtility from '../../PurchaseOrders/PurchaseOrderUtility';
 import sendPurchaseOrderDeptEmailActions from '../../../actions/sendPurchaseOrderDeptEmailActions';
 import purchaseOrderActions from '../../../actions/purchaseOrderActions';
@@ -99,6 +100,15 @@ const stateWithCreateForOtherUserLink = {
                     rel: 'create-for-other-user'
                 }
             ]
+        }
+    }
+};
+
+const stateWithReturnsOrder = {
+    ...reduxState,
+    purchaseOrder: {
+        item: {
+            ...returnsOrder
         }
     }
 };
@@ -390,5 +400,19 @@ describe('When creating and no create-for-other-user link...', () => {
     test('Should render readonly input for requestedBy field ', () => {
         expect(screen.getByLabelText('Requested By')).toBeInTheDocument();
         expect(screen.getByLabelText('Requested By')).toBeDisabled();
+    });
+});
+
+describe('When order is a Returns Order...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(stateWithReturnsOrder));
+        render(<PurchaseOrderUtility />);
+    });
+
+    test('Should disable price change', () => {
+        expect(screen.getByLabelText('Our price (unit, currency) *')).toBeInTheDocument();
+        expect(screen.getByLabelText('Our price (unit, currency) *')).toBeDisabled();
     });
 });
