@@ -21,50 +21,49 @@
 
         private readonly ChannelConfiguration channelConfiguration;
 
-        private readonly IServiceProvider serviceProvider;
+        private readonly ILog logger;
+
+        private readonly EventingBasicConsumer consumer;
+
+        private readonly Handler<EmailMrOrderBookMessage> emailOrderBookMessageHandler;
+
+        private readonly Handler<EmailMonthlyForecastReportMessage> emailMonthlyForecastReportMessageHandler;
+
+        private readonly Handler<EmailPurchaseOrderReminderMessage> emailPurchaseOrderReminderMessageHandler;
 
         public Listener(
-            // Handler<EmailMrOrderBookMessage> emailOrderBookMessageHandler,
-            // Handler<EmailMonthlyForecastReportMessage> emailMonthlyForecastReportMessageHandler,
-            // Handler<EmailPurchaseOrderReminderMessage> emailPurchaseOrderReminderMessageHandler,
-            // EventingBasicConsumer consumer,
+            Handler<EmailMrOrderBookMessage> emailOrderBookMessageHandler,
+            Handler<EmailMonthlyForecastReportMessage> emailMonthlyForecastReportMessageHandler,
+            Handler<EmailPurchaseOrderReminderMessage> emailPurchaseOrderReminderMessageHandler,
+            EventingBasicConsumer consumer,
             ChannelConfiguration channelConfiguration,
-            IServiceProvider serviceProvider)
-            // ILog logger)
+            ILog logger)
         {
             this.queueName = "purchasing";
+            this.emailMonthlyForecastReportMessageHandler = emailMonthlyForecastReportMessageHandler;
+            this.emailOrderBookMessageHandler = emailOrderBookMessageHandler;
+            this.emailPurchaseOrderReminderMessageHandler = emailPurchaseOrderReminderMessageHandler;
             this.channelConfiguration = channelConfiguration;
-            this.serviceProvider = serviceProvider;
-            
+            this.logger = logger;
+            this.consumer = consumer;
             this.channel = this.channelConfiguration.ConsumerChannel;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            using IServiceScope scope = this.serviceProvider.CreateScope();
-
-            var logger = scope.ServiceProvider.GetRequiredService<ILog>();
-            var consumer = scope.ServiceProvider.GetRequiredService<EventingBasicConsumer>();
-            var emailOrderBookMessageHandler =
-                scope.ServiceProvider.GetRequiredService<Handler<EmailMrOrderBookMessage>>();
-            var emailMonthlyForecastReportMessageHandler 
-                = scope.ServiceProvider.GetRequiredService<Handler<EmailMonthlyForecastReportMessage>>();
-            var emailPurchaseOrderReminderMessageHandler 
-                = scope.ServiceProvider.GetRequiredService<Handler<EmailPurchaseOrderReminderMessage>>();
-
-            logger.Info("Waiting for messages. To exit press CTRL+C");
-            consumer.Received += (_, ea) =>
+            this.logger.Info("Waiting for messages. To exit press CTRL+C");
+            this.consumer.Received += (_, ea) =>
                 {
                     // switch on message RoutingKey to decide which handler to use
                     // handlers process the message and return true if successful
                     // or log errors and return false if unsuccessful
                     bool success = ea.RoutingKey switch
                         {
-                            EmailMrOrderBookMessage.RoutingKey => emailOrderBookMessageHandler.Handle(
+                            EmailMrOrderBookMessage.RoutingKey => this.emailOrderBookMessageHandler.Handle(
                                 new EmailMrOrderBookMessage(ea)),
-                            EmailMonthlyForecastReportMessage.RoutingKey => emailMonthlyForecastReportMessageHandler.Handle(
+                            EmailMonthlyForecastReportMessage.RoutingKey => this.emailMonthlyForecastReportMessageHandler.Handle(
                                 new EmailMonthlyForecastReportMessage(ea)),
-                            EmailPurchaseOrderReminderMessage.RoutingKey => emailPurchaseOrderReminderMessageHandler.Handle(
+                            EmailPurchaseOrderReminderMessage.RoutingKey => this.emailPurchaseOrderReminderMessageHandler.Handle(
                                 new EmailPurchaseOrderReminderMessage(ea)),
                             _ => false
                         };

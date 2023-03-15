@@ -9,23 +9,28 @@
     using Linn.Purchasing.Messaging.Messages;
     using Linn.Purchasing.Resources.Messages;
 
+    using Microsoft.Extensions.DependencyInjection;
+
     using Newtonsoft.Json;
 
     public class EmailMrOrderBookMessageHandler : Handler<EmailMrOrderBookMessage>
     {
-        private readonly ISupplierAutoEmailsMailer mailer;
+        private readonly IServiceProvider serviceProvider;
 
         public EmailMrOrderBookMessageHandler(
             ILog logger,
-            ISupplierAutoEmailsMailer mailer)
+            IServiceProvider serviceProvider)
             : base(logger)
         {
-            this.mailer = mailer;
+            this.serviceProvider = serviceProvider;
         }
 
         public override bool Handle(EmailMrOrderBookMessage message)
         {
             this.Logger.Info("Message received: " + message.Event.RoutingKey);
+            using var scope = this.serviceProvider.CreateScope();
+
+            var mailer = scope.ServiceProvider.GetRequiredService<ISupplierAutoEmailsMailer>();
 
             try
             {
@@ -34,7 +39,7 @@
                 var resource = JsonConvert.DeserializeObject<EmailOrderBookMessageResource>(enc);
                 this.Logger.Info("Sending MR order book email to: " + resource.ForSupplier);
 
-                this.mailer.SendOrderBookEmail(
+                mailer.SendOrderBookEmail(
                     resource.ToAddress,
                     resource.ForSupplier, 
                     resource.Timestamp.ToShortTimeString(), 
