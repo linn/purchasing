@@ -80,7 +80,8 @@
                     }
                 };
             this.channel.BasicConsume(queue: $"{this.queueName}.q", autoAck: false, consumer: consumer);
-            await Task.Delay(1, stoppingToken);
+            this.logger.Info("This is happening");
+            await Task.CompletedTask;
         }
 
         public override Task StopAsync(CancellationToken stoppingToken)
