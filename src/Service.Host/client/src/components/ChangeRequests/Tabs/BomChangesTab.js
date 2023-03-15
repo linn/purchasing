@@ -64,6 +64,24 @@ function BomChangesTab({ bomChanges, handleSelectChange, phaseInsUri, phaseIn })
 
     return (
         <Grid container spacing={3}>
+            {phaseInsUri && (
+                <Grid item xs={12}>
+                    <LinnWeekPicker
+                        label="From Week Starting"
+                        selectedDate={weekStartDate?.toString()}
+                        setWeekStartDate={handleWeekChange}
+                        propertyName="weekStartDate"
+                        required
+                    />
+                    <Button
+                        variant="outlined"
+                        onClick={() => phaseIn(weekStartDate)}
+                        disabled={!validPhaseInWeek(weekStartDate)}
+                    >
+                        Phase In
+                    </Button>
+                </Grid>
+            )}
             <Grid item xs={12}>
                 {bomChanges ? (
                     <DataGrid
@@ -83,24 +101,6 @@ function BomChangesTab({ bomChanges, handleSelectChange, phaseInsUri, phaseIn })
                     <span>No Bom Changes</span>
                 )}
             </Grid>
-            {phaseInsUri && (
-                <Grid item xs={12}>
-                    <LinnWeekPicker
-                        label="From Week Starting"
-                        selectedDate={weekStartDate?.toString()}
-                        setWeekStartDate={handleWeekChange}
-                        propertyName="weekStartDate"
-                        required
-                    />
-                    <Button
-                        variant="outlined"
-                        onClick={() => phaseIn(weekStartDate)}
-                        disabled={!validPhaseInWeek(weekStartDate)}
-                    >
-                        Phase In
-                    </Button>
-                </Grid>
-            )}
         </Grid>
     );
 }
