@@ -238,7 +238,7 @@
                 this.SetDetailFieldsForCreation(detail, newOrderNumber);
 
                 this.PerformDetailCalculations(
-                    detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.SupplierId, creating: true);
+                    detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.SupplierId, order.DocumentType.Name, creating: true);
 
                 this.AddDeliveryToDetail(order, detail);
 
@@ -387,7 +387,7 @@
             this.CheckOkToRaiseOrders();
 
             this.UpdateOrderProperties(current, updated);
-            this.UpdateDetails(current.Details, updated.Details, updated.SupplierId, updated.ExchangeRate.Value);
+            this.UpdateDetails(current.Details, updated.Details, updated.SupplierId, updated.ExchangeRate.Value, current.DocumentType.Name);
             this.UpdateMiniOrder(updated);
             return current;
         }
@@ -1033,19 +1033,20 @@
             PurchaseOrderDetail current,
             PurchaseOrderDetail updated,
             int supplierId,
-            decimal exchangeRate)
+            decimal exchangeRate,
+            string documentType)
         {
             current.SuppliersDesignation = updated.SuppliersDesignation;
             current.InternalComments = updated.InternalComments;
 
-            this.PerformDetailCalculations(current, updated, exchangeRate, supplierId);
+            this.PerformDetailCalculations(current, updated, exchangeRate, supplierId, documentType);
 
             this.UpdateOrderPostingsForDetail(current, updated);
 
             this.UpdateDeliveries(current, exchangeRate, supplierId);
         }
 
-        private void PerformDetailCalculations(PurchaseOrderDetail current, PurchaseOrderDetail updated, decimal exchangeRate, int supplierId, bool creating = false)
+        private void PerformDetailCalculations(PurchaseOrderDetail current, PurchaseOrderDetail updated, decimal exchangeRate, int supplierId, string documentType, bool creating = false)
         {
             var netTotal = updated.OurUnitPriceCurrency.GetValueOrDefault() * updated.OurQty.GetValueOrDefault();
             current.NetTotalCurrency = Math.Round(netTotal, 2, MidpointRounding.AwayFromZero);
@@ -1055,8 +1056,8 @@
 
             current.DetailTotalCurrency = Math.Round(netTotal + current.VatTotalCurrency.Value, 2);
 
-            if (creating || (updated.OrderUnitPriceCurrency == current.OrderUnitPriceCurrency
-                && updated.OurUnitPriceCurrency != current.OurUnitPriceCurrency))
+            if ((creating || (updated.OrderUnitPriceCurrency == current.OrderUnitPriceCurrency
+                && updated.OurUnitPriceCurrency != current.OurUnitPriceCurrency)) && (documentType != "CO" && documentType != "RO"))
             {
                 // if order price hasn't been overridden but our price has changed, use conv factor
                 current.OrderUnitPriceCurrency = updated.OurUnitPriceCurrency * current.OrderConversionFactor;
@@ -1079,7 +1080,10 @@
             }
 
             current.OurQty = updated.OurQty;
-            current.OurUnitPriceCurrency = updated.OurUnitPriceCurrency;
+            if (documentType != "CO" && documentType != "RO")
+            {
+                current.OurUnitPriceCurrency = updated.OurUnitPriceCurrency;
+            }
 
             current.BaseNetTotal = Math.Round(netTotal / exchangeRate, 2, MidpointRounding.AwayFromZero);
             current.BaseOrderUnitPrice = Math.Round(
@@ -1106,14 +1110,15 @@
             ICollection<PurchaseOrderDetail> currentDetails,
             ICollection<PurchaseOrderDetail> updatedDetails,
             int supplierId,
-            decimal exchangeRate)
+            decimal exchangeRate,
+            string documentType)
         {
             foreach (var detail in updatedDetails)
             {
                 var currentDetail = currentDetails.FirstOrDefault(x => x.Line == detail.Line);
                 if (currentDetail != null)
                 {
-                    this.UpdateDetailProperties(currentDetail, detail, supplierId, exchangeRate);
+                    this.UpdateDetailProperties(currentDetail, detail, supplierId, exchangeRate, documentType);
                 }
                 else
                 {
@@ -1172,7 +1177,11 @@
             }
 
             miniOrder.OurQty = updatedDetail.OurQty;
-            miniOrder.OurPrice = updatedDetail.OurUnitPriceCurrency;
+
+            if (miniOrder.DocumentType != "CO" && miniOrder.DocumentType != "RO")
+            {
+                miniOrder.OurPrice = updatedDetail.OurUnitPriceCurrency;
+            }
 
             var exchangeRate = updatedOrder.ExchangeRate.GetValueOrDefault();
 

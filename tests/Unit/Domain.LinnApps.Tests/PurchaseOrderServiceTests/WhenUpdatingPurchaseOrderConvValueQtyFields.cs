@@ -32,7 +32,12 @@
                                {
                                    OrderNumber = this.orderNumber,
                                    Cancelled = string.Empty,
-                                   DocumentTypeName = string.Empty,
+                                   DocumentType = new DocumentType
+                                                      {
+                                                          Description = "Regular Purchase Order",
+                                                          Name = "PO"
+                                                      },
+                                   DocumentTypeName = "PO",
                                    OrderDate = 10.January(2021),
                                    Overbook = string.Empty,
                                    OverbookQty = 0,
@@ -187,7 +192,12 @@
                                {
                                    OrderNumber = this.orderNumber,
                                    Cancelled = string.Empty,
-                                   DocumentTypeName = string.Empty,
+                                   DocumentType = new DocumentType
+                                                      {
+                                                          Description = "Regular Purchase Order",
+                                                          Name = "PO"
+                                                      },
+                                   DocumentTypeName = "PO",
                                    OrderDate = 10.January(2021),
                                    Overbook = string.Empty,
                                    OverbookQty = 0,
