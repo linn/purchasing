@@ -2,12 +2,12 @@ import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
 import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
-import ChangeState from '../ChangeState';
+import Link from '@mui/material/Link';
+import ChangeState from './ChangeState';
 
-function PcasChangesTab({ pcasChanges, handleSelectChange }) {
+function PcasChangeReplace({ wused, handleSelectChange, documentNumber }) {
     const useStyles = makeStyles(() => ({
         gap: {
             marginTop: '20px'
@@ -19,21 +19,23 @@ function PcasChangesTab({ pcasChanges, handleSelectChange }) {
     const classes = useStyles();
 
     const columns = [
+        { field: 'quantity', headerName: 'Qty', width: 100 },
         {
             field: 'boardCode',
-            headerName: 'Board Code',
-            width: 140,
+            headerName: 'Board',
+            width: 150,
             renderCell: params => (
                 <Link
                     className={classes.a}
                     component={RouterLink}
-                    to={`/purchasing/boms/board-components/${params.row.boardCode}`}
+                    to={`/purchasing/boms/board-components/${params.row.boardCode}?changeRequest=${documentNumber}`}
                 >
                     {params.row.boardCode}
                 </Link>
             )
         },
-        { field: 'revisionCode', headerName: 'Revision Code', width: 140 },
+        { field: 'revisionCode', headerName: 'Revision', width: 150 },
+        { field: 'cref', headerName: 'Cref', width: 100 },
         {
             field: 'changeState',
             headerName: 'State',
@@ -44,43 +46,45 @@ function PcasChangesTab({ pcasChanges, handleSelectChange }) {
                 </>
             )
         },
-        { field: 'changeId', headerName: 'Id', width: 100 },
-        { field: 'lifecycleText', headerName: 'Lifecycle', width: 350 }
+        { field: 'deleteChangeRequest', headerName: 'Delete Change Request', width: 150 }
     ];
 
     return (
         <Grid container spacing={3}>
             <Grid item xs={12}>
-                {pcasChanges ? (
+                {wused ? (
                     <DataGrid
-                        getRowId={row => row.changeId}
+                        getRowId={row => `${row.boardCode}/${row.boardLine}/${row.revisionCode}`}
                         className={classes.gap}
-                        rows={pcasChanges}
+                        rows={wused}
                         columns={columns}
-                        rowHeight={34}
+                        getRowHeight={() => 'auto'}
                         autoHeight
                         loading={false}
                         checkboxSelection
+                        isRowSelectable={params => !params.row.deleteChangeId}
                         onSelectionModelChange={handleSelectChange}
                         pageSize={100}
-                        hideFooter={!pcasChanges || pcasChanges.length <= 100}
+                        hideFooter={!wused || wused.length <= 100}
                     />
                 ) : (
-                    <span>No Bom Changes</span>
+                    <span>Old Part Not Used Anywhere</span>
                 )}
             </Grid>
         </Grid>
     );
 }
 
-PcasChangesTab.propTypes = {
-    pcasChanges: PropTypes.arrayOf(PropTypes.shape({})),
-    handleSelectChange: PropTypes.func
+PcasChangeReplace.propTypes = {
+    wused: PropTypes.arrayOf(PropTypes.shape({})),
+    handleSelectChange: PropTypes.func,
+    documentNumber: PropTypes.number
 };
 
-PcasChangesTab.defaultProps = {
-    pcasChanges: [],
-    handleSelectChange: null
+PcasChangeReplace.defaultProps = {
+    wused: [],
+    handleSelectChange: null,
+    documentNumber: 0
 };
 
-export default PcasChangesTab;
+export default PcasChangeReplace;

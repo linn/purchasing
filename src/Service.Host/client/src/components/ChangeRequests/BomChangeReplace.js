@@ -10,6 +10,9 @@ function BomChangeReplace({ wused, handleSelectChange, documentNumber }) {
     const useStyles = makeStyles(() => ({
         gap: {
             marginTop: '20px'
+        },
+        a: {
+            textDecoration: 'none'
         }
     }));
     const classes = useStyles();
@@ -61,7 +64,9 @@ function BomChangeReplace({ wused, handleSelectChange, documentNumber }) {
                         autoHeight
                         loading={false}
                         checkboxSelection
-                        isRowSelectable={params => !params.row.deleteChangeDocumentNumber}
+                        isRowSelectable={params =>
+                            !params.row.deleteChangeDocumentNumber && params.row.pcasLine !== 'Y'
+                        }
                         onSelectionModelChange={handleSelectChange}
                         pageSize={100}
                         hideFooter={!wused || wused.length <= 100}

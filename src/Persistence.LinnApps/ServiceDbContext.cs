@@ -2171,6 +2171,7 @@
             entity.Property(a => a.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
             entity.Property(a => a.AddChangeId).HasColumnName("ADD_CHANGE_ID");
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
+            entity.Property(a => a.DeleteChangeRequest).HasColumnName("DELETE_CHANGE_REQUEST");
             entity.Property(a => a.FromLayoutVersion).HasColumnName("FROM_LAYOUT_VERSION");
             entity.Property(a => a.FromRevisionVersion).HasColumnName("FROM_REVISION_VERSION");
             entity.Property(a => a.ToLayoutVersion).HasColumnName("TO_LAYOUT_VERSION");

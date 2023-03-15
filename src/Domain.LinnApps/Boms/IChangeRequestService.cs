@@ -31,8 +31,10 @@
             int documentNumber,
             int replacedBy,
             bool globalReplace,
+            bool hasPcasLines,
             decimal? newQty,
             IEnumerable<int> selectedDetailIds,
+            IEnumerable<string> selectedPcasComponents,
             IEnumerable<string> privileges = null);
 
         Expression<Func<ChangeRequest, bool>> SearchExpression(string searchTerm, bool? outstanding, int? lastMonths);

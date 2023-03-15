@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link as RouterLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Page,
@@ -7,22 +7,26 @@ import {
     CheckboxWithLabel,
     InputField,
     itemSelectorHelpers,
+    collectionSelectorHelpers,
     utilities
 } from '@linn-it/linn-form-components-library';
 import queryString from 'query-string';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import changeRequestActions from '../../actions/changeRequestActions';
 import changeRequestReplaceActions from '../../actions/changeRequestReplaceActions';
+import boardComponentSummariesActions from '../../actions/boardComponentSummariesActions';
 import bomTreeActions from '../../actions/bomTreeActions';
 import history from '../../history';
 import useInitialise from '../../hooks/useInitialise';
 import { changeRequest } from '../../itemTypes';
 import BomChangeReplace from './BomChangeReplace';
+import PcasChangeReplace from './PcasChangeReplace';
 
 function ChangeRequestReplace() {
     const dispatch = useDispatch();
@@ -38,12 +42,17 @@ function ChangeRequestReplace() {
         if (item?.oldPartNumber) {
             const showChanges = true;
             const requirementOnly = false;
-            const url = `/purchasing/boms/tree?bomName=${
+
+            const bomWusedUrl = `/purchasing/boms/tree?bomName=${
                 item?.oldPartNumber
             }&levels=1&requirementOnly=${requirementOnly ?? false}&showChanges=${
                 showChanges ?? false
             }&treeType=whereUsed`;
-            dispatch(bomTreeActions.fetchByHref(url));
+
+            dispatch(bomTreeActions.fetchByHref(bomWusedUrl));
+
+            const pcasOptions = `&partNumber=${item?.oldPartNumber}&`;
+            dispatch(boardComponentSummariesActions.searchWithOptions(pcasOptions));
         }
     }, [item, dispatch]);
 
@@ -55,13 +64,26 @@ function ChangeRequestReplace() {
 
     const tree = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.bomTree));
 
+    const components = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(state.boardComponentSummaries)
+    );
+    const componentsLoading = useSelector(state =>
+        collectionSelectorHelpers.getSearchLoading(state.boardComponentSummaries)
+    );
+
     const [selectedDetailIds, setSelectedDetailIds] = useState(null);
+    const [selectedPcasComponents, setSelectedPcasComponents] = useState(null);
     const [newQty, setNewQty] = useState(null);
     const [globalReplace, setGlobalReplace] = useState(item?.globalReplace);
     const [tab, setTab] = useState(0);
 
-    const handleSelectChange = selected => {
+    const handleBomSelectChange = selected => {
         setSelectedDetailIds(selected);
+    };
+
+    const handlePcasSelectChange = selected => {
+        console.log(selected);
+        setSelectedPcasComponents(selected);
     };
 
     const handleNewQtyChange = (propertyName, newValue) => {
@@ -74,8 +96,10 @@ function ChangeRequestReplace() {
                 changeRequestReplaceActions.add({
                     documentNumber: request.documentNumber,
                     globalReplace,
+                    hasPcasLines: components.length > 0,
                     newQty,
-                    selectedDetailIds
+                    selectedDetailIds,
+                    selectedPcasComponents
                 })
             );
         }
@@ -88,7 +112,12 @@ function ChangeRequestReplace() {
             ) : (
                 <Grid container spacing={2} justifyContent="center">
                     <Grid item xs={12}>
-                        <Typography variant="h6">Change Request {documentNumber}</Typography>
+                        <Link
+                            component={RouterLink}
+                            to={`/purchasing/change-requests/${documentNumber}`}
+                        >
+                            <Typography variant="h6">Change Request {documentNumber}</Typography>
+                        </Link>
                     </Grid>
                     <Grid item xs={6}>
                         <InputField
@@ -111,7 +140,10 @@ function ChangeRequestReplace() {
                     <Grid item xs={4}>
                         <Button
                             variant="contained"
-                            disabled={!replaceUri || (!selectedDetailIds && !globalReplace)}
+                            disabled={
+                                !replaceUri ||
+                                (!(selectedDetailIds || selectedPcasComponents) && !globalReplace)
+                            }
                             onClick={() => replace(item)}
                         >
                             Replace
@@ -144,7 +176,12 @@ function ChangeRequestReplace() {
                                         }`}
                                         disabled={!tree?.children?.length}
                                     />
-                                    <Tab label="PCAS WUSED" />
+                                    <Tab
+                                        label={`Pcas WUSED${
+                                            components?.length ? ` (${components?.length})` : ''
+                                        }`}
+                                        disabled={!components?.length}
+                                    />
                                 </Tabs>
                             </Box>
                         </Box>
@@ -158,7 +195,8 @@ function ChangeRequestReplace() {
                                 <Grid item xs={12}>
                                     <BomChangeReplace
                                         wused={tree?.children}
-                                        handleSelectChange={handleSelectChange}
+                                        handleSelectChange={handleBomSelectChange}
+                                        documentNumber={documentNumber}
                                     />
                                 </Grid>
                             )}
@@ -167,7 +205,17 @@ function ChangeRequestReplace() {
 
                     {tab === 1 && (
                         <Box sx={{ paddingTop: 3, width: '100%' }}>
-                            <span>Coming Soon...</span>
+                            {componentsLoading ? (
+                                <Loading />
+                            ) : (
+                                <Grid item xs={12}>
+                                    <PcasChangeReplace
+                                        wused={components}
+                                        handleSelectChange={handlePcasSelectChange}
+                                        documentNumber={documentNumber}
+                                    />
+                                </Grid>
+                            )}
                         </Box>
                     )}
                 </Grid>

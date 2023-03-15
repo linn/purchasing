@@ -22,6 +22,8 @@
 
         public int? DeleteChangeId { get; set; }
 
+        public int? DeleteChangeRequest { get; set; }
+
         public int FromLayoutVersion { get; set; }
 
         public int FromRevisionVersion { get; set; }
