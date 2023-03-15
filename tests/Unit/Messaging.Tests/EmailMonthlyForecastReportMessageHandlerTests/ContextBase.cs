@@ -10,6 +10,8 @@
     using Linn.Purchasing.Messaging.Messages;
     using Linn.Purchasing.Resources.Messages;
 
+    using Microsoft.Extensions.DependencyInjection;
+
     using Newtonsoft.Json;
 
     using NSubstitute;
@@ -50,8 +52,10 @@
             this.Message = new EmailMonthlyForecastReportMessage(e);
 
             this.Mailer = Substitute.For<ISupplierAutoEmailsMailer>();
+            IServiceCollection services = new ServiceCollection();
+            services.AddTransient<ISupplierAutoEmailsMailer>(_ => this.Mailer);
             this.Log = Substitute.For<ILog>();
-            this.Sut = new EmailMonthlyForecastReportMessageHandler(this.Log, this.Mailer);
+            this.Sut = new EmailMonthlyForecastReportMessageHandler(this.Log, services.BuildServiceProvider());
         }
     }
 }

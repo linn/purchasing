@@ -55,6 +55,7 @@
                                                                   {
                                                                       PurchaseOrder = new PurchaseOrder
                                                                           {
+                                                                              OrderMethodName = "MANUAL",
                                                                               Supplier = new Supplier
                                                                                   {
                                                                                       ReceivesOrderReminders = "Y"
@@ -73,6 +74,7 @@
                                                                   {
                                                                       PurchaseOrder = new PurchaseOrder
                                                                           {
+                                                                              OrderMethodName = "MANUAL",
                                                                               Supplier = new Supplier
                                                                                   {
                                                                                       ReceivesOrderReminders = "Y"
@@ -82,18 +84,58 @@
                                                           },
                                                       new PurchaseOrderDelivery
                                                           {
-                                                              OrderNumber = 2,
-                                                              OrderLine = 2,
-                                                              DeliverySeq = 2,
+                                                              OrderNumber = 3,
+                                                              OrderLine = 3,
+                                                              DeliverySeq = 1,
                                                               QuantityOutstanding = 1,
                                                               DateAdvised = 10.March(2023),
                                                               PurchaseOrderDetail = new PurchaseOrderDetail
                                                                   {
                                                                       PurchaseOrder = new PurchaseOrder
                                                                           {
+                                                                              OrderMethodName = "MANUAL",
                                                                               Supplier = new Supplier
                                                                                   {
                                                                                       ReceivesOrderReminders = "N"
+                                                                                  }
+                                                                          }
+                                                                  }
+                                                          },
+                                                      new PurchaseOrderDelivery
+                                                          {
+                                                              OrderNumber = 4,
+                                                              OrderLine = 4,
+                                                              DeliverySeq = 1,
+                                                              QuantityOutstanding = 1,
+                                                              DateAdvised = 10.March(2023),
+                                                              PurchaseOrderDetail = new PurchaseOrderDetail
+                                                                  {
+                                                                      PurchaseOrder = new PurchaseOrder
+                                                                          {
+                                                                              OrderMethodName = "AUTO",
+                                                                              Supplier = new Supplier
+                                                                                  {
+                                                                                      ReceivesOrderReminders = "Y"
+                                                                                  }
+                                                                          }
+                                                                  }
+                                                          },
+                                                      new PurchaseOrderDelivery
+                                                          {
+                                                              OrderNumber = 5,
+                                                              OrderLine = 5,
+                                                              DeliverySeq = 1,
+                                                              QuantityOutstanding = 1,
+                                                              ReminderSent = "Y",
+                                                              DateAdvised = 10.March(2023),
+                                                              PurchaseOrderDetail = new PurchaseOrderDetail
+                                                                  {
+                                                                      PurchaseOrder = new PurchaseOrder
+                                                                          {
+                                                                              OrderMethodName = "MANUAL",
+                                                                              Supplier = new Supplier
+                                                                                  {
+                                                                                      ReceivesOrderReminders = "Y"
                                                                                   }
                                                                           }
                                                                   }

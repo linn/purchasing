@@ -833,6 +833,7 @@
             entity.Property(o => o.QtyNetReceived).HasColumnName("QTY_NET_RECEIVED").HasMaxLength(19);
             entity.Property(o => o.RescheduleReason).HasColumnName("RESCHEDULE_REASON").HasMaxLength(20);
             entity.Property(o => o.AvailableAtSupplier).HasColumnName("AVAILABLE_AT_SUPPLIER").HasMaxLength(1);
+            entity.Property(d => d.ReminderSent).HasColumnName("REMINDER_SENT").HasMaxLength(1);
             entity.HasOne(d => d.PurchaseOrderDetail).WithMany(o => o.PurchaseDeliveries);
             entity.HasMany(d => d.DeliveryHistories).WithOne().HasForeignKey(p => new { p.DeliverySeq, p.OrderNumber, p.OrderLine });
         }

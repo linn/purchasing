@@ -5,28 +5,44 @@
 
     using Linn.Common.Logging;
     using Linn.Common.Messaging.RabbitMQ.Handlers;
+    using Linn.Purchasing.Domain.LinnApps.Mailers;
     using Linn.Purchasing.Messaging.Messages;
     using Linn.Purchasing.Resources.Messages;
+
+    using Microsoft.Extensions.DependencyInjection;
 
     using Newtonsoft.Json;
 
     public class EmailPurchaseOrderReminderMessageHandler : Handler<EmailPurchaseOrderReminderMessage>
     {
-        public EmailPurchaseOrderReminderMessageHandler(ILog logger)
+        private readonly IServiceProvider serviceProvider;
+
+        public EmailPurchaseOrderReminderMessageHandler(
+            ILog logger,
+            IServiceProvider serviceProvider)
             : base(logger)
         {
+            this.serviceProvider = serviceProvider;
         }
 
         public override bool Handle(EmailPurchaseOrderReminderMessage message)
         {
             this.Logger.Info("Message received: " + message.Event.RoutingKey);
+
+            using var scope = this.serviceProvider.CreateScope();
+
+            var mailer = scope.ServiceProvider.GetRequiredService<IPurchaseOrderRemindersMailer>();
+
             try
             {
                 var body = message.Event.Body.ToArray();
                 var enc = Encoding.UTF8.GetString(body);
                 var resource = JsonConvert.DeserializeObject<EmailPurchaseOrderReminderMessageResource>(enc);
                 this.Logger.Info(
-                        $"Sending Purchase Order Reminder for Order/Line/Deliver: {resource.OrderNumber}/{resource.OrderLine}/{resource.DeliverySeq}");
+                        $"Sending Purchase Order Reminder for Order/Line/Delivery: " 
+                        + $"{resource.OrderNumber}/{resource.OrderLine}/{resource.DeliverySeq}");
+                mailer.SendDeliveryReminder(
+                    resource.OrderNumber, resource.OrderLine, resource.DeliverySeq, resource.Test.GetValueOrDefault());
                 return true;
             }
             catch (Exception e)

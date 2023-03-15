@@ -12,6 +12,6 @@
 
         public DateTime Timestamp { get; set; }
 
-        public bool Test { get; set; }
+        public bool? Test { get; set; }
     }
 }

@@ -10,6 +10,8 @@
     using Linn.Purchasing.Messaging.Messages;
     using Linn.Purchasing.Resources.Messages;
 
+    using Microsoft.Extensions.DependencyInjection;
+
     using Newtonsoft.Json;
 
     using NSubstitute;
@@ -20,8 +22,6 @@
 
     public class ContextBase
     {
-        protected ISupplierAutoEmailsMailer Mailer { get; private set; }
-
         protected ILog Log { get; private set; }
 
         protected Handler<EmailMrOrderBookMessage> Sut { get; private set; }
@@ -29,6 +29,8 @@
         protected EmailOrderBookMessageResource Resource { get; private set; }
 
         protected EmailMrOrderBookMessage Message { get; private set; }
+
+        protected ISupplierAutoEmailsMailer Mailer { get; private set; }
 
         [SetUp]
         public void SetUpContext()
@@ -48,10 +50,11 @@
                                Body = memory
                            };
             this.Message = new EmailMrOrderBookMessage(e);
-
             this.Mailer = Substitute.For<ISupplierAutoEmailsMailer>();
+            IServiceCollection services = new ServiceCollection();
+            services.AddTransient<ISupplierAutoEmailsMailer>(_ => this.Mailer);
             this.Log = Substitute.For<ILog>();
-            this.Sut = new EmailMrOrderBookMessageHandler(this.Log, this.Mailer);
+            this.Sut = new EmailMrOrderBookMessageHandler(this.Log, services.BuildServiceProvider());
         }
     }
 }

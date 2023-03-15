@@ -47,7 +47,19 @@
             this.Dispatcher.DidNotReceive().Dispatch(Arg.Is<EmailPurchaseOrderReminderMessageResource>(x =>
                 x.OrderNumber == 3
                 && x.OrderLine == 3
-                && x.DeliverySeq == 3));
+                && x.DeliverySeq == 1));
+
+            // since this delivery is for not of a MANUAL order
+            this.Dispatcher.DidNotReceive().Dispatch(Arg.Is<EmailPurchaseOrderReminderMessageResource>(x =>
+                x.OrderNumber == 4
+                && x.OrderLine == 4
+                && x.DeliverySeq == 1));
+
+            // since this delivery already has a reminder sent
+            this.Dispatcher.DidNotReceive().Dispatch(Arg.Is<EmailPurchaseOrderReminderMessageResource>(x =>
+                x.OrderNumber == 5
+                && x.OrderLine == 5
+                && x.DeliverySeq == 1));
         }
     }
 }

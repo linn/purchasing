@@ -9,23 +9,29 @@
     using Linn.Purchasing.Messaging.Messages;
     using Linn.Purchasing.Resources.Messages;
 
+    using Microsoft.Extensions.DependencyInjection;
+
     using Newtonsoft.Json;
 
     public class EmailMonthlyForecastReportMessageHandler : Handler<EmailMonthlyForecastReportMessage>
     {
-        private readonly ISupplierAutoEmailsMailer mailer;
+        private readonly IServiceProvider serviceProvider;
 
         public EmailMonthlyForecastReportMessageHandler(
             ILog logger,
-            ISupplierAutoEmailsMailer mailer)
+            IServiceProvider serviceProvider)
             : base(logger)
         {
-            this.mailer = mailer;
+            this.serviceProvider = serviceProvider;
         }
 
         public override bool Handle(EmailMonthlyForecastReportMessage message)
         {
             this.Logger.Info("Message received: " + message.Event.RoutingKey);
+
+            using var scope = this.serviceProvider.CreateScope();
+
+            var mailer = scope.ServiceProvider.GetRequiredService<ISupplierAutoEmailsMailer>();
 
             try
             {
@@ -34,7 +40,7 @@
                 var resource = JsonConvert.DeserializeObject<EmailOrderBookMessageResource>(enc);
                 this.Logger.Info("Sending Monthly Forecast email to: " + resource.ForSupplier);
 
-                this.mailer.SendMonthlyForecastEmail(
+                mailer.SendMonthlyForecastEmail(
                     resource.ToAddress, resource.ForSupplier, resource.Timestamp.ToShortTimeString(), resource.Test);
                 return true;
             }

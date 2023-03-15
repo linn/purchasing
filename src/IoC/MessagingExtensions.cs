@@ -25,15 +25,15 @@
                                   };
 
             return services.AddSingleton<ChannelConfiguration>(d => new ChannelConfiguration("purchasing", routingKeys))
-                .AddScoped(d => new EventingBasicConsumer(d.GetService<ChannelConfiguration>()?.ConsumerChannel));
+                .AddSingleton(d => new EventingBasicConsumer(d.GetService<ChannelConfiguration>()?.ConsumerChannel));
         }
 
         public static IServiceCollection AddMessageHandlers(this IServiceCollection services)
         {
             return services
-                .AddScoped<Handler<EmailMrOrderBookMessage>, EmailMrOrderBookMessageHandler>()
-                .AddScoped<Handler<EmailMonthlyForecastReportMessage>, EmailMonthlyForecastReportMessageHandler>()
-                .AddScoped<Handler<EmailPurchaseOrderReminderMessage>, EmailPurchaseOrderReminderMessageHandler>();
+                .AddSingleton<Handler<EmailMrOrderBookMessage>, EmailMrOrderBookMessageHandler>()
+                .AddSingleton<Handler<EmailMonthlyForecastReportMessage>, EmailMonthlyForecastReportMessageHandler>()
+                .AddSingleton<Handler<EmailPurchaseOrderReminderMessage>, EmailPurchaseOrderReminderMessageHandler>();
         }
 
         public static IServiceCollection AddMessageDispatchers(this IServiceCollection services)
