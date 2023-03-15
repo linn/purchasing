@@ -238,7 +238,7 @@
                 this.SetDetailFieldsForCreation(detail, newOrderNumber);
 
                 this.PerformDetailCalculations(
-                    detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.SupplierId, order.DocumentType.Name, creating: true);
+                    detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.SupplierId, creating: true);
 
                 this.AddDeliveryToDetail(order, detail);
 
@@ -1039,14 +1039,17 @@
             current.SuppliersDesignation = updated.SuppliersDesignation;
             current.InternalComments = updated.InternalComments;
 
-            this.PerformDetailCalculations(current, updated, exchangeRate, supplierId, documentType);
+            if ((documentType != "CO") && (documentType != "RO"))
+            {
+                this.PerformDetailCalculations(current, updated, exchangeRate, supplierId);
+            }
 
             this.UpdateOrderPostingsForDetail(current, updated);
 
             this.UpdateDeliveries(current, exchangeRate, supplierId);
         }
 
-        private void PerformDetailCalculations(PurchaseOrderDetail current, PurchaseOrderDetail updated, decimal exchangeRate, int supplierId, string documentType, bool creating = false)
+        private void PerformDetailCalculations(PurchaseOrderDetail current, PurchaseOrderDetail updated, decimal exchangeRate, int supplierId, bool creating = false)
         {
             var netTotal = updated.OurUnitPriceCurrency.GetValueOrDefault() * updated.OurQty.GetValueOrDefault();
             current.NetTotalCurrency = Math.Round(netTotal, 2, MidpointRounding.AwayFromZero);
@@ -1056,8 +1059,8 @@
 
             current.DetailTotalCurrency = Math.Round(netTotal + current.VatTotalCurrency.Value, 2);
 
-            if ((creating || (updated.OrderUnitPriceCurrency == current.OrderUnitPriceCurrency
-                && updated.OurUnitPriceCurrency != current.OurUnitPriceCurrency)) && (documentType != "CO" && documentType != "RO"))
+            if (creating || (updated.OrderUnitPriceCurrency == current.OrderUnitPriceCurrency
+                && updated.OurUnitPriceCurrency != current.OurUnitPriceCurrency))
             {
                 // if order price hasn't been overridden but our price has changed, use conv factor
                 current.OrderUnitPriceCurrency = updated.OurUnitPriceCurrency * current.OrderConversionFactor;
@@ -1080,11 +1083,8 @@
             }
 
             current.OurQty = updated.OurQty;
-            if (documentType != "CO" && documentType != "RO")
-            {
-                current.OurUnitPriceCurrency = updated.OurUnitPriceCurrency;
-            }
-
+            current.OurUnitPriceCurrency = updated.OurUnitPriceCurrency;
+            
             current.BaseNetTotal = Math.Round(netTotal / exchangeRate, 2, MidpointRounding.AwayFromZero);
             current.BaseOrderUnitPrice = Math.Round(
                 current.OrderUnitPriceCurrency.GetValueOrDefault() / exchangeRate,
