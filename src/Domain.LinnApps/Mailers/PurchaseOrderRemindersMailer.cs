@@ -47,16 +47,25 @@
                 "The order is now due for delivery, can you please provide the shipping details including the tracking number.";
             body += Environment.NewLine;
             body += Environment.NewLine;
+            body += Environment.NewLine;
 
             body += $"Item: {delivery.PurchaseOrderDetail.SuppliersDesignation}";
             body += Environment.NewLine;
+            body += Environment.NewLine;
+
             body += $"Linn Part Number: {delivery.PurchaseOrderDetail.PartNumber}";
             body += Environment.NewLine;
+            body += Environment.NewLine;
+
             body += $"Delivery Qty: {delivery.OrderDeliveryQty}";
             body += Environment.NewLine;
+            body += Environment.NewLine;
+
             body += $"Promise Date: {delivery.DateAdvised.GetValueOrDefault():dd-MM-yyyy}";
             body += Environment.NewLine;
             body += Environment.NewLine;
+            body += Environment.NewLine;
+
             body += "Kind Regards,";
             body += Environment.NewLine;
             body += vendorManagerName;

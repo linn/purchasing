@@ -89,16 +89,25 @@
                 "The order is now due for delivery, can you please provide the shipping details including the tracking number.";
             expectedBody += Environment.NewLine;
             expectedBody += Environment.NewLine;
+            expectedBody += Environment.NewLine;
 
             expectedBody += $"Item: {delivery.PurchaseOrderDetail.SuppliersDesignation}";
             expectedBody += Environment.NewLine;
+            expectedBody += Environment.NewLine;
+
             expectedBody += $"Linn Part Number: {delivery.PurchaseOrderDetail.PartNumber}";
             expectedBody += Environment.NewLine;
+            expectedBody += Environment.NewLine;
+
             expectedBody += $"Delivery Qty: {delivery.OrderDeliveryQty}";
             expectedBody += Environment.NewLine;
+            expectedBody += Environment.NewLine;
+
             expectedBody += $"Promise Date: {delivery.DateAdvised.GetValueOrDefault():dd-MM-yyyy}";
             expectedBody += Environment.NewLine;
             expectedBody += Environment.NewLine;
+            expectedBody += Environment.NewLine;
+
             expectedBody += "Kind Regards,";
             expectedBody += Environment.NewLine;
             expectedBody += "Test Person";
