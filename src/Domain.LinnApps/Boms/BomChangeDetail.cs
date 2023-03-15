@@ -38,6 +38,11 @@
             }
         }
 
+        public BomChangeDetail()
+        {
+            // for json deserialisation        
+        }
+
         public int DetailId { get; set; }
 
         public string DeletePartNumber { get; set; }

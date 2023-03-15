@@ -109,6 +109,11 @@
                 yield return new LinkResource { Rel = "replace", Href = $"/purchasing/change-requests/replace" };
             }
 
+            if (model.CanEdit(adminPrivs))
+            {
+                yield return new LinkResource { Rel = "edit", Href = $"/purchasing/change-requests" };
+            }
+
             yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
         }
     }

@@ -53,7 +53,7 @@
             var resource = ((SuccessResult<ChangeRequestResource>)this.result).Data;
             resource.DocumentNumber.Should().Be(1);
             resource.ChangeState.Should().Be("ACCEPT");
-            resource.Links.Length.Should().Be(5);
+            resource.Links.Length.Should().Be(6);
             resource.GlobalReplace.Should().BeFalse();
             var acceptLink = resource.Links.Single(r => r.Rel == "make-live");
             acceptLink.Should().NotBeNull();
@@ -63,6 +63,8 @@
             phaseInLink.Should().NotBeNull();
             var undoLink = resource.Links.Single(r => r.Rel == "undo");
             undoLink.Should().NotBeNull();
+            var editLink = resource.Links.Single(r => r.Rel == "edit");
+            editLink.Should().NotBeNull();
         }
     }
 }

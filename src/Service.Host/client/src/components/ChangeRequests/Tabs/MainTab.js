@@ -18,7 +18,7 @@ import history from '../../../history';
 function MainTab({ item, approve }) {
     const reduxDispatch = useDispatch();
     const approveUri = utilities.getHref(item, 'approve');
-    const editUri = utilities.getHref(item, 'approve');
+    const editUri = utilities.getHref(item, 'edit');
     const makeLiveUri = utilities.getHref(item, 'make-live');
 
     const [updated, setUpdated] = useState(item);
