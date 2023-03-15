@@ -38,6 +38,10 @@ function ChangeRequest() {
         itemSelectorHelpers.getItem(reduxState.changeRequestStatusChange)
     );
 
+    const phaseInChange = useSelector(reduxState =>
+        itemSelectorHelpers.getItem(reduxState.changeRequestPhaseIns)
+    );
+
     const changedState = (changereq, origreq) => {
         if (changereq?.documentNumber !== origreq?.documentNumber) {
             return false;
@@ -78,6 +82,11 @@ function ChangeRequest() {
     };
 
     if (item && statusChange && changedState(statusChange, item)) {
+        reduxDispatch(changeRequestActions.fetch(id));
+    }
+
+    if (item && phaseInChange) {
+        reduxDispatch(changeRequestPhaseInsActions.clearItem());
         reduxDispatch(changeRequestActions.fetch(id));
     }
 
