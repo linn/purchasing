@@ -15,7 +15,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingEditablePurchaseOrderFields : ContextBase
+    public class WhenUpdatingReturnsOrderConvValueQtyFields : ContextBase
     {
         private readonly int orderNumber = 600179;
 
@@ -34,10 +34,10 @@
                                    Cancelled = string.Empty,
                                    DocumentType = new DocumentType
                                                       {
-                                                          Description = "Regular Purchase Order",
-                                                          Name = "PO"
+                                                          Description = "Regular Returns Order",
+                                                          Name = "RO"
                                                       },
-                                   DocumentTypeName = "PO",
+                                   DocumentTypeName = "RO",
                                    OrderDate = 10.January(2021),
                                    Overbook = string.Empty,
                                    OverbookQty = 0,
@@ -139,10 +139,12 @@
                                                                               Building = "HQ",
                                                                               Id = 1551,
                                                                               LineNumber = 1,
-                                                                              NominalAccount =
+                                                                              NominalAccount = 
                                                                                   new NominalAccount
                                                                                       {
                                                                                           AccountId = 3939,
+                                                                                          NominalCode = "00002222",
+                                                                                          DepartmentCode = "0001111",
                                                                                           Department =
                                                                                               new Department
                                                                                                   {
@@ -179,7 +181,7 @@
                                    EnteredBy = new Employee { FullName = "Pam Beesley", Id = 2222 },
                                    QuotationRef = "ref11101",
                                    AuthorisedBy = new Employee { FullName = "Dwight Schrute", Id = 3333 },
-                                   SentByMethod = null,
+                                   SentByMethod = "EMAIL",
                                    FilCancelled = string.Empty,
                                    Remarks = "applebooks",
                                    DateFilCancelled = null,
@@ -192,10 +194,10 @@
                                    Cancelled = string.Empty,
                                    DocumentType = new DocumentType
                                                       {
-                                                          Description = "Regular Purchase Order",
-                                                          Name = "PO"
+                                                          Description = "Regular Returns Order",
+                                                          Name = "RO"
                                                       },
-                                   DocumentTypeName = "PO",
+                                   DocumentTypeName = "RO",
                                    OrderDate = 10.January(2021),
                                    Overbook = string.Empty,
                                    OverbookQty = 0,
@@ -300,10 +302,8 @@
                                                                                   new NominalAccount
                                                                                       {
                                                                                           AccountId = 911,
-                                                                                          NominalCode =
-                                                                                              "00009222",
-                                                                                          DepartmentCode =
-                                                                                              "0000911",
+                                                                                          NominalCode = "00009222",
+                                                                                          DepartmentCode = "0000911",
                                                                                           Department =
                                                                                               new Department
                                                                                                   {
@@ -340,7 +340,7 @@
                                    EnteredBy = new Employee { FullName = "Pam Beesley", Id = 2222 },
                                    QuotationRef = "ref11101",
                                    AuthorisedBy = new Employee { FullName = "Dwight Schrute", Id = 3333 },
-                                   SentByMethod = "FAX",
+                                   SentByMethod = "EMAIL",
                                    FilCancelled = string.Empty,
                                    Remarks = "updated remarks",
                                    DateFilCancelled = null,
@@ -365,13 +365,15 @@
                                      InternalComments = "comment for internal staff",
                                      SuppliersDesignation = "macbooks",
                                      OrderConvFactor = 2m,
-                                     SentByMethod = null
+                                     DocumentType = "RO"
             };
 
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
             this.MiniOrderRepository.FindById(this.orderNumber).Returns(this.miniOrder);
+
+            this.PurchaseOrdersPack.GetVatAmountSupplier(Arg.Any<decimal>(), Arg.Any<int>()).Returns(40.55m);
 
             this.PurchaseLedgerMaster.GetRecord().Returns(new PurchaseLedgerMaster { OkToRaiseOrder = "Y" });
 
@@ -387,28 +389,55 @@
         }
 
         [Test]
-        public void ShouldUpdateMiniOrderFields()
+        public void ShouldNotUpdateFieldsForOrders()
+        {
+            this.current.OrderNumber.Should().Be(600179);
+            this.current.Remarks.Should().Be("updated remarks");
+
+            var firstDetail = this.current.Details.First();
+
+            // Item should not have been updated from 120 as return order
+            firstDetail.OurUnitPriceCurrency.Should().Be(120m);
+        }
+
+        [Test]
+        public void ShouldNotUpdateMiniOrderFields()
         {
             this.miniOrder.OrderNumber.Should().Be(600179);
             this.miniOrder.Remarks.Should().Be("updated remarks");
 
-            this.miniOrder.InternalComments.Should().Be("updated internal comment");
-            this.miniOrder.SuppliersDesignation.Should().Be("updated suppliers designation");
-
-            this.miniOrder.Nominal.Should().Be("00009222");
-            this.miniOrder.SentByMethod.Should().Be("FAX");
+            // should not have been updated as return order
+            this.miniOrder.OurPrice.Should().Be(120m);
         }
 
         [Test]
-        public void ShouldUpdatePurchaseOrderFields()
+        public void ShouldNotUpdateFirstDeliveryTotalFields()
         {
             this.current.OrderNumber.Should().Be(600179);
             this.current.Remarks.Should().Be("updated remarks");
-            this.current.SentByMethod.Should().Be("FAX");
 
             var firstDetail = this.current.Details.First();
-            firstDetail.SuppliersDesignation.Should().Be("updated suppliers designation");
-            firstDetail.InternalComments.Should().Be("updated internal comment");
+
+            // get first delivery 
+            var delivery = firstDetail.PurchaseDeliveries.First();
+
+            // Item should not have been updated from 120 as return order
+            delivery.OurUnitPriceCurrency.Should().Be(120m);
+        }
+
+        [Test]
+        public void ShouldNotUpdateSecondDeliveryTotalFields()
+        {
+            this.current.OrderNumber.Should().Be(600179);
+            this.current.Remarks.Should().Be("updated remarks");
+
+            var firstDetail = this.current.Details.First();
+
+            // get second delivery
+            var delivery = firstDetail.PurchaseDeliveries.Last();
+
+            // Item should not have been updated from 120 as return order
+            delivery.OurUnitPriceCurrency.Should().Be(120m);
         }
     }
 }

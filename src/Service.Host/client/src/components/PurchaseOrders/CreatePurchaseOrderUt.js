@@ -579,7 +579,7 @@ function CreatePurchaseOrderUt() {
                                         type: 'detailFieldUpdate'
                                     })
                                 }
-                                disabled={!allowedToCreate()}
+                                disabled={!allowedToCreate() || isCreditOrReturn()}
                                 type="number"
                                 required
                             />
