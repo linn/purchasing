@@ -9,6 +9,6 @@
     {
         IResult<ReportReturnResource> GetReport(string fromDate, string toDate);
 
-        IEnumerable<IEnumerable<string>> GetExport(string fromDate, string toDate);
+        IResult<IEnumerable<IEnumerable<string>>> GetExport(string fromDate, string toDate);
     }
 }

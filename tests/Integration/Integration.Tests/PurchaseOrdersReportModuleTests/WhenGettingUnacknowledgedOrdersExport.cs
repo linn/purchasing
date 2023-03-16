@@ -5,6 +5,7 @@
 
     using FluentAssertions;
 
+    using Linn.Common.Facade;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources.RequestResources;
 
@@ -20,7 +21,7 @@
             this.FacadeService
                 .GetUnacknowledgedOrdersReportExport(
                     Arg.Any<UnacknowledgedOrdersRequestResource>())
-                .Returns(new List<IEnumerable<string>>());
+                .Returns(new SuccessResult<IEnumerable<IEnumerable<string>>>(new List<IEnumerable<string>>()));
 
             this.Response = this.Client.Get(
                 $"/purchasing/reports/unacknowledged-orders/export?supplierId=123&supplierGroupId=456",

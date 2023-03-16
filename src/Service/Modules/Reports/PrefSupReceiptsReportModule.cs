@@ -48,7 +48,7 @@
         {
             var csv = reportFacadeService.GetExport(fromDate, toDate);
 
-            await res.FromCsv(csv, $"prefsupvsreceipts{fromDate.Substring(0, 10)}_To_{toDate.Substring(0, 10)}.csv");
+            await res.Negotiate(csv);
         }
     }
 }

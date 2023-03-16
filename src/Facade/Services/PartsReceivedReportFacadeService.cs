@@ -37,15 +37,16 @@
             return new SuccessResult<ReportReturnResource>(resource);
         }
 
-        public IEnumerable<IEnumerable<string>> GetReportCsv(PartsReceivedReportRequestResource options)
+        public IResult<IEnumerable<IEnumerable<string>>> GetExport(PartsReceivedReportRequestResource options)
         {
-            return this.domainService.GetReport(
+            return new SuccessResult<IEnumerable<IEnumerable<string>>>(
+                this.domainService.GetReport(
                 options.Jobref,
                 options.Supplier,
                 options.FromDate,
                 options.ToDate,
                 options.OrderBy,
-                options.IncludeNegativeValues).ConvertToCsvList();
+                options.IncludeNegativeValues).ConvertToCsvList());
         }
     }
 }

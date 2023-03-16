@@ -6,7 +6,6 @@
     using Carter;
     using Carter.Response;
 
-    using Linn.Common.Facade.Carter.Extensions;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Service.Models;
 
@@ -47,8 +46,7 @@
         {
             var csvResults = facadeService.GetExport(
                 supplierId);
-            var now = DateTime.Today;
-            await res.FromCsv(csvResults, $"{supplierId}-order-book_{now.Day}-{now.Month}-{now.Year}.csv");
+            await res.Negotiate(csvResults);
         }
     }
 }

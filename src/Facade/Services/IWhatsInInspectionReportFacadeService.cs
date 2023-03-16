@@ -16,7 +16,7 @@
             bool showBackOrdered = true,
             bool showOrders = true);
 
-        IEnumerable<IEnumerable<string>> GetTopLevelExport(
+        IResult<IEnumerable<IEnumerable<string>>> GetTopLevelExport(
             bool showGoodStockQty = false,
             bool includePartsWithNoOrderNumber = false,
             bool includeFailedStock = false,

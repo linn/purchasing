@@ -46,11 +46,11 @@
             return new SuccessResult<ReportReturnResource>(resource);
         }
 
-        public IEnumerable<IEnumerable<string>> GetPartsOnBomExport(string bomName)
+        public IResult<IEnumerable<IEnumerable<string>>> GetPartsOnBomExport(string bomName)
         {
-            return this.domainService
+            return new SuccessResult<IEnumerable<IEnumerable<string>>>(this.domainService
                 .GetPartsOnBomReport(bomName.ToUpper().Trim())
-                .ConvertToCsvList();
+                .ConvertToCsvList());
         }
 
         public IResult<IEnumerable<BomCostReportResource>> GetBomCostReport(

@@ -6,6 +6,7 @@
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
+    using Linn.Common.Facade;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
@@ -46,7 +47,7 @@
 
             this.FacadeService
                 .GetOrdersByPartExport(Arg.Any<OrdersByPartSearchResource>())
-                .Returns(new List<IEnumerable<string>>());
+                .Returns(new SuccessResult<IEnumerable<IEnumerable<string>>>(new List<IEnumerable<string>>()));
 
             this.Response = this.Client.Get(
                 $"/purchasing/reports/orders-by-part/export?partNumber={"MCP 123"}&fromDate={(1.January(2022).ToLongDateString())}&toDate={(1.February(2022).ToLongDateString())}&cancelled=N",

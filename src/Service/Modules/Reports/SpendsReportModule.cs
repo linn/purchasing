@@ -46,7 +46,7 @@
         {
             var csv = spendsReportFacadeService.GetSpendByPartExport(id);
             
-            await res.FromCsv(csv, $"spendByPart_{id}_{DateTime.Now.ToString("dd-MM-yyyy")}.csv");
+            await res.Negotiate(csv);
         }
 
         private async Task GetSpendByPartReport(
@@ -86,13 +86,7 @@
             string vm)
         {
             var csv = spendsReportFacadeService.GetSpendBySupplierExport(vm ?? string.Empty);
-
-            var contentDisposition = new ContentDisposition
-                                         {
-                                             FileName = $"spendBySuppliers{DateTime.Now.ToString("dd-MM-yyyy")}.csv"
-                                         };
-
-            await res.FromCsv(csv, $"spendBySuppliers{DateTime.Now.ToString("dd-MM-yyyy")}.csv");
+            await res.Negotiate(csv);
         }
 
         private async Task GetSpendBySupplierReport(
@@ -125,7 +119,7 @@
 
             var csv = spendsReportFacadeService.GetSpendBySupplierByDateRangeReportExport(options);
 
-            await res.FromCsv(csv, $"spendBySuppliersByDateRange{DateTime.Now.ToString("dd-MM-yyyy")}.csv");
+            await res.Negotiate(csv);
         }
 
         private async Task GetSpendBySupplierByDateRangeReport(

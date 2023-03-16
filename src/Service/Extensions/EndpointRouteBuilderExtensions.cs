@@ -10,12 +10,14 @@
     {
         private static readonly string[] PatchVerb = new[] { "PATCH" };
 
-        public static RouteHandlerBuilder MapPatch(
-            this IEndpointRouteBuilder endpoints,
-            string pattern,
-            Delegate requestDelegate)
-        {
-            return endpoints.MapMethods(pattern, PatchVerb, requestDelegate);
-        }
+        // looks like dotnet have copied us and added this one?
+
+        // public static RouteHandlerBuilder MapPatch(
+        //     this IEndpointRouteBuilder endpoints,
+        //     string pattern,
+        //     Delegate requestDelegate)
+        // {
+        //     return endpoints.MapMethods(pattern, PatchVerb, requestDelegate);
+        // }
     }
 }

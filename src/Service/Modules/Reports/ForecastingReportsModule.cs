@@ -35,8 +35,7 @@
         {
             var csvResults = facadeService.GetMonthlyForecastExport(
                supplierId);
-            var now = DateTime.Today;
-            await res.FromCsv(csvResults, $"{supplierId}-monthly-forecast-orders_{now.Day}-{now.Month}-{now.Year}.csv");
+            await res.Negotiate(csvResults);
         }
     }
 }

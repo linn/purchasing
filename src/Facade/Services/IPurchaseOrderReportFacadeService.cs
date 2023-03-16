@@ -12,13 +12,13 @@
         IResult<ReportReturnResource> GetOrdersBySupplierReport(
             OrdersBySupplierSearchResource resource);
 
-        IEnumerable<IEnumerable<string>> GetOrdersBySupplierExport(
+        IResult<IEnumerable<IEnumerable<string>>> GetOrdersBySupplierExport(
             OrdersBySupplierSearchResource resource);
 
         IResult<ReportReturnResource> GetOrdersByPartReport(
             OrdersByPartSearchResource resource);
 
-        IEnumerable<IEnumerable<string>> GetOrdersByPartExport(
+        IResult<IEnumerable<IEnumerable<string>>> GetOrdersByPartExport(
             OrdersByPartSearchResource resource);
 
         IResult<ReportReturnResource> GetSuppliersWithUnacknowledgedOrdersReport(
@@ -27,7 +27,7 @@
         IResult<ReportReturnResource> GetUnacknowledgedOrdersReport(
             UnacknowledgedOrdersRequestResource resource);
 
-        IEnumerable<IEnumerable<string>> GetUnacknowledgedOrdersReportExport(
+        IResult<IEnumerable<IEnumerable<string>>> GetUnacknowledgedOrdersReportExport(
             UnacknowledgedOrdersRequestResource resource);
 
         IResult<ReportReturnResource> GetDeliveryPerformanceSummaryReport(

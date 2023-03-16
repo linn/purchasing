@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFramework>net6.0</TargetFramework>
+	<TargetFramework>net7.0</TargetFramework>
     <AssemblyName>Linn.Purchasing.Proxy</AssemblyName>
     <RootNamespace>Linn.Purchasing.Proxy</RootNamespace>
   </PropertyGroup>
@@ -10,8 +10,8 @@
     <PackageReference Include="Linn.Common.Configuration" Version="2.0.0" />
     <PackageReference Include="Linn.Common.Proxy" Version="3.0.1" />
     <PackageReference Include="Linn.Common.Proxy.LinnApps" Version="3.0.0" />
-    <PackageReference Include="MimeKit" Version="3.4.0" />
-    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.70" />
+    <PackageReference Include="MimeKit" Version="3.6.0" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.90" />
   </ItemGroup>
 
   <ItemGroup>

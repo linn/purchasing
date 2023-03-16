@@ -86,9 +86,9 @@
                     IncludeNegativeValues = includeNegativeValues ?? false
                 };
             
-            var csv = reportFacadeService.GetReportCsv(options);
+            var csv = reportFacadeService.GetExport(options);
 
-            await res.FromCsv(csv, "parts_received.csv");
+            await res.Negotiate(csv);
         }
     }
 }

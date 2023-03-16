@@ -30,10 +30,10 @@
             return new SuccessResult<ReportReturnResource>(resource);
         }
 
-        public IEnumerable<IEnumerable<string>> GetExport(int supplierId)
+        public IResult<IEnumerable<IEnumerable<string>>> GetExport(int supplierId)
         {
-            return this.domainService
-                .GetOrderBookExport(supplierId).ConvertToCsvList();
+            return new SuccessResult<IEnumerable<IEnumerable<string>>>(
+                this.domainService.GetOrderBookExport(supplierId).ConvertToCsvList());
         }
     }
 }

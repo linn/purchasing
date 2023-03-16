@@ -55,7 +55,7 @@
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
-        public IEnumerable<IEnumerable<string>> GetOrdersByPartExport(
+        public IResult<IEnumerable<IEnumerable<string>>> GetOrdersByPartExport(
             OrdersByPartSearchResource resource)
         {
             var fromValid = DateTime.TryParse(resource.From, out var from);
@@ -74,7 +74,7 @@
                 resource.PartNumber,
                 cancelled);
 
-            return results.ConvertToCsvList();
+            return new SuccessResult<IEnumerable<IEnumerable<string>>>(results.ConvertToCsvList());
         }
 
         public IResult<ReportReturnResource> GetSuppliersWithUnacknowledgedOrdersReport(
@@ -100,11 +100,12 @@
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
-        public IEnumerable<IEnumerable<string>> GetUnacknowledgedOrdersReportExport(UnacknowledgedOrdersRequestResource resource)
+        public IResult<IEnumerable<IEnumerable<string>>> GetUnacknowledgedOrdersReportExport(
+            UnacknowledgedOrdersRequestResource resource)
         {
             var results = this.domainService.GetUnacknowledgedOrders(resource.SupplierId, resource.SupplierGroupId);
 
-            return results.ConvertToCsvList();
+            return new SuccessResult<IEnumerable<IEnumerable<string>>>(results.ConvertToCsvList());
         }
 
         public IResult<ReportReturnResource> GetDeliveryPerformanceSummaryReport(DeliveryPerformanceRequestResource requestResource)
@@ -181,7 +182,7 @@
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
-        public IEnumerable<IEnumerable<string>> GetOrdersBySupplierExport(
+        public IResult<IEnumerable<IEnumerable<string>>> GetOrdersBySupplierExport(
             OrdersBySupplierSearchResource resource)
         {
             var fromValid = DateTime.TryParse(resource.From, out var from);
@@ -206,7 +207,8 @@
                 resource.Credits,
                 resource.StockControlled);
 
-            return results.ConvertToCsvList();
+            return new SuccessResult<IEnumerable<IEnumerable<string>>>(
+                results.ConvertToCsvList());
         }
     }
 }
