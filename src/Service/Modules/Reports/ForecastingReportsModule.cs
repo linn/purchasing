@@ -33,9 +33,9 @@
             IForecastingReportsFacadeService facadeService,
             int supplierId)
         {
-            var csvResults = facadeService.GetMonthlyForecastExport(
+            var data = facadeService.GetMonthlyForecastExport(
                supplierId);
-            await res.Negotiate(csvResults);
+            await res.Negotiate(data);
         }
     }
 }

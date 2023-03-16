@@ -46,9 +46,9 @@
             string fromDate,
             string toDate)
         {
-            var csv = reportFacadeService.GetExport(fromDate, toDate);
+            var data = reportFacadeService.GetExport(fromDate, toDate);
 
-            await res.Negotiate(csv);
+            await res.Negotiate(data);
         }
     }
 }

@@ -52,9 +52,9 @@
             string vendorManager,
             int? supplier)
         {
-            var csvResults = reportFacadeService.GetExport(fromDate, toDate, orderBy, vendorManager, supplier);
+            var data = reportFacadeService.GetExport(fromDate, toDate, orderBy, vendorManager, supplier);
 
-            await res.Negotiate(csvResults);
+            await res.Negotiate(data);
         }
     }
 }

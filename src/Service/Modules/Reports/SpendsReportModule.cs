@@ -44,9 +44,9 @@
             ISpendsReportFacadeService spendsReportFacadeService,
             int id)
         {
-            var csv = spendsReportFacadeService.GetSpendByPartExport(id);
+            var data = spendsReportFacadeService.GetSpendByPartExport(id);
             
-            await res.Negotiate(csv);
+            await res.Negotiate(data);
         }
 
         private async Task GetSpendByPartReport(
@@ -85,8 +85,8 @@
             ISpendsReportFacadeService spendsReportFacadeService,
             string vm)
         {
-            var csv = spendsReportFacadeService.GetSpendBySupplierExport(vm ?? string.Empty);
-            await res.Negotiate(csv);
+            var data = spendsReportFacadeService.GetSpendBySupplierExport(vm ?? string.Empty);
+            await res.Negotiate(data);
         }
 
         private async Task GetSpendBySupplierReport(
@@ -117,9 +117,9 @@
                 SupplierId = supplierId
             };
 
-            var csv = spendsReportFacadeService.GetSpendBySupplierByDateRangeReportExport(options);
+            var data = spendsReportFacadeService.GetSpendBySupplierByDateRangeReportExport(options);
 
-            await res.Negotiate(csv);
+            await res.Negotiate(data);
         }
 
         private async Task GetSpendBySupplierByDateRangeReport(

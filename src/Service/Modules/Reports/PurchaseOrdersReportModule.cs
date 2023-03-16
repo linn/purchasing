@@ -127,10 +127,10 @@
                                    Name = name
                                };
 
-            var csv = purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReportExport(
+            var data = purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReportExport(
                 resource);
 
-            await response.Negotiate(csv);
+            await response.Negotiate(data);
         }
 
         private async Task GetSuppliersWithUnacknowledgedOrdersReport(

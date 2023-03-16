@@ -44,9 +44,9 @@
             IMrOrderBookReportFacadeService facadeService,
             int supplierId)
         {
-            var csvResults = facadeService.GetExport(
+            var data = facadeService.GetExport(
                 supplierId);
-            await res.Negotiate(csvResults);
+            await res.Negotiate(data);
         }
     }
 }
