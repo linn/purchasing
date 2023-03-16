@@ -5,13 +5,12 @@
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Routing;
 
-    // todo - move to Common
     public static class EndpointRouteBuilderExtensions
     {
         private static readonly string[] PatchVerb = new[] { "PATCH" };
 
         // looks like dotnet have copied us and added this one?
-
+        // todo - check PATCH still works and delete this if it does
         // public static RouteHandlerBuilder MapPatch(
         //     this IEndpointRouteBuilder endpoints,
         //     string pattern,
