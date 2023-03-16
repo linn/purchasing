@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
+    using System.Collections;
     using System.Collections.Generic;
     using System.Globalization;
 
@@ -11,14 +12,13 @@
     {
         private readonly IBomTreeService domainService;
 
-        public BomTreeReportService(
-           IBomTreeService domainService)
+        public BomTreeReportService(IBomTreeService domainService)
         {
-           this.domainService = domainService;
+            this.domainService = domainService;
         }
 
         public IResult<BomTreeNode> GetTree(
-            string bomName, 
+            string bomName,
             int? levels = null,
             bool requirementOnly = true,
             bool showChanges = false,
@@ -29,26 +29,27 @@
                 return new SuccessResult<BomTreeNode>(
                     this.domainService.BuildBomTree(bomName, levels, requirementOnly, showChanges));
             }
-            
+
             return new SuccessResult<BomTreeNode>(
                 this.domainService.BuildWhereUsedTree(bomName, levels, requirementOnly, showChanges));
         }
 
-        public CsvResult<IEnumerable<BomTreeNode>> GetFlatTreeExport(
-            string bomName, 
+        public IResult<IEnumerable<BomTreeNode>> GetFlatTreeExport(
+            string bomName,
             int? levels,
             bool requirementOnly = true,
             bool showChanges = false,
             string treeType = "bom")
         {
-            var flattened = treeType == "bom" ? this.domainService
-                                    .FlattenBomTree(bomName, levels, requirementOnly, showChanges)
-                                : this.domainService.FlattenWhereUsedTree(bomName, levels, requirementOnly, showChanges);
-            
-            return new CsvResult<IEnumerable<BomTreeNode>>(bomName)
-                       {
-                           Data = flattened
-                       };
+            var flattened = treeType == "bom"
+                                ? this.domainService.FlattenBomTree(bomName, levels, requirementOnly, showChanges)
+                                : this.domainService.FlattenWhereUsedTree(
+                                    bomName,
+                                    levels,
+                                    requirementOnly,
+                                    showChanges);
+
+            return new SuccessResult<IEnumerable<BomTreeNode>>(flattened);
         }
     }
 }

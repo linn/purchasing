@@ -25,7 +25,7 @@
 
             this.Response = this.Client.Get(
                 $"/purchasing/reports/unacknowledged-orders/export?supplierId=123&supplierGroupId=456",
-                with => { with.Accept("application/json"); }).Result;
+                with => { with.Accept("text/csv"); }).Result;
         }
 
         [Test]

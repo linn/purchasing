@@ -27,7 +27,7 @@
                 .Returns(new SuccessResult<IEnumerable<IEnumerable<string>>>(data));
             this.Response = this.Client.Get(
                 "/purchasing/reports/pref-sup-receipts/export?fromDate=abc1234567&toDate=xyz1234567",
-                with => { with.Accept("application/csv"); }).Result;
+                with => { with.Accept("text/csv"); }).Result;
         }
 
         [Test]
