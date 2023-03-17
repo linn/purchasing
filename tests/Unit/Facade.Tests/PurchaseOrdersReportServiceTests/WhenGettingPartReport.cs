@@ -47,7 +47,7 @@
         public void ShouldReturnSuccess()
         {
             this.result.Should().BeOfType<SuccessResult<ReportReturnResource>>();
-            var dataResult = ((SuccessResult<ReportReturnResource>) this.result).Data;
+            var dataResult = ((SuccessResult<ReportReturnResource>)this.result).Data;
             dataResult.ReportResults.First().title.displayString.Should()
                 .Be("Purchase Orders By Part: RAW 123");
         }

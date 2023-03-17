@@ -23,9 +23,10 @@
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
         }
 
-        public IEnumerable<IEnumerable<string>> GetSpendBySupplierExport(string vendorManagerId)
+        public IResult<IEnumerable<IEnumerable<string>>> GetSpendBySupplierExport(string vendorManagerId)
         {
-            return this.domainService.GetSpendBySupplierReport(vendorManagerId).ConvertToCsvList();
+            return new SuccessResult<IEnumerable<IEnumerable<string>>>(
+                this.domainService.GetSpendBySupplierReport(vendorManagerId).ConvertToCsvList());
         }
 
         public IResult<ReportReturnResource> GetSpendBySupplierReport(string vendorManagerId)
@@ -37,13 +38,14 @@
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
-        public IEnumerable<IEnumerable<string>> GetSpendBySupplierByDateRangeReportExport(SpendBySupplierByDateRangeReportRequestResource options)
+        public IResult<IEnumerable<IEnumerable<string>>> GetSpendBySupplierByDateRangeReportExport(SpendBySupplierByDateRangeReportRequestResource options)
         {
-            return this.domainService.GetSpendBySupplierByDateRangeReport(
+            return new SuccessResult<IEnumerable<IEnumerable<string>>>(
+                this.domainService.GetSpendBySupplierByDateRangeReport(
                 options.FromDate,
                 options.ToDate,
                 options.VendorManager,
-                options.SupplierId).ConvertToCsvList();
+                options.SupplierId).ConvertToCsvList());
         }
 
         public IResult<ReportReturnResource> GetSpendBySupplierByDateRangeReport(SpendBySupplierByDateRangeReportRequestResource options)
@@ -58,9 +60,10 @@
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
-        public IEnumerable<IEnumerable<string>> GetSpendByPartExport(int supplierId)
+        public IResult<IEnumerable<IEnumerable<string>>> GetSpendByPartExport(int supplierId)
         {
-            return this.domainService.GetSpendByPartReport(supplierId).ConvertToCsvList();
+            return new SuccessResult<IEnumerable<IEnumerable<string>>>(
+                this.domainService.GetSpendByPartReport(supplierId).ConvertToCsvList());
         }
 
         public IResult<ReportReturnResource> GetSpendByPartReport(int supplierId)

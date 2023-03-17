@@ -65,17 +65,17 @@
                 });
         }
 
-        public IEnumerable<IEnumerable<string>> GetTopLevelExport(
+        public IResult<IEnumerable<IEnumerable<string>>> GetTopLevelExport(
             bool showGoodStockQty = false,
             bool includePartsWithNoOrderNumber = false,
             bool includeFailedStock = false,
             bool includeFinishedGoods = true)
         {
-            return this.domainService.GetTopLevelReport(
+            return new SuccessResult<IEnumerable<IEnumerable<string>>>(this.domainService.GetTopLevelReport(
                 showGoodStockQty,
                 includePartsWithNoOrderNumber,
                 includeFailedStock,
-                includeFinishedGoods).ConvertToCsvList();
+                includeFinishedGoods).ConvertToCsvList());
         }
     }
 }

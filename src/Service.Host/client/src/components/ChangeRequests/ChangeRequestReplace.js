@@ -82,7 +82,6 @@ function ChangeRequestReplace() {
     };
 
     const handlePcasSelectChange = selected => {
-        console.log(selected);
         setSelectedPcasComponents(selected);
     };
 

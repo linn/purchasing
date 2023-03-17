@@ -5,6 +5,7 @@
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
+    using Linn.Common.Facade;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Resources;
 
@@ -16,7 +17,7 @@
     {
         private readonly int supplierId = 71234;
 
-        private IEnumerable<IEnumerable<string>> csvData;
+        private IResult<IEnumerable<IEnumerable<string>>> result;
 
         [SetUp]
         public void SetUp()
@@ -40,7 +41,7 @@
                             ReportTitle = new NameModel("Purchase Orders By Supplier - 71234: Dwight K Schrute")
                         });
 
-            this.csvData = this.Sut.GetOrdersBySupplierExport(resource);
+            this.result = this.Sut.GetOrdersBySupplierExport(resource);
         }
 
         [Test]
@@ -58,9 +59,9 @@
         }
 
         [Test]
-        public void ShouldReturnCsv()
+        public void ShouldReturnOk()
         {
-            this.csvData.Should().BeOfType<List<List<string>>>();
+            this.result.Should().BeOfType<SuccessResult<IEnumerable<IEnumerable<string>>>>();
         }
     }
 }

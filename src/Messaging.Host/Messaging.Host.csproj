@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net7.0</TargetFramework>
 		<AssemblyName>Linn.Purchasing.Messaging.Host</AssemblyName>
 		<RootNamespace>Linn.Purchasing.Messaging.Host</RootNamespace>
 		<Nullable>enable</Nullable>
@@ -11,7 +11,7 @@
 	<ItemGroup>
 		<PackageReference Include="Linn.Common.Configuration" Version="2.0.0" />
 		<PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
 		<PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
 	</ItemGroup>
 

@@ -1344,7 +1344,7 @@
             entity.Property(e => e.OrderNumber).HasColumnName("ORDER_NUMBER");
             entity.Property(e => e.OrderLine).HasColumnName("ORDER_LINE");
             entity.Property(e => e.OrderCurrency).HasColumnName("ORDER_CURRENCY").HasMaxLength(4);
-            entity.Property(e => e.PrefsupCurrency).HasColumnName("ORDER_CURRENCY").HasMaxLength(4);
+            entity.Property(e => e.PrefsupCurrency).HasColumnName("PS_CURRENCY").HasMaxLength(4);
             entity.Property(e => e.MPVReason).HasColumnName("MPV_REASON").HasMaxLength(20);
         }
 
