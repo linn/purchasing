@@ -54,12 +54,12 @@ const ForecastOrdersReport = () => {
                     </Grid>
                     <ExportButton
                         disabled={!supplierId}
-                        href={`${config.appRoot}/purchasing/reports/monthly-forecast-orders/export?supplierId=${supplierId}`}
+                        href={`${config.appRoot}/purchasing/reports/monthly-forecast-orders?supplierId=${supplierId}`}
                         buttonText="Monthly Forecast"
                     />
                     <ExportButton
                         disabled={!supplierId}
-                        href={`${config.appRoot}/purchasing/reports/mr-order-book/export?supplierId=${supplierId}`}
+                        href={`${config.appRoot}/purchasing/reports/mr-order-book?supplierId=${supplierId}`}
                         buttonText="Order Book"
                     />
                 </Grid>

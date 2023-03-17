@@ -56,7 +56,7 @@ function SpendBySupplierByDateRangeReport() {
                     {!loading && reportData ? (
                         <ExportButton
                             href={
-                                `${config.appRoot}/purchasing/reports/spend-by-supplier-by-date-range/export` +
+                                `${config.appRoot}/purchasing/reports/spend-by-supplier-by-date-range` +
                                 `?&vm=${vendorManager}` +
                                 `&fromDate=${fromDate}` +
                                 `&toDate=${toDate}&supplierId=${supplierId}`

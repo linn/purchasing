@@ -13,12 +13,5 @@
             string orderBy, 
             string vendorManager, 
             int? supplier);
-
-        public IResult<IEnumerable<IEnumerable<string>>> GetExport(
-            string fromDate,
-            string toDate,
-            string orderBy,
-            string vendorManager,
-            int? supplier);
     }
 }

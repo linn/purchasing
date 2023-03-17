@@ -8,15 +8,9 @@
 
     public interface ISpendsReportFacadeService
     {
-        IResult<IEnumerable<IEnumerable<string>>> GetSpendBySupplierExport(string vendorManagerId);
-
         IResult<ReportReturnResource> GetSpendBySupplierReport(string vendorManagerId);
 
-        IResult<IEnumerable<IEnumerable<string>>> GetSpendBySupplierByDateRangeReportExport(SpendBySupplierByDateRangeReportRequestResource options);
-
         IResult<ReportReturnResource> GetSpendBySupplierByDateRangeReport(SpendBySupplierByDateRangeReportRequestResource options);
-
-        IResult<IEnumerable<IEnumerable<string>>> GetSpendByPartExport(int supplierId);
 
         IResult<ReportReturnResource> GetSpendByPartReport(int supplierId);
 

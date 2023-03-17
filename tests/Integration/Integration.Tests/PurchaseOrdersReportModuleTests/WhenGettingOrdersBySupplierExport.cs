@@ -46,18 +46,18 @@
             reportReturnResource.ReportResults.Add(reportResult);
 
             this.FacadeService
-                .GetOrdersBySupplierExport(Arg.Any<OrdersBySupplierSearchResource>())
-                .Returns(new SuccessResult<IEnumerable<IEnumerable<string>>>(new List<IEnumerable<string>>()));
+                .GetOrdersBySupplierReport(Arg.Any<OrdersBySupplierSearchResource>())
+                .Returns(new SuccessResult<ReportReturnResource>(new ReportReturnResource()));
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/orders-by-supplier/export?id={16622}&fromDate={(1.January(2022).ToLongDateString())}&toDate={(1.February(2022).ToLongDateString())}",
+                $"/purchasing/reports/orders-by-supplier?id={16622}&fromDate={(1.January(2022).ToLongDateString())}&toDate={(1.February(2022).ToLongDateString())}",
                 with => { with.Accept("text/csv"); }).Result;
         }
 
         [Test]
         public void ShouldCallFacadeService()
         {
-            this.FacadeService.Received().GetOrdersBySupplierExport(
+            this.FacadeService.Received().GetOrdersBySupplierReport(
                 Arg.Any<OrdersBySupplierSearchResource>());
         }
 

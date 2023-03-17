@@ -13,8 +13,6 @@
 
         IResult<ReportReturnResource> GetBomDifferencesReport(string bom1, string bom2);
 
-        IResult<IEnumerable<IEnumerable<string>>> GetPartsOnBomExport(string bomName);
-
         IResult<IEnumerable<BomCostReportResource>> GetBomCostReport(
             string bomName,
             bool splitBySubAssembly,

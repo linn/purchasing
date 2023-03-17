@@ -46,7 +46,7 @@ function SpendBySupplierReport() {
                     {!loading && reportData ? (
                         <ExportButton
                             href={
-                                `${config.appRoot}/purchasing/reports/spend-by-supplier/export` +
+                                `${config.appRoot}/purchasing/reports/spend-by-supplier` +
                                 `?&vm=${options.vm}`
                             }
                         />
