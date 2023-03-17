@@ -4,6 +4,7 @@
     <AssemblyName>Linn.Purchasing.Service.Host</AssemblyName>
     <RootNamespace>Linn.Purchasing.Service.Host</RootNamespace>
     <PreserveCompilationContext>true</PreserveCompilationContext>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="client\assets\" />
