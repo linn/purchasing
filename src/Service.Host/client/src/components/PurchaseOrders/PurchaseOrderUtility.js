@@ -88,13 +88,6 @@ function PurchaseOrderUtility({ creating }) {
         }
     }, [reduxDispatch, creating]);
 
-    useEffect(() => {
-        reduxDispatch(currenciesActions.fetch());
-    }, [reduxDispatch]);
-    useEffect(() => {
-        reduxDispatch(unitsOfMeasureActions.fetch());
-    }, [reduxDispatch]);
-
     const deliveryTableColumns = [
         { field: 'id', headerName: 'Id', width: 100, hide: true },
         { field: 'deliverySeq', headerName: 'Delivery', width: 100 },
