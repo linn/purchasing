@@ -61,13 +61,13 @@
             bool includeFailedStock,
             bool includeFinishedGoods)
         {
-            var csvResults = facadeService.GetTopLevelExport(
+            var data = facadeService.GetTopLevelExport(
                 showGoodStockQty,
                 includePartsWithNoOrderNumber,
                 includeFailedStock,
                 includeFinishedGoods);
-            var now = DateTime.Today;
-            await res.FromCsv(csvResults, $"whats_in_insp_{now.Day}-{now.Month}-{now.Year}.csv");
+
+            await res.Negotiate(data);
         }
     }
 }

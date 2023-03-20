@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFramework>net6.0</TargetFramework>
+	<TargetFramework>net7.0</TargetFramework>
     <AssemblyName>Linn.Purchasing.Facade</AssemblyName>
     <RootNamespace>Linn.Purchasing.Facade</RootNamespace>
   </PropertyGroup>
@@ -10,7 +10,7 @@
     <PackageReference Include="Linn.Common.Facade" Version="9.2.0" />
     <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
     <PackageReference Include="linn.common.persistence" Version="3.0.0" />
-    <PackageReference Include="Linn.Common.Proxy.LinnApps" Version="3.0.0" />
+    <PackageReference Include="Linn.Common.Proxy.LinnApps" Version="3.1.0" />
     <PackageReference Include="Linn.Common.Reporting" Version="1.7.0" />
     <PackageReference Include="Linn.Common.Reporting.Resources" Version="1.5.0" />
     <PackageReference Include="Linn.Common.Serialization" Version="2.1.0" />

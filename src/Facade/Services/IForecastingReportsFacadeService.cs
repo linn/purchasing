@@ -2,8 +2,10 @@
 {
     using System.Collections.Generic;
 
+    using Linn.Common.Facade;
+
     public interface IForecastingReportsFacadeService
     {
-        IEnumerable<IEnumerable<string>> GetMonthlyForecastExport(int supplierId);
+        IResult<IEnumerable<IEnumerable<string>>> GetMonthlyForecastExport(int supplierId);
     }
 }

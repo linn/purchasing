@@ -9,6 +9,6 @@
     {
         IResult<ReportReturnResource> GetReport(int supplierId);
 
-        IEnumerable<IEnumerable<string>> GetExport(int supplierId);
+         IResult<IEnumerable<IEnumerable<string>>> GetExport(int supplierId);
     }
 }

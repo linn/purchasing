@@ -5,6 +5,7 @@
 
     using FluentAssertions;
 
+    using Linn.Common.Facade;
     using Linn.Purchasing.Integration.Tests.Extensions;
 
     using NSubstitute;
@@ -16,17 +17,17 @@
         [SetUp]
         public void SetUp()
         {
-            var csv = new List<List<string>>
+            var data = new List<List<string>>
                           {
                               new List<string> { "mary", "little", "lamb" },
                               new List<string> { "princess", "frog", "kiss" }
                           };
 
             this.ReportFacadeService.GetExport("abc1234567", "xyz1234567")
-                .Returns(csv);
+                .Returns(new SuccessResult<IEnumerable<IEnumerable<string>>>(data));
             this.Response = this.Client.Get(
                 "/purchasing/reports/pref-sup-receipts/export?fromDate=abc1234567&toDate=xyz1234567",
-                with => { with.Accept("application/csv"); }).Result;
+                with => { with.Accept("text/csv"); }).Result;
         }
 
         [Test]

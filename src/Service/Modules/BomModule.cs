@@ -239,7 +239,7 @@
         {
             var result = facadeService.GetPartsOnBomExport(bomName);
 
-            await res.FromCsv(result, $"{bomName}.csv");
+            await res.Negotiate(result);
         }
 
         private async Task GetBomCostReport(

@@ -127,16 +127,10 @@
                                    Name = name
                                };
 
-            var csv = purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReportExport(
+            var data = purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReportExport(
                 resource);
 
-            var fileName = $"Unacknowledged purchase orders for {resource.Name}.csv";
-            if (resource.SupplierId.HasValue)
-            {
-                fileName += $" ({resource.SupplierId}).csv";
-            }
-
-            await response.FromCsv(csv, fileName);
+            await response.Negotiate(data);
         }
 
         private async Task GetSuppliersWithUnacknowledgedOrdersReport(
@@ -179,10 +173,10 @@
                                    PartNumber = partNumber, From = fromDate, To = toDate, Cancelled = cancelled
                                };
 
-            var csv = purchaseOrderReportFacadeService.GetOrdersByPartExport(
+            var data = purchaseOrderReportFacadeService.GetOrdersByPartExport(
                 resource);
 
-            await res.FromCsv(csv, $"ordersByPart{resource.From.Substring(0, 10)}_To_{resource.To.Substring(0, 10)}.csv");
+            await res.Negotiate(data);
         }
 
         private async Task GetOrdersByPartReport(
@@ -233,10 +227,10 @@
                                    StockControlled = stockControlled
                                };
 
-            var csv = purchaseOrderReportFacadeService.GetOrdersBySupplierExport(
+            var data = purchaseOrderReportFacadeService.GetOrdersBySupplierExport(
                 resource);
 
-            await res.FromCsv(csv, $"ordersBySupplier{resource.From.Substring(0, 10)}_To_{resource.To.Substring(0, 10)}.csv");
+            await res.Negotiate(data);
         }
 
         private async Task GetOrdersBySupplierReport(

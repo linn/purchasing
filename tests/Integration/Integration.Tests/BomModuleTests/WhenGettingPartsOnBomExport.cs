@@ -33,7 +33,7 @@
 
             this.Response = this.Client.Get(
                 $"/purchasing/boms/reports/list/export?bomName={this.bomName}",
-                with => { with.Accept("application/json"); }).Result;
+                with => { with.Accept("text/csv"); }).Result;
         }
 
         [Test]

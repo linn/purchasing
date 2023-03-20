@@ -37,15 +37,15 @@
             return new SuccessResult<ReportReturnResource>(resource);
         }
 
-        public IEnumerable<IEnumerable<string>> GetReportCsv(
+        public IResult<IEnumerable<IEnumerable<string>>> GetExport(
             string fromDate, string toDate, string orderBy, string vendorManager, int? supplier)
         {
-            return this.domainService.GetReport(
+            return new SuccessResult<IEnumerable<IEnumerable<string>>>(this.domainService.GetReport(
                 DateTime.Parse(fromDate).Date,
                 DateTime.Parse(toDate).Date.AddDays(1).AddTicks(-1),
                 orderBy,
                 vendorManager,
-                supplier).ConvertToCsvList();
+                supplier).ConvertToCsvList());
         }
     }
 }
