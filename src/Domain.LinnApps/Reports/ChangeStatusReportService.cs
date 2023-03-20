@@ -7,6 +7,7 @@
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Layouts;
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Boms;
 
     public class ChangeStatusReportService : IChangeStatusReportService
@@ -17,9 +18,12 @@
 
         private readonly IRepository<Employee, int> employeeRepository;
 
+        private readonly IQueryRepository<MrHeader> partMRQueryRepository;
+
         public ChangeStatusReportService(
             IQueryRepository<ChangeRequest> changeRequests,
             IRepository<Employee, int> employeeRepository,
+            IQueryRepository<MrHeader> queryRepository,
             IReportingHelper reportingHelper
             )
         {
@@ -30,11 +34,11 @@
 
         public ResultsModel GetChangeStatusReport(int months)
         {
-            var acceptedChangeRequests = this.changeRequests
-                .FindAll().Count(x => x.DateAccepted >= DateTime.Today.AddMonths(-months) && x.ChangeState == "ACCEPT");
+            var acceptedChangeRequests = this.changeRequests.FindAll().Where(x =>
+                x.DateAccepted >= DateTime.Today.AddMonths(-months) && x.ChangeState == "ACCEPT").Count();
 
-            var proposedChangeRequests = this.changeRequests
-                .FindAll().Count(x => x.DateEntered >= DateTime.Today.AddMonths(-months) && x.ChangeState == "PROPOS");
+            var proposedChangeRequests = this.changeRequests.FindAll().Where(x =>
+                x.DateEntered >= DateTime.Today.AddMonths(-months) && x.ChangeState == "PROPOS").Count();
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
 
