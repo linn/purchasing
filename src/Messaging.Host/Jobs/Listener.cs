@@ -80,7 +80,6 @@
                     }
                 };
             this.channel.BasicConsume(queue: $"{this.queueName}.q", autoAck: false, consumer: consumer);
-            this.logger.Info("This is happening");
             await Task.CompletedTask;
         }
 
