@@ -173,7 +173,7 @@
                 .AddTransient<IPurchaseOrdersReportService, PurchaseOrdersReportService>()
                 .AddTransient<IPurchaseOrderService, PurchaseOrderService>()
                 .AddTransient<IAuthorisationService, AuthorisationService>()
-                .AddTransient<IDatabaseService, DatabaseService>()
+                .AddTransient<IDatabaseService, MyDatabaseService>()
                 .AddTransient<ISpendsReportService, SpendsReportService>()
                 .AddTransient<IPlCreditDebitNoteService, PlCreditDebitNoteService>()
                 .AddTransient<IPartsReceivedReportService, PartsReceivedReportService>()

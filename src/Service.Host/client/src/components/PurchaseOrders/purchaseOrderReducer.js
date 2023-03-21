@@ -6,8 +6,12 @@ const initialState = {};
 const recalculateDetailFields = (detail, exchangeRate) => {
     const netTotalCurrency = new Decimal(detail.ourQty ?? 0).mul(detail.ourUnitPriceCurrency);
     const detailTotalCurrency = new Decimal(netTotalCurrency).plus(detail.vatTotalCurrency);
-    const baseNetTotal = currencyConvert(netTotalCurrency, exchangeRate);
-    const baseDetailTotal = currencyConvert(detailTotalCurrency, exchangeRate);
+    const baseNetTotal = exchangeRate
+        ? currencyConvert(netTotalCurrency, exchangeRate)
+        : netTotalCurrency;
+    const baseDetailTotal = exchangeRate
+        ? currencyConvert(detailTotalCurrency, exchangeRate)
+        : detailTotalCurrency;
 
     //vat amount not yet calculated, can do it if include the supplier vat % in what's sent to front end
 
