@@ -400,10 +400,10 @@
 
         private BomChange GetOrCreateBomChange(string bomName, int crfNumber, int changedBy, Bom bom)
         {
-            var change = this.bomChangeRepository.FindBy(
+            var change = this.bomChangeRepository.FilterBy(
                 x => x.DocumentNumber == crfNumber
                      && x.BomId == bom.BomId
-                     && new[] { "PROPOS", "ACCEPT" }.Contains(x.ChangeState));
+                     && new[] { "PROPOS", "ACCEPT" }.Contains(x.ChangeState))?.FirstOrDefault();
             if (change == null)
             {
                 change = new BomChange

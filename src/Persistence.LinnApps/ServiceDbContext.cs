@@ -1949,7 +1949,7 @@
             entity.Property(c => c.ChangeRequestType).HasColumnName("CRF_TYPE_CODE").HasMaxLength(10);
             entity.Property(c => c.OldPartNumber).HasColumnName("OLD_PART_NUMBER");
             entity.HasOne(o => o.OldPart).WithMany().HasForeignKey(o => o.OldPartNumber);
-            entity.Property(c => c.NewPartNumber).HasColumnName("NEW_PART_NUMBER");
+            entity.Property(c => c.NewPartNumber).HasColumnName("NEW_PART_NUMBER").HasColumnType("VARCHAR");
             entity.Property(c => c.BoardCode).HasColumnName("BOARD_CODE").HasMaxLength(6);
             entity.HasOne(o => o.CircuitBoard).WithMany().HasForeignKey(o => o.BoardCode);
             entity.Property(c => c.RevisionCode).HasColumnName("REVISION_CODE").HasMaxLength(10);
