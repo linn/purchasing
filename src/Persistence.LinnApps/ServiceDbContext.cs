@@ -373,6 +373,7 @@
             entity.Property(e => e.NewQty).HasColumnName("NEW_QTY");
             entity.Property(e => e.OldQty).HasColumnName("OLD_QTY");
             entity.Property(e => e.Cref).HasColumnName("CREF");
+            entity.Property(e => e.DocumentNumber).HasColumnName("DOCUMENT_NUMBER");
         }
 
         private void BuildBomHistoryView(ModelBuilder builder)
