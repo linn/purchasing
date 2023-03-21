@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
 
-    using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
 
@@ -15,10 +14,12 @@
             this.repository = repository; 
         }
 
-        public IResult<IEnumerable<PcasChangeComponent>> GetChanges(int documentNumber)
+        public CsvResult<IEnumerable<PcasChangeComponent>> GetChanges(int documentNumber)
         {
-            return new SuccessResult<IEnumerable<PcasChangeComponent>>(
-                this.repository.FilterBy(x => x.DocumentNumber == documentNumber));
+            return new CsvResult<IEnumerable<PcasChangeComponent>>("export.csv")
+                       {
+                           Data = this.repository.FilterBy(x => x.DocumentNumber == documentNumber)
+                       };
         }
     }
 }

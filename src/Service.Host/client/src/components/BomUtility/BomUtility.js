@@ -1003,7 +1003,7 @@ function BomUtility() {
                         rows={getRows()}
                         loading={bomTreeLoading}
                         processRowUpdate={processRowUpdate}
-                        onProcessRowUpdateError={err => console.log(err)}
+                        onProcessRowUpdateError={() => {}}
                         autoHeight
                         experimentalFeatures={{ newEditingApi: true }}
                         disableSelectionOnClick
