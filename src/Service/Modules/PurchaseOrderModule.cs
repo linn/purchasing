@@ -166,8 +166,8 @@
             HttpResponse res,
             IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> currencyService)
         {
-            var result = currencyService.GetAll();
-            await res.Negotiate(result);
+             var result = currencyService.GetAll();
+             await res.Negotiate(result);
         }
 
         private async Task GetDeliveryAddresses(
