@@ -38,7 +38,7 @@
             return new SuccessResult<ReportReturnResource>(resource);
         }
 
-        public IEnumerable<IEnumerable<string>> GetExport(string fromDate, string toDate)
+        public IResult<IEnumerable<IEnumerable<string>>> GetExport(string fromDate, string toDate)
         {
             var fromValid = DateTime.TryParse(fromDate, out var from);
             var toValid = DateTime.TryParse(toDate, out var to);
@@ -50,7 +50,7 @@
 
             var results = this.domainService.GetReport(from, to, true);
 
-            return results.ConvertToCsvList();
+            return new SuccessResult<IEnumerable<IEnumerable<string>>>(results.ConvertToCsvList());
         }
     }
 }

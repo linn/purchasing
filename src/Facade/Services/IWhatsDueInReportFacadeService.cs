@@ -14,7 +14,7 @@
             string vendorManager, 
             int? supplier);
 
-        public IEnumerable<IEnumerable<string>> GetReportCsv(
+        public IResult<IEnumerable<IEnumerable<string>>> GetExport(
             string fromDate,
             string toDate,
             string orderBy,

@@ -5,6 +5,7 @@
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
+    using Linn.Common.Facade;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Resources;
 
@@ -16,7 +17,7 @@
     {
         private readonly string partNumber = "MCAS 5";
 
-        private IEnumerable<IEnumerable<string>> csvData;
+        private IResult<IEnumerable<IEnumerable<string>>> result;
 
         [SetUp]
         public void SetUp()
@@ -36,7 +37,7 @@
                             ReportTitle = new NameModel($"Purchase Orders By Part:{this.partNumber}")
                         });
 
-            this.csvData = this.Sut.GetOrdersByPartExport(resource);
+            this.result = this.Sut.GetOrdersByPartExport(resource);
         }
 
         [Test]
@@ -46,9 +47,9 @@
         }
 
         [Test]
-        public void ShouldReturnCsv()
+        public void ShouldReturnOk()
         {
-            this.csvData.Should().BeOfType<List<List<string>>>();
+            this.result.Should().BeOfType<SuccessResult<IEnumerable<IEnumerable<string>>>>();
         }
     }
 }

@@ -19,12 +19,11 @@
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Logging;
 
     public class ServiceDbContext : DbContext
     {
-        public static readonly LoggerFactory MyLoggerFactory =
-            new LoggerFactory(new[] { new Microsoft.Extensions.Logging.Debug.DebugLoggerProvider() });
+        // public static readonly LoggerFactory MyLoggerFactory =
+        //     new LoggerFactory(new[] { new Microsoft.Extensions.Logging.Debug.DebugLoggerProvider() });
 
         public DbSet<PartSupplier> PartSuppliers { get; set; }
 
@@ -1344,7 +1343,7 @@
             entity.Property(e => e.OrderNumber).HasColumnName("ORDER_NUMBER");
             entity.Property(e => e.OrderLine).HasColumnName("ORDER_LINE");
             entity.Property(e => e.OrderCurrency).HasColumnName("ORDER_CURRENCY").HasMaxLength(4);
-            entity.Property(e => e.PrefsupCurrency).HasColumnName("ORDER_CURRENCY").HasMaxLength(4);
+            entity.Property(e => e.PrefsupCurrency).HasColumnName("PS_CURRENCY").HasMaxLength(4);
             entity.Property(e => e.MPVReason).HasColumnName("MPV_REASON").HasMaxLength(20);
         }
 

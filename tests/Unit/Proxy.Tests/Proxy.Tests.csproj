@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFramework>net6.0</TargetFramework>
+	<TargetFramework>net7.0</TargetFramework>
     <AssemblyName>Linn.Purchasing.Proxy.Tests</AssemblyName>
     <RootNamespace>Linn.Purchasing.Proxy.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.7.0" />
-    <PackageReference Include="Linn.Common.Proxy.LinnApps" Version="3.0.0" />
+    <PackageReference Include="Linn.Common.Proxy.LinnApps" Version="3.1.0" />
     <PackageReference Include="Linn.Common.Serialization.Json" Version="3.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />

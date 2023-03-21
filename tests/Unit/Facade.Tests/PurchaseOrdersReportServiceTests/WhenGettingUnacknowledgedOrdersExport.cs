@@ -4,7 +4,9 @@
 
     using FluentAssertions;
 
+    using Linn.Common.Facade;
     using Linn.Common.Reporting.Models;
+    using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Resources.RequestResources;
 
     using NSubstitute;
@@ -13,7 +15,7 @@
 
     public class WhenGettingUnacknowledgedOrdersExport : ContextBase
     {
-        private IEnumerable<IEnumerable<string>> csvData;
+        private IResult<IEnumerable<IEnumerable<string>>> result;
 
         private UnacknowledgedOrdersRequestResource requestResource;
 
@@ -32,7 +34,7 @@
                                        };
             this.DomainService.GetUnacknowledgedOrders(this.supplierId, this.supplierGroupId)
                 .Returns(new ResultsModel { ReportTitle = new NameModel("Title") });
-            this.csvData = this.Sut.GetUnacknowledgedOrdersReportExport(this.requestResource);
+            this.result = this.Sut.GetUnacknowledgedOrdersReportExport(this.requestResource);
         }
 
         [Test]
@@ -42,10 +44,11 @@
                 .Received().GetUnacknowledgedOrders(this.supplierId, this.supplierGroupId);
         }
 
+
         [Test]
-        public void ShouldReturnCsv()
+        public void ShouldReturnOk()
         {
-            this.csvData.Should().BeOfType<List<List<string>>>();
+            this.result.Should().BeOfType<SuccessResult<IEnumerable<IEnumerable<string>>>>();
         }
     }
 }

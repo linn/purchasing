@@ -19,8 +19,6 @@
 
         private readonly string fromState = "ORDER WAIT";
 
-        private readonly int newOrderNumber = 101137;
-
         private readonly int reqNumber = 5678;
 
         private readonly string toState = "ORDER";

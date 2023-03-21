@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFramework>net6.0</TargetFramework>
+	<TargetFramework>net7.0</TargetFramework>
     <AssemblyName>Linn.Purchasing.Domain.LinnApps</AssemblyName>
     <RootNamespace>Linn.Purchasing.Domain.LinnApps</RootNamespace>
   </PropertyGroup>
@@ -11,11 +11,11 @@
     <PackageReference Include="Linn.Common.Configuration" Version="2.0.0" />
     <PackageReference Include="Linn.Common.Domain" Version="1.1.0" />
     <PackageReference Include="Linn.Common.Domain.LinnApps" Version="1.0.0" />
-    <PackageReference Include="Linn.Common.Email" Version="4.0.0" />
+    <PackageReference Include="Linn.Common.Email" Version="5.0.0" />
     <PackageReference Include="linn.common.logging" Version="2.0.0" />
     <PackageReference Include="Linn.Common.Pdf" Version="2.0.0" />
     <PackageReference Include="Linn.Common.Persistence" Version="3.0.0" />
-    <PackageReference Include="Linn.Common.Proxy.LinnApps" Version="3.0.0" />
+    <PackageReference Include="Linn.Common.Proxy.LinnApps" Version="3.1.0" />
     <PackageReference Include="Linn.Common.Reporting" Version="1.7.0" />
   </ItemGroup>
 
