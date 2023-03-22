@@ -8,7 +8,6 @@
     using Carter.Response;
 
     using Linn.Common.Facade;
-    using Linn.Common.Facade.Carter.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Facade.Services;

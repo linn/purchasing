@@ -81,7 +81,7 @@
         public void ShouldSendEmail()
         {
             var expectedBody =
-                $"Linn sent you a Purchase Order ${this.delivery.OrderNumber} that you have previously confirmed.";
+                $"Linn sent you a Purchase Order {this.delivery.OrderNumber} that you have previously confirmed.";
             expectedBody += Environment.NewLine;
             expectedBody += Environment.NewLine;
 

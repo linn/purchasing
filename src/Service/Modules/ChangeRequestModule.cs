@@ -28,6 +28,7 @@
             app.MapPost("/purchasing/change-requests/phase-ins", this.PostPhaseIns);
             app.MapPost("/purchasing/change-requests/replace", this.ChangeRequestReplace);
             app.MapPut("/purchasing/change-requests/{id:int}", this.UpdateChangeRequest);
+            app.MapGet("/purchasing/change-requests/pcas-component-changes", this.GetPcasChangeComponents);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -136,6 +137,17 @@
                 res.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
+        }
+
+        private async Task GetPcasChangeComponents(
+            HttpRequest request,
+            HttpResponse response,
+            int documentNumber,
+            IPcasChangeComponentsService service)
+        {
+            var result = service.GetChanges(documentNumber);
+
+            await response.Negotiate(result);
         }
     }
 }

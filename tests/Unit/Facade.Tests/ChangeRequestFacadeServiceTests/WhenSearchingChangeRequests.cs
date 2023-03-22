@@ -28,6 +28,7 @@
                                  new ChangeRequest
                                      {
                                          DocumentNumber = 1,
+                                         OldPartNumber = "SOUP",
                                          NewPartNumber = "TEST1",
                                          DateEntered = DateTime.Today,
                                          ChangeState = "ACCEPT"
@@ -35,6 +36,7 @@
                                  new ChangeRequest
                                      {
                                          DocumentNumber = 2,
+                                         OldPartNumber = "SOUP2",
                                          NewPartNumber = "TOAST2",
                                          DateEntered = DateTime.Today,
                                          ChangeState = "ACCEPT"

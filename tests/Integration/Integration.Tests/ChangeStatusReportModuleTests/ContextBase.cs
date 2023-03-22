@@ -1,10 +1,9 @@
-﻿using Linn.Purchasing.Domain.LinnApps.Reports;
-
-namespace Linn.Purchasing.Integration.Tests.ChangeStatusReportModuleTests
+﻿namespace Linn.Purchasing.Integration.Tests.ChangeStatusReportModuleTests
 {
     using System.Net.Http;
 
     using Linn.Common.Reporting.Resources.ResourceBuilders;
+    using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Service.Modules.Reports;

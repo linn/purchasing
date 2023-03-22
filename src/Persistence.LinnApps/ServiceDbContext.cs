@@ -217,6 +217,8 @@
         
         public DbSet<PartDataSheetValues> PartDataSheetValues { get; set; }
 
+        public DbSet<PcasChangeComponent> PcasChangeComponentView { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -335,6 +337,7 @@
             this.BuildBomPriceVariances(builder);
             this.BuildBomHistoryView(builder);
             this.BuildPartDataSheetValues(builder);
+            this.BuildPcasChangeComponentsView(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -355,6 +358,21 @@
             // optionsBuilder.UseLoggerFactory(MyLoggerFactory);
             // optionsBuilder.EnableSensitiveDataLogging(true);
             base.OnConfiguring(optionsBuilder);
+        }
+
+        private void BuildPcasChangeComponentsView(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PcasChangeComponent>().ToTable("PCAS_CHANGE_COMP_VIEW").HasNoKey();
+            entity.Property(e => e.BoardCode).HasColumnName("BOARD_CODE");
+            entity.Property(e => e.RevisionCode).HasColumnName("REVISION_CODE");
+            entity.Property(e => e.NewPartNumber).HasColumnName("NEW_PART_NUMBER");
+            entity.Property(e => e.OldPartNumber).HasColumnName("OLD_PART_NUMBER");
+            entity.Property(e => e.NewAssemblyTechnology).HasColumnName("NEW_ASSEMBLY_TECHNOLOGY");
+            entity.Property(e => e.OldAssemblyTechnology).HasColumnName("OLD_ASSEMBLY_TECHNOLOGY");
+            entity.Property(e => e.NewQty).HasColumnName("NEW_QTY");
+            entity.Property(e => e.OldQty).HasColumnName("OLD_QTY");
+            entity.Property(e => e.Cref).HasColumnName("CREF");
+            entity.Property(e => e.DocumentNumber).HasColumnName("DOCUMENT_NUMBER");
         }
 
         private void BuildBomHistoryView(ModelBuilder builder)
@@ -1930,7 +1948,7 @@
             entity.Property(c => c.ChangeRequestType).HasColumnName("CRF_TYPE_CODE").HasMaxLength(10);
             entity.Property(c => c.OldPartNumber).HasColumnName("OLD_PART_NUMBER");
             entity.HasOne(o => o.OldPart).WithMany().HasForeignKey(o => o.OldPartNumber);
-            entity.Property(c => c.NewPartNumber).HasColumnName("NEW_PART_NUMBER");
+            entity.Property(c => c.NewPartNumber).HasColumnName("NEW_PART_NUMBER").HasColumnType("VARCHAR");
             entity.Property(c => c.BoardCode).HasColumnName("BOARD_CODE").HasMaxLength(6);
             entity.HasOne(o => o.CircuitBoard).WithMany().HasForeignKey(o => o.BoardCode);
             entity.Property(c => c.RevisionCode).HasColumnName("REVISION_CODE").HasMaxLength(10);

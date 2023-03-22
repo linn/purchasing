@@ -31,14 +31,17 @@
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            this.log.Info("Supplier Auto Emails Scheduler Running...");
+            this.log.Info("Purchase Order Reminder Emails Scheduler Running...");
 
           
-            var dailyTrigger = new DailyTrigger(this.currentTime, 8);
+            var dailyTrigger = new DailyTrigger(this.currentTime, 8, 0, 0);
 
             dailyTrigger.OnTimeTriggered += () =>
                 {
+
                     using IServiceScope scope = this.serviceProvider.CreateScope();
+
+                    this.log.Info("Looking Up Reminders to send...");
 
                     IPurchaseOrderDeliveryRepository deliveryRepository =
                         scope.ServiceProvider.GetRequiredService<IPurchaseOrderDeliveryRepository>();
@@ -53,16 +56,22 @@
                              && x.PurchaseOrderDetail.PurchaseOrder.Supplier.ReceivesOrderReminders == "Y"
                              && x.DateAdvised.HasValue && x.QuantityOutstanding.GetValueOrDefault() > 0).ToList();
 
-                    foreach (var d in deliveries)
+                    if (deliveries.Count > 0)
                     {
-                        this.dispatcher.Dispatch(new EmailPurchaseOrderReminderMessageResource
-                                                     {
-                                                         OrderNumber = d.OrderNumber,
-                                                         OrderLine = d.OrderLine,
-                                                         DeliverySeq = d.DeliverySeq,
-                                                         Timestamp = DateTime.Now,
-                                                         Test = true
-                                                     });
+                        this.log.Info($"Sending ${deliveries.Count} Emails: ");
+
+
+                        foreach (var d in deliveries)
+                        {
+                            this.dispatcher.Dispatch(new EmailPurchaseOrderReminderMessageResource
+                                                         {
+                                                             OrderNumber = d.OrderNumber,
+                                                             OrderLine = d.OrderLine,
+                                                             DeliverySeq = d.DeliverySeq,
+                                                             Timestamp = DateTime.Now,
+                                                             Test = true
+                                                         });
+                        }
                     }
                 };
 
