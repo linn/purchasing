@@ -7,8 +7,6 @@
     using Linn.Common.Persistence.EntityFramework;
     using Linn.Purchasing.Domain.LinnApps.Boms;
 
-    using Microsoft.EntityFrameworkCore;
-
     public class BomVerificationHistoryRepository : EntityFrameworkRepository<BomVerificationHistory, int>
     {
         private readonly ServiceDbContext serviceDbContext;

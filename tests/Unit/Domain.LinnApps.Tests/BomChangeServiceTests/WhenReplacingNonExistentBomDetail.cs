@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
 {
     using System;
-    using System.Collections.Generic;
 
     using FluentAssertions;
 

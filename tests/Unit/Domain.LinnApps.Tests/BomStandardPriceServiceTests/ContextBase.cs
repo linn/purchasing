@@ -23,6 +23,7 @@
         public void Setup()
         {
             this.StoresMatVarPack = Substitute.For<IStoresMatVarPack>();
+            this.Repository = Substitute.For<IQueryRepository<BomStandardPrice>>();
             this.AutocostPack = Substitute.For<IAutocostPack>();
             this.Sut = new BomStandardPriceService(
                 this.Repository, this.StoresMatVarPack, this.AutocostPack);

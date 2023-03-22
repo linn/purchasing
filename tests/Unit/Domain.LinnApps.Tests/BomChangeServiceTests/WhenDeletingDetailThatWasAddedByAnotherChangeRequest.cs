@@ -1,17 +1,18 @@
-﻿using Linn.Purchasing.Domain.LinnApps.Boms.Models;
-using Linn.Purchasing.Domain.LinnApps.Boms;
-using Linn.Purchasing.Domain.LinnApps.Parts;
-using NSubstitute;
-using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System;
-
-namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
 {
-    using System.Linq;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
+
+    using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+
+    using NSubstitute;
+
+    using NUnit.Framework;
 
     public class WhenDeletingDetailThatWasAddedByAnotherChangeRequest : ContextBase
     {
