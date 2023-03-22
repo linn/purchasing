@@ -103,6 +103,7 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PartDataSheetValuesResource>>>()
                 .AddTransient<IHandler, CsvResultHandler<IEnumerable<BomTreeNode>>>()
                 .AddTransient<IHandler, CsvResultHandler<ReportReturnResource>>()
+                .AddTransient<IHandler, CsvResultHandler<IEnumerable<PcasChangeComponent>>>()
                 .AddTransient<IHandler, CsvResultHandler<IEnumerable<IEnumerable<string>>>>();
         }
     }

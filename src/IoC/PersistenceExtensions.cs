@@ -242,7 +242,10 @@
                 .AddTransient<IRepository<PartDataSheetValues, PartDataSheetValuesKey>, PartDataSheetValuesRepository>()
                 .AddTransient<IQueryRepository<ChangeRequest>, EntityFrameworkQueryRepository<ChangeRequest>>(
                     r => new EntityFrameworkQueryRepository<ChangeRequest>(r.GetService<ServiceDbContext>()
-                        ?.ChangeRequests));
+                        ?.ChangeRequests))
+                .AddTransient<IQueryRepository<PcasChangeComponent>, EntityFrameworkQueryRepository<PcasChangeComponent>>(
+                    r => new EntityFrameworkQueryRepository<PcasChangeComponent>(r.GetService<ServiceDbContext>()
+                        ?.PcasChangeComponentView));
         }
     }
 }

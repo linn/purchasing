@@ -59,7 +59,7 @@ function SpendBySupplierByDateRangeReport() {
                                 `${config.appRoot}/purchasing/reports/spend-by-supplier-by-date-range/report` +
                                 `?&vm=${vendorManager}` +
                                 `&fromDate=${fromDate}` +
-                                `&toDate=${toDate}&supplierId=${supplierId}`
+                                `&toDate=${toDate}${supplierId ? `supplierId=${supplierId}` : ''}`
                             }
                         />
                     ) : (

@@ -5,15 +5,22 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Resources.Boms;
 
     public class BoardComponentSummaryFacadeService : QueryFacadeResourceService<BoardComponentSummary,
         BoardComponentSummaryResource, BoardComponentSummaryResource>
     {
-        public BoardComponentSummaryFacadeService(IQueryRepository<BoardComponentSummary> repository, IBuilder<BoardComponentSummary> resourceBuilder)
+        private readonly ICircuitBoardSummaryService circuitBoardSummaryService;
+
+        public BoardComponentSummaryFacadeService(
+            IQueryRepository<BoardComponentSummary> repository,
+            IBuilder<BoardComponentSummary> resourceBuilder,
+            ICircuitBoardSummaryService circuitBoardSummaryService)
             : base(repository, resourceBuilder)
         {
+            this.circuitBoardSummaryService = circuitBoardSummaryService;
         }
 
         protected override Expression<Func<BoardComponentSummary, bool>> SearchExpression(string searchTerm)
@@ -23,17 +30,13 @@
 
         protected override Expression<Func<BoardComponentSummary, bool>> FilterExpression(BoardComponentSummaryResource searchResource)
         {
-            return a => (
-                            string.IsNullOrEmpty(searchResource.BoardCode) 
-                            || a.BoardCode == searchResource.BoardCode)
-                        && (string.IsNullOrEmpty(searchResource.RevisionCode)
-                            || a.RevisionCode == searchResource.RevisionCode)
-                        && (string.IsNullOrEmpty(searchResource.Cref)
-                            || a.Cref == searchResource.Cref)
-                        && (string.IsNullOrEmpty(searchResource.PartNumber)
-                            || a.PartNumber == searchResource.PartNumber);
+            return this.circuitBoardSummaryService.GetFilterExpression(
+                searchResource.BoardCode,
+                searchResource.RevisionCode,
+                searchResource.Cref,
+                searchResource.PartNumber);
         }
-
+        
         protected override Expression<Func<BoardComponentSummary, bool>> FindExpression(BoardComponentSummaryResource searchResource)
         {
             throw new NotImplementedException();

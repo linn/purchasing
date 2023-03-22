@@ -3,9 +3,7 @@
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
-    using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Reports;
-    using Linn.Purchasing.Resources.RequestResources;
 
     public class ChangeStatusReportFacadeService : IChangeStatusReportsFacadeService
     {

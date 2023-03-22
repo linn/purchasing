@@ -1,17 +1,19 @@
-﻿using Linn.Purchasing.Domain.LinnApps.Boms.Models;
-using Linn.Purchasing.Domain.LinnApps.Boms;
-using Linn.Purchasing.Domain.LinnApps.Parts;
-using NSubstitute;
-using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System;
-
-namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
 {
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
+
+    using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+
+    using NSubstitute;
+
+    using NUnit.Framework;
 
     public class WhenDeletingDetailThatWasAddedByAnotherChangeRequest : ContextBase
     {
@@ -71,8 +73,8 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
             };
             this.BomDetailRepository.FindById(4567)
                 .Returns(this.deletedDetail);
-            this.BomChangeRepository.FindBy(Arg.Any<Expression<Func<BomChange, bool>>>())
-                .Returns(new BomChange { ChangeId = 999, DocumentNumber = 666 });
+            this.BomChangeRepository.FilterBy(Arg.Any<Expression<Func<BomChange, bool>>>()).Returns(
+                new List<BomChange> { new BomChange { ChangeId = 999, DocumentNumber = 666 } }.AsQueryable());
             this.Sut.ProcessTreeUpdate(this.newTree, 666, 33087);
         }
 

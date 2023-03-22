@@ -118,18 +118,37 @@ function MainTab({ item, approve }) {
             </Grid>
             <Grid item xs={8} />
             <Grid item xs={12}>
-                <Button
-                    text="View/Edit Bom"
-                    onClick={() => {
-                        history.push(
-                            `/purchasing/boms/bom-utility?bomName=${
-                                item?.newPartNumber
-                            }&changeRequest=${(approveUri || makeLiveUri) && item?.documentNumber}`
-                        );
-                    }}
-                >
-                    View/Edit Bom
-                </Button>
+                {item?.boardCode ? (
+                    <Button
+                        text="View/Edit Bom"
+                        onClick={() => {
+                            history.push(
+                                `/purchasing/boms/board-components/${
+                                    item?.boardCode
+                                }?changeRequest=${
+                                    (approveUri || makeLiveUri) && item?.documentNumber
+                                }`
+                            );
+                        }}
+                    >
+                        View/Edit Board
+                    </Button>
+                ) : (
+                    <Button
+                        text="View/Edit Bom"
+                        onClick={() => {
+                            history.push(
+                                `/purchasing/boms/bom-utility?bomName=${
+                                    item?.newPartNumber
+                                }&changeRequest=${
+                                    (approveUri || makeLiveUri) && item?.documentNumber
+                                }`
+                            );
+                        }}
+                    >
+                        View/Edit Bom
+                    </Button>
+                )}
             </Grid>
             {editUri && (
                 <Grid item xs={12}>
@@ -153,6 +172,7 @@ MainTab.propTypes = {
     item: PropTypes.shape({
         documentNumber: PropTypes.number,
         newPartNumber: PropTypes.string,
+        boardCode: PropTypes.string,
         dateEntered: PropTypes.string,
         dateAccepted: PropTypes.string,
         changeState: PropTypes.string,
