@@ -78,6 +78,7 @@
             string fromDate,
             string toDate,
             string vm,
+            int? supplierId,
             ISpendsReportFacadeService spendsReportFacadeService)
         {
             var options = new SpendBySupplierByDateRangeReportRequestResource
@@ -85,6 +86,7 @@
                 VendorManager = vm ?? string.Empty,
                 FromDate = fromDate,
                 ToDate = toDate,
+                SupplierId = supplierId
             };
 
             var results = spendsReportFacadeService.GetSpendBySupplierByDateRangeReport(options);
