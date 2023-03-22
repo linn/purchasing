@@ -46,23 +46,23 @@
             reportReturnResource.ReportResults.Add(reportResult);
 
             this.FacadeService
-                .GetOrdersByPartExport(Arg.Any<OrdersByPartSearchResource>())
-                .Returns(new SuccessResult<IEnumerable<IEnumerable<string>>>(new List<IEnumerable<string>>()));
+                .GetOrdersByPartReport(Arg.Any<OrdersByPartSearchResource>())
+                .Returns(new SuccessResult<ReportReturnResource>(new ReportReturnResource()));
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/orders-by-part/export?partNumber={"MCP 123"}&fromDate={(1.January(2022).ToLongDateString())}&toDate={(1.February(2022).ToLongDateString())}&cancelled=N",
+                $"/purchasing/reports/orders-by-part/report?partNumber={"MCP 123"}&fromDate={(1.January(2022).ToLongDateString())}&toDate={(1.February(2022).ToLongDateString())}&cancelled=N",
                 with => { with.Accept("text/csv"); }).Result;
         }
 
         [Test]
         public void ShouldCallFacadeService()
         {
-            this.FacadeService.Received().GetOrdersByPartExport(
+            this.FacadeService.Received().GetOrdersByPartReport(
                 Arg.Any<OrdersByPartSearchResource>());
         }
 
         [Test]
-        public void ShouldReturnCSVContentType()
+        public void ShouldReturnCsvContentType()
         {
             this.Response.Content.Headers.ContentType.Should().NotBeNull();
             this.Response.Content.Headers.ContentType?.ToString().Should().Be("text/csv");

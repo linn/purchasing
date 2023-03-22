@@ -183,13 +183,11 @@ function WhatsDueInReport() {
                                     <ExportButton
                                         href={`${
                                             config.appRoot
-                                        }/purchasing/reports/whats-due-in/export?${queryString.stringify(
-                                            {
-                                                ...options,
-                                                fromDate: options.fromDate.toISOString(),
-                                                toDate: options.toDate.toISOString()
-                                            }
-                                        )}`}
+                                        }/purchasing/reports/whats-due-in?${queryString.stringify({
+                                            ...options,
+                                            fromDate: options.fromDate.toISOString(),
+                                            toDate: options.toDate.toISOString()
+                                        })}`}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>

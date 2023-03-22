@@ -6,7 +6,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Linn.Common.Reporting.Resources" Version="1.5.0" />
+		<PackageReference Include="Linn.Common.Reporting.Resources" Version="1.6.0" />
 		<PackageReference Include="Linn.Common.Resources" Version="2.0.0" />
 	</ItemGroup>
 	<ItemGroup>

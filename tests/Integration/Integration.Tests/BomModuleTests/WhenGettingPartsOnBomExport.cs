@@ -32,7 +32,7 @@
                 this.bomName.Trim().ToUpper()).Returns(this.results);
 
             this.Response = this.Client.Get(
-                $"/purchasing/boms/reports/list/export?bomName={this.bomName}",
+                $"/purchasing/boms/reports/list?bomName={this.bomName}",
                 with => { with.Accept("text/csv"); }).Result;
         }
 

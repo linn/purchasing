@@ -18,7 +18,6 @@
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/purchasing/reports/whats-due-in", this.GetReport);
-            app.MapGet("/purchasing/reports/whats-due-in/export", this.GetExport);
         }
 
         private async Task GetReport(
@@ -40,21 +39,6 @@
             var results = reportFacadeService.GetReport(fromDate, toDate, orderBy, vendorManager, supplier);
 
             await res.Negotiate(results);
-        }
-
-        private async Task GetExport(
-            HttpRequest req,
-            HttpResponse res,
-            IWhatsDueInReportFacadeService reportFacadeService,
-            string fromDate,
-            string toDate,
-            string orderBy,
-            string vendorManager,
-            int? supplier)
-        {
-            var data = reportFacadeService.GetExport(fromDate, toDate, orderBy, vendorManager, supplier);
-
-            await res.Negotiate(data);
         }
     }
 }

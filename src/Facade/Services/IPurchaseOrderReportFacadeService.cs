@@ -1,7 +1,5 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
-    using System.Collections.Generic;
-
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Resources;
@@ -12,22 +10,13 @@
         IResult<ReportReturnResource> GetOrdersBySupplierReport(
             OrdersBySupplierSearchResource resource);
 
-        IResult<IEnumerable<IEnumerable<string>>> GetOrdersBySupplierExport(
-            OrdersBySupplierSearchResource resource);
-
         IResult<ReportReturnResource> GetOrdersByPartReport(
-            OrdersByPartSearchResource resource);
-
-        IResult<IEnumerable<IEnumerable<string>>> GetOrdersByPartExport(
             OrdersByPartSearchResource resource);
 
         IResult<ReportReturnResource> GetSuppliersWithUnacknowledgedOrdersReport(
             SuppliersWithUnacknowledgedOrdersRequestResource resource);
 
         IResult<ReportReturnResource> GetUnacknowledgedOrdersReport(
-            UnacknowledgedOrdersRequestResource resource);
-
-        IResult<IEnumerable<IEnumerable<string>>> GetUnacknowledgedOrdersReportExport(
             UnacknowledgedOrdersRequestResource resource);
 
         IResult<ReportReturnResource> GetDeliveryPerformanceSummaryReport(

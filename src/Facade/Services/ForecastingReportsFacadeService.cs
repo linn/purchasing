@@ -15,7 +15,7 @@
             this.domainService = domainService;
         }
 
-        public IResult<IEnumerable<IEnumerable<string>>> GetMonthlyForecastExport(int supplierId)
+        public IResult<IEnumerable<IEnumerable<string>>> GetMonthlyForecastForSupplier(int supplierId)
         {
             return new SuccessResult<IEnumerable<IEnumerable<string>>>(this.domainService.GetMonthlyExport(supplierId));
         }
