@@ -2,10 +2,11 @@
 {
     using System.Collections.Generic;
 
+    using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
 
     public interface IPcasChangeComponentsService
     {
-        CsvResult<IEnumerable<PcasChangeComponent>> GetChanges(int documentNumber);
+        IResult<IEnumerable<PcasChangeComponent>> GetChanges(int documentNumber);
     }
 }
