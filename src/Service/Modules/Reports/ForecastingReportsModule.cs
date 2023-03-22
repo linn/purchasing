@@ -18,7 +18,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/purchasing/reports/monthly-forecast-orders/export", this.GetMonthlyExport);
+            app.MapGet("/purchasing/reports/monthly-forecast-orders", this.GetMonthlyExport);
             app.MapGet("/purchasing/reports/forecast-order-reports", this.GetApp);
         }
 
@@ -33,7 +33,7 @@
             IForecastingReportsFacadeService facadeService,
             int supplierId)
         {
-            var data = facadeService.GetMonthlyForecastExport(
+            var data = facadeService.GetMonthlyForecastForSupplier(
                supplierId);
             await res.Negotiate(data);
         }

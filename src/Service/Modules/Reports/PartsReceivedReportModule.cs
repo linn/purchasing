@@ -22,7 +22,6 @@
         {
             app.MapGet("/purchasing/tqms-jobrefs", this.GetJobRefs);
             app.MapGet("/purchasing/reports/parts-received", this.GetReport);
-            app.MapGet("/purchasing/reports/parts-received/export", this.GetExport);
         }
 
         private async Task GetJobRefs(
@@ -63,32 +62,6 @@
             var results = reportFacadeService.GetReport(options);
 
             await res.Negotiate(results);
-        }
-
-        private async Task GetExport(
-            HttpRequest req,
-            HttpResponse res,
-            int? supplier,
-            string fromDate,
-            string toDate,
-            string jobref,
-            string orderBy,
-            bool? includeNegativeValues,
-            IPartsReceivedReportFacadeService reportFacadeService)
-        {
-            var options = new PartsReceivedReportRequestResource
-                {
-                    Supplier = supplier, 
-                    FromDate = fromDate, 
-                    ToDate = toDate, 
-                    Jobref = jobref, 
-                    OrderBy = orderBy, 
-                    IncludeNegativeValues = includeNegativeValues ?? false
-                };
-            
-            var data = reportFacadeService.GetExport(options);
-
-            await res.Negotiate(data);
         }
     }
 }

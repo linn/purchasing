@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.5" />
     <PackageReference Include="Linn.Common.Authorisation" Version="1.0.0" />
-    <PackageReference Include="Linn.Common.Facade.Carter" Version="8.0.0" />
+    <PackageReference Include="Linn.Common.Facade.Carter" Version="8.1.0" />
     <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
     <PackageReference Include="Linn.Common.Logging.AmazonSqs" Version="3.0.0" />
     <PackageReference Include="Linn.Common.Messaging.RabbitMQ" Version="3.0.0" />

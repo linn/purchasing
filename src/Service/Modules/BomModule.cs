@@ -43,7 +43,6 @@
             app.MapPut("/purchasing/boms/board-components/{id}", this.UpdateBoardComponents);
 
             app.MapGet("/purchasing/boms/reports/list", this.GetPartsOnBomReport);
-            app.MapGet("/purchasing/boms/reports/list/export", this.GetPartsOnBomExport);
 
             app.MapGet("/purchasing/boms/reports/cost/options", this.GetApp);
             app.MapGet("/purchasing/boms/reports/cost", this.GetBomCostReport);
@@ -226,17 +225,6 @@
             {
                 result = facadeService.GetPartsOnBomReport(bomName);
             }
-
-            await res.Negotiate(result);
-        }
-
-        private async Task GetPartsOnBomExport(
-            HttpRequest req,
-            HttpResponse res,
-            string bomName,
-            IBomReportsFacadeService facadeService)
-        {
-            var result = facadeService.GetPartsOnBomExport(bomName);
 
             await res.Negotiate(result);
         }
