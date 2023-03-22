@@ -221,6 +221,7 @@
                 .AddTransient<IBomHistoryReportService, BomHistoryReportService>()
                 .AddTransient<IChangeStatusReportService, ChangeStatusReportService>()
                 .AddTransient<IPurchaseOrderRemindersMailer, PurchaseOrderRemindersMailer>()
+                .AddTransient<ICircuitBoardSummaryService, CircuitBoardSummaryService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

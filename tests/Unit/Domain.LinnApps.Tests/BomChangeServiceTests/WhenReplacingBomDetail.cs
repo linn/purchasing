@@ -20,7 +20,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.detail = new BomDetail {DetailId = 1, PartNumber = "OLD 001", Qty = 1, BomId = 1};
+            this.detail = new BomDetail { DetailId = 1, PartNumber = "OLD 001", Qty = 1, BomId = 1 };
             this.BomDetailRepository.FindById(1).Returns(this.detail);
 
             this.bom = new Bom {BomId = 1, Part = new Part {PartNumber = "ASS 007"}};

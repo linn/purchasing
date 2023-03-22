@@ -1,11 +1,15 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeRequestServiceTests
 {
-    using FluentAssertions;
-    using Linn.Purchasing.Domain.LinnApps.Exceptions;
-    using NSubstitute;
-    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
+
+    using FluentAssertions;
+
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
+
+    using NSubstitute;
+
+    using NUnit.Framework;
 
     public class WhenUndoingNonExistentChangeRequest : ContextBase
     {
