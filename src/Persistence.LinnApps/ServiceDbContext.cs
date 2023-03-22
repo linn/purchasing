@@ -19,12 +19,11 @@
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Logging;
 
     public class ServiceDbContext : DbContext
     {
-        public static readonly LoggerFactory MyLoggerFactory =
-            new LoggerFactory(new[] { new Microsoft.Extensions.Logging.Debug.DebugLoggerProvider() });
+        // public static readonly LoggerFactory MyLoggerFactory =
+        //     new LoggerFactory(new[] { new Microsoft.Extensions.Logging.Debug.DebugLoggerProvider() });
 
         public DbSet<PartSupplier> PartSuppliers { get; set; }
 

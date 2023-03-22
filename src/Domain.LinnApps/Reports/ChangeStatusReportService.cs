@@ -29,7 +29,6 @@
         {
             this.changeRequests = changeRequests;
             this.employeeRepository = employeeRepository;
-            this.partMRQueryRepository = partMRQueryRepository;
             this.reportingHelper = reportingHelper;
         }
 
