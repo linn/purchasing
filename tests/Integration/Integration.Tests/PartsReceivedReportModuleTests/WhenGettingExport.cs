@@ -46,7 +46,7 @@
                 .Returns(new ResultsModel());
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/parts-received/export" 
+                $"/purchasing/reports/parts-received" 
                 + $"?supplier={this.supplierId}&jobref={this.jobRef}&fromDate={this.fromDate}&toDate={this.toDate}"
                 + $"&orderBy={this.orderBy}&includeNegativeValues={this.includeNegativeValues}",
                 with => { with.Accept("text/csv"); }).Result;

@@ -25,7 +25,12 @@
                         {
                             ReportResults = new List<ReportResultResource>
                                                 {
-                                                    new ReportResultResource { title = new DisplayResource("Title") }
+                                                    new ReportResultResource
+                                                        {
+                                                            headers = new HeaderResource { columnHeaders = new List<string>() },
+                                                            title = new DisplayResource("Title"),
+                                                            results  = new List<ResultDetailsResource>()
+                                                        }
                                                 }
                         }));
 

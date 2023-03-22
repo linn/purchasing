@@ -42,7 +42,7 @@
                 .Returns(new ResultsModel());
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/whats-due-in/export"
+                $"/purchasing/reports/whats-due-in"
                 + $"?supplier={this.supplierId}&vendorManager={this.vendorManager}&fromDate={this.fromDate:o}&toDate={this.toDate:o}"
                 + $"&orderBy={this.orderBy}",
                 with => { with.Accept("text/csv"); })?.Result;

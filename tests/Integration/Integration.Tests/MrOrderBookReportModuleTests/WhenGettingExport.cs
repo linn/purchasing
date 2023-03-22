@@ -32,7 +32,7 @@
         [Test]
         public void ShouldPassCorrectOptionsToDomainService()
         {
-            this.MockDomainService.Received().GetOrderBookExport(this.supplierId);
+            this.MockDomainService.Received().GetOrderBookReport(this.supplierId);
         }
 
         [Test]

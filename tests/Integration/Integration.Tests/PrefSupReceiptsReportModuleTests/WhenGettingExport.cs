@@ -20,7 +20,7 @@
             this.ReportFacadeService.GetReport("abc1234567", "xyz1234567")
                 .Returns(new SuccessResult<ReportReturnResource>(new ReportReturnResource()));
             this.Response = this.Client.Get(
-                "/purchasing/reports/pref-sup-receipts/export?fromDate=abc1234567&toDate=xyz1234567",
+                "/purchasing/reports/pref-sup-receipts/report?fromDate=abc1234567&toDate=xyz1234567",
                 with => { with.Accept("text/csv"); }).Result;
         }
 

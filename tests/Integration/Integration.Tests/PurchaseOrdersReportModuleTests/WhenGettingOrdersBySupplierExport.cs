@@ -50,7 +50,7 @@
                 .Returns(new SuccessResult<ReportReturnResource>(new ReportReturnResource()));
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/orders-by-supplier?id={16622}&fromDate={(1.January(2022).ToLongDateString())}&toDate={(1.February(2022).ToLongDateString())}",
+                $"/purchasing/reports/orders-by-supplier/report?id={16622}&fromDate={(1.January(2022).ToLongDateString())}&toDate={(1.February(2022).ToLongDateString())}",
                 with => { with.Accept("text/csv"); }).Result;
         }
 
