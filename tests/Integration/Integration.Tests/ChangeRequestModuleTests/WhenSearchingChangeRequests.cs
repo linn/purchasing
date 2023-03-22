@@ -24,12 +24,14 @@
                              {
                                  new ChangeRequest
                                      {
+                                         OldPartNumber = "SK HUB",
                                          NewPartNumber = "SK HUB",
                                          DateEntered = DateTime.Today,
                                          ChangeState = "ACCEPT"
                                      },
                                  new ChangeRequest
                                      {
+                                         OldPartNumber = "TURNTABLE",
                                          NewPartNumber = "TURNTABLE",
                                          DateEntered = DateTime.Today,
                                          ChangeState = "ACCEPT"

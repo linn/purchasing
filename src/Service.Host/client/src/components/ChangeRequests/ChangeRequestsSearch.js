@@ -185,9 +185,9 @@ function ChangeRequestSearch() {
                 <Grid item xs={5} className={classes.gap}>
                     <InputField
                         fullWidth
-                        placeholder="Search new part number * wildcard"
+                        placeholder="Search old/new part number * wildcard"
                         value={newPartNumber}
-                        label="New Part Number"
+                        label="Part Number"
                         propertyName="newPartNumber"
                         onChange={(_, newValue) => setNewPartNumber(newValue)}
                     />
