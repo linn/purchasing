@@ -46,7 +46,7 @@ function SpendByPartReport() {
                     {!loading && reportData ? (
                         <ExportButton
                             href={
-                                `${config.appRoot}/purchasing/reports/spend-by-part` +
+                                `${config.appRoot}/purchasing/reports/spend-by-part/report` +
                                 `?&id=${options.id}`
                             }
                         />

@@ -52,7 +52,7 @@ function PrefSupReceiptsReport() {
                     <ExportButton
                         href={`${
                             config.appRoot
-                        }/purchasing/reports/pref-sup-receipts?fromDate=${moment(
+                        }/purchasing/reports/pref-sup-receipts/report?fromDate=${moment(
                             options.fromDate
                         ).format('DD-MMM-YYYY')}&toDate=${moment(options.toDate).format(
                             'DD-MMM-YYYY'
