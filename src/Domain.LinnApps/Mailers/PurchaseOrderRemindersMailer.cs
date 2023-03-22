@@ -39,7 +39,7 @@
 
             var vendorManagerName = supplier.VendorManager.Employee.FullName;
 
-            var body = $"Linn sent you a Purchase Order ${delivery.OrderNumber} that you have previously confirmed.";
+            var body = $"Linn sent you a Purchase Order {delivery.OrderNumber} that you have previously confirmed.";
             body += Environment.NewLine;
             body += Environment.NewLine;
 

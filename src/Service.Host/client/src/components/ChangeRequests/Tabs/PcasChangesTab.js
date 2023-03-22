@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { ExportButton } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
 import ChangeState from '../ChangeState';
+import config from '../../../config';
 
 function PcasChangesTab({ pcasChanges, handleSelectChange }) {
     const useStyles = makeStyles(() => ({
@@ -50,6 +52,14 @@ function PcasChangesTab({ pcasChanges, handleSelectChange }) {
 
     return (
         <Grid container spacing={3}>
+            <Grid item xs={9} />
+            <Grid item xs={3}>
+                <ExportButton
+                    href={`${config.appRoot}/purchasing/change-requests/pcas-component-changes?documentNumber=${pcasChanges?.[0]?.documentNumber}`}
+                    buttonText="Export Component Changes"
+                />
+            </Grid>
+
             <Grid item xs={12}>
                 {pcasChanges ? (
                     <DataGrid
@@ -74,7 +84,7 @@ function PcasChangesTab({ pcasChanges, handleSelectChange }) {
 }
 
 PcasChangesTab.propTypes = {
-    pcasChanges: PropTypes.arrayOf(PropTypes.shape({})),
+    pcasChanges: PropTypes.arrayOf(PropTypes.shape({ documentNumber: PropTypes.number })),
     handleSelectChange: PropTypes.func
 };
 

@@ -72,8 +72,8 @@
             };
             this.BomDetailRepository.FindById(4567)
                 .Returns(this.deletedDetail);
-            this.BomChangeRepository.FindBy(Arg.Any<Expression<Func<BomChange, bool>>>())
-                .Returns(new BomChange { ChangeId = 999, DocumentNumber = 666 });
+            this.BomChangeRepository.FilterBy(Arg.Any<Expression<Func<BomChange, bool>>>()).Returns(
+                new List<BomChange> { new BomChange { ChangeId = 999, DocumentNumber = 666 } }.AsQueryable());
             this.Sut.ProcessTreeUpdate(this.newTree, 666, 33087);
         }
 

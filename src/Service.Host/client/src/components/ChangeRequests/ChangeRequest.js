@@ -229,7 +229,7 @@ function ChangeRequest() {
                                     data={csvData()}
                                     filename={`${item.documentType}${item.documentNumber}`}
                                 >
-                                    <Button variant="contained">Export</Button>
+                                    <Button variant="outlined">Export</Button>
                                 </CSVLink>
                             </Grid>
                         </>
