@@ -98,6 +98,7 @@
                         .Contains(detail.ChangeState))
                 {
                     detail.DeleteChangeId = change.ChangeId;
+                    detail.ChangeState = "HIST";
                 }
             }
         }

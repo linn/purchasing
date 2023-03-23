@@ -34,7 +34,8 @@
                     resource.CrNumber,
                     resource.EnteredBy);
                 this.transactionManager.Commit();
-                return new SuccessResult<BomTreeNode>(this.treeService.BuildBomTree(resource.TreeRoot.Name, null, false, true));
+                return new SuccessResult<BomTreeNode>(
+                    this.treeService.BuildBomTree(resource.TreeRoot.Name, null, false, true));
             }
             catch (DomainException e)
             {
