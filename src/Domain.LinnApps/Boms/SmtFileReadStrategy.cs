@@ -20,7 +20,7 @@
 
                 if (!string.IsNullOrWhiteSpace(items[0]))
                 {
-                    components.Add(new BoardComponent { CRef = items[1], PartNumber = items[0].PadPartNumber(), Quantity = 1 });
+                    components.Add(new BoardComponent { CRef = items[1].PadCRef(), PartNumber = items[0].PadPartNumber(), Quantity = 1 });
                 }
             }
 

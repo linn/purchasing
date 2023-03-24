@@ -6,7 +6,7 @@
 
         public static string PadPartNumber(this string partNumberText)
         {
-            if (partNumberText.Contains(' ') || partNumberText.Length == 14 || string.IsNullOrWhiteSpace(partNumberText))
+            if (string.IsNullOrWhiteSpace(partNumberText) || partNumberText.Contains(' ') || partNumberText.Length == 14)
             {
                 return partNumberText;
             }
