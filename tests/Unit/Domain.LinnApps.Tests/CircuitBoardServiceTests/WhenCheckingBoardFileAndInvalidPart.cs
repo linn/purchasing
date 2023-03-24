@@ -42,7 +42,7 @@
         [Test]
         public void ShouldMakeSuggestedChangesMessage()
         {
-            this.result.Message.Should().Contain("Changes proposed (not made) for board 123 revision L1R1");
+            this.result.Message.Should().Contain("Differences found in file against board 123 revision L1R1");
             this.result.Message.Should().Contain("Pcb part number on revision is  but found  in the file.");
             this.result.Message.Should().Contain("Adding MISS 266 at BR100.");
             this.result.Message.Should().Contain("******* ERROR MISS 266 at BR100 is not valid.  ******* ");

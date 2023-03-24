@@ -79,8 +79,7 @@
         {
             if (fileType != "TSB" && fileType != "SMT")
             {
-                throw new InvalidOptionException(
-                    $"File type {fileType} has no supporting strategy and cannot be processed");
+                throw new InvalidOptionException($"File type {fileType} has no supporting strategy and cannot be processed");
             }
 
             var board = this.GetCircuitBoard(boardCode);
@@ -89,17 +88,22 @@
                 this.GetChangeRequestAndMaybePopulatePcasChange(pcasChange, pcasChange.DocumentNumber);
             }
 
-            var revision = board.Layouts.SelectMany(a => a.Revisions).First(a => a.RevisionCode == revisionCode);
-            
-            var strategy = new TabSeparatedReadStrategy();
+            var revision = board.Layouts.SelectMany(a => a.Revisions).FirstOrDefault(a => a.RevisionCode == revisionCode);
+            if (revision == null)
+            {
+                throw new ItemNotFoundException($"Could not find revision {revisionCode} on board {boardCode}");
+            }
+
+            IBoardFileReadStrategy strategy = fileType == "TSB" ? new TabSeparatedReadStrategy() : new SmtFileReadStrategy();
+
             var (fileContents, pcbPartNumber) = strategy.ReadFile(fileString);
 
             var message = makeChanges
                               ? $"THE FOLLOWING CHANGES HAVE BEEN MADE FOR BOARD {boardCode} revision {revisionCode} \n\n"
-                              : $"Changes proposed (not made) for board {boardCode} revision {revisionCode} \n\n";
+                              : $"Differences found in file against board {boardCode} revision {revisionCode} \n\n";
             var changeCounter = 0;
 
-            if (revision.PcbPartNumber != pcbPartNumber)
+            if (fileType == "TSB" && revision.PcbPartNumber != pcbPartNumber)
             {
                 message += $"Pcb part number on revision is {revision.PcbPartNumber} but found {pcbPartNumber} in the file. \n";
                 changeCounter++;
