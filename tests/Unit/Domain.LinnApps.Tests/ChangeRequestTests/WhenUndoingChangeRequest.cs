@@ -1,13 +1,15 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeRequestTests
 {
-    using FluentAssertions;
-    using Linn.Purchasing.Domain.LinnApps.Boms;
-    using NUnit.Framework;
     using System.Collections.Generic;
 
+    using FluentAssertions;
+
+    using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
 
     using NSubstitute;
+
+    using NUnit.Framework;
 
     public class WhenUndoingChangeRequest : ContextBase
     {
@@ -27,8 +29,8 @@
                                BomChanges = new List<BomChange>
                                                 {
                                                     new BomChange { ChangeId = 1, ChangeState = "LIVE", BomName = "ABOM", PcasChange = "N" },
-                                                    new BomChange { ChangeId = 2, ChangeState = "LIVE", BomName = "BBOM", PcasChange = "N"  },
-                                                    new BomChange { ChangeId = 3, ChangeState = "LIVE", BomName = "CBOM", PcasChange = "N"  }
+                                                    new BomChange { ChangeId = 2, ChangeState = "LIVE", BomName = "BBOM", PcasChange = "N" },
+                                                    new BomChange { ChangeId = 3, ChangeState = "LIVE", BomName = "CBOM", PcasChange = "N" }
                                                 },
                                PcasChanges = new List<PcasChange>
                                                  {
@@ -61,7 +63,7 @@
         [Test]
         public void ShouldUndoOneBomChange()
         {
-            this.BomPack.Received().UndoBomChange(1,1);
+            this.BomPack.Received().UndoBomChange(1, 1);
             this.BomPack.DidNotReceive().UndoBomChange(2, 1);
             this.BomPack.DidNotReceive().UndoBomChange(3, 1);
         }

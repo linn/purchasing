@@ -55,7 +55,6 @@
         {
             this.StoresMatVarPack.Received(1).MakeReqLine(123, "BOMBOM", 33087);
             this.StoresMatVarPack.Received(1).MakeReqLine(123, "BOMBOM2", 33087);
-
         }
 
         [Test]

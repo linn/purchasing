@@ -1,14 +1,16 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeRequestServiceTests
 {
-    using Linn.Purchasing.Domain.LinnApps.Exceptions;
-    using NSubstitute;
-    using NUnit.Framework;
-    using System.Collections.Generic;
     using System;
+    using System.Collections.Generic;
 
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
+
+    using NSubstitute;
+
+    using NUnit.Framework;
 
     public class WhenUndoingWithNonExistentEmployee : ContextBase
     {

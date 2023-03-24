@@ -13,12 +13,5 @@
             string orderBy, 
             string vendorManager, 
             int? supplier);
-
-        public IEnumerable<IEnumerable<string>> GetReportCsv(
-            string fromDate,
-            string toDate,
-            string orderBy,
-            string vendorManager,
-            int? supplier);
     }
 }

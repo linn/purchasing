@@ -188,7 +188,8 @@
             }
             else if (linnWeekStartDate != null)
             {
-                var weekDate = ((DateTime) linnWeekStartDate).Date;
+                var weekDate = ((DateTime)linnWeekStartDate).Date;
+                
                 // if you don't do weekNumber > 0 then for this week you also get the Now week and Jacki doesn't want that
                 week = this.weekRepository.FindBy(
                     d => d.StartsOn <= weekDate && d.EndsOn >= weekDate && d.WeekNumber > 0);
@@ -235,7 +236,7 @@
             {
                 throw new ItemNotFoundException("Change Request not found");
             }
-			
+
             var employee = this.employeeRepository.FindById(undoneById);
             if (employee == null)
             {
@@ -288,7 +289,7 @@
 
             if (globalReplace)
             {
-                request.GlobalReplace = globalReplace ? "Y" : "N";
+                request.GlobalReplace = "Y";
                 this.bomChangeService.ReplaceAllBomDetails(request, replacedBy, null);
 
                 if (hasPcasLines && (request.OldPartNumber != request.NewPartNumber))

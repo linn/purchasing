@@ -125,12 +125,14 @@ function BomUtility() {
         e.preventDefault();
         const { target } = e;
         const detail = selected.children.find(x => x.id === target.id);
+        const index = selected.children.findIndex(x => x.id === target.id);
         setContextMenu(
             crNumber && contextMenu === null
                 ? {
                       mouseX: e.clientX + 2,
                       mouseY: e.clientY - 6,
                       part: target.innerText,
+                      position: index + 1,
                       canDelete: !detail.deleteReplaceSeq,
                       canReplace:
                           Number(crNumber) !== detail.addChangeDocumentNumber &&
@@ -313,10 +315,12 @@ function BomUtility() {
                 if (current.id === newNode.parentId) {
                     current.assemblyHasChanges = true;
                     if (addNode) {
-                        current.children = [
-                            ...current.children,
-                            { ...newNode, addChangeDocumentNumber }
-                        ];
+                        const newChildren = [...current.children];
+                        newChildren.splice(addNode, 0, {
+                            ...newNode,
+                            addChangeDocumentNumber
+                        });
+                        current.children = newChildren;
                     } else {
                         let replacedIndex = null;
                         let replacementFor = null;
@@ -431,7 +435,7 @@ function BomUtility() {
     );
 
     // add a new line to the children list of the selected node
-    const addLine = () => {
+    const addLine = position => {
         setDisableChangesButton(true);
         setTreeView(tree =>
             updateTree(
@@ -444,7 +448,7 @@ function BomUtility() {
                     qty: 1,
                     requirement: 'Y'
                 },
-                true,
+                position,
                 crNumber
             )
         );
@@ -524,7 +528,12 @@ function BomUtility() {
                     value={partSearchTerm}
                     handleValueChange={(_, newVal) => setPartSearchTerm(newVal)}
                     search={searchParts}
-                    searchResults={partsSearchResults.filter(p => p.bomType && !p.datePhasedOut)}
+                    searchResults={partsSearchResults
+                        .filter(p => !!p.bomType)
+                        .map(r => ({
+                            ...r,
+                            description: r.datePhasedOut ? 'PHASED OUT!!' : r.description
+                        }))}
                     loading={partsSearchLoading}
                     priorityFunction="closestMatchesFirst"
                     onResultSelect={handlePartSelect}
@@ -1003,7 +1012,7 @@ function BomUtility() {
                         rows={getRows()}
                         loading={bomTreeLoading}
                         processRowUpdate={processRowUpdate}
-                        onProcessRowUpdateError={err => console.log(err)}
+                        onProcessRowUpdateError={() => {}}
                         autoHeight
                         experimentalFeatures={{ newEditingApi: true }}
                         disableSelectionOnClick
@@ -1022,6 +1031,14 @@ function BomUtility() {
                             }
                         >
                             <MenuItem
+                                onClick={() => {
+                                    addLine(contextMenu.position);
+                                    setContextMenu(null);
+                                }}
+                            >
+                                ADD
+                            </MenuItem>
+                            <MenuItem
                                 disabled={!contextMenu.canReplace}
                                 onClick={handleReplaceClick}
                             >
@@ -1036,7 +1053,7 @@ function BomUtility() {
                         <Button
                             disabled={!crNumber || subAssemblyLoading}
                             variant="outlined"
-                            onClick={() => addLine(selected.id)}
+                            onClick={() => addLine(selected.children.length + 1)}
                         >
                             +
                         </Button>

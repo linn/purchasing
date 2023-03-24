@@ -41,7 +41,12 @@
                 .Returns(true);
 
             var bomChangeIds = new List<int> { 1 };
-            this.result = this.Sut.PhaseInChanges(1, null, new DateTime(2100,12,12), bomChangeIds, new List<string>());
+            this.result = this.Sut.PhaseInChanges(
+                1,
+                null,
+                new DateTime(2100, 12, 12),
+                bomChangeIds,
+                new List<string>());
         }
 
         [Test]

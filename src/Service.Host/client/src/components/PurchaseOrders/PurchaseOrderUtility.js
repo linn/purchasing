@@ -88,13 +88,6 @@ function PurchaseOrderUtility({ creating }) {
         }
     }, [reduxDispatch, creating]);
 
-    useEffect(() => {
-        reduxDispatch(currenciesActions.fetch());
-    }, [reduxDispatch]);
-    useEffect(() => {
-        reduxDispatch(unitsOfMeasureActions.fetch());
-    }, [reduxDispatch]);
-
     const deliveryTableColumns = [
         { field: 'id', headerName: 'Id', width: 100, hide: true },
         { field: 'deliverySeq', headerName: 'Delivery', width: 100 },
@@ -274,6 +267,9 @@ function PurchaseOrderUtility({ creating }) {
 
         return false;
     };
+
+    const isCreditOrReturn = () =>
+        order?.documentType?.name === 'CO' || order?.documentType?.name === 'RO';
 
     const allowedToFilCancel = () => !creating && utilities.getHref(order, 'fil-cancel');
 
@@ -1379,11 +1375,12 @@ function PurchaseOrderUtility({ creating }) {
                                                             );
                                                         }}
                                                         disabled={
-                                                            !creating &&
-                                                            (!allowedToUpdate() ||
-                                                                lineItemsReceived(
-                                                                    detail.lineNumber
-                                                                ))
+                                                            (!creating &&
+                                                                (!allowedToUpdate() ||
+                                                                    lineItemsReceived(
+                                                                        detail.lineNumber
+                                                                    ))) ||
+                                                            isCreditOrReturn()
                                                         }
                                                         type="number"
                                                         required

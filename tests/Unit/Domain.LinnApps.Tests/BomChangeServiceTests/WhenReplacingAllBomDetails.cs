@@ -5,8 +5,6 @@
     using System.Linq;
     using System.Linq.Expressions;
 
-    using FluentAssertions;
-
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
@@ -14,7 +12,7 @@
 
     using NUnit.Framework;
 
-    public class WhenREplacingAllBomDetails : ContextBase
+    public class WhenReplacingAllBomDetails : ContextBase
     {
         private ChangeRequest request;
 
@@ -51,7 +49,7 @@
 
 
 
-            this.Sut.ReplaceAllBomDetails(request, 7004, null);
+            this.Sut.ReplaceAllBomDetails(this.request, 7004, null);
         }
 
         [Test]

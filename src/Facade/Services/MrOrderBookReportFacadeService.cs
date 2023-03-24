@@ -1,9 +1,6 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
-    using System.Collections.Generic;
-
     using Linn.Common.Facade;
-    using Linn.Common.Reporting.Resources.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
@@ -28,12 +25,6 @@
                 this.domainService.GetOrderBookReport(supplierId));
             
             return new SuccessResult<ReportReturnResource>(resource);
-        }
-
-        public IEnumerable<IEnumerable<string>> GetExport(int supplierId)
-        {
-            return this.domainService
-                .GetOrderBookExport(supplierId).ConvertToCsvList();
         }
     }
 }

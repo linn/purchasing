@@ -1,10 +1,8 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
     using System;
-    using System.Collections.Generic;
 
     using Linn.Common.Facade;
-    using Linn.Common.Reporting.Resources.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
@@ -35,17 +33,6 @@
                     DateTime.Parse(fromDate).Date, DateTime.Parse(toDate).Date.AddDays(1).AddTicks(-1), orderBy, vendorManager, supplier));
 
             return new SuccessResult<ReportReturnResource>(resource);
-        }
-
-        public IEnumerable<IEnumerable<string>> GetReportCsv(
-            string fromDate, string toDate, string orderBy, string vendorManager, int? supplier)
-        {
-            return this.domainService.GetReport(
-                DateTime.Parse(fromDate).Date,
-                DateTime.Parse(toDate).Date.AddDays(1).AddTicks(-1),
-                orderBy,
-                vendorManager,
-                supplier).ConvertToCsvList();
         }
     }
 }

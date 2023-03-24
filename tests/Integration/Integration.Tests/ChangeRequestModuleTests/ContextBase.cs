@@ -8,6 +8,7 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -56,6 +57,10 @@
 
         protected ILog Logger { get; set; }
 
+        protected IPcasChangeComponentsService PcasChangeComponentsService { get; set; }
+
+        protected IQueryRepository<PcasChangeComponent> PcasChangeCompView { get; set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -71,6 +76,8 @@
             this.BomPack = Substitute.For<IBomPack>();
             this.PcasPack = Substitute.For<IPcasPack>();
             this.BomChangeService = Substitute.For<IBomChangeService>();
+            this.PcasChangeCompView = Substitute.For<IQueryRepository<PcasChangeComponent>>();
+            this.PcasChangeComponentsService = new PcasChangeComponentsService(this.PcasChangeCompView);
 
             this.FacadeService = new ChangeRequestFacadeService(
                 this.Repository,
@@ -94,6 +101,7 @@
                 services =>
                     {
                         services.AddSingleton(this.FacadeService);
+                        services.AddSingleton(this.PcasChangeComponentsService);
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);

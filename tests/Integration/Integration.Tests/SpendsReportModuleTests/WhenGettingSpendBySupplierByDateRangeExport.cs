@@ -39,7 +39,7 @@
                 .Returns(new ResultsModel { ReportTitle = new NameModel(this.title) });
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/spend-by-supplier-by-date-range/export?fromDate={this.requestResource.FromDate}&toDate={this.requestResource.ToDate}&vm={this.requestResource.VendorManager}&supplierId={this.requestResource.SupplierId}",
+                $"/purchasing/reports/spend-by-supplier-by-date-range/report?fromDate={this.requestResource.FromDate}&toDate={this.requestResource.ToDate}&vm={this.requestResource.VendorManager}&supplierId={this.requestResource.SupplierId}",
                 with => { with.Accept("text/csv"); }).Result;
         }
 

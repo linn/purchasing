@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
 
+    using Linn.Common.Facade;
     using Linn.Common.Reporting.Resources.Extensions;
     using Linn.Purchasing.Domain.LinnApps.Reports;
 
@@ -14,9 +15,9 @@
             this.domainService = domainService;
         }
 
-        public IEnumerable<IEnumerable<string>> GetMonthlyForecastExport(int supplierId)
+        public IResult<IEnumerable<IEnumerable<string>>> GetMonthlyForecastForSupplier(int supplierId)
         {
-            return this.domainService.GetMonthlyExport(supplierId);
+            return new SuccessResult<IEnumerable<IEnumerable<string>>>(this.domainService.GetMonthlyExport(supplierId));
         }
     }
 }

@@ -8,7 +8,6 @@
     using Carter.Response;
 
     using Linn.Common.Facade;
-    using Linn.Common.Facade.Carter.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Facade.Services;
@@ -44,7 +43,6 @@
             app.MapPut("/purchasing/boms/board-components/{id}", this.UpdateBoardComponents);
 
             app.MapGet("/purchasing/boms/reports/list", this.GetPartsOnBomReport);
-            app.MapGet("/purchasing/boms/reports/list/export", this.GetPartsOnBomExport);
 
             app.MapGet("/purchasing/boms/reports/cost/options", this.GetApp);
             app.MapGet("/purchasing/boms/reports/cost", this.GetBomCostReport);
@@ -229,17 +227,6 @@
             }
 
             await res.Negotiate(result);
-        }
-
-        private async Task GetPartsOnBomExport(
-            HttpRequest req,
-            HttpResponse res,
-            string bomName,
-            IBomReportsFacadeService facadeService)
-        {
-            var result = facadeService.GetPartsOnBomExport(bomName);
-
-            await res.FromCsv(result, $"{bomName}.csv");
         }
 
         private async Task GetBomCostReport(

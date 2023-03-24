@@ -25,14 +25,14 @@
                 .Returns(new ResultsModel());
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/mr-order-book/export?supplierId={this.supplierId}",
+                $"/purchasing/reports/mr-order-book?supplierId={this.supplierId}",
                 with => { with.Accept("text/csv"); })?.Result;
         }
 
         [Test]
         public void ShouldPassCorrectOptionsToDomainService()
         {
-            this.MockDomainService.Received().GetOrderBookExport(this.supplierId);
+            this.MockDomainService.Received().GetOrderBookReport(this.supplierId);
         }
 
         [Test]

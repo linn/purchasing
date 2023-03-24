@@ -195,7 +195,7 @@ function PartsReceivedReport() {
                                     <ExportButton
                                         href={`${
                                             config.appRoot
-                                        }/purchasing/reports/parts-received/export?${queryString.stringify(
+                                        }/purchasing/reports/parts-received?${queryString.stringify(
                                             {
                                                 ...options,
                                                 fromDate: options.fromDate.toISOString(),

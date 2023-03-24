@@ -1,6 +1,8 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using Linn.Purchasing.Domain.LinnApps.Boms;
@@ -32,7 +34,8 @@
                                   BomId = 123
                               };
             this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(this.destBom);
-            this.BomChangeRepository.FindBy(Arg.Any<Expression<Func<BomChange, bool>>>()).Returns(this.change);
+            this.BomChangeRepository.FilterBy(Arg.Any<Expression<Func<BomChange, bool>>>()).Returns(
+                new List<BomChange> { this.change }.AsQueryable());
             this.Sut.CopyBom("SRC", this.destBom.BomName, 33087, 666, "O");
         }
 

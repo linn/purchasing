@@ -103,7 +103,7 @@ function PartsOnBomReport() {
                             <>
                                 <Grid item xs={12}>
                                     <ExportButton
-                                        href={`${config.appRoot}/purchasing/boms/reports/list/export?bomName=${searchTerm}`}
+                                        href={`${config.appRoot}/purchasing/boms/reports/list?bomName=${searchTerm}`}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>

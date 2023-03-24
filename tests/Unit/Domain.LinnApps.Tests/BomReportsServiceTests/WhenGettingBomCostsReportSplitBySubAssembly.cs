@@ -42,7 +42,7 @@
                               {
                                   DetailId = 1, BomName = "SK HUB", PartNumber = "MCAS 073", MaterialPrice = 123.45m, StandardPrice = 123.46m, Qty = 1
                               },
-                          new BomCostReportDetail { DetailId = 2, BomName = "SK HUB", PartNumber = "CONN 493", MaterialPrice = 223.45m, StandardPrice = 223.46m, Qty = 1},
+                          new BomCostReportDetail { DetailId = 2, BomName = "SK HUB", PartNumber = "CONN 493", MaterialPrice = 223.45m, StandardPrice = 223.46m, Qty = 1 },
                           new BomCostReportDetail { DetailId = 3, BomName = "SK HUB", PartNumber = "SELEKT BITS", MaterialPrice = 323.45m, StandardPrice = 323.46m, Qty = 1 },
                           new BomCostReportDetail { DetailId = 4, BomName = "SK HUB", PartNumber = "MCP 1000", MaterialPrice = 423.45m, StandardPrice = 423.46m, Qty = 1 },
                           new BomCostReportDetail { DetailId = 5, BomName = "SK HUB", PartNumber = "PCAS 1234", MaterialPrice = 523.45m, StandardPrice = 523.46m, Qty = 1 },
