@@ -77,7 +77,7 @@
             PcasChange pcasChange,
             bool makeChanges)
         {
-            if (fileType != "TSB")
+            if (fileType != "TSB" && fileType != "SMT")
             {
                 throw new InvalidOptionException(
                     $"File type {fileType} has no supporting strategy and cannot be processed");
