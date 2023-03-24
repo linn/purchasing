@@ -211,7 +211,7 @@
 
             try
             {
-                var changeRequest = this.changeRequestService.Replace(request.DocumentNumber, replacedBy, request.GlobalReplace, request.HasPcasLines, request.NewQty, request.SelectedDetailIds, request.SelectedPcasComponents, privileges);
+                var changeRequest = this.changeRequestService.Replace(request.DocumentNumber, replacedBy, request.GlobalReplace, request.HasPcasLines, request.NewQty, request.SelectedDetailIds, request.SelectedPcasComponents, request.AddToBoms, privileges);
                 this.transactionManager.Commit();
                 var resource = (ChangeRequestResource)this.resourceBuilder.Build(changeRequest, privileges);
                 return new SuccessResult<ChangeRequestResource>(resource);
