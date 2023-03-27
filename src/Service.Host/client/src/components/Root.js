@@ -99,6 +99,7 @@ import ChangeStatusReport from './reports/ChangeStatusReport';
 import AcceptedChangesReport from './reports/AcceptedChangesReport';
 import ProposedChangesReport from './reports/ProposedChangesReport';
 import OutstandingChangesReport from './reports/OutstandingChangesReport';
+import BoardComponentsSmtCheck from './boards/BoardComponentsSmtCheck';
 
 const Root = ({ store }) => (
     <div>
@@ -269,6 +270,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/boms/board-components"
                                     component={BoardComponents}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/boms/board-components-smt-check"
+                                    component={BoardComponentsSmtCheck}
                                 />
                                 <Route
                                     exact
