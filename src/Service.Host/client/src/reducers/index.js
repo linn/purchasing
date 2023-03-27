@@ -113,6 +113,7 @@ import changeRequestPhaseIns from './changeRequestPhaseIns';
 import bomVerificationHistory from './bomVerificationHistory';
 import bomStandardPrices from './bomStandardPrices';
 import uploadBoardFile from './uploadBoardFile';
+import uploadSmtBoardFile from './uploadSmtBoardFile';
 import bomHistoryReport from './bomHistoryReport';
 import boardDifferenceReport from './boardDifferenceReport';
 import partDataSheetValues from './partDataSheetValues';
@@ -245,6 +246,7 @@ const rootReducer = history =>
         unacknowledgedOrdersReport,
         unitsOfMeasure,
         uploadBoardFile,
+        uploadSmtBoardFile,
         vendorManagers,
         whatsDueInReport,
         whatsInInspectionReport,

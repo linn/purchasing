@@ -4,10 +4,10 @@
     using System.IO;
     using System.Linq;
 
+    using Linn.Purchasing.Domain.LinnApps.Boms.Extensions;
+
     public class TabSeparatedReadStrategy : IBoardFileReadStrategy
     {
-        private static readonly char[] CheckArray = "0123456789".ToCharArray();
-
         public (IList<BoardComponent>, string) ReadFile(string boardFile)
         {
             var components = new List<BoardComponent>();
@@ -19,26 +19,15 @@
                 var items = line.Split('\t').Select(a => a.Trim('"')).ToList();
                 if (!items[1].StartsWith("PCB") && !string.IsNullOrWhiteSpace(items[1]))
                 {
-                    components.Add(new BoardComponent { CRef = items[0], PartNumber = this.PadPartNumber(items[1]), Quantity = 1 });
+                    components.Add(new BoardComponent { CRef = items[0].PadCRef(), PartNumber = items[1].PadPartNumber(), Quantity = 1 });
                 }
                 else
                 {
-                    pcbPartNumber = this.PadPartNumber(items[1]);
+                    pcbPartNumber = items[1].PadPartNumber();
                 }
             }
 
             return (components, pcbPartNumber);
-        }
-
-        private string PadPartNumber(string partNumber)
-        {
-            if (partNumber.Contains(' ') || partNumber.Length == 14)
-            {
-                return partNumber;
-            }
-
-            var firstNumberIndex = partNumber.IndexOfAny(CheckArray);
-            return firstNumberIndex == -1 ? partNumber : partNumber.Insert(firstNumberIndex, " ");
         }
     }
 }
