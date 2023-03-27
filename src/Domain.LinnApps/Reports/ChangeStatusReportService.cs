@@ -132,7 +132,7 @@
                 false);
 
             reportLayout.AddValueDrillDownDetails(
-                "OutstandingChanges",
+                "CurrentPhaseInWeeks",
                 $"/purchasing/reports/current-phase-in-weeks/report?months={months}",
                 3,
                 1,
