@@ -124,6 +124,7 @@ import changeStatusReport from './changeStatusReport';
 import acceptedChangesReport from './acceptedChangesReport';
 import proposedChangesReport from './proposedChangesReport';
 import outstandingChangesReport from './outstandingChangesReport';
+import currentPhaseInWeeksReport from './currentPhaseInWeeksReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -162,6 +163,7 @@ const rootReducer = history =>
         changeStatusReport,
         countries,
         currencies,
+        currentPhaseInWeeksReport,
         deliveryAddresses,
         deliveryPerformanceDetailReport,
         deliveryPerformanceSummaryReport,

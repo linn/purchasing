@@ -242,7 +242,10 @@
                 .AddTransient<IRepository<PartDataSheetValues, PartDataSheetValuesKey>, PartDataSheetValuesRepository>()
                 .AddTransient<IQueryRepository<ChangeRequest>, EntityFrameworkQueryRepository<ChangeRequest>>(
                     r => new EntityFrameworkQueryRepository<ChangeRequest>(r.GetService<ServiceDbContext>()
-                        ?.ChangeRequests));
+                        ?.ChangeRequests))
+                .AddTransient<IQueryRepository<ChangeRequestPhaseInWeeksView>, EntityFrameworkQueryRepository<ChangeRequestPhaseInWeeksView>>(
+                    r => new EntityFrameworkQueryRepository<ChangeRequestPhaseInWeeksView>(r.GetService<ServiceDbContext>()
+                        ?.ChangeRequestPhaseInWeeksView));
         }
     }
 }

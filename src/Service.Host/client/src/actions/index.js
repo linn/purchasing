@@ -406,3 +406,8 @@ export const outstandingChangesReportActionTypes = makeReportActionTypes(
     reportTypes.outstandingChangesReport.actionType,
     false
 );
+
+export const currentPhaseInWeeksReportActionTypes = makeReportActionTypes(
+    reportTypes.currentPhaseInWeeksReport.actionType,
+    false
+);

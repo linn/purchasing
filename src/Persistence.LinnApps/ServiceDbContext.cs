@@ -218,6 +218,8 @@
         
         public DbSet<PartDataSheetValues> PartDataSheetValues { get; set; }
 
+        public DbSet<ChangeRequestPhaseInWeeksView> ChangeRequestPhaseInWeeksView { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -336,6 +338,7 @@
             this.BuildBomPriceVariances(builder);
             this.BuildBomHistoryView(builder);
             this.BuildPartDataSheetValues(builder);
+            this.BuildChangeRequestPhaseInWeeksView(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -2253,6 +2256,27 @@
             entity.Property(a => a.StockMaterialVariance).HasColumnName("STOCK_MATVAR");
             entity.Property(a => a.LoanMaterialVariance).HasColumnName("LOAN_MATVAR");
             entity.Property(a => a.AllocLines).HasColumnName("ALLOC_LINES");
+        }
+
+        private void BuildChangeRequestPhaseInWeeksView(ModelBuilder builder)
+        {
+            var entity = builder.Entity<ChangeRequestPhaseInWeeksView>().ToTable("CHANGE_REQUESTS_CURRENT_P_IN_W").HasNoKey();
+            entity.Property(a => a.PhaseInWeek).HasColumnName("PHASE_IN_WEEK").HasMaxLength(8);
+            entity.Property(a => a.LinnWeekNumber).HasColumnName("LINN_WEEK_NUMBER").HasColumnType("NUMBER").HasMaxLength(6);
+            entity.Property(a => a.LinnEndDate).HasColumnName("LINN_END_DATE");
+            entity.Property(a => a.DocumentNumber).HasColumnName("DOCUMENT_NUMBER").HasColumnType("NUMBER").HasMaxLength(10);
+            entity.Property(a => a.DateAccepted).HasColumnName("DATE_ACCEPTED");
+            entity.Property(a => a.DisplayName).HasColumnName("DISPLAY_NAME").HasMaxLength(48);
+            entity.Property(a => a.OldNewPartNumber).HasColumnName("OLD_NEW_PART_NUMBER").HasMaxLength(41);
+            entity.Property(a => a.ReasonForChange).HasColumnName("REASON_FOR_CHANGE").HasMaxLength(2000);
+            entity.Property(a => a.Notes).HasColumnName("NOTES").HasMaxLength(2000);
+            entity.Property(a => a.DescriptionOfChange).HasColumnName("DESCRIPTION_OF_CHANGE").HasMaxLength(2000);
+            entity.Property(a => a.CountOfBomChanges).HasColumnName("COUNTS_BOM_CHANGES");
+            entity.Property(a => a.PhaseInType).HasColumnName("PHASE_IN_TYPE").HasMaxLength(1);
+            entity.Property(a => a.OldPartNumber).HasColumnName("OLD_PART_NUMBER").HasMaxLength(14);
+            entity.Property(a => a.NewPartNumber).HasColumnName("NEW_PART_NUMBER").HasMaxLength(14);
+            entity.Property(a => a.NewPartStock).HasColumnName("NEW_PART_STOCK").HasColumnType("NUMBER");
+            entity.Property(a => a.OldPartStock).HasColumnName("OLD_PART_STOCK").HasColumnType("NUMBER");
         }
     }
 }
