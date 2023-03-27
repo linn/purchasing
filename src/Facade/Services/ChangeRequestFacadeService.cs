@@ -204,7 +204,7 @@
             {
                 return new BadRequestResult<ChangeRequestResource>("No parameters supplied");
             }
-            else if (request.GlobalReplace == false && request.SelectedDetailIds == null && request.SelectedPcasComponents == null)
+            else if (request.GlobalReplace == false && request.SelectedDetailIds == null && request.SelectedPcasComponents == null && request.AddToBoms == null)
             {
                 return new BadRequestResult<ChangeRequestResource>("No details selected to replace");
             }

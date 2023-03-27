@@ -306,7 +306,7 @@
                 return request;
             }
             
-            if (selectedDetailIds.Any())
+            if (selectedDetailIds != null && selectedDetailIds.Any())
             {
                 foreach (var detailId in selectedDetailIds)
                 {
