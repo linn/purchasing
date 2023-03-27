@@ -45,6 +45,9 @@
             var proposedChangeRequests = this.changeRequests.FindAll().Where(x =>
                 x.DateEntered >= DateTime.Today.AddMonths(-months) && x.ChangeState == "PROPOS").Count();
 
+            var changeRequestsPhaseInWeeks = this.changeRequestPhaseInWeeksViewRepository.FindAll().Where(x =>
+                x.DateAccepted >= DateTime.Today.AddMonths(-months)).Count();
+
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
 
             reportLayout.AddColumnComponent(
@@ -92,6 +95,18 @@
                     RowId = "3",
                     ColumnId = "State",
                     TextDisplay = "TOTAL OUTSTANDING CHANGES",
+                },
+                new CalculationValueModel 
+                {
+                    RowId = "4",
+                    ColumnId = "Count",
+                    Value = changeRequestsPhaseInWeeks
+                },
+                new CalculationValueModel
+                {
+                    RowId = "4",
+                    ColumnId = "State",
+                    TextDisplay = "CHANGES WITH CURRENT PHASE IN WEEK",
                 }
             };
 
@@ -114,6 +129,13 @@
                 $"/purchasing/reports/outstanding-changes/report?months={months}",
                 2, 
                 1, 
+                false);
+
+            reportLayout.AddValueDrillDownDetails(
+                "OutstandingChanges",
+                $"/purchasing/reports/current-phase-in-weeks/report?months={months}",
+                3,
+                1,
                 false);
 
             reportLayout.ReportTitle = "Change Status Report";
@@ -413,7 +435,7 @@
         public ResultsModel GetCurrentPhaseInWeeksReport(int months)
         {
             var lines = this.changeRequestPhaseInWeeksViewRepository.FindAll().Where(x =>
-                x.DateAccepted >= DateTime.Today.AddMonths(-months));
+                x.DateAccepted >= DateTime.Today.AddMonths(-months)).OrderBy(x => x.PhaseInWeek);
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
 
@@ -429,6 +451,7 @@
                         new("NewPartNumber", "New Part", GridDisplayType.Value) ,
                         new("NewPartStock", "New Part Stock", GridDisplayType.TextValue),
                         new("DescriptionOfChange", "Description Of Change", GridDisplayType.TextValue),
+                        new("ReasonForChange", "Reason For Change", GridDisplayType.TextValue),
                         new("Notes", "Notes", GridDisplayType.TextValue)
                     });
 
@@ -494,6 +517,13 @@
                         ColumnId = "DescriptionOfChange",
                         TextDisplay = line.DescriptionOfChange
                     });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = rowId,
+                            ColumnId = "ReasonForChange",
+                            TextDisplay = line.ReasonForChange
+                        });
                 values.Add(
                     new CalculationValueModel
                         {

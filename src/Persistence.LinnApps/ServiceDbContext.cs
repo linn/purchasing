@@ -2271,7 +2271,7 @@
             entity.Property(a => a.ReasonForChange).HasColumnName("REASON_FOR_CHANGE").HasMaxLength(2000);
             entity.Property(a => a.Notes).HasColumnName("NOTES").HasMaxLength(2000);
             entity.Property(a => a.DescriptionOfChange).HasColumnName("DESCRIPTION_OF_CHANGE").HasMaxLength(2000);
-            entity.Property(a => a.CountOfBomChanges).HasColumnName("COUNTS_BOM_CHANGES");
+            entity.Property(a => a.CountOfBomChanges).HasColumnName("COUNT_BOM_CHANGES");
             entity.Property(a => a.PhaseInType).HasColumnName("PHASE_IN_TYPE").HasMaxLength(1);
             entity.Property(a => a.OldPartNumber).HasColumnName("OLD_PART_NUMBER").HasMaxLength(14);
             entity.Property(a => a.NewPartNumber).HasColumnName("NEW_PART_NUMBER").HasMaxLength(14);
