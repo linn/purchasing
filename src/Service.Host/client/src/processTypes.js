@@ -17,3 +17,9 @@ export const uploadBoardFile = new ItemType(
     'UPDATE_BOARD_FILE',
     '/purchasing/purchase-orders/boms/upload-board-file'
 );
+
+export const uploadSmtBoardFile = new ItemType(
+    'uploadSmtBoardFile',
+    'UPDATE_SMT_BOARD_FILE',
+    '/purchasing/purchase-orders/boms/upload-smt-file'
+);
