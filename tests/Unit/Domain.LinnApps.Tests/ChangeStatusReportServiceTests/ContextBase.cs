@@ -18,20 +18,16 @@
 
         protected IQueryRepository<ChangeRequestPhaseInWeeksView> ChangeRequestPhaseInWeeksView { get; private set; }
 
-        protected IRepository<LinnWeek, int> WeekRepository { get; private set; }
-
         protected IRepository<Employee, int> EmployeeRepository { get; private set; }
 
         [SetUp]
         public void SetUpContext()
         {
             this.ChangeRequestsRepository = Substitute.For<IQueryRepository<ChangeRequest>>();
-            this.WeekRepository = Substitute.For<IRepository<LinnWeek, int>>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
             this.ChangeRequestPhaseInWeeksView = Substitute.For<IQueryRepository<ChangeRequestPhaseInWeeksView>>();
             this.Sut = new ChangeStatusReportService(
                 this.ChangeRequestsRepository,
-                this.WeekRepository,
                 this.EmployeeRepository,
                 this.ChangeRequestPhaseInWeeksView,
                 new ReportingHelper());

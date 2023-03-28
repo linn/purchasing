@@ -18,13 +18,10 @@
 
         private readonly IQueryRepository<ChangeRequestPhaseInWeeksView> changeRequestPhaseInWeeksViewRepository;
 
-        private readonly IRepository<LinnWeek, int> weekRepository;
-
         private readonly IRepository<Employee, int> employeeRepository;
 
         public ChangeStatusReportService(
             IQueryRepository<ChangeRequest> changeRequests,
-            IRepository<LinnWeek, int> weekRepository,
             IRepository<Employee, int> employeeRepository,
             IQueryRepository<ChangeRequestPhaseInWeeksView> changeRequestPhaseInWeeksViewRepository,
             IReportingHelper reportingHelper
@@ -32,7 +29,6 @@
         {
             this.changeRequests = changeRequests;
             this.employeeRepository = employeeRepository;
-            this.weekRepository = weekRepository;
             this.changeRequestPhaseInWeeksViewRepository = changeRequestPhaseInWeeksViewRepository;
             this.reportingHelper = reportingHelper;
         }
