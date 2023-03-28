@@ -46,7 +46,7 @@ function OrderBySupplierReport() {
                     {!loading && reportData ? (
                         <ExportButton
                             href={
-                                `${config.appRoot}/purchasing/reports/orders-by-supplier/export?` +
+                                `${config.appRoot}/purchasing/reports/orders-by-supplier/report?` +
                                 `?&id=${options.id}` +
                                 `&fromDate=${options.fromDate}` +
                                 `&toDate=${options.toDate}` +

@@ -49,13 +49,13 @@
 
             var selectedBomChangeIds = new List<int> {1};
 
-            this.result = this.Sut.UndoChanges(1, 7, selectedBomChangeIds, null );
+            this.result = this.Sut.UndoChanges(1, 7, selectedBomChangeIds, null);
         }
 
         [Test] 
         public void ShouldHaveCalledUndoBomChanges()
         {
-            this.BomPack.Received().UndoBomChange(1,7);
+            this.BomPack.Received().UndoBomChange(1, 7);
         }
     }
 }

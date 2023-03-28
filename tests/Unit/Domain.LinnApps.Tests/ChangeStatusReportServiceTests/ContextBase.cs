@@ -3,9 +3,7 @@
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Boms;
-    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
-    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.Reports;
 
     using NSubstitute;

@@ -1,10 +1,8 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
     using System;
-    using System.Collections.Generic;
 
     using Linn.Common.Facade;
-    using Linn.Common.Reporting.Resources.Extensions;
 
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
@@ -55,28 +53,6 @@
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
-        public IEnumerable<IEnumerable<string>> GetOrdersByPartExport(
-            OrdersByPartSearchResource resource)
-        {
-            var fromValid = DateTime.TryParse(resource.From, out var from);
-            var toValid = DateTime.TryParse(resource.To, out var to);
-
-            if (!fromValid || !toValid)
-            {
-                throw new Exception("Invalid dates supplied to orders by part export");
-            }
-
-            var cancelled = resource.Cancelled == "Y";
-
-            var results = this.domainService.GetOrdersByPartReport(
-                from,
-                to,
-                resource.PartNumber,
-                cancelled);
-
-            return results.ConvertToCsvList();
-        }
-
         public IResult<ReportReturnResource> GetSuppliersWithUnacknowledgedOrdersReport(
             SuppliersWithUnacknowledgedOrdersRequestResource resource)
         {
@@ -98,13 +74,6 @@
             var returnResource = this.resultsModelResourceBuilder.Build(results);
 
             return new SuccessResult<ReportReturnResource>(returnResource);
-        }
-
-        public IEnumerable<IEnumerable<string>> GetUnacknowledgedOrdersReportExport(UnacknowledgedOrdersRequestResource resource)
-        {
-            var results = this.domainService.GetUnacknowledgedOrders(resource.SupplierId, resource.SupplierGroupId);
-
-            return results.ConvertToCsvList();
         }
 
         public IResult<ReportReturnResource> GetDeliveryPerformanceSummaryReport(DeliveryPerformanceRequestResource requestResource)
@@ -179,34 +148,6 @@
             var returnResource = this.resultsModelResourceBuilder.Build(results);
 
             return new SuccessResult<ReportReturnResource>(returnResource);
-        }
-
-        public IEnumerable<IEnumerable<string>> GetOrdersBySupplierExport(
-            OrdersBySupplierSearchResource resource)
-        {
-            var fromValid = DateTime.TryParse(resource.From, out var from);
-            var toValid = DateTime.TryParse(resource.To, out var to);
-
-            if (!fromValid || !toValid)
-            {
-                throw new Exception("Invalid dates supplied to orders by supplier export");
-            }
-
-            var returns = resource.Returns == "Y";
-            var outstanding = resource.Outstanding == "Y";
-            var cancelled = resource.Cancelled == "Y";
-
-            var results = this.domainService.GetOrdersBySupplierReport(
-                from,
-                to,
-                resource.SupplierId,
-                returns,
-                outstanding,
-                cancelled,
-                resource.Credits,
-                resource.StockControlled);
-
-            return results.ConvertToCsvList();
         }
     }
 }

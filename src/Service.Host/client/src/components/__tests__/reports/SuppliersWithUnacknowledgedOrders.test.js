@@ -120,7 +120,7 @@ const stateWithReport = {
                                 drillDowns: [
                                     {
                                         name: 'csv',
-                                        href: '/purchasing/reports/unacknowledged-orders/export?supplierId=41193'
+                                        href: '/purchasing/reports/unacknowledged-orders?supplierId=41193'
                                     }
                                 ]
                             }
@@ -176,7 +176,7 @@ const stateWithReport = {
                                 drillDowns: [
                                     {
                                         name: 'csv',
-                                        href: '/purchasing/reports/unacknowledged-orders/export?supplierId=110945'
+                                        href: '/purchasing/reports/unacknowledged-orders?supplierId=110945'
                                     }
                                 ]
                             }

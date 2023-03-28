@@ -1,10 +1,11 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.PrefSupReceiptsReportModuleTests
 {
-    using System.Collections.Generic;
     using System.Net;
 
     using FluentAssertions;
 
+    using Linn.Common.Facade;
+    using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Integration.Tests.Extensions;
 
     using NSubstitute;
@@ -16,17 +17,11 @@
         [SetUp]
         public void SetUp()
         {
-            var csv = new List<List<string>>
-                          {
-                              new List<string> { "mary", "little", "lamb" },
-                              new List<string> { "princess", "frog", "kiss" }
-                          };
-
-            this.ReportFacadeService.GetExport("abc1234567", "xyz1234567")
-                .Returns(csv);
+            this.ReportFacadeService.GetReport("abc1234567", "xyz1234567")
+                .Returns(new SuccessResult<ReportReturnResource>(new ReportReturnResource()));
             this.Response = this.Client.Get(
-                "/purchasing/reports/pref-sup-receipts/export?fromDate=abc1234567&toDate=xyz1234567",
-                with => { with.Accept("application/csv"); }).Result;
+                "/purchasing/reports/pref-sup-receipts/report?fromDate=abc1234567&toDate=xyz1234567",
+                with => { with.Accept("text/csv"); }).Result;
         }
 
         [Test]
@@ -45,7 +40,7 @@
         [Test]
         public void ShouldCallFacade()
         {
-            this.ReportFacadeService.Received().GetExport("abc1234567", "xyz1234567");
+            this.ReportFacadeService.Received().GetReport("abc1234567", "xyz1234567");
         }
     }
 }

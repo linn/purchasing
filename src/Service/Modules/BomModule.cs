@@ -8,7 +8,6 @@
     using Carter.Response;
 
     using Linn.Common.Facade;
-    using Linn.Common.Facade.Carter.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Facade.Services;
@@ -44,7 +43,6 @@
             app.MapPut("/purchasing/boms/board-components/{id}", this.UpdateBoardComponents);
 
             app.MapGet("/purchasing/boms/reports/list", this.GetPartsOnBomReport);
-            app.MapGet("/purchasing/boms/reports/list/export", this.GetPartsOnBomExport);
 
             app.MapGet("/purchasing/boms/reports/cost/options", this.GetApp);
             app.MapGet("/purchasing/boms/reports/cost", this.GetBomCostReport);
@@ -55,6 +53,8 @@
             app.MapPost("/purchasing/boms/delete", this.DeleteAllFromBom);
             app.MapPost("/purchasing/boms/explode", this.ExplodeSubAssembly);
             app.MapPost("/purchasing/purchase-orders/boms/upload-board-file", this.UploadBoardFile);
+            app.MapPost("/purchasing/purchase-orders/boms/upload-smt-file", this.UploadSmtFile);
+            app.MapGet("/purchasing/boms/board-components-smt-check", this.GetApp);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -231,17 +231,6 @@
             await res.Negotiate(result);
         }
 
-        private async Task GetPartsOnBomExport(
-            HttpRequest req,
-            HttpResponse res,
-            string bomName,
-            IBomReportsFacadeService facadeService)
-        {
-            var result = facadeService.GetPartsOnBomExport(bomName);
-
-            await res.FromCsv(result, $"{bomName}.csv");
-        }
-
         private async Task GetBomCostReport(
             HttpRequest req,
             HttpResponse res,
@@ -331,6 +320,37 @@
                     reader.Result,
                     changeRequestId,
                     makeChanges,
+                    req.HttpContext.GetPrivileges());
+            }
+            else
+            {
+                result = new BadRequestResult<ProcessResultResource>("Unsupported content type.");
+            }
+
+            await res.Negotiate(result);
+        }
+
+        private async Task UploadSmtFile(
+            HttpRequest req,
+            HttpResponse res,
+            ICircuitBoardFacadeService circuitBoardFacadeService,
+            string boardCode,
+            string revisionCode,
+            int? changeRequestId)
+        {
+            IResult<ProcessResultResource> result;
+
+            if (req.ContentType == "text/tab-separated-values")
+            {
+                var reader = new StreamReader(req.Body).ReadToEndAsync();
+
+                result = circuitBoardFacadeService.UploadBoardFile(
+                    boardCode,
+                    revisionCode,
+                    "SMT",
+                    reader.Result,
+                    changeRequestId,
+                    false,
                     req.HttpContext.GetPrivileges());
             }
             else

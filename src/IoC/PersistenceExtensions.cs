@@ -243,6 +243,9 @@
                 .AddTransient<IQueryRepository<ChangeRequest>, EntityFrameworkQueryRepository<ChangeRequest>>(
                     r => new EntityFrameworkQueryRepository<ChangeRequest>(r.GetService<ServiceDbContext>()
                         ?.ChangeRequests))
+                .AddTransient<IQueryRepository<PcasChangeComponent>, EntityFrameworkQueryRepository<PcasChangeComponent>>(
+                    r => new EntityFrameworkQueryRepository<PcasChangeComponent>(r.GetService<ServiceDbContext>()
+                        ?.PcasChangeComponentView))
                 .AddTransient<IQueryRepository<ChangeRequestPhaseInWeeksView>, EntityFrameworkQueryRepository<ChangeRequestPhaseInWeeksView>>(
                     r => new EntityFrameworkQueryRepository<ChangeRequestPhaseInWeeksView>(r.GetService<ServiceDbContext>()
                         ?.ChangeRequestPhaseInWeeksView));

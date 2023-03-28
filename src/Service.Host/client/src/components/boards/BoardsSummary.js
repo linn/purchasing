@@ -9,6 +9,7 @@ import {
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
+import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import history from '../../history';
 import config from '../../config';
@@ -119,10 +120,15 @@ function BoardsSummary() {
                         label="Part Number Search"
                     />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={3}>
                     <Button onClick={getComponents} variant="outlined" color="primary">
                         Show Components
                     </Button>
+                </Grid>
+                <Grid item xs={9}>
+                    <Typography style={{ paddingTop: '12px' }} variant="subtitle1">
+                        Wildcard * can be used
+                    </Typography>
                 </Grid>
                 {!loading && components && (
                     <>

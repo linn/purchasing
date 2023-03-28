@@ -43,7 +43,12 @@
             this.DomainService.DidNotReceiveWithAnyArgs().GetOrdersBySupplierReport(
                 Arg.Any<DateTime>(),
                 Arg.Any<DateTime>(),
-                Arg.Any<int>(), true, false, true, "Y", "A");
+                Arg.Any<int>(),
+                true,
+                false, 
+                true, 
+                "Y", 
+                "A");
         }
 
         [Test]

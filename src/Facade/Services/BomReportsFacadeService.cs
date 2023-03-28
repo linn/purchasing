@@ -7,7 +7,6 @@
     using Linn.Common.Domain.Exceptions;
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Models;
-    using Linn.Common.Reporting.Resources.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
@@ -44,13 +43,6 @@
                         bom1.Trim().ToUpper(), bom2.Trim().ToUpper()));
 
             return new SuccessResult<ReportReturnResource>(resource);
-        }
-
-        public IEnumerable<IEnumerable<string>> GetPartsOnBomExport(string bomName)
-        {
-            return this.domainService
-                .GetPartsOnBomReport(bomName.ToUpper().Trim())
-                .ConvertToCsvList();
         }
 
         public IResult<IEnumerable<BomCostReportResource>> GetBomCostReport(

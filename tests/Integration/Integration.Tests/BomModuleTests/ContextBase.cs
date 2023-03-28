@@ -64,6 +64,8 @@
         protected IBomChangeService BomChangeService { get; set; }
 
         protected ICircuitBoardService CircuitBoardService { get; private set; }
+        
+        protected ICircuitBoardSummaryService CircuitBoardSummaryService { get; private set; }
 
         protected string BoardCode { get; set; }
 
@@ -83,6 +85,7 @@
             this.PcasChangeRepository = Substitute.For<IRepository<PcasChange, int>>();
             this.BomChangeService = Substitute.For<IBomChangeService>();
             this.CircuitBoardService = Substitute.For<ICircuitBoardService>();
+            this.CircuitBoardSummaryService = Substitute.For<ICircuitBoardSummaryService>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.BomTreeService = Substitute.For<IBomTreeService>();
             this.AuthorisationService = Substitute.For<IAuthorisationService>();
@@ -100,7 +103,8 @@
                 new ReportReturnResourceBuilder());
             this.BoardComponentSummaryFacadeService = new BoardComponentSummaryFacadeService(
                 this.BoardComponentSummaryRepository,
-                new BoardComponentSummaryResourceBuilder());
+                new BoardComponentSummaryResourceBuilder(),
+                this.CircuitBoardSummaryService);
             this.BoardRevisionTypeRepository.FindAll().Returns(
                 new List<BoardRevisionType>
                     {

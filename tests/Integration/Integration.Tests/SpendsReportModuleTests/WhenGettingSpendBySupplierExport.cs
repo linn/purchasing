@@ -23,7 +23,7 @@
                 .Returns(new ResultsModel { ReportTitle = new NameModel(this.title) });
 
             this.Response = this.Client.Get(
-                "/purchasing/reports/spend-by-supplier/export?vm=",
+                "/purchasing/reports/spend-by-supplier/report?vm=",
                 with => { with.Accept("text/csv"); }).Result;
         }
 

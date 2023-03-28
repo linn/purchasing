@@ -18,7 +18,6 @@
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/purchasing/reports/pref-sup-receipts/report", this.GetReport);
-            app.MapGet("/purchasing/reports/pref-sup-receipts/export", this.GetExport);
             app.MapGet("/purchasing/reports/pref-sup-receipts", this.GetApp);
         }
 
@@ -37,18 +36,6 @@
             var results = reportFacadeService.GetReport(fromDate, toDate);
 
             await res.Negotiate(results);
-        }
-
-        private async Task GetExport(
-            HttpRequest req,
-            HttpResponse res,
-            IPrefSupReceiptsReportFacadeService reportFacadeService,
-            string fromDate,
-            string toDate)
-        {
-            var csv = reportFacadeService.GetExport(fromDate, toDate);
-
-            await res.FromCsv(csv, $"prefsupvsreceipts{fromDate.Substring(0, 10)}_To_{toDate.Substring(0, 10)}.csv");
         }
     }
 }

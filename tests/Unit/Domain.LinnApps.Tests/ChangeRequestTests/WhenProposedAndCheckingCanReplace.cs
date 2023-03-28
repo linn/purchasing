@@ -17,8 +17,8 @@
                                    DocumentNumber = 1,
                                    ChangeState = "PROPOS",
                                    ChangeRequestType = "REPLACE",
-                                   OldPart = new Part {PartNumber = "OLD"},
-                                   NewPart = new Part {PartNumber = "NEW"}
+                                   OldPart = new Part { PartNumber = "OLD" },
+                                   NewPart = new Part { PartNumber = "NEW" }
                                };
             }
 

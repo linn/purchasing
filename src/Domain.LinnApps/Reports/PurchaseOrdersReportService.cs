@@ -235,8 +235,8 @@
                 results.ValueDrillDownTemplates.Add(new DrillDownModel("view", href, row.RowIndex, 3));
 
                 var exportHref = results.GetGridTextValue(row.RowIndex, 2) == string.Empty
-                               ? $"/purchasing/reports/unacknowledged-orders/export?supplierId={row.RowId}&name={results.GetGridTextValue(row.RowIndex, 1)}"
-                               : $"/purchasing/reports/unacknowledged-orders/export?supplierGroupId={row.RowId}&name={results.GetGridTextValue(row.RowIndex, 1)}";
+                               ? $"/purchasing/reports/unacknowledged-orders?supplierId={row.RowId}&name={results.GetGridTextValue(row.RowIndex, 1)}"
+                               : $"/purchasing/reports/unacknowledged-orders?supplierGroupId={row.RowId}&name={results.GetGridTextValue(row.RowIndex, 1)}";
                 results.ValueDrillDownTemplates.Add(
                     new DrillDownModel(
                         "csv",
