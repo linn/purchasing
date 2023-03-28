@@ -160,7 +160,6 @@
                         new("EnteredBy", "Entered By",  GridDisplayType.TextValue),
                         new("OldPart", "Old Part Number", GridDisplayType.TextValue),
                         new("NewPart", "New Part Number", GridDisplayType.TextValue),
-                        new("OldPartStock", "Stock of Old Part", GridDisplayType.Value) ,
                         new("ReasonForChange", "Reason For Change", GridDisplayType.TextValue)
                     });
 
@@ -205,13 +204,6 @@
                         RowId = rowId,
                         ColumnId = "NewPart",
                         TextDisplay = line.NewPartNumber
-                    });
-                values.Add(
-                    new CalculationValueModel
-                    {
-                        RowId = rowId,
-                        ColumnId = "OldPartStock",
-                        Value = 0
                     });
                 values.Add(
                     new CalculationValueModel
@@ -256,7 +248,6 @@
                         new("EnteredBy", "Entered By",  GridDisplayType.TextValue),
                         new("OldPart", "Old Part Number", GridDisplayType.TextValue),
                         new("NewPart", "New Part Number", GridDisplayType.TextValue),
-                        new("OldPartStock", "Stock of Old Part", GridDisplayType.Value) ,
                         new("ReasonForChange", "Reason For Change", GridDisplayType.TextValue)
                     });
 
@@ -301,13 +292,6 @@
                         RowId = rowId,
                         ColumnId = "NewPart",
                         TextDisplay = line.NewPartNumber
-                    });
-                values.Add(
-                    new CalculationValueModel
-                    {
-                        RowId = rowId,
-                        ColumnId = "OldPartStock",
-                        Value = 0
                     });
                 values.Add(
                     new CalculationValueModel
@@ -352,7 +336,6 @@
                         new("EnteredBy", "Entered By",  GridDisplayType.TextValue),
                         new("OldPart", "Old Part Number", GridDisplayType.TextValue),
                         new("NewPart", "New Part Number", GridDisplayType.TextValue),
-                        new("OldPartStock", "Stock of Old Part", GridDisplayType.Value) ,
                         new("ReasonForChange", "Reason For Change", GridDisplayType.TextValue)
                     });
 
@@ -402,13 +385,6 @@
                     new CalculationValueModel
                     {
                         RowId = rowId,
-                        ColumnId = "OldPartStock",
-                        Value = 0
-                    });
-                values.Add(
-                    new CalculationValueModel
-                    {
-                        RowId = rowId,
                         ColumnId = "NewPart",
                         TextDisplay = line.NewPartNumber
                     });
@@ -435,7 +411,7 @@
         public ResultsModel GetCurrentPhaseInWeeksReport(int months)
         {
             var lines = this.changeRequestPhaseInWeeksViewRepository.FindAll().Where(x =>
-                x.DateAccepted >= DateTime.Today.AddMonths(-months)).OrderBy(x => x.PhaseInWeek);
+                x.DateAccepted >= DateTime.Today.AddMonths(-months)).OrderBy(x => x.LinnWeekNumber);
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
 
