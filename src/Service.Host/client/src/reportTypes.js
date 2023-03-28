@@ -179,3 +179,9 @@ export const outstandingChangesReport = new ItemType(
     'OUTSTANDING_CHANGES_REPORT',
     '/purchasing/reports/outstanding-changes/report'
 );
+
+export const currentPhaseInWeeksReport = new ItemType(
+    'currentPhaseInWeeksReport',
+    'CURRENT_PHASE_IN_WEEKS_REPORT',
+    '/purchasing/reports/current-phase-in-weeks/report'
+);

@@ -50,5 +50,13 @@
 
             return new SuccessResult<ReportReturnResource>(resource);
         }
+
+        public IResult<ReportReturnResource> GetCurrentPhaseInWeeksReport(int months)
+        {
+            var resource = this.reportReturnResourceBuilder.Build(
+                this.domainService.GetCurrentPhaseInWeeksReport(months));
+
+            return new SuccessResult<ReportReturnResource>(resource);
+        }
     }
 }

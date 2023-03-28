@@ -100,6 +100,7 @@ import AcceptedChangesReport from './reports/AcceptedChangesReport';
 import ProposedChangesReport from './reports/ProposedChangesReport';
 import OutstandingChangesReport from './reports/OutstandingChangesReport';
 import BoardComponentsSmtCheck from './boards/BoardComponentsSmtCheck';
+import CurrentPhaseInWeeksReport from './reports/CurrentPhaseInWeeksReport';
 
 const Root = ({ store }) => (
     <div>
@@ -605,6 +606,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/outstanding-changes/report"
                                     component={OutstandingChangesReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/current-phase-in-weeks/report"
+                                    component={CurrentPhaseInWeeksReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>
