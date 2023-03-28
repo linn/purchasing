@@ -36,7 +36,7 @@ function CurrentPhaseInWeeksReport() {
     return (
         <Grid style={{ marginTop: 40 }} container spacing={3} justifyContent="center">
             <Grid item xs={12}>
-                <BackButton backClick={() => handleBackClick()} />
+                <BackButton backClick={handleBackClick} />
             </Grid>
             <Grid item xs={6}>
                 {loading || !reportData ? (
@@ -55,7 +55,7 @@ function CurrentPhaseInWeeksReport() {
             <Grid item xs={6} />
 
             <Grid item xs={12}>
-                <BackButton backClick={() => handleBackClick()} />
+                <BackButton backClick={handleBackClick} />
             </Grid>
         </Grid>
     );
