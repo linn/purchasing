@@ -171,21 +171,24 @@
             detail.DeleteReplaceSeq = otherReplaceSeq == null ? 1 : (int)otherReplaceSeq + 1;
 
             // now add the second half
-            var id = this.databaseService.GetIdSequence("BOMDET_SEQ");
-            this.bomDetailRepository.Add(new BomDetail
-                                             {
-                                                 DetailId = id,
-                                                 BomId = change.BomId,
-                                                 PartNumber = request.NewPart.PartNumber,
-                                                 Qty = newQty ?? detail.Qty,
-                                                 GenerateRequirement = detail.GenerateRequirement,
-                                                 ChangeState = request.ChangeState,
-                                                 AddChangeId = change.ChangeId,
-                                                 AddReplaceSeq = otherReplaceSeq == null ? 1 : (int)otherReplaceSeq + 1,
-                                                 DeleteChangeId = null,
-                                                 DeleteReplaceSeq = null,
-                                                 PcasLine = detail.PcasLine
-                                             });
+            if ((newQty == null) || (newQty > 0))
+            {
+                var id = this.databaseService.GetIdSequence("BOMDET_SEQ");
+                this.bomDetailRepository.Add(new BomDetail
+                                                 {
+                                                     DetailId = id,
+                                                     BomId = change.BomId,
+                                                     PartNumber = request.NewPart.PartNumber,
+                                                     Qty = newQty ?? detail.Qty,
+                                                     GenerateRequirement = detail.GenerateRequirement,
+                                                     ChangeState = request.ChangeState,
+                                                     AddChangeId = change.ChangeId,
+                                                     AddReplaceSeq = otherReplaceSeq == null ? 1 : (int)otherReplaceSeq + 1,
+                                                     DeleteChangeId = null,
+                                                     DeleteReplaceSeq = null,
+                                                     PcasLine = detail.PcasLine
+                                                 });
+            }
         }
 
         public void AddBomDetail(string bomName, ChangeRequest request, int changedBy, decimal? newQty)
@@ -230,20 +233,23 @@
             }
 
             // now add the second half
-            var id = this.databaseService.GetIdSequence("BOMDET_SEQ");
-            this.bomDetailRepository.Add(new BomDetail
-                                             {
-                                                 DetailId = id,
-                                                 BomId = change.BomId,
-                                                 PartNumber = request.NewPart.PartNumber,
-                                                 Qty = newQty,
-                                                 GenerateRequirement = "Y",
-                                                 ChangeState = request.ChangeState,
-                                                 AddChangeId = change.ChangeId,
-                                                 DeleteChangeId = null,
-                                                 DeleteReplaceSeq = null,
-                                                 PcasLine = "N"
-                                             });
+            if (newQty > 0)
+            {
+                var id = this.databaseService.GetIdSequence("BOMDET_SEQ");
+                this.bomDetailRepository.Add(new BomDetail
+                                                 {
+                                                     DetailId = id,
+                                                     BomId = change.BomId,
+                                                     PartNumber = request.NewPart.PartNumber,
+                                                     Qty = newQty,
+                                                     GenerateRequirement = "Y",
+                                                     ChangeState = request.ChangeState,
+                                                     AddChangeId = change.ChangeId,
+                                                     DeleteChangeId = null,
+                                                     DeleteReplaceSeq = null,
+                                                     PcasLine = "N"
+                                                 });
+            }
         }
 
         public void ReplaceAllBomDetails(ChangeRequest request, int changedBy, decimal? newQty)
