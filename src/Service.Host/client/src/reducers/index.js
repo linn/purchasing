@@ -113,6 +113,7 @@ import changeRequestPhaseIns from './changeRequestPhaseIns';
 import bomVerificationHistory from './bomVerificationHistory';
 import bomStandardPrices from './bomStandardPrices';
 import uploadBoardFile from './uploadBoardFile';
+import uploadSmtBoardFile from './uploadSmtBoardFile';
 import bomHistoryReport from './bomHistoryReport';
 import boardDifferenceReport from './boardDifferenceReport';
 import partDataSheetValues from './partDataSheetValues';
@@ -124,6 +125,7 @@ import changeStatusReport from './changeStatusReport';
 import acceptedChangesReport from './acceptedChangesReport';
 import proposedChangesReport from './proposedChangesReport';
 import outstandingChangesReport from './outstandingChangesReport';
+import currentPhaseInWeeksReport from './currentPhaseInWeeksReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -162,6 +164,7 @@ const rootReducer = history =>
         changeStatusReport,
         countries,
         currencies,
+        currentPhaseInWeeksReport,
         deliveryAddresses,
         deliveryPerformanceDetailReport,
         deliveryPerformanceSummaryReport,
@@ -245,6 +248,7 @@ const rootReducer = history =>
         unacknowledgedOrdersReport,
         unitsOfMeasure,
         uploadBoardFile,
+        uploadSmtBoardFile,
         vendorManagers,
         whatsDueInReport,
         whatsInInspectionReport,

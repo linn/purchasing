@@ -806,7 +806,7 @@ function BoardComponents() {
                 </Grid>
                 <Grid item xs={4} />
                 <Grid item xs={8}>
-                    <Tooltip title="Remove">
+                    <Tooltip title="Add new component">
                         <div>
                             <Button
                                 disabled={!crfNumber}

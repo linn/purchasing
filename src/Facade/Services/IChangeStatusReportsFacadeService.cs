@@ -12,5 +12,7 @@
         IResult<ReportReturnResource> GetProposedChangesReport(int months);
 
         IResult<ReportReturnResource> GetTotalOutstandingChangesReport(int months);
+
+        IResult<ReportReturnResource> GetCurrentPhaseInWeeksReport(int months);
     }
 }
