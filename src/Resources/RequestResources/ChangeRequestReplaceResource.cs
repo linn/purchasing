@@ -15,5 +15,7 @@
         public IEnumerable<int> SelectedDetailIds { get; set; }
 
         public IEnumerable<string> SelectedPcasComponents { get; set; }
+
+        public IEnumerable<string> AddToBoms { get; set; }
     }
 }

@@ -15,6 +15,8 @@
 
         void ReplaceBomDetail(int detailId, ChangeRequest request, int changedBy, decimal? newQty);
 
+        void AddBomDetail(string bomName, ChangeRequest request, int changedBy, decimal? newQty);
+
         void ReplaceAllBomDetails(ChangeRequest request, int changedBy, decimal? newQty);
     }
 }

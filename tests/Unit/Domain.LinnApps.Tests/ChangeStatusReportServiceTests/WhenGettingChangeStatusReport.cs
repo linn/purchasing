@@ -67,10 +67,11 @@
         [Test]
         public void ShouldReturnData()
         {
-            this.results.Rows.Count().Should().Be(3);
+            this.results.Rows.Count().Should().Be(4);
             this.results.GetGridTextValue(0, 1).Should().Be("ACCEPT ACCEPTED CHANGES");
             this.results.GetGridTextValue(1, 1).Should().Be("PROPOS PROPOSED CHANGES");
             this.results.GetGridTextValue(2, 1).Should().Be("TOTAL OUTSTANDING CHANGES");
+            this.results.GetGridTextValue(3, 1).Should().Be("CHANGES WITH CURRENT PHASE IN WEEK");
         }
     }
 }

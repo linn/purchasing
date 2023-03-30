@@ -11,5 +11,7 @@
         ResultsModel GetProposedChangesReport(int months);
 
         ResultsModel GetTotalOutstandingChangesReport(int months);
+
+        ResultsModel GetCurrentPhaseInWeeksReport(int months);
     }
 }

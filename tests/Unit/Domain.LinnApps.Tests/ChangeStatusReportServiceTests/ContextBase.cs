@@ -3,7 +3,6 @@
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Boms;
-    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Reports;
 
     using NSubstitute;
@@ -16,7 +15,7 @@
 
         protected IQueryRepository<ChangeRequest> ChangeRequestsRepository { get; private set; }
 
-        protected IQueryRepository<MrHeader> MrHeaderRepository { get; private set; }
+        protected IQueryRepository<ChangeRequestPhaseInWeeksView> ChangeRequestPhaseInWeeksView { get; private set; }
 
         protected IRepository<Employee, int> EmployeeRepository { get; private set; }
 
@@ -24,12 +23,12 @@
         public void SetUpContext()
         {
             this.ChangeRequestsRepository = Substitute.For<IQueryRepository<ChangeRequest>>();
-            this.MrHeaderRepository = Substitute.For<IQueryRepository<MrHeader>>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
+            this.ChangeRequestPhaseInWeeksView = Substitute.For<IQueryRepository<ChangeRequestPhaseInWeeksView>>();
             this.Sut = new ChangeStatusReportService(
                 this.ChangeRequestsRepository,
                 this.EmployeeRepository,
-                this.MrHeaderRepository,
+                this.ChangeRequestPhaseInWeeksView,
                 new ReportingHelper());
         }
     }

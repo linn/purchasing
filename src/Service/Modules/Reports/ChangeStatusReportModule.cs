@@ -21,6 +21,7 @@
             app.MapGet("/purchasing/reports/accepted-changes/report", this.GetAcceptedChangesReport);
             app.MapGet("/purchasing/reports/proposed-changes/report", this.GetProposedChangesReport);
             app.MapGet("/purchasing/reports/outstanding-changes/report", this.GetTotalOutstandingChangesReport);
+            app.MapGet("/purchasing/reports/current-phase-in-weeks/report", this.GetCurrentPhaseInWeeksReport);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -68,6 +69,17 @@
             IChangeStatusReportsFacadeService facadeService)
         {
             var results = facadeService.GetTotalOutstandingChangesReport(months);
+
+            await res.Negotiate(results);
+        }
+
+        private async Task GetCurrentPhaseInWeeksReport(
+            HttpRequest req,
+            HttpResponse res,
+            int months,
+            IChangeStatusReportsFacadeService facadeService)
+        {
+            var results = facadeService.GetCurrentPhaseInWeeksReport(months);
 
             await res.Negotiate(results);
         }
