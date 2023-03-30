@@ -22,7 +22,7 @@
                 .HasPermissionFor(AuthorisedAction.AdminChangeRequest, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
-            this.action = () => this.Sut.Replace(1, 7004, true, false, null, null, new List<string>());
+            this.action = () => this.Sut.Replace(1, 7004, true, false, null, null, null, new List<string>());
         }
 
         [Test]

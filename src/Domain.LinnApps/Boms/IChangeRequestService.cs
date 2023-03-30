@@ -35,6 +35,7 @@
             decimal? newQty,
             IEnumerable<int> selectedDetailIds,
             IEnumerable<string> selectedPcasComponents,
+            IEnumerable<string> addToBoms,
             IEnumerable<string> privileges = null);
 
         Expression<Func<ChangeRequest, bool>> SearchExpression(string searchTerm, bool? outstanding, int? lastMonths);

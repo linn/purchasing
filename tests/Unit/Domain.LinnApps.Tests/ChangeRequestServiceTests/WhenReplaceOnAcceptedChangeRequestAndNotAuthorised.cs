@@ -30,7 +30,7 @@
 
             var bomChangeIds = new List<int> { 1 };
 
-            this.action = () => this.Sut.Replace(1, 7004, true, false, null, null, new List<string>());
+            this.action = () => this.Sut.Replace(1, 7004, true, false, null, null, new List<string>(), null);
         }
 
         [Test]
