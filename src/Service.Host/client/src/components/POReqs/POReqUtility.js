@@ -290,7 +290,7 @@ function POReqUtility({ creating }) {
         !req.country?.countryCode?.length ||
         !req.nominal?.nominalCode.length ||
         !req.department?.departmentCode.length ||
-        !req.dateRequired.length;
+        !req.dateRequired?.length;
 
     const canSave = () =>
         editStatus !== 'view' && editingAllowed && !inputIsInvalid() && req !== item;
