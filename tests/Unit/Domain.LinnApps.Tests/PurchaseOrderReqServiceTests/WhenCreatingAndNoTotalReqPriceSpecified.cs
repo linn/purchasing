@@ -110,7 +110,7 @@
         }
 
         [Test]
-        public void ShouldThrowExceptionAboutLackOfDate()
+        public void ShouldThrowExceptionAboutLackOfTotalReqPrice()
         {
             this.action.Should().Throw<ArgumentException>().WithMessage("Cannot create order from a req without value for price");
         }

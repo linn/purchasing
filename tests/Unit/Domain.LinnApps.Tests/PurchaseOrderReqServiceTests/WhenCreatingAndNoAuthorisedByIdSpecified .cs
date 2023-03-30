@@ -111,7 +111,7 @@
         }
 
         [Test]
-        public void ShouldThrowExceptionAboutLackOfDate()
+        public void ShouldThrowExceptionAboutLackOfAuthorisedById()
         {
             this.action.Should().Throw<ArgumentException>().WithMessage("Cannot create order from a req that has not been authorised");
         }

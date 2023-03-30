@@ -115,7 +115,7 @@
         }
 
         [Test]
-        public void ShouldThrowExceptionAboutLackOfDate()
+        public void ShouldThrowExceptionAboutLackOfOrderState()
         {
             this.action.Should().Throw<UnauthorisedActionException>().WithMessage("Cannot create order from a req that is not in state 'ORDER WAIT'. Please make sure the req is saved in this state and try again");
         }
