@@ -94,7 +94,13 @@
             foreach (var child in bom.Details)
             {
                 var detail = this.bomDetailRepository.FindById(child.DetailId);
-                if (new[] { "PROPOS", "ACCEPT", "LIVE" }
+                
+                if (detail.AddChange.DocumentNumber == crfNumber)
+                {
+                    this.bomDetailRepository.Remove(detail);
+                }
+
+                if (!detail.DeleteChangeId.HasValue && new[] { "PROPOS", "ACCEPT", "LIVE" }
                         .Contains(detail.ChangeState))
                 {
                     detail.DeleteChangeId = change.ChangeId;
