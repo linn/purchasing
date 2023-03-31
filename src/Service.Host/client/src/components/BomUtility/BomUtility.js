@@ -193,8 +193,8 @@ function BomUtility() {
         {
             field: 'description',
             headerName: 'Description',
-            hide: showChanges,
-            width: 250,
+            hide: false,
+            width: 350,
             editable: false,
             renderCell: params =>
                 params.row.isReplaced || params.row.toDelete ? (
@@ -246,7 +246,7 @@ function BomUtility() {
             field: 'addReplaceSeq',
             headerName: 'In',
             width: 75,
-            hide: !showChanges,
+            hide: true,
 
             editable: false
         },
@@ -270,7 +270,7 @@ function BomUtility() {
         {
             field: 'deleteReplaceSeq',
             headerName: 'Out',
-            hide: !showChanges,
+            hide: true,
             width: 75,
             editable: false
         },
@@ -479,7 +479,16 @@ function BomUtility() {
             reduxDispatch(subAssemblyActions.fetchByHref(subAssemblyUrl));
         } else {
             if (newValue.bomType !== 'C') {
-                setNewAssemblies(n => [...n, { id: partLookUp.forRow.id, children: [] }]);
+                setNewAssemblies(n => [
+                    ...n,
+                    {
+                        id: partLookUp.forRow.id,
+                        name: newValue.partNumber,
+                        type: newValue.bomType,
+                        isNewAddition: true,
+                        children: []
+                    }
+                ]);
             }
             processRowUpdate({
                 ...partLookUp.forRow,
@@ -487,6 +496,7 @@ function BomUtility() {
                 safetyCritical: newValue.safetyCriticalPart,
                 drawingReference: newValue.drawingReference,
                 type: newValue.bomType,
+                isNewAddition: true,
                 description: newValue.description,
                 children: newValue.bomType === 'C' ? null : []
             });
@@ -502,6 +512,7 @@ function BomUtility() {
                     ...partLookUp.forRow,
                     name: subAssembly.name,
                     type: subAssembly.type,
+                    isNewAddition: true,
                     safetyCritical: subAssembly.safetyCritical,
                     drawingReference: subAssembly.drawingReference,
                     description: subAssembly.description,
@@ -834,7 +845,7 @@ function BomUtility() {
     };
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} width="xl">
             {PartLookUp()}
             {CopyExplodeBomDialog()}
             {DeleteAllFromBomDialog()}
@@ -921,7 +932,7 @@ function BomUtility() {
                             </Button>
                             <Button
                                 variant="outlined"
-                                disabled={!crNumber}
+                                disabled={!crNumber || selected?.isNewAddition}
                                 onClick={() => {
                                     setCopyBomDialogOpen(true);
                                     setBomToCopy(null);

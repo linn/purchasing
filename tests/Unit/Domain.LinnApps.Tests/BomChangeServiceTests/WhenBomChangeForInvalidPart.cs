@@ -9,7 +9,6 @@
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
-    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NSubstitute;
 

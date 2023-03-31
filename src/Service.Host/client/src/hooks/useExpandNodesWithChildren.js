@@ -15,10 +15,12 @@ export default function useExpandNodesWithChildren(initial, tree, rootName) {
             while (n > 0) {
                 const current = q[0];
                 q.shift();
-                if (current.children?.length) {
+                if (current.type !== 'C') {
                     result.push(current);
-                    for (let i = 0; i < current.children.length; i += 1) {
-                        q.push(current.children[i]);
+                    if (current.children?.length) {
+                        for (let i = 0; i < current.children.length; i += 1) {
+                            q.push(current.children[i]);
+                        }
                     }
                 }
                 n -= 1;

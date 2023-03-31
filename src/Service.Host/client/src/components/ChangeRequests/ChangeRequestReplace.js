@@ -27,6 +27,7 @@ import useInitialise from '../../hooks/useInitialise';
 import { changeRequest } from '../../itemTypes';
 import BomChangeReplace from './BomChangeReplace';
 import PcasChangeReplace from './PcasChangeReplace';
+import BomChangeAdd from './BomChangeAdd';
 
 function ChangeRequestReplace() {
     const dispatch = useDispatch();
@@ -76,6 +77,7 @@ function ChangeRequestReplace() {
     const [newQty, setNewQty] = useState(null);
     const [globalReplace, setGlobalReplace] = useState(item?.globalReplace);
     const [tab, setTab] = useState(0);
+    const [addBoms, setAddBoms] = useState([]);
 
     const handleBomSelectChange = selected => {
         setSelectedDetailIds(selected);
@@ -89,6 +91,14 @@ function ChangeRequestReplace() {
         setNewQty(newValue);
     };
 
+    const addAddBomsItem = addeditem => {
+        setAddBoms(addBoms.concat(addeditem));
+    };
+
+    const deleteAddBomsItem = deleteditem => {
+        setAddBoms(addBoms.filter(ab => ab.partNumber !== deleteditem.id));
+    };
+
     const replace = request => {
         if (request.changeState === 'PROPOS' || request.changeState === 'ACCEPT') {
             dispatch(
@@ -98,7 +108,8 @@ function ChangeRequestReplace() {
                     hasPcasLines: components.length > 0,
                     newQty,
                     selectedDetailIds,
-                    selectedPcasComponents
+                    selectedPcasComponents,
+                    addToBoms: addBoms.map(b => b.name)
                 })
             );
         }
@@ -141,7 +152,12 @@ function ChangeRequestReplace() {
                             variant="contained"
                             disabled={
                                 !replaceUri ||
-                                (!(selectedDetailIds || selectedPcasComponents) && !globalReplace)
+                                (!(
+                                    selectedDetailIds ||
+                                    selectedPcasComponents ||
+                                    (addBoms?.length > 0 && newQty)
+                                ) &&
+                                    !globalReplace)
                             }
                             onClick={() => replace(item)}
                         >
@@ -181,6 +197,11 @@ function ChangeRequestReplace() {
                                         }`}
                                         disabled={!components?.length}
                                     />
+                                    <Tab
+                                        label={`Add to BOMs${
+                                            addBoms?.length ? ` (${addBoms?.length})` : ''
+                                        } `}
+                                    />
                                 </Tabs>
                             </Box>
                         </Box>
@@ -215,6 +236,16 @@ function ChangeRequestReplace() {
                                     />
                                 </Grid>
                             )}
+                        </Box>
+                    )}
+
+                    {tab === 2 && (
+                        <Box sx={{ paddingTop: 3, width: '100%' }}>
+                            <BomChangeAdd
+                                addBoms={addBoms}
+                                addAddBomsItem={addAddBomsItem}
+                                deleteAddBomsItem={deleteAddBomsItem}
+                            />
                         </Box>
                     )}
                 </Grid>
