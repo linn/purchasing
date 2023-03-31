@@ -40,6 +40,22 @@
                                               DeleteChangeId = null,
                                               Quantity = 1
                                           });
+            this.Board.Components.Add(new BoardComponent
+                                          {
+                                              BoardCode = this.BoardCode,
+                                              BoardLine = 1,
+                                              CRef = "C006",
+                                              PartNumber = "EDF 789",
+                                              AssemblyTechnology = "TH",
+                                              ChangeState = "PROPOS",
+                                              FromLayoutVersion = 1,
+                                              FromRevisionVersion = 1,
+                                              ToLayoutVersion = null,
+                                              ToRevisionVersion = null,
+                                              AddChangeId = 8763458,
+                                              DeleteChangeId = null,
+                                              Quantity = 1
+                                          });
             this.file = @"
 
   #C CAP011                          ; C5    ; 0.000; 129.604; 62.920
@@ -63,10 +79,11 @@
         {
             this.result.Message.Should().Contain("Differences found in file against board 123 revision L1R1");
             this.result.Message.Should().NotContain("Pcb part number on revision is  but found  in the file.");
-            this.result.Message.Should().Contain("Adding CAP 185 at C602.");
-            this.result.Message.Should().Contain("Adding CAP 214 at C130.");
-            this.result.Message.Should().Contain("Removing CAP 123 from C002.");
-            this.result.Message.Should().Contain("Replacing CAP 789 with CAP 011 at C005.");
+            this.result.Message.Should().Contain("C602                - PC File = CAP 185         Database = _______________");
+            this.result.Message.Should().Contain("C130                - PC File = CAP 214         Database = _______________");
+            this.result.Message.Should().Contain("C002                - PC File = _______________ Database = CAP 123");
+            this.result.Message.Should().NotContain("EDF 789");
+            this.result.Message.Should().Contain("C005                - PC File = CAP 011         Database = CAP 789");
             this.result.Message.Should().NotContain("ERROR");
         }
 
