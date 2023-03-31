@@ -59,11 +59,8 @@
         public void ShouldUpdateNonCancelledNonDeletedDetails()
         {
             this.detail1.DeleteChangeId.Should().Be(123);
-            this.detail1.ChangeState.Should().Be("HIST");
             this.detail2.DeleteChangeId.Should().Be(123);
-            this.detail1.ChangeState.Should().Be("HIST");
             this.detail3.DeleteChangeId.Should().Be(123);
-            this.detail1.ChangeState.Should().Be("HIST");
         }
 
         [Test]

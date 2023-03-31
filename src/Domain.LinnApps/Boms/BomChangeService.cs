@@ -94,11 +94,10 @@
             foreach (var child in bom.Details)
             {
                 var detail = this.bomDetailRepository.FindById(child.DetailId);
-                if (!detail.DeleteChangeId.HasValue && new[] { "PROPOS", "ACCEPT", "LIVE" }
+                if (new[] { "PROPOS", "ACCEPT", "LIVE" }
                         .Contains(detail.ChangeState))
                 {
                     detail.DeleteChangeId = change.ChangeId;
-                    detail.ChangeState = "HIST";
                 }
             }
         }
