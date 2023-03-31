@@ -99,6 +99,7 @@ function BomUtility() {
     const [partMessage, setPartMessage] = useState();
 
     const openPartLookUp = forRow => {
+        console.log(forRow);
         setPartMessage();
         setPartLookUp({ open: true, forRow });
         setPartSearchTerm(null);
@@ -465,6 +466,7 @@ function BomUtility() {
     const [bomToCopy, setBomToCopy] = useState();
 
     const handlePartSelect = newValue => {
+        console.log(newValue);
         if (selected.children.find(x => x.name === newValue.partNumber)) {
             setPartMessage('Part already on BOM!');
             return;
@@ -479,7 +481,17 @@ function BomUtility() {
             reduxDispatch(subAssemblyActions.fetchByHref(subAssemblyUrl));
         } else {
             if (newValue.bomType !== 'C') {
-                setNewAssemblies(n => [...n, { id: partLookUp.forRow.id, children: [] }]);
+                setNewAssemblies(n => [
+                    ...n,
+                    {
+                        id: partLookUp.forRow.id,
+                        name: newValue.partNumber,
+                        type: newValue.bomType,
+                        isNewAddition: true,
+                        children: []
+                    }
+                ]);
+                console.log(newAssemblies);
             }
             processRowUpdate({
                 ...partLookUp.forRow,
@@ -487,6 +499,7 @@ function BomUtility() {
                 safetyCritical: newValue.safetyCriticalPart,
                 drawingReference: newValue.drawingReference,
                 type: newValue.bomType,
+                isNewAddition: true,
                 description: newValue.description,
                 children: newValue.bomType === 'C' ? null : []
             });
@@ -502,6 +515,7 @@ function BomUtility() {
                     ...partLookUp.forRow,
                     name: subAssembly.name,
                     type: subAssembly.type,
+                    isNewAddition: true,
                     safetyCritical: subAssembly.safetyCritical,
                     drawingReference: subAssembly.drawingReference,
                     description: subAssembly.description,
@@ -634,6 +648,7 @@ function BomUtility() {
                         setCopyBomDialogOpen(false);
                         setPartSearchTerm(null);
                         if (copyBomDialogOpen) {
+                            console.log(selected);
                             reduxDispatch(
                                 bomTreeActions.postByHref('/purchasing/boms/copy', {
                                     srcPartNumber: bomToCopy,
@@ -921,7 +936,7 @@ function BomUtility() {
                             </Button>
                             <Button
                                 variant="outlined"
-                                disabled={!crNumber}
+                                disabled={!crNumber || selected?.isNewAddition}
                                 onClick={() => {
                                     setCopyBomDialogOpen(true);
                                     setBomToCopy(null);
@@ -970,9 +985,11 @@ function BomUtility() {
                             renderComponents={false}
                             renderQties={false}
                             onNodeSelect={id => {
-                                setSelected(
+                                setSelected(s =>
                                     [...newAssemblies, ...nodesWithChildren].find(x => x.id === id)
                                 );
+                                console.log(selected);
+
                             }}
                             bomName={bomName}
                             bomTree={treeView}
