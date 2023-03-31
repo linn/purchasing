@@ -99,9 +99,8 @@
                 {
                     this.bomDetailRepository.Remove(detail);
                 }
-
-                if (!detail.DeleteChangeId.HasValue && new[] { "PROPOS", "ACCEPT", "LIVE" }
-                        .Contains(detail.ChangeState))
+                else if (!detail.DeleteChangeId.HasValue && new[] { "PROPOS", "ACCEPT", "LIVE" }
+                             .Contains(detail.ChangeState))
                 {
                     detail.DeleteChangeId = change.ChangeId;
                 }

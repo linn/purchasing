@@ -99,7 +99,6 @@ function BomUtility() {
     const [partMessage, setPartMessage] = useState();
 
     const openPartLookUp = forRow => {
-        console.log(forRow);
         setPartMessage();
         setPartLookUp({ open: true, forRow });
         setPartSearchTerm(null);
@@ -466,7 +465,6 @@ function BomUtility() {
     const [bomToCopy, setBomToCopy] = useState();
 
     const handlePartSelect = newValue => {
-        console.log(newValue);
         if (selected.children.find(x => x.name === newValue.partNumber)) {
             setPartMessage('Part already on BOM!');
             return;
@@ -491,7 +489,6 @@ function BomUtility() {
                         children: []
                     }
                 ]);
-                console.log(newAssemblies);
             }
             processRowUpdate({
                 ...partLookUp.forRow,
@@ -648,7 +645,6 @@ function BomUtility() {
                         setCopyBomDialogOpen(false);
                         setPartSearchTerm(null);
                         if (copyBomDialogOpen) {
-                            console.log(selected);
                             reduxDispatch(
                                 bomTreeActions.postByHref('/purchasing/boms/copy', {
                                     srcPartNumber: bomToCopy,
@@ -985,11 +981,9 @@ function BomUtility() {
                             renderComponents={false}
                             renderQties={false}
                             onNodeSelect={id => {
-                                setSelected(s =>
+                                setSelected(
                                     [...newAssemblies, ...nodesWithChildren].find(x => x.id === id)
                                 );
-                                console.log(selected);
-
                             }}
                             bomName={bomName}
                             bomTree={treeView}
