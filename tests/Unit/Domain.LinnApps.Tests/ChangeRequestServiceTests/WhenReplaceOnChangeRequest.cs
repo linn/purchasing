@@ -33,7 +33,8 @@
                 .Returns(true);
 
             var detailIds = new List<int> { 1, 2 };
-            this.result = this.Sut.Replace(1, 7004, false, false, null, detailIds, null, new List<string>());
+            var addToBoms = new List<string> { "TEST" };
+            this.result = this.Sut.Replace(1, 7004, false, false, null, detailIds, null, addToBoms, new List<string>());
         }
 
         [Test]

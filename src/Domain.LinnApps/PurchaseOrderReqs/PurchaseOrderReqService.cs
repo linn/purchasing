@@ -163,6 +163,11 @@
                 throw new ArgumentException("Cannot create order from a req without value for price");
             }
 
+            if (!entity.DateRequired.HasValue)
+            {
+                throw new ArgumentException("Cannot create order from a req without a date");
+            }
+
             var totalInBaseCurr = this.currencyPack.CalculateBaseValueFromCurrencyValue(entity.CurrencyCode, entity.TotalReqPrice.Value);
 
             if (entity.Carriage.GetValueOrDefault() > 0)

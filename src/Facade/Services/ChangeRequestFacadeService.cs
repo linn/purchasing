@@ -204,14 +204,14 @@
             {
                 return new BadRequestResult<ChangeRequestResource>("No parameters supplied");
             }
-            else if (request.GlobalReplace == false && request.SelectedDetailIds == null && request.SelectedPcasComponents == null)
+            else if (request.GlobalReplace == false && request.SelectedDetailIds == null && request.SelectedPcasComponents == null && request.AddToBoms == null)
             {
                 return new BadRequestResult<ChangeRequestResource>("No details selected to replace");
             }
 
             try
             {
-                var changeRequest = this.changeRequestService.Replace(request.DocumentNumber, replacedBy, request.GlobalReplace, request.HasPcasLines, request.NewQty, request.SelectedDetailIds, request.SelectedPcasComponents, privileges);
+                var changeRequest = this.changeRequestService.Replace(request.DocumentNumber, replacedBy, request.GlobalReplace, request.HasPcasLines, request.NewQty, request.SelectedDetailIds, request.SelectedPcasComponents, request.AddToBoms, privileges);
                 this.transactionManager.Commit();
                 var resource = (ChangeRequestResource)this.resourceBuilder.Build(changeRequest, privileges);
                 return new SuccessResult<ChangeRequestResource>(resource);
