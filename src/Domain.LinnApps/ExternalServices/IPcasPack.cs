@@ -12,5 +12,19 @@
             string changeState,
             int replacedBy,
             string newPartNumber);
+
+        void ReplacePartWith(
+            string boardCode,
+            string revisionCode,
+            int layoutSeq,
+            int versionNumber,
+            int documentNumber,
+            string changeState,
+            int enteredBy,
+            string cref,
+            string partNumber,
+            string newPartNumber,
+            decimal? newQty,
+            string newAsst);
     }
 }
