@@ -164,7 +164,7 @@ function BoardComponentsSmtCheck() {
                         </IconButton>
                     </DialogTitle>
                     <DialogContent dividers>
-                        <Typography variant="body1" style={{ whiteSpace: 'pre-line' }}>
+                        <Typography variant="body1" style={{ whiteSpace: 'pre' }}>
                             {uploadResult?.message}
                         </Typography>
                     </DialogContent>

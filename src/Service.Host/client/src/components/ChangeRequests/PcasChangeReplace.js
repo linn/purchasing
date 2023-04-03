@@ -36,6 +36,7 @@ function PcasChangeReplace({ wused, handleSelectChange, documentNumber }) {
         },
         { field: 'revisionCode', headerName: 'Revision', width: 150 },
         { field: 'cref', headerName: 'Cref', width: 100 },
+        { field: 'assemblyTechnology', headerName: 'AssT', width: 100 },
         {
             field: 'changeState',
             headerName: 'State',
@@ -54,7 +55,9 @@ function PcasChangeReplace({ wused, handleSelectChange, documentNumber }) {
             <Grid item xs={12}>
                 {wused ? (
                     <DataGrid
-                        getRowId={row => `${row.boardCode}/${row.boardLine}/${row.revisionCode}`}
+                        getRowId={row =>
+                            `${row.boardCode}/${row.revisionCode}/${row.cref}/${row.quantity}/${row.assemblyTechnology}/${row.boardLine}`
+                        }
                         className={classes.gap}
                         rows={wused}
                         columns={columns}

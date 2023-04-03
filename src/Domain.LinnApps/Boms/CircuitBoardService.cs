@@ -114,14 +114,24 @@
             }
 
             var componentsOnRevision = board.ComponentsOnRevision(revision.LayoutSequence, revision.VersionNumber);
+            if (fileType == "SMT")
+            {
+                componentsOnRevision = componentsOnRevision.Where(a => a.AssemblyTechnology == "SM").ToList();
+            }
+
             foreach (var fileComponent in fileContents)
             {
                 var existing = componentsOnRevision.FirstOrDefault(a => a.CRef == fileComponent.CRef);
-                var part = this.partRepository.FindBy(a => a.PartNumber == fileComponent.PartNumber.ToUpper());
-
-                if (part == null)
+                
+                Part part = null;
+                if (fileType != "SMT")
                 {
-                    message += $"******* ERROR {fileComponent.PartNumber} at {fileComponent.CRef} is not valid.  ******* \n";
+                    part = this.partRepository.FindBy(a => a.PartNumber == fileComponent.PartNumber.ToUpper());
+
+                    if (part == null)
+                    {
+                        message += $"******* ERROR {fileComponent.PartNumber} at {fileComponent.CRef} is not valid.  ******* \n";
+                    }
                 }
 
                 if (string.IsNullOrWhiteSpace(fileComponent.CRef))
@@ -131,7 +141,7 @@
 
                 if (existing == null)
                 {
-                    message += $"Adding {fileComponent.PartNumber} at {fileComponent.CRef}. \n";
+                    message += this.AddToMessage(fileType, "add", fileComponent.CRef, fileComponent.PartNumber);
                     changeCounter++;
                     if (makeChanges && part!= null && !string.IsNullOrWhiteSpace(fileComponent.CRef))
                     {
@@ -140,7 +150,7 @@
                 } 
                 else if (fileComponent.PartNumber != existing.PartNumber)
                 {
-                    message += $"Replacing {existing.PartNumber} with {fileComponent.PartNumber} at {existing.CRef}. \n";
+                    message += this.AddToMessage(fileType, "replace", fileComponent.CRef, fileComponent.PartNumber, existing.PartNumber);
                     changeCounter++;
                     if (makeChanges && part != null && !string.IsNullOrWhiteSpace(fileComponent.CRef))
                     {
@@ -155,7 +165,7 @@
             {
                 var componentToRemove = componentsOnRevision.First(a => a.CRef == cRef);
                 changeCounter++;
-                message += $"Removing {componentToRemove.PartNumber} from {cRef}. \n";
+                message += AddToMessage(fileType, "remove", cRef, null, componentToRemove.PartNumber);
                 if (makeChanges)
                 {
                     this.RemoveComponent(board, revision, componentToRemove, pcasChange);
@@ -168,6 +178,41 @@
             }
 
             return new ProcessResult(true, message);
+        }
+
+        private string AddToMessage(
+            string fileType,
+            string messageType,
+            string cRef,
+            string filePartNumber,
+            string existingPartNumber = null)
+        {
+            if (fileType == "SMT")
+            {
+                switch (messageType)
+                {
+                    case "add":
+                        return $"{cRef, -20}- PC File = {filePartNumber, -15} Database = _______________\n";
+                    case "remove":
+                        return $"{cRef, -20}- PC File = _______________ Database = {existingPartNumber}\n";
+                    case "replace":
+                        return $"{cRef, -20}- PC File = {filePartNumber,-15} Database = {existingPartNumber}\n";
+                    default:
+                        return null;
+                }
+            }
+
+            switch (messageType)
+            {
+                case "add":
+                    return $"Adding {filePartNumber} at {cRef}. \n";
+                case "replace":
+                    return $"Replacing {existingPartNumber} with {filePartNumber} at {cRef}. \n";
+                case "remove":
+                    return $"Removing {existingPartNumber} from {cRef}. \n";
+                default:
+                    return null;
+            }
         }
 
         private CircuitBoard GetCircuitBoard(string boardCode)
