@@ -259,6 +259,38 @@
             return new SuccessResult<IEnumerable<ChangeRequestResource>>(changeRequests.Select(x => (ChangeRequestResource)this.resourceBuilder.Build(x, privileges)));
         }
 
+        public IResult<ChangeRequestResource> AddAndReplace(ChangeRequestResource resource, int createdBy, IEnumerable<string> privileges = null)
+        {
+            /* on original form this was done with Post-Database-Commit trigger so have to find way to do two stage operation since
+               replace relies on there being an existing change request */
+            var createresult = this.Add(resource, privileges, createdBy);
+            if (resource.GlobalReplace)
+            {
+                if (createresult is CreatedResult<ChangeRequestResource>)
+                {
+                    var createdRequest = ((CreatedResult<ChangeRequestResource>) createresult).Data;
+                    var replaceRequest = new ChangeRequestReplaceResource
+                                             {
+                                                 DocumentNumber = createdRequest.DocumentNumber,
+                                                 GlobalReplace = createdRequest.GlobalReplace,
+                                                 HasPcasLines =
+                                                     createdRequest.ChangeType
+                                                     == "REPLACE" /* BOARDEDIT won't but not easy to know with REPLACE so say true in case */
+                                             };
+                    var replaceresult = this.ChangeRequestReplace(replaceRequest, createdBy, privileges);
+                    if (replaceresult is not SuccessResult<ChangeRequestResource>)
+                    {
+                        return replaceresult;
+                    }
+
+                    ((CreatedResult<ChangeRequestResource>) createresult).Data =
+                        ((SuccessResult<ChangeRequestResource>) replaceresult).Data;
+                }
+            }
+
+            return createresult;
+        }
+
         protected override ChangeRequest CreateFromResource(
             ChangeRequestResource resource, IEnumerable<string> privileges = null)
         {
