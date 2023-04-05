@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import {
+    CheckboxWithLabel,
     Dropdown,
     InputField,
     Loading,
@@ -46,6 +47,10 @@ function BoardChange({ item, creating, handleFieldChange }) {
 
     const setBoardWithoutSearch = () => {
         dispatch(boardActions.fetch(item.boardCode));
+    };
+
+    const setGlobalReplace = newValue => {
+        handleFieldChange('globalReplace', newValue);
     };
 
     const revisionsList = () => {
@@ -217,8 +222,17 @@ function BoardChange({ item, creating, handleFieldChange }) {
                             disabled
                         />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={8}>
                         <Typography>{item?.boardDescription}</Typography>
+                    </Grid>
+                    <Grid item xs={4}>
+                        {item?.newPartNumber && item?.oldPartNumber !== item?.newPartNumber && (
+                            <CheckboxWithLabel
+                                label={`Automatically replace every ${item?.oldPartNumber} with ${item?.newPartNumber}`}
+                                checked={item?.globalReplace}
+                                onChange={() => setGlobalReplace(!item?.globalReplace)}
+                            />
+                        )}
                     </Grid>
                 </>
             ) : (
@@ -308,7 +322,8 @@ BoardChange.propTypes = {
         revisionCode: PropTypes.string,
         boardDescription: PropTypes.string,
         oldPartNumber: PropTypes.string,
-        newPartNumber: PropTypes.string
+        newPartNumber: PropTypes.string,
+        globalReplace: PropTypes.bool
     }),
     creating: PropTypes.bool,
     handleFieldChange: PropTypes.func
@@ -321,7 +336,8 @@ BoardChange.defaultProps = {
         revisionCode: null,
         boardDescription: null,
         oldPartNumber: null,
-        newPartNumber: null
+        newPartNumber: null,
+        globalReplace: false
     },
     creating: false,
     handleFieldChange: null
