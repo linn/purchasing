@@ -194,8 +194,8 @@ function BomUtility() {
         {
             field: 'description',
             headerName: 'Description',
-            hide: showChanges,
-            width: 250,
+            hide: false,
+            width: 350,
             editable: false,
             renderCell: params =>
                 params.row.isReplaced || params.row.toDelete ? (
@@ -247,7 +247,7 @@ function BomUtility() {
             field: 'addReplaceSeq',
             headerName: 'In',
             width: 75,
-            hide: !showChanges,
+            hide: true,
 
             editable: false
         },
@@ -271,7 +271,7 @@ function BomUtility() {
         {
             field: 'deleteReplaceSeq',
             headerName: 'Out',
-            hide: !showChanges,
+            hide: true,
             width: 75,
             editable: false
         },
@@ -491,7 +491,6 @@ function BomUtility() {
                         children: []
                     }
                 ]);
-                console.log(newAssemblies);
             }
             processRowUpdate({
                 ...partLookUp.forRow,
@@ -849,7 +848,7 @@ function BomUtility() {
     };
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} width="xl">
             {PartLookUp()}
             {CopyExplodeBomDialog()}
             {DeleteAllFromBomDialog()}

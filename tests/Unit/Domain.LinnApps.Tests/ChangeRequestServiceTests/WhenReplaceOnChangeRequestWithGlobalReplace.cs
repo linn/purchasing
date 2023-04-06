@@ -35,7 +35,7 @@
                 .Returns(true);
 
             var detailIds = new List<int> { 1, 2 };
-            this.result = this.Sut.Replace(1, 7004, true, true, null, null, null, new List<string>());
+            this.result = this.Sut.Replace(1, 7004, true, true, null, null, null, null, new List<string>());
         }
 
         [Test]

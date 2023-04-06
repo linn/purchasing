@@ -12,7 +12,7 @@
 
     using NUnit.Framework;
 
-    public class WhenReplaceOnAcceptedChangeRequestAndNotAuthorised : ContextBase
+    public class WhenReplaceOnNonExistentSelectedRevision : ContextBase
     {
         private Action action;
 
@@ -24,19 +24,24 @@
                                   DocumentNumber = 1,
                                   ChangeState = "ACCEPT",
                                   DateEntered = new DateTime(2022, 1, 1),
-                                  DescriptionOfChange = "Dastardly Change Request"
+                                  DescriptionOfChange = "Test Change",
+                                  BomChanges = new List<BomChange>()
                               };
             this.Repository.FindById(1).Returns(request);
 
-            var bomChangeIds = new List<int> { 1 };
+            var selectedComponents = new List<string> { "001/L1R1/C001/1/TH" };
 
-            this.action = () => this.Sut.Replace(1, 7004, true, false, null, null, new List<string>(), null);
+            this.AuthService
+                .HasPermissionFor(AuthorisedAction.AdminChangeRequest, Arg.Any<IEnumerable<string>>())
+                .Returns(true);
+
+            this.action = () => this.Sut.Replace(1, 7004, false, false, null, null, selectedComponents, new List<string>());
         }
 
         [Test]
-        public void ShouldThrowUnauthorisedActionException()
+        public void ShouldThrowNotFoundException()
         {
-            this.action.Should().Throw<UnauthorisedActionException>();
+            this.action.Should().Throw<ItemNotFoundException>();
         }
     }
 }

@@ -31,6 +31,8 @@
 
         private readonly IBomChangeService bomChangeService;
 
+        private readonly IRepository<CircuitBoard, string> boardRepository;
+
         public ChangeRequestService(
             IAuthorisationService authService,
             IRepository<ChangeRequest, int> repository,
@@ -39,7 +41,8 @@
             IRepository<LinnWeek, int> weekRepository,
             IBomPack bomPack,
             IPcasPack pcasPack,
-            IBomChangeService bomChangeService)
+            IBomChangeService bomChangeService,
+            IRepository<CircuitBoard, string> boardRepository)
         {
             this.authService = authService;
             this.repository = repository;
@@ -49,6 +52,7 @@
             this.bomPack = bomPack;
             this.pcasPack = pcasPack;
             this.bomChangeService = bomChangeService;
+            this.boardRepository = boardRepository;
         }
 
         public Part ValidPartNumber(string partNumber)
@@ -273,6 +277,7 @@
             decimal? newQty,
             IEnumerable<int> selectedDetailIds,
             IEnumerable<string> selectedPcasComponents,
+            IEnumerable<string> addToBoms,
             IEnumerable<string> privileges = null)
         {
             var request = this.repository.FindById(documentNumber);
@@ -305,11 +310,50 @@
                 return request;
             }
             
-            if (selectedDetailIds.Any())
+            if (selectedDetailIds != null && selectedDetailIds.Any())
             {
                 foreach (var detailId in selectedDetailIds)
                 {
                     this.bomChangeService.ReplaceBomDetail(detailId, request, replacedBy, newQty);
+                }
+            }
+
+            if (selectedPcasComponents != null && selectedPcasComponents.Any())
+            {
+                foreach (var componentKeys in selectedPcasComponents)
+                {
+                    // expecting board/revision/cref/qty/asst/...
+                    // basically a way of passing parameters for this call
+                    var keys = componentKeys.Split("/");
+                    if (keys.Length < 5)
+                    {
+                        throw new DomainException($"invalid selected component {componentKeys}");
+                    }
+
+                    var board = this.boardRepository.FindById(keys[0]);
+                    if (board == null)
+                    {
+                        throw new ItemNotFoundException($"no board found for {keys[0]}");
+                    }
+
+                    var revision = board.Layouts.SelectMany(a => a.Revisions)
+                        .FirstOrDefault(a => a.RevisionCode == keys[1]);
+                    if (revision == null)
+                    {
+                        throw new ItemNotFoundException($"no revision found for {keys[1]}");
+                    }
+
+                    var qty = newQty ?? Convert.ToDecimal(keys[3]);
+
+                    this.pcasPack.ReplacePartWith(board.BoardCode, revision.RevisionCode, revision.LayoutSequence, revision.VersionNumber, request.DocumentNumber, request.ChangeState, replacedBy, keys[2], request.OldPartNumber, request.NewPartNumber, qty, keys[4]);
+                }
+            }
+
+            if (addToBoms != null && addToBoms.Any() && (newQty != null))
+            {
+                foreach (var bomName in addToBoms)
+                {
+                    this.bomChangeService.AddBomDetail(bomName, request, replacedBy, newQty);
                 }
             }
 
