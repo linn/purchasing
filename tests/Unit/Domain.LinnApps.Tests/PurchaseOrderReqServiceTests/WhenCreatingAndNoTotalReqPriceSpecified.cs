@@ -7,6 +7,7 @@
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
 
     using NSubstitute;
@@ -112,7 +113,7 @@
         [Test]
         public void ShouldThrowExceptionAboutLackOfTotalReqPrice()
         {
-            this.action.Should().Throw<ArgumentException>().WithMessage("Cannot create order from a req without value for price");
+            this.action.Should().Throw<PurchaseOrderReqException>().WithMessage("Cannot create order from a req without value for price");
         }
     }
 }
