@@ -7,6 +7,7 @@
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
 
     using NSubstitute;
@@ -113,7 +114,7 @@
         [Test]
         public void ShouldThrowExceptionAboutLackOfAuthorisedById()
         {
-            this.action.Should().Throw<ArgumentException>().WithMessage("Cannot create order from a req that has not been authorised");
+            this.action.Should().Throw<PurchaseOrderReqException>().WithMessage("Cannot create order from a req that has not been authorised");
         }
     }
 }
