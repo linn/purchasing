@@ -6,6 +6,7 @@
 
     using Linn.Common.Logging;
     using Linn.Common.Messaging.RabbitMQ.Handlers;
+    using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Mailers;
     using Linn.Purchasing.Messaging.Messages;
     using Linn.Purchasing.Resources.Messages;
@@ -18,12 +19,16 @@
     {
         private readonly IServiceProvider serviceProvider;
 
+        private readonly ITransactionManager transactionManager;
+
         public EmailPurchaseOrderReminderMessageHandler(
             ILog logger,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            ITransactionManager transactionManager)
             : base(logger)
         {
             this.serviceProvider = serviceProvider;
+            this.transactionManager = transactionManager;
         }
 
         public override bool Handle(EmailPurchaseOrderReminderMessage message)
@@ -41,6 +46,7 @@
                 var resource = JsonConvert.DeserializeObject<EmailPurchaseOrderReminderMessageResource>(enc);
                 mailer.SendDeliveryReminder(
                     resource.Deliveries, resource.Test.GetValueOrDefault());
+                this.transactionManager.Commit();
                 return true;
             }
             catch (Exception e)

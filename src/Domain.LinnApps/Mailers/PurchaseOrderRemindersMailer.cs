@@ -80,7 +80,7 @@
                     {
                         new CsvAttachment(null, csvData, "Deliveries")
                     });
-
+            
             foreach (var d in deliveries)
             {
                 d.ReminderSent = "Y";
