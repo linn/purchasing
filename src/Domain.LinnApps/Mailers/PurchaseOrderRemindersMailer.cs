@@ -27,13 +27,14 @@
         {
             var deliveries = deliveryKeys.Select(k => this.repository.FindById(k)).ToList();
             var csvData = new List<List<string>>();
-            var headers = new List<string> { "Linn Part Number", "Item", "Delivery Qty", "Promise Date", "Courier", "Tracking Number / Link", "Additional Comments" };
+            var headers = new List<string> { "Order Number", "Linn Part Number", "Item", "Delivery Qty", "Promise Date", "Courier", "Tracking Number / Link", "Additional Comments" };
             csvData.Add(headers);
 
             foreach (var d in deliveries)
             {
                 csvData.Add(new List<string>
                                 {
+                                    d.PurchaseOrderDetail.OrderNumber.ToString(),
                                     d.PurchaseOrderDetail.PartNumber, 
                                     d.PurchaseOrderDetail.SuppliersDesignation, 
                                     d.OrderDeliveryQty.ToString(), 

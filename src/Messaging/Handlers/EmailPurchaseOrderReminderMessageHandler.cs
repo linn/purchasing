@@ -19,16 +19,12 @@
     {
         private readonly IServiceProvider serviceProvider;
 
-        private readonly ITransactionManager transactionManager;
-
         public EmailPurchaseOrderReminderMessageHandler(
             ILog logger,
-            IServiceProvider serviceProvider,
-            ITransactionManager transactionManager)
+            IServiceProvider serviceProvider)
             : base(logger)
         {
             this.serviceProvider = serviceProvider;
-            this.transactionManager = transactionManager;
         }
 
         public override bool Handle(EmailPurchaseOrderReminderMessage message)
@@ -38,15 +34,15 @@
             using var scope = this.serviceProvider.CreateScope();
 
             var mailer = scope.ServiceProvider.GetRequiredService<IPurchaseOrderRemindersMailer>();
+            var transactionManager = scope.ServiceProvider.GetRequiredService<ITransactionManager>();
 
             try
             {
                 var body = message.Event.Body.ToArray();
                 var enc = Encoding.UTF8.GetString(body);
                 var resource = JsonConvert.DeserializeObject<EmailPurchaseOrderReminderMessageResource>(enc);
-                mailer.SendDeliveryReminder(
-                    resource.Deliveries, resource.Test.GetValueOrDefault());
-                this.transactionManager.Commit();
+                mailer.SendDeliveryReminder(resource.Deliveries, resource.Test.GetValueOrDefault());
+                transactionManager.Commit();
                 return true;
             }
             catch (Exception e)
