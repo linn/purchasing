@@ -18,7 +18,7 @@
         {
             this.Sut = new PurchaseOrderRemindersScheduler(
                 this.Dispatcher,
-                () => new DateTime(2023, 3, 8, 8, 0, 0),
+                () => new DateTime(2023, 3, 8, 11, 55, 0),
                 this.Log,
                 this.ServiceProvider);
             await this.Sut.StartAsync(CancellationToken.None);

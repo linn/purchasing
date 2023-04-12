@@ -33,8 +33,7 @@
         {
             this.log.Info("Purchase Order Reminder Emails Scheduler Running...");
 
-          
-            var dailyTrigger = new DailyTrigger(this.currentTime, 8, 0, 0);
+            var dailyTrigger = new DailyTrigger(this.currentTime, 11, 55, 0);
 
             dailyTrigger.OnTimeTriggered += () =>
                 {
@@ -47,14 +46,18 @@
                         scope.ServiceProvider.GetRequiredService<IPurchaseOrderDeliveryRepository>();
 
                     var inDateRange = deliveryRepository.FindAll().Where(
-                        x => (x.DateAdvised ?? DateTime.MinValue).Date - this.currentTime().Date - TimeSpan.FromDays(2)
-                             == TimeSpan.Zero);
+                        x => (x.DateAdvised ?? DateTime.MinValue).Date == this.currentTime().AddDays(2).Date);
+
+                    this.log.Info("Found " + inDateRange.Count() + " in date range.");
 
                     var deliveries = inDateRange.Where(
                         x => x.PurchaseOrderDetail.PurchaseOrder.OrderMethodName == "MANUAL"
                              && x.ReminderSent != "Y"
                              && x.PurchaseOrderDetail.PurchaseOrder.Supplier.ReceivesOrderReminders == "Y"
                              && x.DateAdvised.HasValue && x.QuantityOutstanding.GetValueOrDefault() > 0).ToList();
+
+                    this.log.Info("Found " + deliveries.Count() + " eligible for a reminder email.");
+
 
                     if (deliveries.Count > 0)
                     {
