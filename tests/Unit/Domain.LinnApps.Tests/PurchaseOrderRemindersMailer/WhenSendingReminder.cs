@@ -2,10 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
+    using Linn.Common.Email;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -74,37 +76,29 @@
                         k => k.OrderNumber == 123 && k.OrderLine == 1 && k.DeliverySequence == 1))
                 .Returns(this.delivery);
 
-            this.Sut.SendDeliveryReminder(123, 1, 1);
+            this.Sut.SendDeliveryReminder(new List<PurchaseOrderDeliveryKey>
+                                              {
+                                                  new PurchaseOrderDeliveryKey
+                                                      {
+                                                          OrderLine = 1,
+                                                          DeliverySequence = 1,
+                                                          OrderNumber = 123
+                                                      }
+                                              });
         }
 
         [Test]
         public void ShouldSendEmail()
         {
             var expectedBody =
-                $"Linn sent you a Purchase Order {this.delivery.OrderNumber} that you have previously confirmed.";
+                $"Linn sent you Purchase Order(s) that you have previously confirmed.";
             expectedBody += Environment.NewLine;
             expectedBody += Environment.NewLine;
 
             expectedBody +=
-                "The order is now due for delivery, can you please provide the shipping details including the tracking number.";
-            expectedBody += Environment.NewLine;
-            expectedBody += Environment.NewLine;
-            expectedBody += Environment.NewLine;
+            "Please see attached spreadsheet for orders that are now due for delivery. "
+                + "Can you please complete the spreadsheet with the shipping details and tracking number for each delivery and return to Linn.";
 
-            expectedBody += $"Item: {delivery.PurchaseOrderDetail.SuppliersDesignation}";
-            expectedBody += Environment.NewLine;
-            expectedBody += Environment.NewLine;
-
-            expectedBody += $"Linn Part Number: {delivery.PurchaseOrderDetail.PartNumber}";
-            expectedBody += Environment.NewLine;
-            expectedBody += Environment.NewLine;
-
-            expectedBody += $"Delivery Qty: {delivery.OrderDeliveryQty}";
-            expectedBody += Environment.NewLine;
-            expectedBody += Environment.NewLine;
-
-            expectedBody += $"Promise Date: {delivery.DateAdvised.GetValueOrDefault():dd-MM-yyyy}";
-            expectedBody += Environment.NewLine;
             expectedBody += Environment.NewLine;
             expectedBody += Environment.NewLine;
 
@@ -123,9 +117,8 @@
                 "Test Person",
                 "LINN PRODUCTS PURCHASE ORDER DELIVERY REMINDER",
                 expectedBody,
-                null);
+                Arg.Any<IEnumerable<Attachment>>());
         }
-
 
         [Test]
         public void ShouldMarkDeliveryAsSent()

@@ -55,6 +55,27 @@
                                                                   {
                                                                       PurchaseOrder = new PurchaseOrder
                                                                           {
+                                                                              SupplierId = 1,
+                                                                              OrderMethodName = "MANUAL",
+                                                                              Supplier = new Supplier
+                                                                                  {
+                                                                                      ReceivesOrderReminders = "Y"
+                                                                                  }
+                                                                          }
+                                                                  }
+                                                          },
+                                                      new PurchaseOrderDelivery
+                                                          {
+                                                              OrderNumber = 12345,
+                                                              OrderLine = 1,
+                                                              DeliverySeq = 1,
+                                                              QuantityOutstanding = 1,
+                                                              DateAdvised = 10.March(2023),
+                                                              PurchaseOrderDetail = new PurchaseOrderDetail
+                                                                  {
+                                                                      PurchaseOrder = new PurchaseOrder
+                                                                          {
+                                                                              SupplierId = 1,
                                                                               OrderMethodName = "MANUAL",
                                                                               Supplier = new Supplier
                                                                                   {
@@ -74,6 +95,7 @@
                                                                   {
                                                                       PurchaseOrder = new PurchaseOrder
                                                                           {
+                                                                              SupplierId = 1,
                                                                               OrderMethodName = "MANUAL",
                                                                               Supplier = new Supplier
                                                                                   {
@@ -94,6 +116,7 @@
                                                                       PurchaseOrder = new PurchaseOrder
                                                                           {
                                                                               OrderMethodName = "MANUAL",
+                                                                              SupplierId = 2,
                                                                               Supplier = new Supplier
                                                                                   {
                                                                                       ReceivesOrderReminders = "N"
@@ -113,6 +136,7 @@
                                                                       PurchaseOrder = new PurchaseOrder
                                                                           {
                                                                               OrderMethodName = "AUTO",
+                                                                              SupplierId = 3,
                                                                               Supplier = new Supplier
                                                                                   {
                                                                                       ReceivesOrderReminders = "Y"
@@ -133,6 +157,7 @@
                                                                       PurchaseOrder = new PurchaseOrder
                                                                           {
                                                                               OrderMethodName = "MANUAL",
+                                                                              SupplierId = 4,
                                                                               Supplier = new Supplier
                                                                                   {
                                                                                       ReceivesOrderReminders = "Y"

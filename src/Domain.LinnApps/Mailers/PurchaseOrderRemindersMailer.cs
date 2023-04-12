@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Mailers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     using Linn.Common.Configuration;
@@ -22,14 +23,25 @@
             this.repository = repository;
         }
 
-        public void SendDeliveryReminder(int orderNumber, int orderLine, int deliverySeq, bool test = false)
+        public void SendDeliveryReminder(IEnumerable<PurchaseOrderDeliveryKey> deliveryKeys, bool test = false)
         {
-            var delivery = this.repository.FindById(
-                new PurchaseOrderDeliveryKey
-                    {
-                        OrderNumber = orderNumber, OrderLine = orderLine, DeliverySequence = deliverySeq
-                    });
-            var supplier = delivery.PurchaseOrderDetail.PurchaseOrder.Supplier;
+            var deliveries = deliveryKeys.Select(k => this.repository.FindById(k)).ToList();
+            var csvData = new List<List<string>>();
+            var headers = new List<string> { "Linn Part Number", "Item", "Delivery Qty", "Promise Date", "Courier", "Tracking Number / Link", "Additional Comments" };
+            csvData.Add(headers);
+
+            foreach (var d in deliveries)
+            {
+                csvData.Add(new List<string>
+                                {
+                                    d.PurchaseOrderDetail.PartNumber, 
+                                    d.PurchaseOrderDetail.SuppliersDesignation, 
+                                    d.OrderDeliveryQty.ToString(), 
+                                    d.DateAdvised.GetValueOrDefault().ToString("dd-MM-yyyy")
+                                });
+            }
+
+            var supplier = deliveries.First().PurchaseOrderDetail.PurchaseOrder.Supplier;
 
             var toAddress = test 
                                 ? ConfigurationManager.Configuration["ORDER_BOOK_TEST_ADDRESS"] 
@@ -39,30 +51,13 @@
 
             var vendorManagerName = supplier.VendorManager.Employee.FullName;
 
-            var body = $"Linn sent you a Purchase Order {delivery.OrderNumber} that you have previously confirmed.";
+            var body = $"Linn sent you Purchase Order(s) that you have previously confirmed.";
             body += Environment.NewLine;
             body += Environment.NewLine;
 
             body +=
-                "The order is now due for delivery, can you please provide the shipping details including the tracking number.";
-            body += Environment.NewLine;
-            body += Environment.NewLine;
-            body += Environment.NewLine;
-
-            body += $"Item: {delivery.PurchaseOrderDetail.SuppliersDesignation}";
-            body += Environment.NewLine;
-            body += Environment.NewLine;
-
-            body += $"Linn Part Number: {delivery.PurchaseOrderDetail.PartNumber}";
-            body += Environment.NewLine;
-            body += Environment.NewLine;
-
-            body += $"Delivery Qty: {delivery.OrderDeliveryQty}";
-            body += Environment.NewLine;
-            body += Environment.NewLine;
-
-            body += $"Promise Date: {delivery.DateAdvised.GetValueOrDefault():dd-MM-yyyy}";
-            body += Environment.NewLine;
+                "Please see attached spreadsheet for orders that are now due for delivery. "
+                + "Can you please complete the spreadsheet with the shipping details and tracking number for each delivery and return to Linn.";
             body += Environment.NewLine;
             body += Environment.NewLine;
 
@@ -81,9 +76,15 @@
                 vendorManagerName,  
                 "LINN PRODUCTS PURCHASE ORDER DELIVERY REMINDER",
                 body,
-                null);
+                new List<Attachment>
+                    {
+                        new CsvAttachment(null, csvData, "Deliveries")
+                    });
 
-            delivery.ReminderSent = "Y";
+            foreach (var d in deliveries)
+            {
+                d.ReminderSent = "Y";
+            } 
         }
     }
 }

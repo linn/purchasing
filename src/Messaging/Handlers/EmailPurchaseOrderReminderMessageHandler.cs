@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Messaging.Handlers
 {
     using System;
+    using System.Linq;
     using System.Text;
 
     using Linn.Common.Logging;
@@ -38,11 +39,8 @@
                 var body = message.Event.Body.ToArray();
                 var enc = Encoding.UTF8.GetString(body);
                 var resource = JsonConvert.DeserializeObject<EmailPurchaseOrderReminderMessageResource>(enc);
-                this.Logger.Info(
-                        $"Sending Purchase Order Reminder for Order/Line/Delivery: " 
-                        + $"{resource.OrderNumber}/{resource.OrderLine}/{resource.DeliverySeq}");
                 mailer.SendDeliveryReminder(
-                    resource.OrderNumber, resource.OrderLine, resource.DeliverySeq, resource.Test.GetValueOrDefault());
+                    resource.Deliveries, resource.Test.GetValueOrDefault());
                 return true;
             }
             catch (Exception e)
