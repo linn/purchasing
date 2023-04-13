@@ -4,6 +4,7 @@
     using Linn.Common.Messaging.RabbitMQ.Dispatchers;
     using Linn.Common.Scheduling;
     using Linn.Common.Scheduling.Triggers;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources.Messages;
 
@@ -33,11 +34,10 @@
         {
             this.log.Info("Purchase Order Reminder Emails Scheduler Running...");
 
-            var dailyTrigger = new DailyTrigger(this.currentTime, 11, 55, 0);
+            var dailyTrigger = new DailyTrigger(this.currentTime, 8, 0, 0);
 
             dailyTrigger.OnTimeTriggered += () =>
                 {
-
                     using IServiceScope scope = this.serviceProvider.CreateScope();
 
                     this.log.Info("Looking Up Reminders to send...");
@@ -58,21 +58,24 @@
 
                     this.log.Info("Found " + deliveries.Count() + " eligible for a reminder email.");
 
-
                     if (deliveries.Count > 0)
                     {
-                        this.log.Info($"Sending ${deliveries.Count} Emails: ");
+                        var supplierGroups = deliveries.GroupBy(d => d.PurchaseOrderDetail.PurchaseOrder.SupplierId);
+                        var enumerable = supplierGroups.ToList();
+                        this.log.Info($"Sending ${enumerable.ToList().Count} Emails: ");
 
-
-                        foreach (var d in deliveries)
+                        foreach (var g in enumerable)
                         {
                             this.dispatcher.Dispatch(new EmailPurchaseOrderReminderMessageResource
                                                          {
-                                                             OrderNumber = d.OrderNumber,
-                                                             OrderLine = d.OrderLine,
-                                                             DeliverySeq = d.DeliverySeq,
-                                                             Timestamp = DateTime.Now,
-                                                             Test = true
+                                                            Deliveries = g.ToList().OrderBy(o => o.OrderNumber).Select(d => new PurchaseOrderDeliveryKey()
+                                                                {
+                                                                    OrderNumber = d.OrderNumber,
+                                                                    OrderLine = d.OrderLine,
+                                                                    DeliverySequence = d.DeliverySeq
+                                                                }),
+                                                            Timestamp = DateTime.Now,
+                                                            Test = true
                                                          });
                         }
                     }

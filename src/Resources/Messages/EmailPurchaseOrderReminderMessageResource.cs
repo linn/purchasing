@@ -1,14 +1,13 @@
 ﻿namespace Linn.Purchasing.Resources.Messages
 {
     using System;
+    using System.Collections.Generic;
+
+    using Linn.Purchasing.Domain.LinnApps.Keys;
 
     public class EmailPurchaseOrderReminderMessageResource
     {
-        public int OrderNumber { get; set; }
-
-        public int OrderLine { get; set; }
-
-        public int DeliverySeq { get; set; }
+        public IEnumerable<PurchaseOrderDeliveryKey> Deliveries { get; set; }
 
         public DateTime Timestamp { get; set; }
 
