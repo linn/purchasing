@@ -53,7 +53,7 @@
                 PhoneNumber = "+44 1234567780",
                 QuoteRef = "blah",
                 Email = "LC@gmail",
-                DateRequired = 1.January(2033),
+                DateRequired = DateTime.Today.AddDays(1),
                 RequestedById = 33107,
                 AuthorisedById = 33107,
                 SecondAuthById = null,
