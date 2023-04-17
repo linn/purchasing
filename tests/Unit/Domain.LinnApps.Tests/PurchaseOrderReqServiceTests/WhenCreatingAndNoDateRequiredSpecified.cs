@@ -117,7 +117,7 @@
         [Test]
         public void ShouldThrowExceptionAboutLackOfDate()
         {
-            this.action.Should().Throw<PurchaseOrderReqException>().WithMessage("Cannot create order from a req without a date");
+            this.action.Should().Throw<PurchaseOrderReqException>().WithMessage("Cannot create order from a req without a future date specified");
         }
     }
 }

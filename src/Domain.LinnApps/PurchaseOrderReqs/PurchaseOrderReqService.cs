@@ -163,9 +163,9 @@
                 throw new PurchaseOrderReqException("Cannot create order from a req without value for price");
             }
 
-            if (!entity.DateRequired.HasValue)
+            if ((!entity.DateRequired.HasValue) || (entity.DateRequired.Value.Date <= DateTime.Now.Date))
             {
-                throw new PurchaseOrderReqException("Cannot create order from a req without a date");
+                throw new PurchaseOrderReqException("Cannot create order from a req without a future date specified");
             }
 
             var totalInBaseCurr = this.currencyPack.CalculateBaseValueFromCurrencyValue(entity.CurrencyCode, entity.TotalReqPrice.Value);
