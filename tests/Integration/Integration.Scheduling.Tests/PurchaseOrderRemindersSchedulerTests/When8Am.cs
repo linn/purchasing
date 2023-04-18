@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Integration.Scheduling.Tests.PurchaseOrderRemindersSchedulerTests
 {
     using System;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -29,37 +30,30 @@
         [Test]
         public void ShouldDispatchMessage()
         {
-            // since this delivery has qty outstanding and advised to arrive in two days
+            // since this supplier has two deliveries with qty outstanding and advised to arrive in two days
             this.Dispatcher.Received().Dispatch(Arg.Is<EmailPurchaseOrderReminderMessageResource>(x =>
-                x.OrderNumber == 1
-                && x.OrderLine == 1
-                && x.DeliverySeq == 1));
+                x.Deliveries.Count() == 2 && x.Deliveries.All(d => d.OrderNumber == 1 || d.OrderNumber == 12345)));
 
 
             // since this delivery is not advised to arrive in two days
             this.Dispatcher.DidNotReceive().Dispatch(
                 Arg.Is<EmailPurchaseOrderReminderMessageResource>(
-                    x => x.OrderNumber == 2 
-                         && x.OrderLine == 2 
-                         && x.DeliverySeq == 2));
+                    x => x.Deliveries.Any(d => d.OrderNumber == 2)));
 
             // since this delivery is for a supplier who is set not to receive emails
-            this.Dispatcher.DidNotReceive().Dispatch(Arg.Is<EmailPurchaseOrderReminderMessageResource>(x =>
-                x.OrderNumber == 3
-                && x.OrderLine == 3
-                && x.DeliverySeq == 1));
+            this.Dispatcher.DidNotReceive().Dispatch(
+                Arg.Is<EmailPurchaseOrderReminderMessageResource>(
+                    x => x.Deliveries.Any(d => d.OrderNumber == 3)));
 
             // since this delivery is for not of a MANUAL order
-            this.Dispatcher.DidNotReceive().Dispatch(Arg.Is<EmailPurchaseOrderReminderMessageResource>(x =>
-                x.OrderNumber == 4
-                && x.OrderLine == 4
-                && x.DeliverySeq == 1));
+            this.Dispatcher.DidNotReceive().Dispatch(
+                Arg.Is<EmailPurchaseOrderReminderMessageResource>(
+                    x => x.Deliveries.Any(d => d.OrderNumber == 4)));
 
             // since this delivery already has a reminder sent
-            this.Dispatcher.DidNotReceive().Dispatch(Arg.Is<EmailPurchaseOrderReminderMessageResource>(x =>
-                x.OrderNumber == 5
-                && x.OrderLine == 5
-                && x.DeliverySeq == 1));
+            this.Dispatcher.DidNotReceive().Dispatch(
+                Arg.Is<EmailPurchaseOrderReminderMessageResource>(
+                    x => x.Deliveries.Any(d => d.OrderNumber == 5)));
         }
     }
 }
