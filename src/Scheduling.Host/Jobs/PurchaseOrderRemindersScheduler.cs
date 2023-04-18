@@ -74,7 +74,8 @@
                                                                     OrderLine = d.OrderLine,
                                                                     DeliverySequence = d.DeliverySeq
                                                                 }),
-                                                            Timestamp = DateTime.Now
+                                                            Timestamp = DateTime.Now,
+                                                            Test = true
                                                          });
                         }
                     }
