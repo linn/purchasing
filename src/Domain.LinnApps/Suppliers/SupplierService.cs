@@ -125,7 +125,7 @@
             current.PmDeliveryDaysGrace = updated.PmDeliveryDaysGrace;
             current.Notes = updated.Notes;
             current.OrganisationId = updated.OrganisationId;
-
+            current.ReceivesOrderReminders = updated.ReceivesOrderReminders;
             current.InvoiceGoesTo = updated.InvoiceGoesTo != null
                                         ? this.supplierRepository.FindById(updated.InvoiceGoesTo.SupplierId)
                                         : null;
