@@ -99,6 +99,8 @@
 
         public DateTime? RecommendedOrderDate { get; set; }
 
+        public string IgnoreSalesOrdersForMrp { get; set; }
+
         public IEnumerable<MrDetail> MrDetails { get; set; }
     }
 }

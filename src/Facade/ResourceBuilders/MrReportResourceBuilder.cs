@@ -78,6 +78,7 @@
                 MrComments = entity.MrComments,
                 RecommendedOrderDate = recommendedOrderDate,
                 RecommendedOrderQuantity = entity.RecommendedOrderQuantity,
+                IgnoreSalesOrdersForMrp = entity.IgnoreSalesOrdersForMrp,
                 Details = this.BuildDetails(entity, runWeekNumber),
                 Links = this.BuildHeaderLinks(entity, recommendedOrderDate).ToArray()
             };
