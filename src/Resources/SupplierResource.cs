@@ -99,5 +99,7 @@
         public string Country { get; set; }
 
         public AddressResource OrderAddress { get; set; }
+
+        public bool ReceivesPurchaseOrderReminders { get; set; }
     }
 }

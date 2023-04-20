@@ -54,5 +54,8 @@
 
         IResult<IEnumerable<ChangeRequestResource>> SearchChangeRequests(
             string searchTerm, bool? outstanding, int? lastMonths, IEnumerable<string> privileges = null);
+
+        IResult<ChangeRequestResource> AddAndReplace(
+            ChangeRequestResource resource, int createdBy, IEnumerable<string> privileges = null);
     }
 }

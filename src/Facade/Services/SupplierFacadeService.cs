@@ -150,7 +150,8 @@
                                                                                       }
                                                                           }),
                            Group = resource.GroupId.HasValue 
-                                       ? new SupplierGroup { Id = (int)resource.GroupId } : null
+                                       ? new SupplierGroup { Id = (int)resource.GroupId } : null,
+                           ReceivesOrderReminders = resource.ReceivesPurchaseOrderReminders ? "Y" : "N"
                         };
          
             return supplier;

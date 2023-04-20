@@ -23,6 +23,8 @@
 
         protected IRepository<LinnWeek, int> WeekRepository { get; private set; }
 
+        protected IRepository<CircuitBoard, string> BoardRepository { get; set; }
+
         protected IBomPack BomPack { get; private set; }
 
         protected IPcasPack PcasPack { get; private set; }
@@ -37,6 +39,7 @@
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
             this.WeekRepository = Substitute.For<IRepository<LinnWeek, int>>();
+            this.BoardRepository = Substitute.For<IRepository<CircuitBoard, string>>();
             this.BomPack = Substitute.For<IBomPack>();
             this.PcasPack = Substitute.For<IPcasPack>();
             this.BomChangeService = Substitute.For<IBomChangeService>();
@@ -48,7 +51,8 @@
                 this.WeekRepository,
                 this.BomPack,
                 this.PcasPack,
-                this.BomChangeService);
+                this.BomChangeService,
+                this.BoardRepository);
         }
     }
 }

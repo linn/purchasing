@@ -89,6 +89,7 @@
                                entity.OrderAddress != null
                                    ? (AddressResource)this.addressResourceBuilder.Build(entity.OrderAddress, new List<string>())
                                    : null,
+                           ReceivesPurchaseOrderReminders = entity.ReceivesOrderReminders == "Y",
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }

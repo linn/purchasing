@@ -10,7 +10,8 @@ import {
     collectionSelectorHelpers,
     Dropdown,
     Typeahead,
-    Loading
+    Loading,
+    CheckboxWithLabel
 } from '@linn-it/linn-form-components-library';
 import suppliersActions from '../../../actions/suppliersActions';
 import supplierGroupsActions from '../../../actions/supplierGroupsActions';
@@ -29,7 +30,8 @@ function PurchTab({
     holdLink,
     openHoldDialog,
     bulkUpdateLeadTimesUrl,
-    groupId
+    groupId,
+    receivesPurchaseOrderReminders
 }) {
     const reduxDispatch = useDispatch();
 
@@ -187,7 +189,18 @@ function PurchTab({
                     allowNoValue
                 />
             </Grid>
-            <Grid item xs={8} />
+            <Grid item xs={12}>
+                <CheckboxWithLabel
+                    label="Supplier Receives Purchase Order Reminder Emails"
+                    checked={receivesPurchaseOrderReminders}
+                    onChange={() =>
+                        handleFieldChange(
+                            'receivesPurchaseOrderReminders',
+                            !receivesPurchaseOrderReminders
+                        )
+                    }
+                />
+            </Grid>
             <Grid item xs={3}>
                 <InputField
                     fullWidth
@@ -241,7 +254,8 @@ PurchTab.propTypes = {
     holdLink: PropTypes.string,
     openHoldDialog: PropTypes.func.isRequired,
     bulkUpdateLeadTimesUrl: PropTypes.string,
-    groupId: PropTypes.number
+    groupId: PropTypes.number,
+    receivesPurchaseOrderReminders: PropTypes.bool.isRequired
 };
 
 PurchTab.defaultProps = {

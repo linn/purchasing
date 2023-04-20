@@ -160,5 +160,139 @@
                 connection.Close();
             }
         }
+
+        public void ReplacePartWith(
+            string boardCode,
+            string revisionCode,
+            int layoutSeq,
+            int versionNumber,
+            int documentNumber,
+            string changeState,
+            int enteredBy,
+            string cref,
+            string partNumber,
+            string newPartNumber,
+            decimal? newQty,
+            string newAsst)
+        {
+            /*
+             PROCEDURE REPLACE_PART_WITH	  (p_board_code in varchar2,
+                                                                     p_revision_code in varchar2,
+                                                                     p_layout_seq in number,
+                                                                     p_version_number in number,
+                                       p_document_type in varchar2,
+
+                                       p_document_number in number,
+
+                                       p_change_State in varchar2,
+
+                                       p_entered_by in number,
+                                       p_cref in varchar2,
+                                       p_part_number in varchar2,
+                                       p_new_part_number in varchar2,
+                                       p_new_qty in number,
+                                       p_new_asst in varchar2);
+             */
+
+            using (var connection = this.databaseService.GetConnection())
+            {
+                connection.Open();
+                var cmd = new OracleCommand("pcas_pack.REPLACE_PART_WITH", connection)
+                              {
+                                  CommandType = CommandType.StoredProcedure
+                              };
+
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_board_code", OracleDbType.Varchar2)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = boardCode
+                        });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_revision_code", OracleDbType.Varchar2)
+                        {
+                            Direction = ParameterDirection.Input, Value = revisionCode
+                    });
+
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_layout_seq", OracleDbType.Int32)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = layoutSeq
+                        });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_version_number", OracleDbType.Int32)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = versionNumber
+                        });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_document_type", OracleDbType.Varchar2)
+                        {
+                            Direction = ParameterDirection.Input, Value = "CRF"
+                        });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_document_number", OracleDbType.Int32)
+                        {
+                            Direction = ParameterDirection.Input, Value = documentNumber
+                        });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_change_state", OracleDbType.Varchar2)
+                        {
+                            Direction = ParameterDirection.Input, Value = changeState
+                        });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_entered_by", OracleDbType.Int32)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = enteredBy
+                        });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_cref", OracleDbType.Varchar2)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = cref
+                        });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_part_number", OracleDbType.Varchar2)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = partNumber
+                        });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_new_part_number", OracleDbType.Varchar2)
+                        {
+                            Direction = ParameterDirection.Input, Value = newPartNumber
+                        });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_new_qty", OracleDbType.Decimal)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = newQty
+                        });
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_new_asst", OracleDbType.Varchar2)
+                        {
+                            Direction = ParameterDirection.Input,
+                            Value = newAsst
+                        });
+
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
     }
 }

@@ -369,6 +369,10 @@ function Supplier({ creating }) {
                                                     }
                                                     bulkUpdateLeadTimesUrl={bulkUpdateLeadTimesUrl}
                                                     groupId={state.supplier.groupId}
+                                                    receivesPurchaseOrderReminders={
+                                                        state.supplier
+                                                            .receivesPurchaseOrderReminders
+                                                    }
                                                 />
                                             </Box>
                                         )}
