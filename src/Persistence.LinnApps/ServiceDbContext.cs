@@ -1544,6 +1544,7 @@
             entity.Property(e => e.StockCategoryName).HasColumnName("STOCK_CATEGORY_NAME").HasColumnType("VARCHAR2").HasMaxLength(20);
             entity.Property(e => e.RecommendedOrderQuantity).HasColumnName("RECOM_PURCH_ORDER_QTY");
             entity.Property(e => e.RecommendedOrderDate).HasColumnName("RECOM_PURCH_ORDER_DATE");
+            entity.Property(e => e.IgnoreSalesOrdersForMrp).HasColumnName("IGNORE_SALES_ORDERS_FOR_MRP").HasMaxLength(1);
             entity.HasMany(s => s.MrDetails).WithOne().HasForeignKey(c => new { c.JobRef, c.PartNumber });
         }
 
