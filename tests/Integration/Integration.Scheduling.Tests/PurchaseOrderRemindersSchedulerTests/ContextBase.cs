@@ -164,6 +164,27 @@
                                                                                   }
                                                                           }
                                                                   }
+                                                          },
+                                                      new PurchaseOrderDelivery
+                                                          {
+                                                              OrderNumber = 789,
+                                                              OrderLine = 5,
+                                                              DeliverySeq = 1,
+                                                              QuantityOutstanding = 1,
+                                                              DateAdvised = 10.March(2023),
+                                                              PurchaseOrderDetail = new PurchaseOrderDetail
+                                                                  {
+                                                                      PurchaseOrder = new PurchaseOrder
+                                                                          {
+                                                                              OrderMethodName = "MANUAL",
+                                                                              SupplierId = 4,
+                                                                              Cancelled = "Y",
+                                                                              Supplier = new Supplier
+                                                                                  {
+                                                                                      ReceivesOrderReminders = "Y"
+                                                                                  }
+                                                                          }
+                                                                  }
                                                           }
                                                   }.AsQueryable());
             IServiceCollection services = new ServiceCollection();

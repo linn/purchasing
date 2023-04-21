@@ -54,6 +54,11 @@
             this.Dispatcher.DidNotReceive().Dispatch(
                 Arg.Is<EmailPurchaseOrderReminderMessageResource>(
                     x => x.Deliveries.Any(d => d.OrderNumber == 5)));
+
+            // since this order is cancelled 
+            this.Dispatcher.DidNotReceive().Dispatch(
+                Arg.Is<EmailPurchaseOrderReminderMessageResource>(
+                    x => x.Deliveries.Any(d => d.OrderNumber == 123)));
         }
     }
 }
