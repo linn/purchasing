@@ -52,6 +52,7 @@
 
                     var deliveries = inDateRange.Where(
                         x => x.PurchaseOrderDetail.PurchaseOrder.OrderMethodName == "MANUAL"
+                             && x.PurchaseOrderDetail.PurchaseOrder.Cancelled != "Y"
                              && x.ReminderSent != "Y"
                              && x.PurchaseOrderDetail.PurchaseOrder.Supplier.ReceivesOrderReminders == "Y"
                              && x.DateAdvised.HasValue && x.QuantityOutstanding.GetValueOrDefault() > 0).ToList();
@@ -74,8 +75,7 @@
                                                                     OrderLine = d.OrderLine,
                                                                     DeliverySequence = d.DeliverySeq
                                                                 }),
-                                                            Timestamp = DateTime.Now,
-                                                            Test = true
+                                                            Timestamp = DateTime.Now
                                                          });
                         }
                     }
