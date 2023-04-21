@@ -34,7 +34,6 @@
             this.Dispatcher.Received().Dispatch(Arg.Is<EmailPurchaseOrderReminderMessageResource>(x =>
                 x.Deliveries.Count() == 2 && x.Deliveries.All(d => d.OrderNumber == 1 || d.OrderNumber == 12345)));
 
-
             // since this delivery is not advised to arrive in two days
             this.Dispatcher.DidNotReceive().Dispatch(
                 Arg.Is<EmailPurchaseOrderReminderMessageResource>(
@@ -58,7 +57,7 @@
             // since this order is cancelled 
             this.Dispatcher.DidNotReceive().Dispatch(
                 Arg.Is<EmailPurchaseOrderReminderMessageResource>(
-                    x => x.Deliveries.Any(d => d.OrderNumber == 123)));
+                    x => x.Deliveries.Any(d => d.OrderNumber == 789)));
         }
     }
 }
