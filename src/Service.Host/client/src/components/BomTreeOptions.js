@@ -29,7 +29,7 @@ export default function BomTreeOptions() {
     const [explode, setExplode] = useState(0);
     const [requirementOnly, setRequirementOnly] = useState(true);
     const [showChanges, setShowChanges] = useState(false);
-    const [whereUsed, setWhereUsed] = useState(false);
+    const [whereUsed, setWhereUsed] = useState(true);
 
     const dispatch = useDispatch();
 
