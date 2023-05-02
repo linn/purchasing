@@ -648,6 +648,7 @@
             s.Property(e => e.Comments).HasColumnName("COMMENTS");
             s.HasOne(e => e.Person).WithMany().HasForeignKey("PERSON_ID");
             s.Property(e => e.DateCreated).HasColumnName("DATE_CREATED");
+            s.Property(e => e.DateInvalid).HasColumnName("DATE_INVALID");
         }
 
         private void BuildPersons(ModelBuilder builder)

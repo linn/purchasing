@@ -189,6 +189,13 @@ function Supplier({ creating }) {
         });
         setNewCounter(c => c + 1);
     };
+    const deleteContacts = ids => {
+        setEditStatus('edit');
+        dispatch({
+            type: 'deleteContacts',
+            payload: ids
+        });
+    };
     const updateContact = (contactId, propertyName, newValue) => {
         setEditStatus('edit');
         if (propertyName === 'isMainOrderContact' || propertyName === 'isMainInvoiceContact') {
@@ -439,6 +446,7 @@ function Supplier({ creating }) {
                                                     contacts={state.supplier.supplierContacts}
                                                     updateContact={updateContact}
                                                     addContact={addContact}
+                                                    deleteContacts={deleteContacts}
                                                 />
                                             </Box>
                                         )}

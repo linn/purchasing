@@ -5,7 +5,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
 import { Button } from '@mui/material';
 
-function ContactTab({ contacts, updateContact, addContact }) {
+function ContactTab({ contacts, updateContact, addContact, deleteContacts }) {
     const useStyles = makeStyles(() => ({
         gap: {
             marginTop: '20px'
@@ -64,6 +64,11 @@ function ContactTab({ contacts, updateContact, addContact }) {
         },
         [updateContact]
     );
+    const [selectedRows, setSelectedRows] = useState([]);
+
+    const handleSelectionModelChange = model => {
+        setSelectedRows(model);
+    };
 
     return (
         <Grid container spacing={3}>
@@ -72,6 +77,8 @@ function ContactTab({ contacts, updateContact, addContact }) {
                     className={classes.gap}
                     rows={contacts}
                     columns={columns}
+                    checkboxSelection
+                    onSelectionModelChange={handleSelectionModelChange}
                     rowHeight={34}
                     autoHeight
                     loading={false}
@@ -82,6 +89,13 @@ function ContactTab({ contacts, updateContact, addContact }) {
             </Grid>
             <Grid item xs={3}>
                 <Button onClick={addContact}>Add</Button>
+                <Button
+                    color="secondary"
+                    onClick={() => deleteContacts(selectedRows)}
+                    disabled={!selectedRows?.length}
+                >
+                    Delete Selected
+                </Button>
             </Grid>
         </Grid>
     );
@@ -90,7 +104,8 @@ function ContactTab({ contacts, updateContact, addContact }) {
 ContactTab.propTypes = {
     contacts: PropTypes.arrayOf(PropTypes.shape({})),
     updateContact: PropTypes.func.isRequired,
-    addContact: PropTypes.func.isRequired
+    addContact: PropTypes.func.isRequired,
+    deleteContacts: PropTypes.func.isRequired
 };
 
 ContactTab.defaultProps = {
