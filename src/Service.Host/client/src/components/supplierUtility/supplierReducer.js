@@ -63,6 +63,16 @@ export default function partReducer(state = initialState, action) {
                         : [{ ...action.payload, isMainOrderContact, isMainInvoiceContact }]
                 }
             };
+        case 'deleteContacts':
+            return {
+                ...state,
+                supplier: {
+                    ...state.supplier,
+                    supplierContacts: state.supplier?.supplierContacts.filter(
+                        x => !action.payload.includes(x.id)
+                    )
+                }
+            };
         default:
             return state;
     }

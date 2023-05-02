@@ -368,10 +368,21 @@
 
             var result = new List<SupplierContact>();
 
-            foreach (var supplierContact in supplierContacts)
+            var currentContacts =
+                this.supplierContactRepository.FilterBy(x => x.SupplierId == supplierContacts.First().SupplierId);
+
+            var enumerable = supplierContacts.ToList();
+            foreach (var contact in currentContacts)
+            {
+                if (!enumerable.Select(c => c.ContactId).Contains(contact.ContactId))
+                {
+                    this.supplierContactRepository.Remove(this.supplierContactRepository.FindById(contact.ContactId));
+                }
+            }
+
+            foreach (var supplierContact in enumerable)
             {
                 var existingSupplierContact = this.supplierContactRepository.FindById(supplierContact.ContactId);
-
                 if (existingSupplierContact != null)
                 {
                     existingSupplierContact.IsMainInvoiceContact = supplierContact.IsMainInvoiceContact;
