@@ -376,7 +376,8 @@
             {
                 if (!enumerable.Select(c => c.ContactId).Contains(contact.ContactId))
                 {
-                    this.supplierContactRepository.Remove(this.supplierContactRepository.FindById(contact.ContactId));
+                    var toInvalidate = this.supplierContactRepository.FindById(contact.ContactId);
+                    toInvalidate.DateInvalid = DateTime.Today;
                 }
             }
 

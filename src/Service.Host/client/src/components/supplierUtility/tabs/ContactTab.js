@@ -89,7 +89,11 @@ function ContactTab({ contacts, updateContact, addContact, deleteContacts }) {
             </Grid>
             <Grid item xs={3}>
                 <Button onClick={addContact}>Add</Button>
-                <Button color="secondary" onClick={() => deleteContacts(selectedRows)}>
+                <Button
+                    color="secondary"
+                    onClick={() => deleteContacts(selectedRows)}
+                    disabled={!selectedRows?.length}
+                >
                     Delete Selected
                 </Button>
             </Grid>
