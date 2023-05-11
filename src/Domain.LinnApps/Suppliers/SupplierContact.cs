@@ -25,5 +25,7 @@
         public Person Person { get; set; }
 
         public DateTime? DateCreated { get; set; }
+
+        public DateTime? DateInvalid { get; set; }
     }
 }
