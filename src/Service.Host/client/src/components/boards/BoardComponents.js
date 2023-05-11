@@ -640,6 +640,17 @@ function BoardComponents() {
                         >
                             Load File
                         </Button>
+                        {crfNumber && (
+                            <Link
+                                style={{ marginTop: '5px' }}
+                                component={RouterLink}
+                                variant="button"
+                                disabled={!crfNumber || !editingAllowed}
+                                to={`/purchasing/change-requests/${crfNumber}`}
+                            >
+                                CRF {crfNumber || null}
+                            </Link>
+                        )}
                     </Stack>
                 </Grid>
                 <Grid item xs={4}>
