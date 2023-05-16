@@ -19,6 +19,8 @@ import Email from '@mui/icons-material/Email';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import Link from '@mui/material/Link';
+import Stack from '@mui/material/Stack';
 import moment from 'moment';
 import Send from '@mui/icons-material/Send';
 import { makeStyles } from '@mui/styles';
@@ -791,14 +793,29 @@ function PurchaseOrderUtility({ creating }) {
                                     </div>
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <Button
-                                        className={classes.buttonMarginTop}
-                                        aria-label="Pl Inv/Rec"
-                                        onClick={() => setInvRecDialogOpen(true)}
-                                        disabled={creating}
-                                    >
-                                        Pl Inv/Rec
-                                    </Button>
+                                    <Stack direction="row" spacing={2}>
+                                        <Tooltip title="View invoices in pop-up">
+                                            <Button
+                                                className={classes.buttonMarginTop}
+                                                aria-label="Pl Inv/Rec"
+                                                onClick={() => setInvRecDialogOpen(true)}
+                                                disabled={creating}
+                                            >
+                                                Inv PopUp
+                                            </Button>
+                                        </Tooltip>
+                                        {order?.orderNumber && (
+                                            <Tooltip title="Leave orders screen and open inv post">
+                                                <Link
+                                                    variant="body1"
+                                                    href={`${config.proxyRoot}/ledgers/purchase/inv-post?orderNumber=${order?.orderNumber}`}
+                                                    style={{ marginTop: '35px' }}
+                                                >
+                                                    Invoices
+                                                </Link>
+                                            </Tooltip>
+                                        )}
+                                    </Stack>
                                 </Grid>
                                 <Grid item xs={2}>
                                     <InputField
