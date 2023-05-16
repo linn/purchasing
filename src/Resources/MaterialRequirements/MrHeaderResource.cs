@@ -58,6 +58,8 @@
 
         public string RecommendedOrderDate { get; set; }
 
+        public string IgnoreSalesOrdersForMrp { get; set; }
+
         public IEnumerable<MrDetailResource> Details { get; set; }
     }
 }

@@ -869,6 +869,15 @@ function MaterialRequirementsReport() {
                                         <Typography variant="body2">
                                             Our Units: {selectedItem.ourUnits}
                                         </Typography>
+                                        {selectedItem.ignoreSalesOrdersForMrp === 'Y' && (
+                                            <Typography
+                                                variant="body2"
+                                                className={classes.highlightText}
+                                            >
+                                                N.B. Sales orders are excluded from MRP calculations
+                                                for this part.
+                                            </Typography>
+                                        )}
                                     </Stack>
                                 </Grid>
                                 <Grid item xs={3}>

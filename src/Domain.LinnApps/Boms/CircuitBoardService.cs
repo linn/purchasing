@@ -38,14 +38,6 @@
 
             var revision = board.Layouts.SelectMany(a => a.Revisions).First(r => r.RevisionCode == changeRequest.RevisionCode);
 
-            if (componentsToRemove != null)
-            {
-                foreach (var boardComponent in componentsToRemove)
-                {
-                    this.RemoveComponent(board, revision, boardComponent, pcasChange);
-                }
-            }
-
             if (componentsToAdd != null)
             {
                 foreach (var boardComponent in componentsToAdd)
@@ -63,6 +55,14 @@
                     }
 
                     this.AddComponent(board, revision, boardComponent, part, pcasChange);
+                }
+            }
+
+            if (componentsToRemove != null)
+            {
+                foreach (var boardComponent in componentsToRemove)
+                {
+                    this.RemoveComponent(board, revision, boardComponent, pcasChange);
                 }
             }
 

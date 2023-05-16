@@ -1,7 +1,11 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Mailers
 {
+    using System.Collections.Generic;
+
+    using Linn.Purchasing.Domain.LinnApps.Keys;
+
     public interface IPurchaseOrderRemindersMailer
     {
-        void SendDeliveryReminder(int orderNumber, int orderLine, int deliverySeq, bool test = false);
+        void SendDeliveryReminder(IEnumerable<PurchaseOrderDeliveryKey> deliveryKeys, bool test = false);
     }
 }

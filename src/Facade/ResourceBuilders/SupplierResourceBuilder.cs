@@ -81,7 +81,7 @@
                            Notes = entity.Notes,
                            OrganisationId = entity.OrganisationId,
                            SupplierContacts =
-                               entity.SupplierContacts?.Select(
+                               entity.SupplierContacts?.Where(c => !c.DateInvalid.HasValue).Select(
                                    c => (SupplierContactResource)this.supplierContactResourceBuilder.Build(c, null)),
                            GroupId = entity.Group?.Id,
                            Country = entity.Country,
@@ -89,6 +89,7 @@
                                entity.OrderAddress != null
                                    ? (AddressResource)this.addressResourceBuilder.Build(entity.OrderAddress, new List<string>())
                                    : null,
+                           ReceivesPurchaseOrderReminders = entity.ReceivesOrderReminders == "Y",
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }
