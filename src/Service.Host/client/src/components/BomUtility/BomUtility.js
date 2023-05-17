@@ -85,6 +85,9 @@ function BomUtility() {
                     `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${false}&treeType=${'bom'}`
                 )
             );
+            reduxDispatch(
+                changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True')
+            );
         }
     }, [bomName, reduxDispatch, bomTree]);
 
