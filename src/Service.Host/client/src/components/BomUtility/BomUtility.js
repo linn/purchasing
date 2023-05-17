@@ -58,14 +58,6 @@ function BomUtility() {
     const currentIndex = resultsArray?.indexOf(bomName);
     const nextResult = resultsArray?.[currentIndex + 1];
     const prevResult = resultsArray?.[currentIndex - 1];
-    useEffect(() => {
-        reduxDispatch(
-            bomTreeActions.fetchByHref(
-                `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${false}&treeType=${'bom'}`
-            )
-        );
-    }, [bomName, reduxDispatch]);
-
     const [crNumber, setCrNumber] = useState(changeRequest === 'null' ? null : changeRequest);
     const [changeRequests, changeRequestsLoading] = useInitialise(
         () => changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True'),
@@ -85,6 +77,16 @@ function BomUtility() {
         'item',
         bomTreeActions.clearErrorsForItem
     );
+
+    useEffect(() => {
+        if (bomTree && bomTree.name !== bomName) {
+            reduxDispatch(
+                bomTreeActions.fetchByHref(
+                    `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${false}&treeType=${'bom'}`
+                )
+            );
+        }
+    }, [bomName, reduxDispatch, bomTree]);
 
     const [treeView, setTreeView] = useState();
 
