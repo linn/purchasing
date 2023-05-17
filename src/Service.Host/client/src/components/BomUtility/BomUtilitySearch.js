@@ -49,7 +49,7 @@ function BomUtilitySearch() {
                             x => x.bomType === 'A' || x.bomType === 'P'
                         )}
                         loading={searchLoading}
-                        priorityFunction="closestMatchesFirst"
+                        priorityFunction={null}
                         onResultSelect={res =>
                             history.push(
                                 `/purchasing/boms/bom-utility?bomName=${
