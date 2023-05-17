@@ -52,7 +52,13 @@ function BomUtilitySearch() {
                         priorityFunction="closestMatchesFirst"
                         onResultSelect={res =>
                             history.push(
-                                `/purchasing/boms/bom-utility?bomName=${res.partNumber}&searchResults=${searchResultsQueryString}`
+                                `/purchasing/boms/bom-utility?bomName=${
+                                    res.partNumber
+                                }&searchResults=${
+                                    searchResultsQueryString?.length > 1
+                                        ? searchResultsQueryString
+                                        : ''
+                                }`
                             )
                         }
                         clearSearch={clearSearch}
