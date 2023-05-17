@@ -899,7 +899,7 @@ function BomUtility() {
                             <Grid item xs={2}>
                                 <Button
                                     variant="outlined"
-                                    startIcon={<ArrowRightIcon />}
+                                    endIcon={<ArrowRightIcon />}
                                     onClick={() =>
                                         history.push(
                                             `/purchasing/boms/bom-utility?bomName=${nextResult}&searchResults=${searchResults}`
