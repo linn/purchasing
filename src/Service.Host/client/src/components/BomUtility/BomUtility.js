@@ -39,10 +39,11 @@ import {
 } from '../../itemTypes';
 import changeRequestsActions from '../../actions/changeRequestsActions';
 import bomTreeActions from '../../actions/bomTreeActions';
-import useInitialise from '../../hooks/useInitialise';
 import partsActions from '../../actions/partsActions';
 import subAssemblyActions from '../../actions/subAssemblyActions';
 import useExpandNodesWithChildren from '../../hooks/useExpandNodesWithChildren';
+import usePreviousNextNavigation from '../../hooks/usePreviousNextNavigation';
+import PrevNextButtons from '../PrevNextButtons';
 
 // unique id generator
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -52,12 +53,15 @@ function BomUtility() {
     const { search } = useLocation();
     const { bomName, changeRequest } = queryString.parse(search);
 
-    const [crNumber, setCrNumber] = useState(changeRequest === 'null' ? null : changeRequest);
-    const [changeRequests, changeRequestsLoading] = useInitialise(
-        () => changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True'),
-        changeRequestsItemType.item,
-        'searchItems'
+    const [goPrev, goNext, prevResult, nextResult] = usePreviousNextNavigation(
+        (id, searchResultsString) =>
+            `/purchasing/boms/bom-utility?bomName=${id}&searchResults=${searchResultsString}`,
+        'query',
+        'bomName'
     );
+
+    const [crNumber, setCrNumber] = useState(changeRequest === 'null' ? null : changeRequest);
+
     const [showChanges, setShowChanges] = useState(true);
     const [disableChangesButton, setDisableChangesButton] = useState(false);
     const [searchBomTerm, setSearchBomTerm] = useState();
@@ -65,12 +69,26 @@ function BomUtility() {
     const url = changes =>
         `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${changes}&treeType=${'bom'}`;
 
-    const [bomTree, bomTreeLoading] = useInitialise(
-        () => bomTreeActions.fetchByHref(url(showChanges)),
-        bomTreeItemType.item,
-        'item',
-        bomTreeActions.clearErrorsForItem
+    const bomTree = useSelector(state => state[bomTreeItemType.item].item);
+    const bomTreeLoading = useSelector(state => state[bomTreeItemType.item].loading);
+
+    const changeRequests = useSelector(state => state[changeRequestsItemType.item].searchItems);
+    const changeRequestsLoading = useSelector(
+        state => state[changeRequestsItemType.item].searchLoading
     );
+
+    useEffect(() => {
+        if (bomTree?.name !== bomName) {
+            reduxDispatch(
+                bomTreeActions.fetchByHref(
+                    `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${showChanges}&treeType=${'bom'}`
+                )
+            );
+            reduxDispatch(
+                changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True')
+            );
+        }
+    }, [bomName, reduxDispatch, bomTree, showChanges]);
 
     const [treeView, setTreeView] = useState();
 
@@ -858,6 +876,12 @@ function BomUtility() {
                     onClose={() => reduxDispatch(bomTreeActions.setSnackbarVisible(false))}
                     message="Save Successful"
                     timeOut={3000}
+                />
+                <PrevNextButtons
+                    goPrev={goPrev}
+                    goNext={goNext}
+                    nextResult={nextResult}
+                    prevResult={prevResult}
                 />
                 {changeRequestsLoading ? (
                     <Grid item xs={12}>
