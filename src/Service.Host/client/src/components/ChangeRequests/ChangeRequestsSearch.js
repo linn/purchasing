@@ -54,7 +54,10 @@ function ChangeRequestSearch() {
 
     const getUrl = item => {
         const base = utilities.getSelfHref(item);
-        const searchResultsQueryString = searchRequestsResults?.map(s => s.documentNumber).join();
+        const searchResultsQueryString = searchRequestsResults
+            ?.map(s => s.documentNumber)
+            .reverse()
+            .join();
         if (!searchRequestsResults?.length) {
             return base;
         }
@@ -230,7 +233,7 @@ function ChangeRequestSearch() {
                         <DataGrid
                             getRowId={row => row.documentNumber}
                             className={classes.gap}
-                            rows={searchRequestsResults?.reverse()}
+                            rows={searchRequestsResults}
                             columns={columns}
                             rowHeight={34}
                             autoHeight
