@@ -52,17 +52,22 @@ function ChangeRequestSearch() {
         dispatch(changeRequestsActions.clearSearch());
     }, [dispatch]);
 
+    const getUrl = item => {
+        const base = utilities.getSelfHref(item);
+        const searchResultsQueryString = searchRequestsResults?.map(s => s.documentNumber).join();
+        if (!searchRequestsResults?.length) {
+            return base;
+        }
+        return `${base}?searchResults=${searchResultsQueryString}`;
+    };
+
     const columns = [
         {
             field: 'documentNumber',
             headerName: 'CRF',
             width: 100,
             renderCell: params => (
-                <Link
-                    className={classes.a}
-                    component={RouterLink}
-                    to={utilities.getSelfHref(params.row)}
-                >
+                <Link className={classes.a} component={RouterLink} to={getUrl(params.row)}>
                     {params.row.documentNumber}
                 </Link>
             )

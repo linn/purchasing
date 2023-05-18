@@ -54,8 +54,10 @@ function BomUtility() {
     const { bomName, changeRequest } = queryString.parse(search);
 
     const [goPrev, goNext, prevResult, nextResult] = usePreviousNextNavigation(
-        'bomName',
-        '/purchasing/boms/bom-utility'
+        (id, searchResultsString) =>
+            `/purchasing/boms/bom-utility?bomName=${id}&searchResults=${searchResultsString}`,
+        'query',
+        'bomName'
     );
 
     const [crNumber, setCrNumber] = useState(changeRequest === 'null' ? null : changeRequest);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
@@ -21,15 +21,23 @@ import MainTab from './Tabs/MainTab';
 import BomChangesTab from './Tabs/BomChangesTab';
 import PcasChangesTab from './Tabs/PcasChangesTab';
 import history from '../../history';
-import useInitialise from '../../hooks/useInitialise';
 import { changeRequest, changeRequestStatusChange } from '../../itemTypes';
+import usePreviousNextNavigation from '../../hooks/usePreviousNextNavigation';
+import PrevNextButtons from '../PrevNextButtons';
 
 function ChangeRequest() {
     const { id } = useParams();
-
     const reduxDispatch = useDispatch();
 
-    const [item, loading] = useInitialise(() => changeRequestActions.fetch(id), changeRequest.item);
+    const item = useSelector(state => state[changeRequest.item].item);
+    const loading = useSelector(state => state[changeRequest.item].loading);
+
+    useEffect(() => {
+        if (!item || (item?.documentNumber && id.toString() !== item.documentNumber.toString())) {
+            reduxDispatch(changeRequestActions.fetch(id));
+        }
+    }, [id, reduxDispatch, item]);
+
     const statusChangeLoading = useSelector(reduxState =>
         itemSelectorHelpers.getItemLoading(reduxState[changeRequestStatusChange.item])
     );
@@ -223,6 +231,10 @@ function ChangeRequest() {
               ]
             : [];
     };
+    const [goPrev, goNext, prevResult, nextResult] = usePreviousNextNavigation(
+        (docNo, searchResultsString) =>
+            `/purchasing/change-requests/${docNo}?searchResults=${searchResultsString}`
+    );
 
     return (
         <Page history={history}>
@@ -243,6 +255,12 @@ function ChangeRequest() {
                             </Grid>
                         </>
                     )}
+                    <PrevNextButtons
+                        goPrev={goPrev}
+                        goNext={goNext}
+                        nextResult={nextResult}
+                        prevResult={prevResult}
+                    />
                     <Grid item xs={12}>
                         <Typography variant="h6">Change Request {id}</Typography>
                     </Grid>
