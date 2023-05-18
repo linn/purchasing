@@ -10,7 +10,7 @@ import { makeStyles } from '@mui/styles';
 import { Search, collectionSelectorHelpers } from '@linn-it/linn-form-components-library';
 import partsActions from '../../actions/partsActions';
 
-function BomChangeAdd({ addBoms, addAddBomsItem, deleteAddBomsItem }) {
+function BomChangeAdd({ addBoms, addAddBomsItem, deleteAddBomsItem, defaultQty, setAddBoms }) {
     const useStyles = makeStyles(() => ({
         buttonMarginTop: {
             marginTop: '12px'
@@ -19,6 +19,18 @@ function BomChangeAdd({ addBoms, addAddBomsItem, deleteAddBomsItem }) {
     const classes = useStyles();
 
     const dispatch = useDispatch();
+
+    const handleEditRowsModelChange = model => {
+        /* you can only edit qty */
+        if (model && Object.keys(model)[0]) {
+            const id = Object.keys(model)[0];
+            if (model && model[id] && model[id].qty) {
+                const newValue = parseInt(model[id].qty.value, 10);
+                const newAddBoms = addBoms.map(x => (x.name === id ? { ...x, qty: newValue } : x));
+                setAddBoms(newAddBoms);
+            }
+        }
+    };
 
     const [bomName, setBomName] = useState('');
     const [selectedBom, setSelectedBom] = useState('');
@@ -29,7 +41,8 @@ function BomChangeAdd({ addBoms, addAddBomsItem, deleteAddBomsItem }) {
         id: c.id,
         name: c.partNumber,
         partNumber: c.partNumber,
-        description: c.description
+        description: c.description,
+        qty: defaultQty
     }));
 
     const partsSearchLoading = useSelector(state =>
@@ -39,6 +52,12 @@ function BomChangeAdd({ addBoms, addAddBomsItem, deleteAddBomsItem }) {
     const bomsColumns = [
         { field: 'partNumber', headerName: 'Bom', minWidth: 140 },
         { field: 'description', headerName: 'Description', minWidth: 300 },
+        {
+            field: 'qty',
+            headerName: 'Qty',
+            width: 150,
+            editable: true
+        },
         {
             field: 'delete',
             headerName: ' ',
@@ -75,6 +94,7 @@ function BomChangeAdd({ addBoms, addAddBomsItem, deleteAddBomsItem }) {
                         density="compact"
                         rowHeight={34}
                         headerHeight={34}
+                        onEditRowsModelChange={handleEditRowsModelChange}
                         autoHeight
                         hideFooter
                     />
@@ -83,8 +103,7 @@ function BomChangeAdd({ addBoms, addAddBomsItem, deleteAddBomsItem }) {
                 )}
                 <Search
                     propertyName="bomToAdd"
-                    label="Add"
-                    helperText="use Enter to search"
+                    helperText="use Enter to search for bom to add"
                     handleValueChange={(_, newVal) => setBomName(newVal)}
                     onResultSelect={newValue => {
                         setSelectedBom(newValue);
@@ -114,13 +133,17 @@ function BomChangeAdd({ addBoms, addAddBomsItem, deleteAddBomsItem }) {
 BomChangeAdd.propTypes = {
     addBoms: PropTypes.arrayOf(PropTypes.shape({})),
     addAddBomsItem: PropTypes.func,
-    deleteAddBomsItem: PropTypes.func
+    deleteAddBomsItem: PropTypes.func,
+    defaultQty: PropTypes.number,
+    setAddBoms: PropTypes.func
 };
 
 BomChangeAdd.defaultProps = {
     addBoms: [],
     addAddBomsItem: null,
-    deleteAddBomsItem: null
+    deleteAddBomsItem: null,
+    defaultQty: 1,
+    setAddBoms: null
 };
 
 export default BomChangeAdd;

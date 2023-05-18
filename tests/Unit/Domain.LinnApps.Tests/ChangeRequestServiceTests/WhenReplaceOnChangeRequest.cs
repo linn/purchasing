@@ -33,7 +33,7 @@
                 .Returns(true);
 
             var detailIds = new List<int> { 1, 2 };
-            var addToBoms = new List<string> { "TEST" };
+            var addToBoms = new List<(string bomName, decimal qty)> { ("TEST", 1) };
             this.result = this.Sut.Replace(1, 7004, false, false, null, detailIds, null, addToBoms, new List<string>());
         }
 
