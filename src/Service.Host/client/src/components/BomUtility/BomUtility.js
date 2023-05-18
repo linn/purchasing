@@ -78,14 +78,14 @@ function BomUtility() {
         if (bomTree?.name !== bomName) {
             reduxDispatch(
                 bomTreeActions.fetchByHref(
-                    `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${false}&treeType=${'bom'}`
+                    `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${showChanges}&treeType=${'bom'}`
                 )
             );
             reduxDispatch(
                 changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True')
             );
         }
-    }, [bomName, reduxDispatch, bomTree]);
+    }, [bomName, reduxDispatch, bomTree, showChanges]);
 
     const [treeView, setTreeView] = useState();
 
