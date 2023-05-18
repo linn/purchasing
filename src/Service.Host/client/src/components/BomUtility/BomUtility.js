@@ -44,6 +44,7 @@ import bomTreeActions from '../../actions/bomTreeActions';
 import partsActions from '../../actions/partsActions';
 import subAssemblyActions from '../../actions/subAssemblyActions';
 import useExpandNodesWithChildren from '../../hooks/useExpandNodesWithChildren';
+import usePreviousNextNavigation from '../../hooks/usePreviousNextNavigation';
 
 // unique id generator
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -51,12 +52,13 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2)
 function BomUtility() {
     const reduxDispatch = useDispatch();
     const { search } = useLocation();
-    const { bomName, changeRequest, searchResults } = queryString.parse(search);
+    const { bomName, changeRequest } = queryString.parse(search);
 
-    const resultsArray = searchResults?.split(',');
-    const currentIndex = resultsArray?.indexOf(bomName);
-    const nextResult = resultsArray?.[currentIndex + 1];
-    const prevResult = resultsArray?.[currentIndex - 1];
+    const [goPrev, goNext, prevResult, nextResult] = usePreviousNextNavigation(
+        'bomName',
+        '/purchasing/boms/bom-utility'
+    );
+
     const [crNumber, setCrNumber] = useState(changeRequest === 'null' ? null : changeRequest);
 
     const [showChanges, setShowChanges] = useState(true);
@@ -874,44 +876,25 @@ function BomUtility() {
                     message="Save Successful"
                     timeOut={3000}
                 />
-                {searchResults?.length && (
-                    <>
-                        {prevResult ? (
-                            <Grid item xs={2}>
-                                <Button
-                                    variant="outlined"
-                                    startIcon={<ArrowLeftIcon />}
-                                    onClick={() =>
-                                        history.push(
-                                            `/purchasing/boms/bom-utility?bomName=${prevResult}&searchResults=${searchResults}`
-                                        )
-                                    }
-                                >
-                                    {prevResult}
-                                </Button>
-                            </Grid>
-                        ) : (
-                            <Grid itemx xs={2} />
-                        )}
-                        <Grid item xs={8} />
-                        {nextResult ? (
-                            <Grid item xs={2}>
-                                <Button
-                                    variant="outlined"
-                                    endIcon={<ArrowRightIcon />}
-                                    onClick={() =>
-                                        history.push(
-                                            `/purchasing/boms/bom-utility?bomName=${nextResult}&searchResults=${searchResults}`
-                                        )
-                                    }
-                                >
-                                    {nextResult}
-                                </Button>
-                            </Grid>
-                        ) : (
-                            <Grid item xs={2} />
-                        )}
-                    </>
+
+                {prevResult ? (
+                    <Grid item xs={2}>
+                        <Button variant="outlined" startIcon={<ArrowLeftIcon />} onClick={goPrev}>
+                            {prevResult}
+                        </Button>
+                    </Grid>
+                ) : (
+                    <Grid itemx xs={2} />
+                )}
+                <Grid item xs={8} />
+                {nextResult ? (
+                    <Grid item xs={2}>
+                        <Button variant="outlined" endIcon={<ArrowRightIcon />} onClick={goNext}>
+                            {nextResult}
+                        </Button>
+                    </Grid>
+                ) : (
+                    <Grid item xs={2} />
                 )}
 
                 {changeRequestsLoading ? (
