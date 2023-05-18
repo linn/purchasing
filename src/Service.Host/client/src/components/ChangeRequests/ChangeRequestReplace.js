@@ -109,7 +109,7 @@ function ChangeRequestReplace() {
                     newQty,
                     selectedDetailIds,
                     selectedPcasComponents,
-                    addToBoms: addBoms.map(b => b.name)
+                    addToBoms: addBoms.map(b => ({ bomName: b.name, qty: b.qty }))
                 })
             );
         }
@@ -155,7 +155,7 @@ function ChangeRequestReplace() {
                                 (!(
                                     selectedDetailIds ||
                                     selectedPcasComponents ||
-                                    (addBoms?.length > 0 && newQty)
+                                    addBoms?.length > 0
                                 ) &&
                                     !globalReplace)
                             }
@@ -245,6 +245,8 @@ function ChangeRequestReplace() {
                                 addBoms={addBoms}
                                 addAddBomsItem={addAddBomsItem}
                                 deleteAddBomsItem={deleteAddBomsItem}
+                                defaultQty={newQty || 1}
+                                setAddBoms={setAddBoms}
                             />
                         </Box>
                     )}

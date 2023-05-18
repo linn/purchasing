@@ -15,8 +15,6 @@
     {
         private Bom bom;
 
-        private BomDetail detail;
-
         private ChangeRequest request;
 
         [SetUp]
