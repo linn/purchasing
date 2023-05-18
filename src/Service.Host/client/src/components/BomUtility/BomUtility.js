@@ -27,8 +27,6 @@ import IconButton from '@mui/material/IconButton';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Menu from '@mui/material/Menu';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
@@ -45,6 +43,7 @@ import partsActions from '../../actions/partsActions';
 import subAssemblyActions from '../../actions/subAssemblyActions';
 import useExpandNodesWithChildren from '../../hooks/useExpandNodesWithChildren';
 import usePreviousNextNavigation from '../../hooks/usePreviousNextNavigation';
+import PrevNextButtons from '../PrevNextButtons';
 
 // unique id generator
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -876,27 +875,12 @@ function BomUtility() {
                     message="Save Successful"
                     timeOut={3000}
                 />
-
-                {prevResult ? (
-                    <Grid item xs={2}>
-                        <Button variant="outlined" startIcon={<ArrowLeftIcon />} onClick={goPrev}>
-                            {prevResult}
-                        </Button>
-                    </Grid>
-                ) : (
-                    <Grid itemx xs={2} />
-                )}
-                <Grid item xs={8} />
-                {nextResult ? (
-                    <Grid item xs={2}>
-                        <Button variant="outlined" endIcon={<ArrowRightIcon />} onClick={goNext}>
-                            {nextResult}
-                        </Button>
-                    </Grid>
-                ) : (
-                    <Grid item xs={2} />
-                )}
-
+                <PrevNextButtons
+                    goPrev={goPrev}
+                    goNext={goNext}
+                    nextResult={nextResult}
+                    prevResult={prevResult}
+                />
                 {changeRequestsLoading ? (
                     <Grid item xs={12}>
                         <LinearProgress />
