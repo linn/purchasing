@@ -27,6 +27,8 @@ import IconButton from '@mui/material/IconButton';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Menu from '@mui/material/Menu';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
@@ -50,8 +52,12 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2)
 function BomUtility() {
     const reduxDispatch = useDispatch();
     const { search } = useLocation();
-    const { bomName, changeRequest } = queryString.parse(search);
+    const { bomName, changeRequest, searchResults } = queryString.parse(search);
 
+    const resultsArray = searchResults?.split(',');
+    const currentIndex = resultsArray?.indexOf(bomName);
+    const nextResult = resultsArray?.[currentIndex + 1];
+    const prevResult = resultsArray?.[currentIndex - 1];
     const [crNumber, setCrNumber] = useState(changeRequest === 'null' ? null : changeRequest);
     const [changeRequests, changeRequestsLoading] = useInitialise(
         () => changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True'),
@@ -71,6 +77,19 @@ function BomUtility() {
         'item',
         bomTreeActions.clearErrorsForItem
     );
+
+    useEffect(() => {
+        if (bomTree && bomTree.name !== bomName) {
+            reduxDispatch(
+                bomTreeActions.fetchByHref(
+                    `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${false}&treeType=${'bom'}`
+                )
+            );
+            reduxDispatch(
+                changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True')
+            );
+        }
+    }, [bomName, reduxDispatch, bomTree]);
 
     const [treeView, setTreeView] = useState();
 
@@ -859,6 +878,46 @@ function BomUtility() {
                     message="Save Successful"
                     timeOut={3000}
                 />
+                {searchResults?.length && (
+                    <>
+                        {prevResult ? (
+                            <Grid item xs={2}>
+                                <Button
+                                    variant="outlined"
+                                    startIcon={<ArrowLeftIcon />}
+                                    onClick={() =>
+                                        history.push(
+                                            `/purchasing/boms/bom-utility?bomName=${prevResult}&searchResults=${searchResults}`
+                                        )
+                                    }
+                                >
+                                    {prevResult}
+                                </Button>
+                            </Grid>
+                        ) : (
+                            <Grid itemx xs={2} />
+                        )}
+                        <Grid item xs={8} />
+                        {nextResult ? (
+                            <Grid item xs={2}>
+                                <Button
+                                    variant="outlined"
+                                    endIcon={<ArrowRightIcon />}
+                                    onClick={() =>
+                                        history.push(
+                                            `/purchasing/boms/bom-utility?bomName=${nextResult}&searchResults=${searchResults}`
+                                        )
+                                    }
+                                >
+                                    {nextResult}
+                                </Button>
+                            </Grid>
+                        ) : (
+                            <Grid item xs={2} />
+                        )}
+                    </>
+                )}
+
                 {changeRequestsLoading ? (
                     <Grid item xs={12}>
                         <LinearProgress />

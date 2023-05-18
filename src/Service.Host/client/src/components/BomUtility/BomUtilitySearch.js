@@ -13,7 +13,8 @@ function BomUtilitySearch() {
     const dispatch = useDispatch();
     const [searchTerm, setSearchTerm] = useState('');
 
-    const searchParts = term => dispatch(partsActions.search(term));
+    const searchParts = term =>
+        dispatch(partsActions.searchWithOptions('', `&partNumberSearchTerm=${term}`));
     const clearSearch = () => dispatch(partsActions.clearSearch());
 
     const searchResults = useSelector(state =>
@@ -25,6 +26,8 @@ function BomUtilitySearch() {
             'description'
         )
     );
+
+    const searchResultsQueryString = searchResults?.map(s => s.partNumber).join();
     const searchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.parts)
     );
@@ -38,7 +41,7 @@ function BomUtilitySearch() {
                 <Grid item xs={12}>
                     <Search
                         propertyName="supplier"
-                        label="Search for an Assembly or Phantom BOM type part"
+                        label="Search for an Assembly or Phantom BOM type part. You can use an asterisk as a wildcard."
                         value={searchTerm}
                         handleValueChange={(_, newVal) => setSearchTerm(newVal)}
                         search={searchParts}
@@ -46,9 +49,17 @@ function BomUtilitySearch() {
                             x => x.bomType === 'A' || x.bomType === 'P'
                         )}
                         loading={searchLoading}
-                        priorityFunction="closestMatchesFirst"
+                        priorityFunction={null}
                         onResultSelect={res =>
-                            history.push(`/purchasing/boms/bom-utility?bomName=${res.partNumber}`)
+                            history.push(
+                                `/purchasing/boms/bom-utility?bomName=${
+                                    res.partNumber
+                                }&searchResults=${
+                                    searchResultsQueryString?.length > 1
+                                        ? searchResultsQueryString
+                                        : ''
+                                }`
+                            )
                         }
                         clearSearch={clearSearch}
                     />
