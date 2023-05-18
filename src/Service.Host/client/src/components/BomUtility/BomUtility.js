@@ -27,8 +27,6 @@ import IconButton from '@mui/material/IconButton';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Menu from '@mui/material/Menu';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
@@ -41,10 +39,11 @@ import {
 } from '../../itemTypes';
 import changeRequestsActions from '../../actions/changeRequestsActions';
 import bomTreeActions from '../../actions/bomTreeActions';
-import useInitialise from '../../hooks/useInitialise';
 import partsActions from '../../actions/partsActions';
 import subAssemblyActions from '../../actions/subAssemblyActions';
 import useExpandNodesWithChildren from '../../hooks/useExpandNodesWithChildren';
+import usePreviousNextNavigation from '../../hooks/usePreviousNextNavigation';
+import PrevNextButtons from '../PrevNextButtons';
 
 // unique id generator
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -52,18 +51,17 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2)
 function BomUtility() {
     const reduxDispatch = useDispatch();
     const { search } = useLocation();
-    const { bomName, changeRequest, searchResults } = queryString.parse(search);
+    const { bomName, changeRequest } = queryString.parse(search);
 
-    const resultsArray = searchResults?.split(',');
-    const currentIndex = resultsArray?.indexOf(bomName);
-    const nextResult = resultsArray?.[currentIndex + 1];
-    const prevResult = resultsArray?.[currentIndex - 1];
-    const [crNumber, setCrNumber] = useState(changeRequest === 'null' ? null : changeRequest);
-    const [changeRequests, changeRequestsLoading] = useInitialise(
-        () => changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True'),
-        changeRequestsItemType.item,
-        'searchItems'
+    const [goPrev, goNext, prevResult, nextResult] = usePreviousNextNavigation(
+        (id, searchResultsString) =>
+            `/purchasing/boms/bom-utility?bomName=${id}&searchResults=${searchResultsString}`,
+        'query',
+        'bomName'
     );
+
+    const [crNumber, setCrNumber] = useState(changeRequest === 'null' ? null : changeRequest);
+
     const [showChanges, setShowChanges] = useState(true);
     const [disableChangesButton, setDisableChangesButton] = useState(false);
     const [searchBomTerm, setSearchBomTerm] = useState();
@@ -71,25 +69,26 @@ function BomUtility() {
     const url = changes =>
         `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${changes}&treeType=${'bom'}`;
 
-    const [bomTree, bomTreeLoading] = useInitialise(
-        () => bomTreeActions.fetchByHref(url(showChanges)),
-        bomTreeItemType.item,
-        'item',
-        bomTreeActions.clearErrorsForItem
+    const bomTree = useSelector(state => state[bomTreeItemType.item].item);
+    const bomTreeLoading = useSelector(state => state[bomTreeItemType.item].loading);
+
+    const changeRequests = useSelector(state => state[changeRequestsItemType.item].searchItems);
+    const changeRequestsLoading = useSelector(
+        state => state[changeRequestsItemType.item].searchLoading
     );
 
     useEffect(() => {
-        if (bomTree && bomTree.name !== bomName) {
+        if (bomTree?.name !== bomName) {
             reduxDispatch(
                 bomTreeActions.fetchByHref(
-                    `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${false}&treeType=${'bom'}`
+                    `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${showChanges}&treeType=${'bom'}`
                 )
             );
             reduxDispatch(
                 changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True')
             );
         }
-    }, [bomName, reduxDispatch, bomTree]);
+    }, [bomName, reduxDispatch, bomTree, showChanges]);
 
     const [treeView, setTreeView] = useState();
 
@@ -878,46 +877,12 @@ function BomUtility() {
                     message="Save Successful"
                     timeOut={3000}
                 />
-                {searchResults?.length && (
-                    <>
-                        {prevResult ? (
-                            <Grid item xs={2}>
-                                <Button
-                                    variant="outlined"
-                                    startIcon={<ArrowLeftIcon />}
-                                    onClick={() =>
-                                        history.push(
-                                            `/purchasing/boms/bom-utility?bomName=${prevResult}&searchResults=${searchResults}`
-                                        )
-                                    }
-                                >
-                                    {prevResult}
-                                </Button>
-                            </Grid>
-                        ) : (
-                            <Grid itemx xs={2} />
-                        )}
-                        <Grid item xs={8} />
-                        {nextResult ? (
-                            <Grid item xs={2}>
-                                <Button
-                                    variant="outlined"
-                                    endIcon={<ArrowRightIcon />}
-                                    onClick={() =>
-                                        history.push(
-                                            `/purchasing/boms/bom-utility?bomName=${nextResult}&searchResults=${searchResults}`
-                                        )
-                                    }
-                                >
-                                    {nextResult}
-                                </Button>
-                            </Grid>
-                        ) : (
-                            <Grid item xs={2} />
-                        )}
-                    </>
-                )}
-
+                <PrevNextButtons
+                    goPrev={goPrev}
+                    goNext={goNext}
+                    nextResult={nextResult}
+                    prevResult={prevResult}
+                />
                 {changeRequestsLoading ? (
                     <Grid item xs={12}>
                         <LinearProgress />
