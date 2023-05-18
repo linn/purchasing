@@ -230,7 +230,7 @@ function ChangeRequestSearch() {
                         <DataGrid
                             getRowId={row => row.documentNumber}
                             className={classes.gap}
-                            rows={searchRequestsResults}
+                            rows={searchRequestsResults?.reverse()}
                             columns={columns}
                             rowHeight={34}
                             autoHeight
