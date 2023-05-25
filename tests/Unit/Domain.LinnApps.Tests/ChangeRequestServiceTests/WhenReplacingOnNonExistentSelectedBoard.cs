@@ -35,7 +35,7 @@
                 .HasPermissionFor(AuthorisedAction.AdminChangeRequest, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
-            this.action = () => this.Sut.Replace(1, 7004, false, false, null, null, selectedComponents, new List<string>());
+            this.action = () => this.Sut.Replace(1, 7004, false, false, null, null, selectedComponents, new List<(string bomName, decimal qty)>());
         }
 
         [Test]

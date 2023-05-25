@@ -277,7 +277,7 @@
             decimal? newQty,
             IEnumerable<int> selectedDetailIds,
             IEnumerable<string> selectedPcasComponents,
-            IEnumerable<string> addToBoms,
+            IEnumerable<(string bomName, decimal qty)> addToBoms,
             IEnumerable<string> privileges = null)
         {
             var request = this.repository.FindById(documentNumber);
@@ -349,11 +349,11 @@
                 }
             }
 
-            if (addToBoms != null && addToBoms.Any() && (newQty != null))
+            if (addToBoms != null && addToBoms.Any())
             {
-                foreach (var bomName in addToBoms)
+                foreach (var addBom in addToBoms)
                 {
-                    this.bomChangeService.AddBomDetail(bomName, request, replacedBy, newQty);
+                    this.bomChangeService.AddBomDetail(addBom.bomName, request, replacedBy, addBom.qty);
                 }
             }
 
