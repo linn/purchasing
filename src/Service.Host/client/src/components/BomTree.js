@@ -7,6 +7,8 @@ import TreeItem, { treeItemClasses } from '@mui/lab/TreeItem';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
+import Link from '@mui/material/Link';
+import config from '../config';
 
 /* eslint react/jsx-props-no-spreading: 0 */
 /* eslint react/destructuring-assignment: 0 */
@@ -77,7 +79,8 @@ export default function BomTree({
     bomTreeLoading,
     expanded,
     setExpanded,
-    selected
+    selected,
+    stockLinks
 }) {
     const renderTree = nodes => {
         const label = (
@@ -88,7 +91,16 @@ export default function BomTree({
                     id={nodes.id}
                     color={!nodes.children?.length ? '' : 'primary'}
                 >
-                    {nodes.name}
+                    {stockLinks ? (
+                        <Link
+                            target="_blank"
+                            href={`${config.appRoot}/inventory/stock-locator/locators?batchRef=&locationId=&locationName=&partDescription=&partNumber=${nodes.name}&state=&stockPoolCode=`}
+                        >
+                            {nodes.name}
+                        </Link>
+                    ) : (
+                        <> {nodes.name}</>
+                    )}
                 </Typography>
                 {nodes.name !== bomName.toUpperCase() && (
                     <>
@@ -187,7 +199,8 @@ BomTree.propTypes = {
     bomName: PropTypes.string.isRequired,
     expanded: PropTypes.arrayOf(PropTypes.shape({})),
     setExpanded: PropTypes.func.isRequired,
-    selected: PropTypes.string
+    selected: PropTypes.string,
+    stockLinks: PropTypes.bool
 };
 BomTree.defaultProps = {
     renderDescriptions: true,
@@ -197,5 +210,6 @@ BomTree.defaultProps = {
     bomTree: null,
     bomTreeLoading: false,
     expanded: [],
-    selected: null
+    selected: null,
+    stockLinks: false
 };

@@ -61,6 +61,7 @@ export default function BomTreeReport() {
                     bomName={bomName}
                     expanded={expanded}
                     setExpanded={setExpanded}
+                    stockLinks
                 />
             </Grid>
         </Page>
