@@ -45,7 +45,7 @@ function BomUtilitySearch() {
                         value={searchTerm}
                         handleValueChange={(_, newVal) => setSearchTerm(newVal)}
                         search={searchParts}
-                        searchResults={searchResults.filter(x => x.bomId)}
+                        searchResults={searchResults}
                         loading={searchLoading}
                         priorityFunction={null}
                         onResultSelect={res =>
