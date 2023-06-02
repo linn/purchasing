@@ -80,5 +80,24 @@
 
             return new SuccessResult<ReportReturnResource>(this.reportReturnResourceBuilder.Build(result));
         }
+
+        public IResult<ReportReturnResource> GetBoardComponentSummaryReport(
+            BoardComponentSummaryReportRequestResource resource)
+        {
+            ResultsModel result;
+
+            try
+            {
+                result = this.domainService.GetBoardComponentSummaryReport(
+                    resource.BoardCode,
+                    resource.RevisionCode);
+            }
+            catch (DomainException exception)
+            {
+                return new BadRequestResult<ReportReturnResource>(exception.Message);
+            }
+
+            return new SuccessResult<ReportReturnResource>(this.reportReturnResourceBuilder.Build(result));
+        }
     }
 }

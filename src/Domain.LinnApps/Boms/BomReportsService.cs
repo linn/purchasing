@@ -666,5 +666,155 @@
             reportLayout.SetGridData(values);
             return reportLayout.GetResultsModel();
         }
+
+        public ResultsModel GetBoardComponentSummaryReport(string boardCode, string revisionCode)
+        {
+            if (string.IsNullOrWhiteSpace(boardCode) || string.IsNullOrWhiteSpace(revisionCode))
+            {
+                throw new InvalidOptionException("Board or revision not specified");
+            }
+
+            var board = this.boardRepository.FindById(boardCode.ToUpper());
+
+            if (board == null)
+            {
+                throw new ItemNotFoundException($"{boardCode.ToUpper()} could not be found");
+            }
+
+            var revision = board.Layouts.SelectMany(a => a.Revisions)
+                .First(a => a.RevisionCode == revisionCode.ToUpper());
+            var components = board.ComponentsOnRevision(revision.LayoutSequence, revision.VersionNumber);
+
+            var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
+
+            var results = new ResultsModel
+                              {
+                                  ReportTitle = new NameModel(
+                                      $"Board Component Summary Report - Board Code : {boardCode.ToUpper()} Revision : {revisionCode.ToUpper()}")
+                              };
+            results.AddSortedColumns(
+                new List<AxisDetailsModel>
+                    {
+                        new AxisDetailsModel("cRef", "CRef", GridDisplayType.TextValue),
+                        new AxisDetailsModel("boardDescription", "Board Description", GridDisplayType.TextValue),
+                        new AxisDetailsModel("partNumber", "Part Number", GridDisplayType.TextValue),
+                        new AxisDetailsModel("description", "Description", GridDisplayType.TextValue),
+                        new AxisDetailsModel("qty", "Qty", GridDisplayType.TextValue),
+                        new AxisDetailsModel("ourUnitOfMeasure", "Our Unit of Measure", GridDisplayType.TextValue),
+                        new AxisDetailsModel("assemblyTechnology", "Assembly Technology", GridDisplayType.TextValue),
+                        new AxisDetailsModel("bomPartNumber", "Bom Part Number", GridDisplayType.TextValue),
+                        new AxisDetailsModel("pcasPartNumber", "PCAS Part Number", GridDisplayType.TextValue),
+                        new AxisDetailsModel("pcsmPartNumber", "PCSM Part Number", GridDisplayType.TextValue),
+                        new AxisDetailsModel("pcbPartNumber", "PCB Part Number", GridDisplayType.TextValue),
+                        new AxisDetailsModel("versionNumber", "Version Number", GridDisplayType.TextValue),
+                        new AxisDetailsModel("splitBom", "Split Bom", GridDisplayType.TextValue)
+                    });
+
+            var values = new List<CalculationValueModel>();
+
+            foreach (var boardComponent in components)
+            {
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = boardComponent.CRef,
+                            ColumnId = "cRef",
+                            TextDisplay = boardComponent.CRef
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = boardComponent.CRef,
+                            ColumnId = "boardDescription",
+                            TextDisplay = board.Description
+                        });
+
+                var part = this.partRepository.FindBy(p => p.PartNumber == boardComponent.PartNumber);
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = boardComponent.CRef,
+                            ColumnId = "partNumber",
+                            TextDisplay = boardComponent.PartNumber
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = boardComponent.CRef,
+                            ColumnId = "description",
+                            TextDisplay = part.Description
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = boardComponent.CRef,
+                            ColumnId = "ourUnitOfMeasure",
+                            TextDisplay = part.OurUnitOfMeasure
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = boardComponent.CRef,
+                            ColumnId = "assemblyTechnology",
+                            TextDisplay = part.AssemblyTechnology
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = boardComponent.CRef,
+                            ColumnId = "assemblyTechnology",
+                            TextDisplay = part.AssemblyTechnology
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = boardComponent.CRef,
+                            ColumnId = "pcasPartNumber",
+                            TextDisplay = revision.PcasPartNumber
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = boardComponent.CRef,
+                            ColumnId = "pcbPartNumber",
+                            TextDisplay = revision.PcbPartNumber
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = boardComponent.CRef,
+                            ColumnId = "pcsmPartNumber",
+                            TextDisplay = revision.PcsmPartNumber
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = boardComponent.CRef,
+                            ColumnId = "pcsmPartNumber",
+                            TextDisplay = revision.VersionNumber.ToString()
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = boardComponent.CRef,
+                            ColumnId = "splitBom",
+                            TextDisplay = revision.SplitBom
+                        });
+            }
+
+            reportLayout.SetGridData(values);
+            return reportLayout.GetResultsModel();
+        }
     }
 }
