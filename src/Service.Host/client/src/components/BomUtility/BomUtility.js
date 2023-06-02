@@ -94,7 +94,7 @@ function BomUtility() {
 
     const { nodesWithChildren } = useExpandNodesWithChildren([], treeView, bomName);
 
-    const [expanded, setExpanded] = useState(bomName ? ['root'] : []);
+    const [expanded, setExpanded] = useState(['root']);
 
     const [newAssemblies, setNewAssemblies] = useState([]);
 
