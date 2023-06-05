@@ -127,6 +127,8 @@
             this.results.GetGridTextValue(0, 1).Should().Be("Standard Board");
             this.results.GetGridTextValue(0, 2).Should().Be("CAP 500");
             this.results.GetGridTextValue(0, 3).Should().BeNull();
+            this.results.GetGridTextValue(0, 4).Should().BeNull();
+            this.results.GetGridTextValue(0, 5).Should().BeNull();
             this.results.GetGridTextValue(1, 0).Should().Be("C003");
             this.results.GetGridTextValue(1, 1).Should().Be("Standard Board");
             this.results.GetGridTextValue(1, 2).Should().Be("CAP 900");
