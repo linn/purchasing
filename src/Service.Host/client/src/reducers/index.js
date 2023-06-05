@@ -126,6 +126,7 @@ import acceptedChangesReport from './acceptedChangesReport';
 import proposedChangesReport from './proposedChangesReport';
 import outstandingChangesReport from './outstandingChangesReport';
 import currentPhaseInWeeksReport from './currentPhaseInWeeksReport';
+import boardComponentSummaryReport from './boardComponentSummaryReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -146,6 +147,7 @@ const rootReducer = history =>
         boardComponents,
         boardComponentSummaries,
         boardDifferenceReport,
+        boardComponentSummaryReport,
         boards,
         bomCostReport,
         bomDifferenceReport,

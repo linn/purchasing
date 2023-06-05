@@ -20,5 +20,7 @@
             decimal labourHourlyRate);
 
         IResult<ReportReturnResource> GetBoardDifferenceReport(BomDifferenceReportRequestResource resource);
+
+        IResult<ReportReturnResource> GetBoardComponentSummaryReport(BoardComponentSummaryReportRequestResource resource);
     }
 }

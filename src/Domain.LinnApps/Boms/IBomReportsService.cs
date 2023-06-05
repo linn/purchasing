@@ -22,5 +22,9 @@
             string revisionCode2);
 
         ResultsModel GetBomDifferencesReport(string bom1, string bom2);
+
+        ResultsModel GetBoardComponentSummaryReport(
+            string boardCode,
+            string revisionCode);
     }
 }
