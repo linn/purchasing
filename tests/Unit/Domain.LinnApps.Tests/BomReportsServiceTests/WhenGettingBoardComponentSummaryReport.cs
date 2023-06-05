@@ -1,12 +1,15 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.BomReportsServiceTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
 
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NSubstitute;
 
@@ -102,7 +105,9 @@
                               };
 
             this.CircuitBoardRepository.FindById(this.boardCode).Returns(this.board);
-
+            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>()).Returns(
+                new Part { MaterialPrice = 1001.1m },
+                new Part { MaterialPrice = 2002.2m });
             this.results = this.Sut.GetBoardComponentSummaryReport(
                 this.boardCode,
                 this.revisionCode);
@@ -118,24 +123,16 @@
         public void ShouldReturnReport()
         {
             this.results.Rows.Count().Should().Be(2);
-            this.results.GetGridTextValue(0, 0).Should().Be("CAP 123");
-            this.results.GetGridTextValue(0, 1).Should().Be("SM");
-            this.results.GetGridTextValue(0, 2).Should().Be("1.0");
-            this.results.GetGridTextValue(0, 3).Should().Be("CAP 124");
-            this.results.GetGridTextValue(0, 4).Should().Be("SM");
-            this.results.GetGridTextValue(0, 5).Should().Be("1.0");
-            this.results.GetGridTextValue(1, 0).Should().Be("CAP 125");
-            this.results.GetGridTextValue(1, 1).Should().Be("SM");
-            this.results.GetGridTextValue(1, 2).Should().Be("1.0");
+            this.results.GetGridTextValue(0, 0).Should().Be("C002");
+            this.results.GetGridTextValue(0, 1).Should().Be("Standard Board");
+            this.results.GetGridTextValue(0, 2).Should().Be("CAP 500");
+            this.results.GetGridTextValue(0, 3).Should().BeNull();
+            this.results.GetGridTextValue(1, 0).Should().Be("C003");
+            this.results.GetGridTextValue(1, 1).Should().Be("Standard Board");
+            this.results.GetGridTextValue(1, 2).Should().Be("CAP 900");
             this.results.GetGridTextValue(1, 3).Should().BeNull();
             this.results.GetGridTextValue(1, 4).Should().BeNull();
             this.results.GetGridTextValue(1, 5).Should().BeNull();
-            this.results.GetGridTextValue(2, 0).Should().BeNull();
-            this.results.GetGridTextValue(2, 1).Should().BeNull();
-            this.results.GetGridTextValue(2, 2).Should().BeNull();
-            this.results.GetGridTextValue(2, 3).Should().Be("CAP 126");
-            this.results.GetGridTextValue(2, 4).Should().Be("SM");
-            this.results.GetGridTextValue(2, 5).Should().Be("1.0");
         }
     }
 }

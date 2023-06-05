@@ -714,6 +714,8 @@
 
             foreach (var boardComponent in components)
             {
+                var part = this.partRepository.FindBy(p => p.PartNumber == boardComponent.PartNumber);
+
                 values.Add(
                     new CalculationValueModel
                         {
@@ -729,8 +731,6 @@
                             ColumnId = "boardDescription",
                             TextDisplay = board.Description
                         });
-
-                var part = this.partRepository.FindBy(p => p.PartNumber == boardComponent.PartNumber);
 
                 values.Add(
                     new CalculationValueModel
