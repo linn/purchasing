@@ -48,7 +48,6 @@ function BoardComponentSummaryReport() {
                             <ReportTable
                                 reportData={reportData}
                                 showTitle
-                                title={reportData?.title}
                                 showTotals={false}
                                 showRowCount
                                 showRowTitles
