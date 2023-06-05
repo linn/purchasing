@@ -236,6 +236,15 @@
                              };
                 this.bomChangeRepository.Add(change);
             }
+            else 
+            {
+                // check if it already been done
+                var existingAdditions = change.AddedBomDetails.Any(d => d.PartNumber == request.NewPart.PartNumber);
+                if (existingAdditions)
+                {
+                    throw new InvalidBomChangeException($"{request.NewPart.PartNumber} already being added to BOM!");
+                }
+            }
 
             // now add the second half
             if (newQty > 0)

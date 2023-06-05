@@ -6,6 +6,8 @@ import {
     Loading,
     CheckboxWithLabel,
     InputField,
+    getItemError,
+    ErrorCard,
     itemSelectorHelpers,
     collectionSelectorHelpers,
     utilities
@@ -24,7 +26,7 @@ import boardComponentSummariesActions from '../../actions/boardComponentSummarie
 import bomTreeActions from '../../actions/bomTreeActions';
 import history from '../../history';
 import useInitialise from '../../hooks/useInitialise';
-import { changeRequest } from '../../itemTypes';
+import { changeRequest, changeRequestReplace } from '../../itemTypes';
 import BomChangeReplace from './BomChangeReplace';
 import PcasChangeReplace from './PcasChangeReplace';
 import BomChangeAdd from './BomChangeAdd';
@@ -33,6 +35,8 @@ function ChangeRequestReplace() {
     const dispatch = useDispatch();
     const { search } = useLocation();
     const documentNumber = queryString.parse(search)?.documentNumber;
+
+    const error = useSelector(reduxState => getItemError(reduxState, changeRequestReplace.item));
 
     const [item, loading] = useInitialise(
         () => changeRequestActions.fetch(documentNumber),
@@ -129,6 +133,11 @@ function ChangeRequestReplace() {
                             <Typography variant="h6">Change Request {documentNumber}</Typography>
                         </Link>
                     </Grid>
+                    {error && error.details && (
+                        <Grid item xs={12}>
+                            <ErrorCard errorMessage={error.details?.error} />
+                        </Grid>
+                    )}
                     <Grid item xs={6}>
                         <InputField
                             value={item?.oldPartNumber}
