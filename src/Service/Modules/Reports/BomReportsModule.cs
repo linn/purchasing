@@ -20,6 +20,7 @@
             app.MapGet("/purchasing/reports/board-difference", this.GetApp);
             app.MapGet("/purchasing/reports/board-difference/report", this.GetBoardDifferenceReport);
             app.MapGet("/purchasing/boms/reports/diff", this.GetBomDifferenceReport);
+            app.MapGet("/purchasing/boms/reports/board-component-summary", this.GetApp);
             app.MapGet("/purchasing/boms/reports/board-component-summary/report", this.GetBoardComponentSummaryReport);
         }
 
