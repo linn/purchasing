@@ -41,7 +41,8 @@
                                                                 ChangeId = 7,
                                                                 ChangeState = "PROPOS",
                                                                 BomId = 1,
-                                                                BomName = "TEST"
+                                                                BomName = "TEST",
+                                                                AddedBomDetails = new List<BomDetail>()
                                                             }
                                                     }
             };

@@ -185,3 +185,9 @@ export const currentPhaseInWeeksReport = new ItemType(
     'CURRENT_PHASE_IN_WEEKS_REPORT',
     '/purchasing/reports/current-phase-in-weeks/report'
 );
+
+export const boardComponentSummaryReport = new ItemType(
+    'boardComponentSummaryReport',
+    'BOARD_COMPONENT_SUMMARY_REPORT',
+    '/purchasing/boms/reports/board-component-summary/report'
+);
