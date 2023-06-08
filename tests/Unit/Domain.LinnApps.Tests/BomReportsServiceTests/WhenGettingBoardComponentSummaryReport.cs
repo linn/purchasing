@@ -83,7 +83,12 @@
                                                                ToRevisionVersion = 1,
                                                                AddChangeId = 98765432,
                                                                DeleteChangeId = null,
-                                                               Quantity = 1
+                                                               Quantity = 1,
+                                                               Part = new Part
+                                                                          {
+                                                                              PartNumber = "TEST 987",
+                                                                              Description = "A test part that we are describing"
+                                                                          }
                                                            },
                                                        new BoardComponent
                                                            {
@@ -99,7 +104,12 @@
                                                                ToRevisionVersion = 1,
                                                                AddChangeId = 1234567,
                                                                DeleteChangeId = null,
-                                                               Quantity = 1
+                                                               Quantity = 1,
+                                                               Part = new Part
+                                                                          {
+                                                                              PartNumber = "TEST 123",
+                                                                              Description = "A test part that we are describing"
+                                                                          }
                                                            }
                                                    }
                               };
@@ -126,15 +136,15 @@
             this.results.GetGridTextValue(0, 0).Should().Be("C002");
             this.results.GetGridTextValue(0, 1).Should().Be("Standard Board");
             this.results.GetGridTextValue(0, 2).Should().Be("CAP 500");
-            this.results.GetGridTextValue(0, 3).Should().BeNull();
+            this.results.GetGridTextValue(0, 3).Should().Be("A test part that we are describing");
             this.results.GetGridTextValue(0, 4).Should().BeNull();
-            this.results.GetGridTextValue(0, 5).Should().BeNull();
+            this.results.GetGridTextValue(0, 5).Should().Be("SM");
             this.results.GetGridTextValue(1, 0).Should().Be("C003");
             this.results.GetGridTextValue(1, 1).Should().Be("Standard Board");
             this.results.GetGridTextValue(1, 2).Should().Be("CAP 900");
-            this.results.GetGridTextValue(1, 3).Should().BeNull();
+            this.results.GetGridTextValue(1, 3).Should().Be("A test part that we are describing");
             this.results.GetGridTextValue(1, 4).Should().BeNull();
-            this.results.GetGridTextValue(1, 5).Should().BeNull();
+            this.results.GetGridTextValue(1, 5).Should().Be("SM");
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
 {
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+
     public class BoardComponent
     {
         public string BoardCode { get; set; }
@@ -31,5 +33,7 @@
         public PcasChange DeleteChange { get; set; }
 
         public decimal Quantity { get; set; }
+
+        public Part Part { get; set; }
     }
 }

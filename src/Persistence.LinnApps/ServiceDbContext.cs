@@ -2225,6 +2225,7 @@
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
             entity.HasOne(a => a.DeleteChange).WithMany().HasForeignKey(a => a.DeleteChangeId);
             entity.Property(a => a.Quantity).HasColumnName("QTY");
+            entity.HasOne(a => a.Part).WithOne().HasForeignKey<Part>(p => p.PartNumber);
         }
 
         private void BuildVMasterMrh(ModelBuilder builder)

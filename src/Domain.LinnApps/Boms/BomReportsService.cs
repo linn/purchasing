@@ -714,8 +714,6 @@
 
             foreach (var boardComponent in components)
             {
-                var part = this.partRepository.FindBy(p => p.PartNumber == boardComponent.PartNumber);
-
                 values.Add(
                     new CalculationValueModel
                         {
@@ -745,7 +743,7 @@
                         {
                             RowId = boardComponent.CRef,
                             ColumnId = "description",
-                            TextDisplay = part.Description
+                            TextDisplay = boardComponent.Part.Description
                         });
 
                 values.Add(
@@ -753,23 +751,15 @@
                         {
                             RowId = boardComponent.CRef,
                             ColumnId = "ourUnitOfMeasure",
-                            TextDisplay = part.OurUnitOfMeasure
-                        });
+                            TextDisplay = boardComponent.Part.OurUnitOfMeasure
+                    });
 
                 values.Add(
                     new CalculationValueModel
                         {
                             RowId = boardComponent.CRef,
                             ColumnId = "assemblyTechnology",
-                            TextDisplay = part.AssemblyTechnology
-                        });
-
-                values.Add(
-                    new CalculationValueModel
-                        {
-                            RowId = boardComponent.CRef,
-                            ColumnId = "assemblyTechnology",
-                            TextDisplay = part.AssemblyTechnology
+                            TextDisplay = boardComponent.AssemblyTechnology
                         });
 
                 values.Add(
