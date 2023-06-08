@@ -2225,10 +2225,10 @@
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
             entity.HasOne(a => a.DeleteChange).WithMany().HasForeignKey(a => a.DeleteChangeId);
             entity.Property(a => a.Quantity).HasColumnName("QTY");
-            entity.HasOne(a => a.Part).WithOne().HasForeignKey<Part>(p => p.PartNumber);
+            entity.HasOne(a => a.Part).WithMany().HasForeignKey(p => p.PartNumber);
         }
 
-        private void BuildVMasterMrh(ModelBuilder builder)
+        private void BuildVMasterMrh(ModelBuilder builder) 
         {
             var entity = builder.Entity<PartRequirement>().ToTable("V_MASTER_MRH");
             entity.HasKey(x => x.PartNumber);

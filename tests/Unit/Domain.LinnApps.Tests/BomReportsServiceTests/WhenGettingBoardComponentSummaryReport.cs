@@ -1,9 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.BomReportsServiceTests
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Linq.Expressions;
 
     using FluentAssertions;
 
@@ -115,9 +113,6 @@
                               };
 
             this.CircuitBoardRepository.FindById(this.boardCode).Returns(this.board);
-            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>()).Returns(
-                new Part { MaterialPrice = 1001.1m },
-                new Part { MaterialPrice = 2002.2m });
             this.results = this.Sut.GetBoardComponentSummaryReport(
                 this.boardCode,
                 this.revisionCode);
