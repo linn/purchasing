@@ -34,6 +34,7 @@
                     .Query()
                     .Include(a => a.AddChange)
                     .Include(a => a.DeleteChange)
+                    .Include(a => a.Part)
                     .Load();
             }
 

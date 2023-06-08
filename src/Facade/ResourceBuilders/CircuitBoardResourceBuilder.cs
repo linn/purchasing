@@ -141,8 +141,9 @@
                            AddChangeDocumentNumber = boardComponent.AddChange.DocumentNumber,
                            DeleteChangeDocumentType = boardComponent.DeleteChange?.DocumentType,
                            DeleteChangeDocumentNumber = boardComponent.DeleteChange?.DocumentNumber,
-                           DeleteChangeState = boardComponent.DeleteChange?.ChangeState
-                       };
+                           DeleteChangeState = boardComponent.DeleteChange?.ChangeState,
+                           Part = boardComponent.Part
+            };
         }
 
         private IEnumerable<LinkResource> BuildLinks(CircuitBoard model, IList<string> claims)
