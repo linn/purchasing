@@ -259,6 +259,7 @@
                     $"Component at line {boardComponent.BoardLine} cRef {boardComponent.CRef} is malformed");
             }
 
+            boardComponent.Part = part;
             boardComponent.AddChangeId = pcasChange.ChangeId;
             boardComponent.AssemblyTechnology = part.AssemblyTechnology;
             boardComponent.FromLayoutVersion = revision.LayoutSequence;
@@ -349,7 +350,8 @@
                                              AddChange = pcasChange,
                                              DeleteChangeId = null,
                                              DeleteChange = null,
-                                             Quantity = component.Quantity
+                                             Quantity = component.Quantity,
+                                             Part = component.Part,
                                          });
             }
         }
@@ -386,7 +388,8 @@
                                                  AddChange = pcasChange,
                                                  DeleteChangeId = null,
                                                  DeleteChange = null,
-                                                 Quantity = component.Quantity
+                                                 Quantity = component.Quantity,
+                                                 Part = component.Part,
                                              });
                 }
             }

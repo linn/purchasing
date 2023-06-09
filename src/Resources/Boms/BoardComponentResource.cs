@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Resources.Boms
 {
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+
     public class BoardComponentResource
     {
         public string BoardCode { get; set; }
@@ -37,5 +39,7 @@
         public string DeleteChangeState { get; set; }
 
         public decimal Quantity { get; set; }
+
+        public Part Part { get; set; }
     }
 }
