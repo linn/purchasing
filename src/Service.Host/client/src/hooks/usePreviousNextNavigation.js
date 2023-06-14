@@ -24,7 +24,7 @@ export default function usePreviousNextNavigation(
     const nextResult = searchResults?.[currentIndex + 1];
     const prevResult = searchResults?.[currentIndex - 1];
 
-    if (!searchResults?.length) {
+    if (!searchResults?.length || searchResults?.length === 1) {
         return [null, null];
     }
     const goNext = nextResult

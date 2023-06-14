@@ -49,7 +49,7 @@ function ChangeRequestSearch() {
     useEffect(() => {
         dispatch(changeRequestsActions.clearSearch());
     }, [dispatch]);
-    const searchResults = searchRequestsResults?.map(s => s.documentNumber).reverse();
+    const searchResults = searchRequestsResults?.map(s => s.documentNumber.toString()).reverse();
     const columns = [
         {
             field: 'documentNumber',
