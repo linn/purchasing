@@ -11,7 +11,6 @@ import {
 import { makeStyles } from '@mui/styles';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { DataGrid } from '@mui/x-data-grid';
 import changeRequestsActions from '../../actions/changeRequestsActions';
@@ -57,15 +56,14 @@ function ChangeRequestSearch() {
             headerName: 'CRF',
             width: 100,
             renderCell: params => (
-                <Link
-                    component="button"
+                <Button
                     className={classes.a}
                     onClick={() =>
                         history.push(utilities.getSelfHref(params.row), { searchResults })
                     }
                 >
                     {params.row.documentNumber}
-                </Link>
+                </Button>
             )
         },
         {
