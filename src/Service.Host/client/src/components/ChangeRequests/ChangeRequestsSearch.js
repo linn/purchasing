@@ -51,19 +51,6 @@ function ChangeRequestSearch() {
         dispatch(changeRequestsActions.clearSearch());
     }, [dispatch]);
     const searchResults = searchRequestsResults?.map(s => s.documentNumber).reverse();
-
-    // const getUrl = item => {
-    //     const base = utilities.getSelfHref(item);
-    //     const searchResultsQueryString = searchRequestsResults
-    //         ?.map(s => s.documentNumber)
-    //         .reverse()
-    //         .join();
-    //     if (!searchRequestsResults?.length) {
-    //         return base;
-    //     }
-    //     return `${base}?searchResults=${searchResultsQueryString}`;
-    // };
-
     const columns = [
         {
             field: 'documentNumber',
@@ -76,7 +63,6 @@ function ChangeRequestSearch() {
                     onClick={() =>
                         history.push(utilities.getSelfHref(params.row), { searchResults })
                     }
-                    // to={getUrl(params.row)}
                 >
                     {params.row.documentNumber}
                 </Link>
