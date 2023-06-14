@@ -14,7 +14,6 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { DataGrid } from '@mui/x-data-grid';
-import { Link as RouterLink } from 'react-router-dom';
 import changeRequestsActions from '../../actions/changeRequestsActions';
 import ChangeState from './ChangeState';
 import history from '../../history';
@@ -51,18 +50,19 @@ function ChangeRequestSearch() {
     useEffect(() => {
         dispatch(changeRequestsActions.clearSearch());
     }, [dispatch]);
+    const searchResults = searchRequestsResults?.map(s => s.documentNumber).reverse();
 
-    const getUrl = item => {
-        const base = utilities.getSelfHref(item);
-        const searchResultsQueryString = searchRequestsResults
-            ?.map(s => s.documentNumber)
-            .reverse()
-            .join();
-        if (!searchRequestsResults?.length) {
-            return base;
-        }
-        return `${base}?searchResults=${searchResultsQueryString}`;
-    };
+    // const getUrl = item => {
+    //     const base = utilities.getSelfHref(item);
+    //     const searchResultsQueryString = searchRequestsResults
+    //         ?.map(s => s.documentNumber)
+    //         .reverse()
+    //         .join();
+    //     if (!searchRequestsResults?.length) {
+    //         return base;
+    //     }
+    //     return `${base}?searchResults=${searchResultsQueryString}`;
+    // };
 
     const columns = [
         {
@@ -70,7 +70,14 @@ function ChangeRequestSearch() {
             headerName: 'CRF',
             width: 100,
             renderCell: params => (
-                <Link className={classes.a} component={RouterLink} to={getUrl(params.row)}>
+                <Link
+                    component="button"
+                    className={classes.a}
+                    onClick={() =>
+                        history.push(utilities.getSelfHref(params.row), { searchResults })
+                    }
+                    // to={getUrl(params.row)}
+                >
                     {params.row.documentNumber}
                 </Link>
             )

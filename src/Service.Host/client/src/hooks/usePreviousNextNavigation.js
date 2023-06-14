@@ -2,10 +2,15 @@ import { useLocation, useParams } from 'react-router';
 import queryString from 'query-string';
 import history from '../history';
 
-export default function usePreviousNextNavigation(urlBuilder, idStyle = 'param', idFieldName) {
+export default function usePreviousNextNavigation(
+    urlBuilder,
+    searchResults,
+    idStyle = 'param',
+    idFieldName
+) {
     const { search } = useLocation();
-    const { id } = useParams();
     const parsed = queryString.parse(search);
+    const { id } = useParams();
 
     let idField;
 
@@ -15,24 +20,21 @@ export default function usePreviousNextNavigation(urlBuilder, idStyle = 'param',
         idField = id;
     }
 
-    const searchResultsString = parsed?.searchResults;
+    const currentIndex = searchResults?.indexOf(idField);
+    const nextResult = searchResults?.[currentIndex + 1];
+    const prevResult = searchResults?.[currentIndex - 1];
 
-    const resultsArray = searchResultsString?.split(',');
-    const currentIndex = resultsArray?.indexOf(idField);
-    const nextResult = resultsArray?.[currentIndex + 1];
-    const prevResult = resultsArray?.[currentIndex - 1];
-
-    if (!resultsArray?.length) {
+    if (!searchResults?.length) {
         return [null, null];
     }
     const goNext = nextResult
         ? () => {
-              history.push(`${urlBuilder(nextResult, searchResultsString)}`);
+              history.push(`${urlBuilder(nextResult)}`, { searchResults });
           }
         : null;
     const goPrev = prevResult
         ? () => {
-              history.push(`${urlBuilder(prevResult, searchResultsString)}`);
+              history.push(`${urlBuilder(prevResult)}`, { searchResults });
           }
         : null;
 

@@ -50,12 +50,12 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2)
 
 function BomUtility() {
     const reduxDispatch = useDispatch();
-    const { search } = useLocation();
+    const { search, state } = useLocation();
     const { bomName, changeRequest } = queryString.parse(search);
 
     const [goPrev, goNext, prevResult, nextResult] = usePreviousNextNavigation(
-        (id, searchResultsString) =>
-            `/purchasing/boms/bom-utility?bomName=${id}&searchResults=${searchResultsString}`,
+        id => `/purchasing/boms/bom-utility?bomName=${id}`,
+        state?.searchResults,
         'query',
         'bomName'
     );
@@ -69,12 +69,14 @@ function BomUtility() {
     const url = changes =>
         `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${changes}&treeType=${'bom'}`;
 
-    const bomTree = useSelector(state => state[bomTreeItemType.item].item);
-    const bomTreeLoading = useSelector(state => state[bomTreeItemType.item].loading);
+    const bomTree = useSelector(reduxState => reduxState[bomTreeItemType.item].item);
+    const bomTreeLoading = useSelector(reduxState => reduxState[bomTreeItemType.item].loading);
 
-    const changeRequests = useSelector(state => state[changeRequestsItemType.item].searchItems);
+    const changeRequests = useSelector(
+        reduxState => reduxState[changeRequestsItemType.item].searchItems
+    );
     const changeRequestsLoading = useSelector(
-        state => state[changeRequestsItemType.item].searchLoading
+        reduxState => reduxState[changeRequestsItemType.item].searchLoading
     );
 
     useEffect(() => {
