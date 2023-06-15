@@ -154,6 +154,7 @@
             {
                 throw new PartSupplierException("Part Not Found");
             }
+
             candidate.Part = part;
             
             if (string.IsNullOrEmpty(candidate.SupplierDesignation))
