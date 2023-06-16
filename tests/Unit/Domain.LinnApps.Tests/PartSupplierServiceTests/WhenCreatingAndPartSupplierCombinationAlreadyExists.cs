@@ -19,7 +19,6 @@
     {
         private Action action;
 
-
         private PartSupplier candidate;
 
         [SetUp]
@@ -43,9 +42,7 @@
                                    Currency = new Currency { Code = "GBP" }
             };
 
-            this.PartSupplierRepository.FindById(Arg.Any<PartSupplierKey>()).Returns(
-                this.candidate,
-                this.candidate);
+            this.PartSupplierRepository.FindById(Arg.Any<PartSupplierKey>()).Returns(this.candidate);
 
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierCreate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
@@ -60,7 +57,7 @@
         }
 
         [Test]
-        public void ShouldListMissingFieldsInMessage()
+        public void ShouldReportPartAndSupplierCombinationExists()
         {
             this.action.Should().Throw<PartSupplierException>()
                 .WithMessage(

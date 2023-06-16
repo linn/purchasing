@@ -141,9 +141,9 @@
 
             ValidateFields(candidate);
 
-            var partSupplierToCreate = this.partSupplierRepository.FindById(
+            var existingPartSupplier = this.partSupplierRepository.FindById(
                 new PartSupplierKey { PartNumber = candidate.PartNumber, SupplierId = candidate.SupplierId });
-            if (partSupplierToCreate != null)
+            if (existingPartSupplier != null)
             {
                 throw new PartSupplierException("This part and supplier ID combination has already been created");
             }
