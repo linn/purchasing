@@ -993,7 +993,7 @@ function POReqUtility({ creating }) {
                                 items={suppliersSearchResults.map(s => ({
                                     ...s,
                                     description: `${s.description} ${
-                                        s.dateClosed ? '(Closed)' : ''
+                                        s.dateClosed ? ' (Closed)' : ''
                                     }`
                                 }))}
                                 value={req.supplier ? req.supplier.id : null}
