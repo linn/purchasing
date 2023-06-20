@@ -21,8 +21,9 @@
                            ToRevisionVersion = resource.ToRevisionVersion,
                            AddChangeId = resource.AddChangeId,
                            DeleteChangeId = resource.DeleteChangeId,
-                           Quantity = resource.Quantity
-                       };
+                           Quantity = resource.Quantity,
+                           Part = resource.Part
+            };
         }
     }
 }

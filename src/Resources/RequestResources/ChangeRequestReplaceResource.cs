@@ -16,6 +16,6 @@
 
         public IEnumerable<string> SelectedPcasComponents { get; set; }
 
-        public IEnumerable<string> AddToBoms { get; set; }
+        public IEnumerable<BomAddResource> AddToBoms { get; set; }
     }
 }

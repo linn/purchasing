@@ -141,12 +141,20 @@
 
             ValidateFields(candidate);
 
+            var existingPartSupplier = this.partSupplierRepository.FindById(
+                new PartSupplierKey { PartNumber = candidate.PartNumber, SupplierId = candidate.SupplierId });
+            if (existingPartSupplier != null)
+            {
+                throw new PartSupplierException("This part and supplier ID combination has already been created");
+            }
+
             candidate.CreatedBy = this.employeeRepository.FindById(candidate.CreatedBy.Id);
             var part = this.partRepository.FindBy(x => x.PartNumber == candidate.PartNumber);
             if (part == null)
             {
                 throw new PartSupplierException("Part Not Found");
             }
+
             candidate.Part = part;
             
             if (string.IsNullOrEmpty(candidate.SupplierDesignation))

@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { collectionSelectorHelpers, Page } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-
 import partsActions from '../../actions/partsActions';
 import history from '../../history';
 import config from '../../config';
@@ -11,6 +10,7 @@ import Search from '../Search';
 
 function BomUtilitySearch() {
     const dispatch = useDispatch();
+
     const [searchTerm, setSearchTerm] = useState('');
 
     const searchParts = term =>
@@ -27,7 +27,6 @@ function BomUtilitySearch() {
         )
     );
 
-    const searchResultsQueryString = searchResults?.map(s => s.partNumber).join();
     const searchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.parts)
     );
@@ -45,21 +44,13 @@ function BomUtilitySearch() {
                         value={searchTerm}
                         handleValueChange={(_, newVal) => setSearchTerm(newVal)}
                         search={searchParts}
-                        searchResults={searchResults.filter(
-                            x => x.bomType === 'A' || x.bomType === 'P'
-                        )}
+                        searchResults={searchResults}
                         loading={searchLoading}
                         priorityFunction={null}
                         onResultSelect={res =>
-                            history.push(
-                                `/purchasing/boms/bom-utility?bomName=${
-                                    res.partNumber
-                                }&searchResults=${
-                                    searchResultsQueryString?.length > 1
-                                        ? searchResultsQueryString
-                                        : ''
-                                }`
-                            )
+                            history.push(`/purchasing/boms/bom-utility?bomName=${res.partNumber}`, {
+                                searchResults: searchResults?.map(s => s.partNumber)
+                            })
                         }
                         clearSearch={clearSearch}
                     />

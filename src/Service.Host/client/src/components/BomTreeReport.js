@@ -37,7 +37,9 @@ export default function BomTreeReport() {
                     <Button
                         variant="outlined"
                         onClick={() =>
-                            history.push(`/purchasing/boms/tree/options?bomName=${bomName}`)
+                            history.push(
+                                `/purchasing/boms/tree/options?bomName=${bomName?.toUpperCase()}`
+                            )
                         }
                     >
                         Back
@@ -48,7 +50,9 @@ export default function BomTreeReport() {
                     <Button
                         variant="outlined"
                         onClick={() =>
-                            history.push(`/purchasing/boms/bom-utility?bomName=${bomName}`)
+                            history.push(
+                                `/purchasing/boms/bom-utility?bomName=${bomName?.toUpperCase()}`
+                            )
                         }
                     >
                         BOM UT
@@ -61,6 +65,7 @@ export default function BomTreeReport() {
                     bomName={bomName}
                     expanded={expanded}
                     setExpanded={setExpanded}
+                    stockLinks
                 />
             </Grid>
         </Page>

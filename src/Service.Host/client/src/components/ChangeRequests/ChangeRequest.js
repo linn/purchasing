@@ -10,6 +10,7 @@ import {
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Tabs from '@mui/material/Tabs';
+import { useLocation } from 'react-router';
 import { CSVLink } from 'react-csv';
 import Tab from '@mui/material/Tab';
 import Grid from '@mui/material/Grid';
@@ -231,9 +232,11 @@ function ChangeRequest() {
               ]
             : [];
     };
+    const { state } = useLocation();
+
     const [goPrev, goNext, prevResult, nextResult] = usePreviousNextNavigation(
-        (docNo, searchResultsString) =>
-            `/purchasing/change-requests/${docNo}?searchResults=${searchResultsString}`
+        docNo => `/purchasing/change-requests/${docNo}`,
+        state?.searchResults
     );
 
     return (

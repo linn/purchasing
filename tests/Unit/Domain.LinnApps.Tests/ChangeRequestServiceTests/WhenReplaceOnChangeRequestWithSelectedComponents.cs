@@ -60,7 +60,7 @@
                 .Returns(true);
 
             var detailIds = new List<int> {};
-            var addToBoms = new List<string> { "TEST" };
+            var addToBoms = new List<(string bomName, decimal qty)> { ("TEST", 1) };
             var selectedComponents = new List<string> { "001/L1R1/C001/1/TH" };
             this.result = this.Sut.Replace(1, 7004, false, false, null, detailIds, selectedComponents, addToBoms, new List<string>());
         }
