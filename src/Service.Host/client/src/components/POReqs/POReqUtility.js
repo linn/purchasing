@@ -990,7 +990,12 @@ function POReqUtility({ creating }) {
                                 label="Supplier"
                                 modal
                                 propertyName="supplierId"
-                                items={suppliersSearchResults}
+                                items={suppliersSearchResults.map(s => ({
+                                    ...s,
+                                    description: `${s.description} ${
+                                        s.dateClosed ? ' (Closed)' : ''
+                                    }`
+                                }))}
                                 value={req.supplier ? req.supplier.id : null}
                                 loading={suppliersSearchLoading}
                                 fetchItems={searchSuppliers}
