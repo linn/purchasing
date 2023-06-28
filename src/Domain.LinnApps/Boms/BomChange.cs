@@ -4,6 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+
     public class BomChange
     {
         public int ChangeId { get; set; }
@@ -43,6 +45,8 @@
         public LinnWeek PhaseInWeek { get; set; }
 
         public string PartNumber { get; set; }
+
+        public Part Part { get; set; }
 
         public string Comments { get; set; }
 

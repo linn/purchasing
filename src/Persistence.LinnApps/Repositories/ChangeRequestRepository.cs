@@ -26,6 +26,7 @@
                 .Include(c => c.BomChanges).ThenInclude(c => c.PhaseInWeek)
                 .Include(c => c.BomChanges).ThenInclude(c => c.AddedBomDetails)
                 .Include(c => c.BomChanges).ThenInclude(c => c.DeletedBomDetails)
+                .Include(x => x.BomChanges).ThenInclude(c => c.Part)
                 .Include(x => x.ProposedBy)
                 .Include(x => x.EnteredBy)
                 .Include(x => x.OldPart)

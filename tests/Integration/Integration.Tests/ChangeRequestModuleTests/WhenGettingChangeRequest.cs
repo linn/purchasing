@@ -9,6 +9,7 @@
 
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -37,6 +38,7 @@
                                                               ChangeId = 1,
                                                               BomName = "TOAST 001",
                                                               ChangeState = "ACCEPT",
+                                                              Part = new Part { DateLive = DateTime.Today },
                                                               AddedBomDetails = new List<BomDetail>
                                                                   {
                                                                       new BomDetail

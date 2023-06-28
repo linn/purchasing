@@ -22,9 +22,6 @@
 
     public class ServiceDbContext : DbContext
     {
-        // public static readonly LoggerFactory MyLoggerFactory =
-        //     new LoggerFactory(new[] { new Microsoft.Extensions.Logging.Debug.DebugLoggerProvider() });
-
         public DbSet<PartSupplier> PartSuppliers { get; set; }
 
         public DbSet<Part> Parts { get; set; }
@@ -357,9 +354,6 @@
 
             optionsBuilder.UseOracle(connectionString, options => options.UseOracleSQLCompatibility("11"));
 
-            // below line commented due to causing crashing during local dev. Uncomment if want to see sql in debug window
-            // optionsBuilder.UseLoggerFactory(MyLoggerFactory);
-            // optionsBuilder.EnableSensitiveDataLogging(true);
             base.OnConfiguring(optionsBuilder);
         }
 
@@ -1990,7 +1984,7 @@
             entity.HasOne(c => c.CancelledBy).WithMany().HasForeignKey(c => c.CancelledById);
             entity.Property(c => c.PhaseInWeekNumber).HasColumnName("PHASE_IN_WEEK");
             entity.Property(c => c.PcasChange).HasColumnName("PCAS_CHANGE").HasMaxLength(1);
-
+            entity.HasOne(c => c.Part).WithMany().HasForeignKey(c => c.PartNumber);
             entity.Property(c => c.Comments).HasColumnName("COMMENTS").HasMaxLength(2000);
             entity.HasOne(c => c.PhaseInWeek).WithMany().HasForeignKey(c => c.PhaseInWeekNumber);
         }

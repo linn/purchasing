@@ -10,6 +10,7 @@
 
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;
@@ -42,7 +43,8 @@
                                                           {
                                                               ChangeId = 1,
                                                               BomName = "TOAST 001",
-                                                              ChangeState = "ACCEPT"
+                                                              ChangeState = "ACCEPT",
+                                                              Part = new Part { DateLive = DateTime.Today }
                                                           }
                                                   }
             };

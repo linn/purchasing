@@ -1,11 +1,13 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeRequestTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NUnit.Framework;
 
@@ -18,12 +20,30 @@
             {
                 DocumentNumber = 1,
                 ChangeState = "ACCEPT",
-                BomChanges = new List<BomChange>
-                                                {
-                                                    new BomChange { ChangeId = 1, ChangeState = "ACCEPT", BomName = "ABOM" },
-                                                    new BomChange { ChangeId = 2, ChangeState = "ACCEPT", BomName = "BBOM" },
-                                                    new BomChange { ChangeId = 3, ChangeState = "LIVE", BomName = "CBOM" }
-                                                },
+                BomChanges = new List<BomChange>  
+                                                    {
+                                                         new BomChange
+                                                             {
+                                                                 ChangeId = 1,
+                                                                 ChangeState = "ACCEPT",
+                                                                 BomName = "ABOM",
+                                                                 Part = new Part { DateLive = DateTime.Today }
+                                                             },
+                                                         new BomChange
+                                                             {
+                                                                 ChangeId = 2,
+                                                                 ChangeState = "ACCEPT",
+                                                                 BomName = "BBOM",
+                                                                 Part = new Part { DateLive = DateTime.Today }
+                                                             },
+                                                         new BomChange
+                                                             {
+                                                                 ChangeId = 3,
+                                                                 ChangeState = "LIVE",
+                                                                 BomName = "CBOM",
+                                                                 Part = new Part { DateLive = DateTime.Today }
+                                                             }
+                                                     },
                 PcasChanges = new List<PcasChange>
                                                  {
                                                      new PcasChange { ChangeId = 1, ChangeState = "ACCEPT", BoardCode = "001" },

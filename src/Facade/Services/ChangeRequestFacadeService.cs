@@ -59,7 +59,7 @@
             {
                 var request = this.changeRequestService.Approve(documentNumber, privileges);
                 this.transactionManager.Commit();
-                var resource = (ChangeRequestResource) this.resourceBuilder.Build(request, new List<string>());
+                var resource = (ChangeRequestResource)this.resourceBuilder.Build(request, new List<string>());
                 return new SuccessResult<ChangeRequestResource>(resource);
             }
             catch (ItemNotFoundException)

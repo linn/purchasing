@@ -183,14 +183,18 @@
             }
         }
 
-        public bool CanMakeLive() => this.ChangeState == "ACCEPT";
+        public bool CanMakeLive() => this.ChangeState == "ACCEPT" 
+                                     && (this.BomChanges == null 
+                                         || this.BomChanges.All(x => x.Part.DateLive.HasValue));
 
         public void MakeLive(Employee appliedBy, IEnumerable<int> selectedBomChangeIds, IEnumerable<int> selectedPcasChangeIds)
         {
             if (this.CanMakeLive())
             {
                 var allLive = true;
-                var globalLive = !(selectedBomChangeIds?.Any() ?? false) && !(selectedPcasChangeIds?.Any() ?? false);
+                var bomChangeIds = selectedBomChangeIds?.ToList() ?? new List<int>();
+                var pcasChangeIds = selectedPcasChangeIds?.ToList() ?? new List<int>();
+                var globalLive = !(bomChangeIds?.Any() ?? false) && !(pcasChangeIds?.Any() ?? false);
 
                 if (this.BomChanges != null)
                 {
@@ -198,11 +202,7 @@
                     {
                         if (bomChange.CanMakeLive())
                         {
-                            if (selectedBomChangeIds == null && !allLive)
-                            {
-                                allLive = false;
-                            }
-                            else if (globalLive || selectedBomChangeIds.Contains(bomChange.ChangeId))
+                            if (globalLive || bomChangeIds.Contains(bomChange.ChangeId))
                             {
                                 bomChange.MakeLive(appliedBy);
                             }
@@ -224,7 +224,7 @@
                             {
                                 allLive = false;
                             }
-                            else if (globalLive || selectedPcasChangeIds.Contains(pcasChange.ChangeId))
+                            else if (globalLive || pcasChangeIds.Contains(pcasChange.ChangeId))
                             {
                                 pcasChange.MakeLive(appliedBy);
                             }

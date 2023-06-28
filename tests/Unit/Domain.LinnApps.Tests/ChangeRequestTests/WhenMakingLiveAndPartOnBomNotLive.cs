@@ -11,7 +11,7 @@
 
     using NUnit.Framework;
 
-    public class WhenMakingLivePartOfChangeRequest : ContextBase
+    public class WhenMakingLiveAndPartOnBomNotLive : ContextBase
     {
         [SetUp]
         public void SetUp()
@@ -24,15 +24,15 @@
                                                 {
                                                     new BomChange
                                                         {
-                                                            ChangeId = 1, 
-                                                            ChangeState = "ACCEPT", 
+                                                            ChangeId = 1,
+                                                            ChangeState = "ACCEPT",
                                                             BomName = "ABOM",
                                                             Part = new Part { DateLive = DateTime.Today }
                                                         },
                                                     new BomChange
                                                         {
-                                                            ChangeId = 2, 
-                                                            ChangeState = "ACCEPT", 
+                                                            ChangeId = 2,
+                                                            ChangeState = "ACCEPT",
                                                             BomName = "BBOM",
                                                             Part = new Part { DateLive = DateTime.Today }
                                                         },

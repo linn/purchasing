@@ -9,6 +9,7 @@
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;
 
@@ -35,7 +36,12 @@
                                   DescriptionOfChange = "Test Change",
                                   BomChanges = new List<BomChange>
                                                    {
-                                                       new BomChange { ChangeId = 1, ChangeState = "ACCEPT" }
+                                                       new BomChange
+                                                           {
+                                                               ChangeId = 1, 
+                                                               ChangeState = "ACCEPT",
+                                                               Part = new Part { DateLive = DateTime.Today }
+                                                           }
                                                    }
                               };
             this.Repository.FindById(1).Returns(request);

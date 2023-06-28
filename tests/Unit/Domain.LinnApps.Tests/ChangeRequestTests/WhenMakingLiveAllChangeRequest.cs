@@ -1,11 +1,13 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeRequestTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NUnit.Framework;
 
@@ -20,9 +22,24 @@
                 ChangeState = "ACCEPT",
                 BomChanges = new List<BomChange>
                                                 {
-                                                    new BomChange { ChangeState = "ACCEPT", BomName = "ABOM" },
-                                                    new BomChange { ChangeState = "ACCEPT", BomName = "BBOM" },
-                                                    new BomChange { ChangeState = "LIVE", BomName = "CBOM" }
+                                                    new BomChange
+                                                        {
+                                                            ChangeState = "ACCEPT", 
+                                                            BomName = "ABOM",
+                                                            Part = new Part { DateLive = DateTime.Today }
+                                                        },
+                                                    new BomChange
+                                                        {
+                                                            ChangeState = "ACCEPT", 
+                                                            BomName = "BBOM",
+                                                            Part = new Part { DateLive = DateTime.Today }
+                                                        },
+                                                    new BomChange
+                                                        {
+                                                            ChangeState = "LIVE", 
+                                                            BomName = "CBOM",
+                                                            Part = new Part { DateLive = DateTime.Today }
+                                                        }
                                                 },
                 PcasChanges = new List<PcasChange>
                                                  {
