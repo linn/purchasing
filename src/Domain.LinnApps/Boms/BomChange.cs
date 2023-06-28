@@ -54,9 +54,8 @@
 
         public bool CanCancel() => this.ChangeState == "PROPOS" || this.ChangeState == "ACCEPT";
 
-        public bool CanMakeLive() => this.ChangeState == "ACCEPT" 
-                                     && (this.AddedBomDetails == null || this.AddedBomDetails.All(x => x.Part.DateLive.HasValue));
-
+        public bool CanMakeLive() => this.ChangeState == "ACCEPT";
+        
         public void Cancel(Employee cancelledBy)
         {
             if (this.CanCancel() && (cancelledBy != null))

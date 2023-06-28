@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
@@ -190,19 +191,28 @@
             if (this.CanMakeLive())
             {
                 var allLive = true;
-                var globalLive = !(selectedBomChangeIds?.Any() ?? false) && !(selectedPcasChangeIds?.Any() ?? false);
+                var bomChangeIds = selectedBomChangeIds?.ToList() ?? Enumerable.Empty<int>().ToList();
+                var pcasChangeIds = selectedPcasChangeIds?.ToList() ?? Enumerable.Empty<int>().ToList();
+                
+                var globalLive = !(bomChangeIds?.Any() ?? false) && !(pcasChangeIds?.Any() ?? false);
 
                 if (this.BomChanges != null)
                 {
                     foreach (var bomChange in this.BomChanges)
                     {
+                        if (bomChange.AddedBomDetails != null
+                            && bomChange.AddedBomDetails.Any(c => !c.Part.DateLive.HasValue))
+                        {
+                            var partsString = bomChange.AddedBomDetails.Where(x => !x.Part.DateLive.HasValue)
+                                .Select(x => x.PartNumber).Aggregate((x, y) => x + ", " + y);
+                            throw new InvalidStateChangeException(
+                                $"Cannot add Non live parts to bom: "
+                                + partsString);
+                        }
+
                         if (bomChange.CanMakeLive())
                         {
-                            if (selectedBomChangeIds == null && !allLive)
-                            {
-                                allLive = false;
-                            }
-                            else if (globalLive || selectedBomChangeIds.Contains(bomChange.ChangeId))
+                            if (globalLive || bomChangeIds.Contains(bomChange.ChangeId))
                             {
                                 bomChange.MakeLive(appliedBy);
                             }
@@ -224,7 +234,7 @@
                             {
                                 allLive = false;
                             }
-                            else if (globalLive || selectedPcasChangeIds.Contains(pcasChange.ChangeId))
+                            else if (globalLive || pcasChangeIds.Contains(pcasChange.ChangeId))
                             {
                                 pcasChange.MakeLive(appliedBy);
                             }
