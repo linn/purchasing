@@ -114,9 +114,9 @@
             {
                 return new NotFoundResult<ChangeRequestResource>("Change Request not found");
             }
-            catch (InvalidStateChangeException)
+            catch (InvalidStateChangeException e)
             {
-                return new BadRequestResult<ChangeRequestResource>("Cannot make this change request live");
+                return new BadRequestResult<ChangeRequestResource>(e.Message ?? "Cannot make this change request live");
             }
         }
 

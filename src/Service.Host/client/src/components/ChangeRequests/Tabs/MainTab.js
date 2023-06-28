@@ -14,6 +14,7 @@ import ReplaceChange from '../ChangeTypes/ReplaceChange';
 import ChangeState from '../ChangeState';
 import changeRequestActions from '../../../actions/changeRequestActions';
 import history from '../../../history';
+import changeRequestStatusChangeActions from '../../../actions/changeRequestStatusChangeActions';
 
 function MainTab({ item, approve }) {
     const reduxDispatch = useDispatch();
@@ -154,11 +155,12 @@ function MainTab({ item, approve }) {
                 <Grid item xs={12}>
                     <SaveBackCancelButtons
                         saveDisabled={!editUri}
-                        saveClick={() =>
+                        saveClick={() => {
                             reduxDispatch(
                                 changeRequestActions.update(updated.documentNumber, updated)
-                            )
-                        }
+                            );
+                            reduxDispatch(changeRequestStatusChangeActions.clearErrorsForItem());
+                        }}
                         cancelClick={() => {}}
                         backClick={() => {}}
                     />
