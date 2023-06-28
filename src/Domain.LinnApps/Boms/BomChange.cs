@@ -54,7 +54,8 @@
 
         public bool CanCancel() => this.ChangeState == "PROPOS" || this.ChangeState == "ACCEPT";
 
-        public bool CanMakeLive() => this.ChangeState == "ACCEPT";
+        public bool CanMakeLive() => this.ChangeState == "ACCEPT" 
+                                     && (this.AddedBomDetails == null || this.AddedBomDetails.All(x => x.Part.DateLive.HasValue));
 
         public void Cancel(Employee cancelledBy)
         {
@@ -97,17 +98,22 @@
             {
                 return $"Cancelled on {this.DateCancelled?.ToString("dd-MMM-yy")} by {this.CancelledBy?.FullName}";
             }
+
             if (this.ChangeState == "LIVE")
             {
                 return $"Live on {this.DateApplied?.ToString("dd-MMM-yy")} by {this.AppliedBy?.FullName}";
             }
+
             return $"Created on {this.DateEntered.ToString("dd-MMM-yy")} by {this.EnteredBy?.FullName}";
         }
 
         public IEnumerable<BomChangeDetail> BomChangeDetails()
         {
-            var addedChanges = this.AddedBomDetails == null ? new List<BomChangeDetail>() : this.AddedBomDetails.Select(a => new BomChangeDetail(a, null, this.DeletedBomDetails)).ToList();
-            var deletedChanges = this.DeletedBomDetails == null ? new List<BomChangeDetail>() : this.DeletedBomDetails.Where(d => d.DeleteReplaceSeq == null)
+            var addedChanges = this.AddedBomDetails == null ? new List<BomChangeDetail>() 
+                                   : this.AddedBomDetails
+                                       .Select(a => new BomChangeDetail(a, null, this.DeletedBomDetails)).ToList();
+            var deletedChanges = this.DeletedBomDetails == null ? new List<BomChangeDetail>() 
+                                     : this.DeletedBomDetails.Where(d => d.DeleteReplaceSeq == null)
                                      .Select(d => new BomChangeDetail(null, d, null)).ToList();
 
             if (!addedChanges.Any())
@@ -119,6 +125,7 @@
             {
                 return addedChanges;
             }
+
             return addedChanges.Concat(deletedChanges);
         }
     }
