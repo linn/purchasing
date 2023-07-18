@@ -12,6 +12,7 @@ import partSupplier from './partSupplier';
 import partSuppliers from './partSuppliers';
 import signingLimit from './signingLimit';
 import signingLimits from './signingLimits';
+import employee from './employee';
 import employees from './employees';
 import suppliers from './suppliers';
 import parts from './parts';
@@ -175,6 +176,7 @@ const rootReducer = history =>
         ediOrders,
         ediSuppliers,
         emailMultiplePurchaseOrders,
+        employee,
         employees,
         forecastWeekChangesReport,
         ledgerPeriods,

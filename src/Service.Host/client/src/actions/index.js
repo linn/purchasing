@@ -17,6 +17,8 @@ export const signingLimitsActionTypes = makeActionTypes(itemTypes.signingLimits.
 export const partSuppliersActionTypes = makeActionTypes(itemTypes.partSuppliers.actionType, false);
 export const partSupplierActionTypes = makeActionTypes(itemTypes.partSupplier.actionType);
 
+export const employeeActionTypes = makeActionTypes(itemTypes.employee.actionType);
+
 export const employeesActionTypes = makeActionTypes(itemTypes.employees.actionType);
 
 export const supplierActionTypes = makeActionTypes(itemTypes.supplier.actionType);

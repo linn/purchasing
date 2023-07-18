@@ -27,6 +27,8 @@ export const supplier = new ItemType('supplier', 'SUPPLIER', '/purchasing/suppli
 
 export const suppliers = new ItemType('suppliers', 'SUPPLIERS', '/purchasing/suppliers');
 
+export const employee = new ItemType('employee', 'EMPLOYEE', '/inventory/employees');
+
 export const employees = new ItemType('employees', 'EMPLOYEES', '/inventory/employees');
 
 export const parts = new ItemType('parts', 'PARTS', '/parts');
