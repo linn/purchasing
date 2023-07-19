@@ -136,7 +136,7 @@ BoardTab.defaultProps = {
     idBoard: null,
     defaultPcbNumber: null,
     variantOfBoardCode: null,
-    splitBom: null,
+    splitBom: 'N',
     creating: false
 };
 

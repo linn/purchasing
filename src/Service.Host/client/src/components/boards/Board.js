@@ -53,6 +53,15 @@ function Board({ creating }) {
     const [state, dispatch] = useReducer(boardReducer, { board: null });
     const itemError = useSelector(reduxState => getItemError(reduxState, 'board'));
 
+    const layout =
+        state.board.layouts && state.selectedLayout?.length
+            ? state.board.layouts.find(a => a.layoutCode === state.selectedLayout[0])
+            : null;
+    const revision =
+        layout && state.selectedRevision?.length && layout.revisions && layout.revisions.length
+            ? layout.revisions.find(a => a.revisionCode === state.selectedRevision[0])
+            : null;
+
     useEffect(() => {
         if (creating) {
             reduxDispatch(boardActions.clearItem());
@@ -158,6 +167,7 @@ function Board({ creating }) {
         state.board.description &&
         state.board.splitBom &&
         state.board.boardCode &&
+        revision.pcbPartNumber &&
         layoutsAreOk(state.board.layouts) &&
         revisionsAreOk(state.board.layouts);
 
