@@ -54,7 +54,7 @@ function Board({ creating }) {
     const itemError = useSelector(reduxState => getItemError(reduxState, 'board'));
 
     const layout =
-        state.board.layouts && state.selectedLayout?.length
+        state.board?.layouts && state.selectedLayout?.length
             ? state.board.layouts.find(a => a.layoutCode === state.selectedLayout[0])
             : null;
     const revision =
@@ -167,7 +167,6 @@ function Board({ creating }) {
         state.board.description &&
         state.board.splitBom &&
         state.board.boardCode &&
-        revision.pcbPartNumber &&
         layoutsAreOk(state.board.layouts) &&
         revisionsAreOk(state.board.layouts);
 
@@ -290,7 +289,9 @@ function Board({ creating }) {
                     )}
                     <Grid item xs={12}>
                         <SaveBackCancelButtons
-                            saveDisabled={!okToSave() || editStatus === 'view'}
+                            saveDisabled={
+                                !okToSave() || !revision?.pcbPartNumber || editStatus === 'view'
+                            }
                             saveClick={saveBoard}
                             cancelClick={handleCancel}
                             backClick={() => history.push('/purchasing/boms/boards')}
