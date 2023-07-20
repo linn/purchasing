@@ -267,6 +267,7 @@ function Board({ creating }) {
                         {selectedTab === 2 && (
                             <RevisionTab
                                 layouts={state.board.layouts}
+                                revision={revision}
                                 style={{ paddingTop: '40px' }}
                                 dispatch={dispatch}
                                 selectedLayout={state.selectedLayout}

@@ -15,7 +15,8 @@ function RevisionTab({
     searchParts,
     partsSearchResults,
     partsSearchLoading,
-    editingAllowed
+    editingAllowed,
+    revision
 }) {
     const columns = [{ field: 'revisionCode', headerName: 'Revision', width: 175 }];
     const rows =
@@ -26,15 +27,6 @@ function RevisionTab({
                   .find(a => a.layoutCode === selectedLayout[0])
                   .revisions.map(l => ({ ...l, id: l.revisionCode }))
             : [];
-
-    const layout =
-        layouts && selectedLayout?.length
-            ? layouts.find(a => a.layoutCode === selectedLayout[0])
-            : null;
-    const revision =
-        layout && selectedRevision?.length && layout.revisions && layout.revisions.length
-            ? layout.revisions.find(a => a.revisionCode === selectedRevision[0])
-            : null;
     const handleRevisionChange = (propertyName, newValue) => {
         if (editingAllowed) {
             setEditStatus('edit');
@@ -192,7 +184,16 @@ RevisionTab.propTypes = {
     partsSearchResults: PropTypes.arrayOf(PropTypes.shape({})),
     partsSearchLoading: PropTypes.bool,
     searchParts: PropTypes.func.isRequired,
-    editingAllowed: PropTypes.string
+    editingAllowed: PropTypes.string,
+    revision: PropTypes.shape({
+        pcbPartNumber: PropTypes.string,
+        pcasPartNumber: PropTypes.string,
+        creating: PropTypes.bool,
+        pcsmPartNumber: PropTypes.string,
+        revisionCode: PropTypes.string,
+        splitBom: PropTypes.string,
+        revisionNumber: PropTypes.string
+    })
 };
 
 RevisionTab.defaultProps = {
@@ -200,7 +201,8 @@ RevisionTab.defaultProps = {
     selectedRevision: [],
     partsSearchResults: [],
     partsSearchLoading: false,
-    editingAllowed: null
+    editingAllowed: null,
+    revision: null
 };
 
 export default RevisionTab;
