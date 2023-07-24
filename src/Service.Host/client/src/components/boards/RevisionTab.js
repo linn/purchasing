@@ -87,7 +87,7 @@ function RevisionTab({
                             <Grid item xs={8} />
                             <Grid item xs={3}>
                                 <Dropdown
-                                    value={revision.splitBom ?? 'No'}
+                                    value={revision.splitBom ?? 'Y'}
                                     label="Split Bom"
                                     propertyName="splitBom"
                                     items={[
