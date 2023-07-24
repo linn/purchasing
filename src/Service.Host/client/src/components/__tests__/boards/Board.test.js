@@ -112,10 +112,25 @@ describe('When editing...', () => {
         render(<Board />);
     });
     test('Shoud update values on save...', async () => {
-        const input = screen.getByLabelText('Description');
+        let input = screen.getByLabelText('Description');
         fireEvent.change(input, { target: { value: 'New description of 0123' } });
 
         const saveButton = await screen.findByRole('button', { name: 'Save' });
+
+        let tab = screen.getByText('Layouts');
+        fireEvent.click(tab);
+
+        let button = await screen.findByRole('button', { name: 'New Layout' });
+        fireEvent.click(button);
+
+        tab = screen.getByText('Revisions');
+        fireEvent.click(tab);
+
+        button = await screen.findByRole('button', { name: 'New Revision' });
+        fireEvent.click(button);
+
+        input = screen.getByLabelText('PCB Part Number');
+        fireEvent.change(input, { target: { value: 'Test' } });
         fireEvent.click(saveButton);
 
         expect(updateSpy).toHaveBeenCalledTimes(1);
@@ -146,6 +161,22 @@ describe('When creating...', () => {
         fireEvent.change(input, { target: { value: '456' } });
 
         const saveButton = await screen.findByRole('button', { name: 'Save' });
+
+        let tab = screen.getByText('Layouts');
+        fireEvent.click(tab);
+
+        let button = await screen.findByRole('button', { name: 'New Layout' });
+        fireEvent.click(button);
+
+        tab = screen.getByText('Revisions');
+        fireEvent.click(tab);
+
+        button = await screen.findByRole('button', { name: 'New Revision' });
+        fireEvent.click(button);
+
+        input = screen.getByLabelText('PCB Part Number');
+        fireEvent.change(input, { target: { value: 'Test' } });
+
         fireEvent.click(saveButton);
 
         expect(addSpy).toHaveBeenCalledTimes(1);
