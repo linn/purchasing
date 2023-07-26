@@ -362,11 +362,20 @@
 
         public Expression<Func<ChangeRequest, bool>> SearchExpression(string searchTerm, bool? outstanding, int? lastMonths)
         {
-            var fromDate = (lastMonths == null)
+            DateTime fromDate;
+
+            if (lastMonths == 0)
+            {
+                fromDate = DateTime.MinValue;
+            }
+            else
+            {
+                fromDate = lastMonths == null
                                ? DateTime.Now.AddMonths(-120)
                                : DateTime.Now.AddMonths(-1 * (int)lastMonths);
-            var inclLive = (outstanding == false) ? "LIVE" : "JUSTOUTSTANDING";
+            }
 
+            var inclLive = (outstanding == false) ? "LIVE" : "JUSTOUTSTANDING";
             var searchPartNumber = searchTerm.Trim().ToUpper();
             var partSearch = searchPartNumber.Split('*');
 
