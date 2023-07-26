@@ -200,7 +200,8 @@ function ChangeRequestSearch() {
                             { id: 'OUTSTANDING', displayText: 'Just Outstanding' },
                             { id: 3, displayText: 'Last 3 Months' },
                             { id: 6, displayText: 'Last 6 Months' },
-                            { id: 60, displayText: 'Last 5 Years' }
+                            { id: 60, displayText: 'Last 5 Years' },
+                            { id: 0, displayText: 'Forever (might be slow)' }
                         ]}
                         propertyName="changeType"
                         onChange={handleDropDownChange}
