@@ -177,7 +177,8 @@
                                        {
                                            SubAssembly = group.Key
                                        };
-                var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
+                var reportLayout = new SimpleGridLayout(
+                    this.reportingHelper, CalculationValueModelType.Value, null, null);
 
                 reportLayout.AddColumnComponent(
                     null,
@@ -283,7 +284,8 @@
             }
 
             var board1 = this.boardRepository.FindById(boardCode1.ToUpper());
-            var board2 = boardCode1.ToUpper() == boardCode2.ToUpper() ? board1 : this.boardRepository.FindById(boardCode2.ToUpper());
+            var board2 = boardCode1.ToUpper() == boardCode2.ToUpper() ? board1 
+                             : this.boardRepository.FindById(boardCode2.ToUpper());
 
             if (board1 == null || board2 == null)
             {
@@ -308,6 +310,7 @@
                                              new AxisDetailsModel("assemblyTech2", "As Tech", GridDisplayType.TextValue),
                                              new AxisDetailsModel("qty2", "Qty", GridDisplayType.TextValue)
                                          });
+
             var valueModels = new List<CalculationValueModel>();
 
             var removed = components1.ExceptBy(components2.Select(a => a.CRef), component => component.CRef);

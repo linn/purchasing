@@ -2,14 +2,18 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
 
     using Linn.Common.Domain.Exceptions;
     using Linn.Common.Facade;
+    using Linn.Common.Pdf;
     using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;
 
@@ -19,12 +23,20 @@
 
         private readonly IReportReturnResourceBuilder reportReturnResourceBuilder;
 
+        private readonly IHtmlTemplateService<BomCostReports> bomCostReportHtmlService;
+
+        private readonly IPdfService pdfService;
+
         public BomReportsFacadeService(
             IBomReportsService domainService,
-            IReportReturnResourceBuilder reportReturnResourceBuilder)
+            IReportReturnResourceBuilder reportReturnResourceBuilder,
+            IHtmlTemplateService<BomCostReports> bomCostReportHtmlService,
+            IPdfService pdfService)
         {
             this.domainService = domainService;
             this.reportReturnResourceBuilder = reportReturnResourceBuilder;
+            this.bomCostReportHtmlService = bomCostReportHtmlService;
+            this.pdfService = pdfService;
         }
 
         public IResult<ReportReturnResource> GetPartsOnBomReport(string bomName)
@@ -98,6 +110,22 @@
             }
 
             return new SuccessResult<ReportReturnResource>(this.reportReturnResourceBuilder.Build(result));
+        }
+
+        public Stream GetBomCostReportPdf(string bomName, bool splitBySubAssembly, int levels, decimal labourHourlyRate)
+        {
+            var data = new BomCostReports
+                           {
+                               BomCosts = this.domainService.GetBomCostReport(
+                                   bomName,
+                                   splitBySubAssembly,
+                                   levels,
+                                   labourHourlyRate)
+                           };
+
+            var html = this.bomCostReportHtmlService.GetHtml(data).Result;
+            var pdf = this.pdfService.ConvertHtmlToPdf(html, true).Result;
+            return pdf;
         }
     }
 }

@@ -1,0 +1,57 @@
+﻿@inherits RazorEngineCore.RazorEngineTemplateBase<Linn.Purchasing.Domain.LinnApps.Boms.Models.BomCostReports>
+@using Linn.Common.Reporting
+@{
+    <style>
+      body { font-family: Trebuchet, sans-serif; font-size: 12px; }
+
+      .logo { grid-area: logo; text-align: right;  }
+      .address { grid-area: address; }
+      .date  { grid-area: date; }
+       
+      .grid-container {
+        column-gap: 10px;
+        display: grid;
+        grid-template-areas:
+                           'logo address address address address date ';
+        padding: 10px;
+        padding-bottom: 50px;
+        row-gap: 20px;
+      }
+      .grid-item { text-align: right; }
+
+      .seven-column-grid-container {
+        column-gap: 10px;
+        display: grid;
+          grid-template-columns: auto auto auto auto auto auto auto;
+        row-gap: 10px;
+      }
+      .page { page-break-after: always; }
+    </style>
+
+    <div class="page">
+    @foreach (var sub in Model.BomCosts)
+        {
+          <h6>@sub.SubAssembly</h6>
+          <div class="seven-column-grid-container">
+            <div class="grid-item"><b>Part</b></div>
+            <div class="grid-item"><b>Desc</b></div>
+            <div class="grid-item"><b>Type</b></div>
+            <div class="grid-item"><b>Qty</b></div>
+            <div class="grid-item"><b>Std Price</b></div>
+            <div class="grid-item"><b>Mat Price</b></div>
+            <div class="grid-item"><b>Total Material</b></div>
+
+            @for (var i = 0; i < sub.Breakdown.RowCount(); i++)
+            {
+                <div class="grid-item">@sub.Breakdown.GetGridTextValue(i, 0)</div>
+                <div class="grid-item">@sub.Breakdown.GetGridTextValue(i, 1)</div>
+                <div class="grid-item">@sub.Breakdown.GetGridTextValue(i, 2)</div>
+                <div class="grid-item">@sub.Breakdown.GetGridValue(i, 3)</div>
+                <div class="grid-item">@sub.Breakdown.GetGridValue(i, 4)</div>
+                <div class="grid-item">@sub.Breakdown.GetGridValue(i, 5)</div>
+                <div class="grid-item">@sub.Breakdown.GetGridValue(i, 6)</div>
+            }
+          </div>
+        }
+    </div>
+}
