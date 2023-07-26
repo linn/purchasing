@@ -24,7 +24,8 @@
             var request = this.serviceDbContext
                 .ChangeRequests
                 .Include(c => c.BomChanges).ThenInclude(c => c.PhaseInWeek)
-                .Include(c => c.BomChanges).ThenInclude(c => c.AddedBomDetails)
+                .Include(c => c.BomChanges)
+                .ThenInclude(c => c.AddedBomDetails).ThenInclude(d => d.Part)
                 .Include(c => c.BomChanges).ThenInclude(c => c.DeletedBomDetails)
                 .Include(x => x.ProposedBy)
                 .Include(x => x.EnteredBy)

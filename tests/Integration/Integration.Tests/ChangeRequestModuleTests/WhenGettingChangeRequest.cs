@@ -9,6 +9,7 @@
 
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -46,7 +47,8 @@
                                                                               Qty = 1,
                                                                               GenerateRequirement = "N",
                                                                               AddChangeId = 1,
-                                                                              AddReplaceSeq = 1
+                                                                              AddReplaceSeq = 1,
+                                                                              Part = new Part { DateLive = DateTime.Today }
                                                                           }
                                                                   },
                                                               DeletedBomDetails = new List<BomDetail>

@@ -5,7 +5,9 @@ import {
     Page,
     Loading,
     itemSelectorHelpers,
-    utilities
+    utilities,
+    getItemError,
+    ErrorCard
 } from '@linn-it/linn-form-components-library';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -32,6 +34,9 @@ function ChangeRequest() {
 
     const item = useSelector(state => state[changeRequest.item].item);
     const loading = useSelector(state => state[changeRequest.item].loading);
+    const itemError = useSelector(reduxState =>
+        getItemError(reduxState, changeRequestStatusChange.item)
+    );
 
     useEffect(() => {
         if (!item || (item?.documentNumber && id.toString() !== item.documentNumber.toString())) {
@@ -125,6 +130,7 @@ function ChangeRequest() {
     const undoUri = utilities.getHref(item, 'undo');
 
     const cancel = request => {
+        reduxDispatch(changeRequestStatusChangeActions.clearErrorsForItem());
         if (request?.changeState === 'PROPOS' || request?.changeState === 'ACCEPT') {
             reduxDispatch(
                 changeRequestStatusChangeActions.add({
@@ -138,6 +144,7 @@ function ChangeRequest() {
     };
 
     const makeLive = request => {
+        reduxDispatch(changeRequestStatusChangeActions.clearErrorsForItem());
         reduxDispatch(changeRequestStatusChangeActions.clearItem());
         if (request?.changeState === 'ACCEPT') {
             reduxDispatch(
@@ -152,6 +159,8 @@ function ChangeRequest() {
     };
 
     const undo = request => {
+        reduxDispatch(changeRequestStatusChangeActions.clearErrorsForItem());
+
         if (request?.changeState === 'ACCEPT' || request?.changeState === 'LIVE') {
             reduxDispatch(
                 changeRequestStatusChangeActions.add({
@@ -245,6 +254,13 @@ function ChangeRequest() {
                 <Loading />
             ) : (
                 <Grid container spacing={2} justifyContent="center">
+                    {itemError && (
+                        <Grid item xs={12} style={{ maxHeight: '200px' }} overflow="scroll">
+                            <ErrorCard
+                                errorMessage={itemError.details?.error || itemError.details}
+                            />
+                        </Grid>
+                    )}
                     {item?.bomChanges && (
                         <>
                             <Grid item xs={10} />
