@@ -6,9 +6,11 @@
 
     using Linn.Common.Authorisation;
     using Linn.Common.Facade;
+    using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Edi;
@@ -75,6 +77,13 @@
 
         protected IPcasPack PcasPack { get; private set; }
 
+        protected IHtmlTemplateService<BomCostReports> BomCostReportsHtmlService
+        {
+            get; private set;
+        }
+
+        protected IPdfService PdfService { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -100,7 +109,9 @@
 
             this.BomReportsFacadeService = new BomReportsFacadeService(
                 this.MockBomReportsDomainService,
-                new ReportReturnResourceBuilder());
+                new ReportReturnResourceBuilder(),
+                this.BomCostReportsHtmlService,
+                this.PdfService);
             this.BoardComponentSummaryFacadeService = new BoardComponentSummaryFacadeService(
                 this.BoardComponentSummaryRepository,
                 new BoardComponentSummaryResourceBuilder(),
