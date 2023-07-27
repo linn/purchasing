@@ -117,7 +117,7 @@
             var data = new BomCostReports
                            {
                                BomCosts = this.domainService.GetBomCostReport(
-                                   bomName,
+                                   bomName.ToUpper().Trim(),
                                    splitBySubAssembly,
                                    levels,
                                    labourHourlyRate)
