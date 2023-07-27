@@ -2,8 +2,11 @@
 {
     using System.Net.Http;
 
+    using Linn.Common.Pdf;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Service.Modules.Reports;
@@ -24,11 +27,24 @@
 
         protected IBomReportsService DomainService { get; private set; }
 
+        protected IHtmlTemplateService<BomCostReports> BomCostReportsHtmlService
+        {
+            get; private set;
+        }
+
+        protected IPdfService PdfService { get; private set; }
+
         [SetUp]
         public void EstablishContext()
         {
             this.DomainService = Substitute.For<IBomReportsService>();
-            this.FacadeService = new BomReportsFacadeService(this.DomainService, new ReportReturnResourceBuilder());
+            this.PdfService = Substitute.For<IPdfService>();
+            this.BomCostReportsHtmlService = Substitute.For<IHtmlTemplateService<BomCostReports>>();
+            this.FacadeService = new BomReportsFacadeService(
+                this.DomainService, 
+                new ReportReturnResourceBuilder(),
+                this.BomCostReportsHtmlService,
+                this.PdfService);
 
             this.Client = TestClient.With<BomReportsModule>(
                 services =>

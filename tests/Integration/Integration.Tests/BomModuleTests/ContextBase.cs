@@ -98,7 +98,8 @@
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.BomTreeService = Substitute.For<IBomTreeService>();
             this.AuthorisationService = Substitute.For<IAuthorisationService>();
-
+            this.PdfService = Substitute.For<IPdfService>();
+            this.BomCostReportsHtmlService = Substitute.For<IHtmlTemplateService<BomCostReports>>();
             this.FacadeService = new BomFacadeService(
                 this.BomChangeService, this.TransactionManager, this.BomTreeService);
             this.DatabaseService = Substitute.For<IDatabaseService>();
