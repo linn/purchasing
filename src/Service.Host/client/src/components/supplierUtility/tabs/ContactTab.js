@@ -24,16 +24,16 @@ function ContactTab({ contacts, updateContact, addContact, deleteContacts }) {
         { field: 'emailAddress', headerName: 'Email', width: 400, editable: true },
         {
             field: 'isMainOrderContact',
-            headerName: 'Main Order Contact',
-            width: 150,
+            headerName: 'Main Order',
+            width: 100,
             type: 'singleSelect',
             valueOptions: ['Y', 'N'],
             editable: true
         },
         {
             field: 'isMainInvoiceContact',
-            headerName: 'Main Invoice Contact',
-            width: 150,
+            headerName: 'Main Invoice',
+            width: 100,
             type: 'singleSelect',
             valueOptions: ['Y', 'N'],
             editable: true
