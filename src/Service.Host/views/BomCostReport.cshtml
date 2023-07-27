@@ -9,13 +9,15 @@
           grid-template-columns: auto auto auto auto auto auto auto;
         row-gap: 10px;
       }
+      .grid-item { text-align: right; }
+
       .page { page-break-after: always; }
     </style>
 
     <div class="page">
     @foreach (var sub in Model.BomCosts)
         {
-          <h6>@sub.SubAssembly</h6>
+          <h4>@sub.SubAssembly</h4>
           <div class="seven-column-grid-container">
             <div class="grid-item"><b>Part</b></div>
             <div class="grid-item"><b>Desc</b></div>
@@ -30,11 +32,18 @@
                 <div class="grid-item">@sub.Breakdown.GetGridTextValue(i, 0)</div>
                 <div class="grid-item">@sub.Breakdown.GetGridTextValue(i, 1)</div>
                 <div class="grid-item">@sub.Breakdown.GetGridTextValue(i, 2)</div>
-                <div class="grid-item">@sub.Breakdown.GetGridValue(i, 3)</div>
                 <div class="grid-item">@sub.Breakdown.GetGridValue(i, 4)</div>
                 <div class="grid-item">@sub.Breakdown.GetGridValue(i, 5)</div>
                 <div class="grid-item">@sub.Breakdown.GetGridValue(i, 6)</div>
+                <div class="grid-item">@sub.Breakdown.GetGridValue(i, 7)</div>
             }
+            <div class="grid-item" />
+            <div class="grid-item" />
+            <div class="grid-item" />
+            <div class="grid-item">Std. Total</div>
+            <div class="grid-item">@sub.StandardTotal</div>
+            <div class="grid-item">Mat. Total</div>
+            <div class="grid-item">@sub.MaterialTotal</div>
           </div>
         }
     </div>
