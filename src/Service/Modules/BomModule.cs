@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.IO;
+    using System.Net.Mime;
     using System.Threading.Tasks;
 
     using Carter;
@@ -19,6 +20,8 @@
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Routing;
+
+    using ContentDisposition = MimeKit.ContentDisposition;
 
     public class BomModule : ICarterModule
     {
@@ -46,6 +49,7 @@
 
             app.MapGet("/purchasing/boms/reports/cost/options", this.GetApp);
             app.MapGet("/purchasing/boms/reports/cost", this.GetBomCostReport);
+            app.MapGet("/purchasing/boms/reports/cost/pdf", this.GetBomCostReportPdf);
 
             app.MapPost("/purchasing/boms/tree", this.PostBomTree);
 
@@ -248,6 +252,21 @@
             }
 
             await res.Negotiate(result);
+        }
+
+        private async Task GetBomCostReportPdf(
+            HttpRequest req,
+            HttpResponse res,
+            string bomName,
+            bool splitBySubAssembly,
+            int levels,
+            decimal labourHourlyRate,
+            IBomReportsFacadeService facadeService)
+        {
+            await res.FromStream(
+                facadeService.GetBomCostReportPdf(bomName, splitBySubAssembly, levels, labourHourlyRate),
+                "application.pdf",
+                new System.Net.Mime.ContentDisposition("attachment"));
         }
 
         private async Task CopyBom(

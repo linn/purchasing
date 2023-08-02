@@ -21,7 +21,7 @@
         }
 
         [Test]
-        public void ShouldBeCancelled()
+        public void ShouldBeLive()
         {
             this.Sut.ChangeState.Should().Be("LIVE");
             this.Sut.DateApplied.Should().NotBeNull();

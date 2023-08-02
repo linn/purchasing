@@ -19,21 +19,21 @@ function ContactTab({ contacts, updateContact, addContact, deleteContacts }) {
 
         { field: 'firstName', headerName: 'First Name', width: 200, editable: true },
         { field: 'lastName', headerName: 'Last Name', width: 200, editable: true },
-        { field: 'jobTitle', headerName: 'Job Title', width: 200, editable: true },
-        { field: 'phoneNumber', headerName: 'Phone', width: 150, editable: true },
-        { field: 'emailAddress', headerName: 'Email', width: 150, editable: true },
+        { field: 'jobTitle', headerName: 'Job Title', width: 200, editable: true, hide: true },
+        { field: 'phoneNumber', headerName: 'Phone', width: 150, editable: true, hide: true },
+        { field: 'emailAddress', headerName: 'Email', width: 400, editable: true },
         {
             field: 'isMainOrderContact',
-            headerName: 'Main Order Contact',
-            width: 150,
+            headerName: 'Main Order',
+            width: 100,
             type: 'singleSelect',
             valueOptions: ['Y', 'N'],
             editable: true
         },
         {
             field: 'isMainInvoiceContact',
-            headerName: 'Main Invoice Contact',
-            width: 150,
+            headerName: 'Main Invoice',
+            width: 100,
             type: 'singleSelect',
             valueOptions: ['Y', 'N'],
             editable: true

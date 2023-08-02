@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
     using System.Collections.Generic;
+    using System.IO;
 
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Resources.ReportResultResources;
@@ -22,5 +23,11 @@
         IResult<ReportReturnResource> GetBoardDifferenceReport(BomDifferenceReportRequestResource resource);
 
         IResult<ReportReturnResource> GetBoardComponentSummaryReport(BoardComponentSummaryReportRequestResource resource);
+
+        Stream GetBomCostReportPdf(
+            string bomName,
+            bool splitBySubAssembly,
+            int levels,
+            decimal labourHourlyRate);
     }
 }

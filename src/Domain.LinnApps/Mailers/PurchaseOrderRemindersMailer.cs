@@ -69,7 +69,7 @@
             body += "Linn Products Ltd";
 
             this.emailService.SendEmail(
-                toAddress, 
+                toAddress.Trim(), 
                 supplier.Name, 
                 null, 
                 null, 
