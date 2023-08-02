@@ -200,16 +200,6 @@
                 {
                     foreach (var bomChange in this.BomChanges)
                     {
-                        if (bomChange.AddedBomDetails != null
-                            && bomChange.AddedBomDetails.Any(c => !c.Part.DateLive.HasValue))
-                        {
-                            var partsString = bomChange.AddedBomDetails.Where(x => !x.Part.DateLive.HasValue)
-                                .Select(x => x.PartNumber).Aggregate((x, y) => x + ", " + y);
-                            throw new InvalidStateChangeException(
-                                $"Cannot add Non live parts to bom: "
-                                + partsString);
-                        }
-
                         if (bomChange.CanMakeLive())
                         {
                             if (globalLive || bomChangeIds.Contains(bomChange.ChangeId))
