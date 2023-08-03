@@ -49,6 +49,7 @@
             return this.serviceDbContext
                 .PurchaseOrders
                 .Include(o => o.Supplier).ThenInclude(s => s.SupplierContacts)
+                .Include(p => p.Supplier).ThenInclude(t => t.InvoiceGoesTo)
                 .Include(o => o.Supplier).ThenInclude(s => s.AccountController).ThenInclude(e => e.PhoneListEntry)
                 .Include(o => o.RequestedBy).ThenInclude(s => s.PhoneListEntry)
                 .Include(o => o.EnteredBy)
