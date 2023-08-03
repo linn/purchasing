@@ -251,6 +251,10 @@
                 .AddTransient<IHtmlTemplateService<PlCreditDebitNote>>(x =>
                     new HtmlTemplateService<PlCreditDebitNote>(
                         $"{ConfigurationManager.Configuration["VIEWS_ROOT"]}PlCreditDebitNote.cshtml",
+                        x.GetService<ITemplateEngine>()))
+                .AddTransient<IHtmlTemplateService<BomCostReports>>(x =>
+                    new HtmlTemplateService<BomCostReports>(
+                        $"{ConfigurationManager.Configuration["VIEWS_ROOT"]}BomCostReport.cshtml",
                         x.GetService<ITemplateEngine>()));
         }
     }

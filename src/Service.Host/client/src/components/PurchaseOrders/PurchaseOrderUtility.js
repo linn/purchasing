@@ -1356,13 +1356,7 @@ function PurchaseOrderUtility({ creating }) {
                                                                         }
                                                                         color="primary"
                                                                         variant="contained"
-                                                                        disabled={
-                                                                            !creating &&
-                                                                            (!allowedToUpdate() ||
-                                                                                lineItemsReceived(
-                                                                                    detail.lineNumber
-                                                                                ))
-                                                                        }
+                                                                        disabled
                                                                         onClick={() =>
                                                                             setOverridingOrderQty(
                                                                                 true
@@ -1461,13 +1455,7 @@ function PurchaseOrderUtility({ creating }) {
                                                                         }
                                                                         color="primary"
                                                                         variant="contained"
-                                                                        disabled={
-                                                                            !creating &&
-                                                                            (!allowedToUpdate() ||
-                                                                                lineItemsReceived(
-                                                                                    detail.lineNumber
-                                                                                ))
-                                                                        }
+                                                                        disabled
                                                                         onClick={() =>
                                                                             setOverridingOrderPrice(
                                                                                 true

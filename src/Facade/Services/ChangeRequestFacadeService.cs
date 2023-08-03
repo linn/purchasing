@@ -59,7 +59,7 @@
             {
                 var request = this.changeRequestService.Approve(documentNumber, privileges);
                 this.transactionManager.Commit();
-                var resource = (ChangeRequestResource) this.resourceBuilder.Build(request, new List<string>());
+                var resource = (ChangeRequestResource)this.resourceBuilder.Build(request, new List<string>());
                 return new SuccessResult<ChangeRequestResource>(resource);
             }
             catch (ItemNotFoundException)
@@ -114,9 +114,9 @@
             {
                 return new NotFoundResult<ChangeRequestResource>("Change Request not found");
             }
-            catch (InvalidStateChangeException)
+            catch (InvalidStateChangeException e)
             {
-                return new BadRequestResult<ChangeRequestResource>("Cannot make this change request live");
+                return new BadRequestResult<ChangeRequestResource>(e.Message ?? "Cannot make this change request live");
             }
         }
 

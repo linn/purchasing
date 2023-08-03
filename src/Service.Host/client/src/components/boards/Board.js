@@ -53,6 +53,15 @@ function Board({ creating }) {
     const [state, dispatch] = useReducer(boardReducer, { board: null });
     const itemError = useSelector(reduxState => getItemError(reduxState, 'board'));
 
+    const layout =
+        state.board?.layouts && state.selectedLayout?.length
+            ? state.board.layouts.find(a => a.layoutCode === state.selectedLayout[0])
+            : null;
+    const revision =
+        layout && state.selectedRevision?.length && layout.revisions && layout.revisions.length
+            ? layout.revisions.find(a => a.revisionCode === state.selectedRevision[0])
+            : null;
+
     useEffect(() => {
         if (creating) {
             reduxDispatch(boardActions.clearItem());
@@ -257,6 +266,7 @@ function Board({ creating }) {
                         {selectedTab === 2 && (
                             <RevisionTab
                                 layouts={state.board.layouts}
+                                revision={revision}
                                 style={{ paddingTop: '40px' }}
                                 dispatch={dispatch}
                                 selectedLayout={state.selectedLayout}
@@ -279,7 +289,9 @@ function Board({ creating }) {
                     )}
                     <Grid item xs={12}>
                         <SaveBackCancelButtons
-                            saveDisabled={!okToSave() || editStatus === 'view'}
+                            saveDisabled={
+                                !okToSave() || !revision?.pcbPartNumber || editStatus === 'view'
+                            }
                             saveClick={saveBoard}
                             cancelClick={handleCancel}
                             backClick={() => history.push('/purchasing/boms/boards')}

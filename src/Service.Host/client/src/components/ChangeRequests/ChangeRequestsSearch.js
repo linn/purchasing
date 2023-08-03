@@ -11,10 +11,8 @@ import {
 import { makeStyles } from '@mui/styles';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { DataGrid } from '@mui/x-data-grid';
-import { Link as RouterLink } from 'react-router-dom';
 import changeRequestsActions from '../../actions/changeRequestsActions';
 import ChangeState from './ChangeState';
 import history from '../../history';
@@ -51,28 +49,21 @@ function ChangeRequestSearch() {
     useEffect(() => {
         dispatch(changeRequestsActions.clearSearch());
     }, [dispatch]);
-
-    const getUrl = item => {
-        const base = utilities.getSelfHref(item);
-        const searchResultsQueryString = searchRequestsResults
-            ?.map(s => s.documentNumber)
-            .reverse()
-            .join();
-        if (!searchRequestsResults?.length) {
-            return base;
-        }
-        return `${base}?searchResults=${searchResultsQueryString}`;
-    };
-
+    const searchResults = searchRequestsResults?.map(s => s.documentNumber.toString()).reverse();
     const columns = [
         {
             field: 'documentNumber',
             headerName: 'CRF',
             width: 100,
             renderCell: params => (
-                <Link className={classes.a} component={RouterLink} to={getUrl(params.row)}>
+                <Button
+                    className={classes.a}
+                    onClick={() =>
+                        history.push(utilities.getSelfHref(params.row), { searchResults })
+                    }
+                >
                     {params.row.documentNumber}
-                </Link>
+                </Button>
             )
         },
         {
@@ -209,7 +200,8 @@ function ChangeRequestSearch() {
                             { id: 'OUTSTANDING', displayText: 'Just Outstanding' },
                             { id: 3, displayText: 'Last 3 Months' },
                             { id: 6, displayText: 'Last 6 Months' },
-                            { id: 60, displayText: 'Last 5 Years' }
+                            { id: 60, displayText: 'Last 5 Years' },
+                            { id: 0, displayText: 'Forever (might be slow)' }
                         ]}
                         propertyName="changeType"
                         onChange={handleDropDownChange}

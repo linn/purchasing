@@ -1,7 +1,13 @@
 import React, { Fragment, useState } from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import { Page, Title, Loading, ReportTable } from '@linn-it/linn-form-components-library';
+import {
+    Page,
+    Title,
+    Loading,
+    ReportTable,
+    ExportButton
+} from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import queryString from 'query-string';
@@ -36,10 +42,26 @@ function BomCostReport() {
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
-                <Grid item xs={12}>
+                <Grid item xs={10}>
                     <Title text="Bom Cost Report" />
                 </Grid>
-
+                <Grid item xs={12}>
+                    <ExportButton
+                        disabled={!reportData}
+                        buttonText="PDF"
+                        href={`${
+                            config.appRoot
+                        }/purchasing/boms/reports/cost/pdf?${queryString.stringify({
+                            bomName,
+                            splitBySubAssembly: true,
+                            levels: 999,
+                            labourHourlyRate: 15
+                        })}`}
+                        tooltipText="Download a pdf version of this report"
+                        accept="application/pdf"
+                        fileName="bom-cost.pdf"
+                    />
+                </Grid>
                 <Grid item xs={3}>
                     <Button
                         variant="contained"
