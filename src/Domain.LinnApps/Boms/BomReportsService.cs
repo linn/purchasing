@@ -52,7 +52,7 @@
                 null,
                 new List<AxisDetailsModel>
                     {
-                        new("Qty", "Qty",  GridDisplayType.Value) { DecimalPlaces = 5 },
+                        new("Qty", "Qty", GridDisplayType.Value) { DecimalPlaces = 5 },
                         new("Units", "Units", GridDisplayType.TextValue),
                         new("PartNumber", "Part Number",  GridDisplayType.TextValue),
                         new("Description", "Description",  GridDisplayType.TextValue),
@@ -364,43 +364,44 @@
 
             foreach (var crefGroup in crefGroups)
             {
-                if (crefGroup.Count() == 2 && crefGroup.First().PartNumber != crefGroup.Last().PartNumber)
+                var crefGroupOrdered = crefGroup.OrderBy(a => a.BoardLine).ToList();
+                if (crefGroupOrdered.Count >= 2 && crefGroupOrdered.First().PartNumber != crefGroupOrdered.Last().PartNumber)
                 {
                     valueModels.Add(new CalculationValueModel
                                    {
                                        RowId = crefGroup.Key,
                                        ColumnId = "partNumber1",
-                                       TextDisplay = crefGroup.First().PartNumber
+                                       TextDisplay = crefGroupOrdered.First().PartNumber
                     });
                     valueModels.Add(new CalculationValueModel
                                    {
                                        RowId = crefGroup.Key,
                                        ColumnId = "assemblyTech1",
-                                       TextDisplay = crefGroup.First().AssemblyTechnology
+                                       TextDisplay = crefGroupOrdered.First().AssemblyTechnology
                                    });
                     valueModels.Add(new CalculationValueModel
                                    {
                                        RowId = crefGroup.Key,
                                        ColumnId = "qty1",
-                                       TextDisplay = crefGroup.First().Quantity.ToString("F1")
+                                       TextDisplay = crefGroupOrdered.First().Quantity.ToString("F1")
                                    });
                     valueModels.Add(new CalculationValueModel
                                    {
                                        RowId = crefGroup.Key,
                                        ColumnId = "partNumber2",
-                                       TextDisplay = crefGroup.Last().PartNumber
+                                       TextDisplay = crefGroupOrdered.Last().PartNumber
                                    });
                     valueModels.Add(new CalculationValueModel
                                    {
                                        RowId = crefGroup.Key,
                                        ColumnId = "assemblyTech2",
-                                       TextDisplay = crefGroup.Last().AssemblyTechnology
+                                       TextDisplay = crefGroupOrdered.Last().AssemblyTechnology
                                    });
                     valueModels.Add(new CalculationValueModel
                                    {
                                        RowId = crefGroup.Key,
                                        ColumnId = "qty2",
-                                       TextDisplay = crefGroup.Last().Quantity.ToString("F1")
+                                       TextDisplay = crefGroupOrdered.Last().Quantity.ToString("F1")
                                    });
                 }
             }
