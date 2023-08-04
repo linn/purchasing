@@ -52,7 +52,7 @@
                 null,
                 new List<AxisDetailsModel>
                     {
-                        new("Qty", "Qty",  GridDisplayType.Value) { DecimalPlaces = 5 },
+                        new("Qty", "Qty", GridDisplayType.Value) { DecimalPlaces = 5 },
                         new("Units", "Units", GridDisplayType.TextValue),
                         new("PartNumber", "Part Number",  GridDisplayType.TextValue),
                         new("Description", "Description",  GridDisplayType.TextValue),
@@ -364,7 +364,7 @@
 
             foreach (var crefGroup in crefGroups)
             {
-                if (crefGroup.Count() == 2 && crefGroup.First().PartNumber != crefGroup.Last().PartNumber)
+                if (crefGroup.Count() >= 2 && crefGroup.First().PartNumber != crefGroup.Last().PartNumber)
                 {
                     valueModels.Add(new CalculationValueModel
                                    {
