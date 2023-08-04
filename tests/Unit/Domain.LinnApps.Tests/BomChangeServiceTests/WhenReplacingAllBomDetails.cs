@@ -27,7 +27,8 @@
             this.BomDetailRepository.FindById(3).Returns(detail3);
 
             var details = new List<BomDetail> { detail1, detail2, detail3 };
-            this.BomDetailRepository.FilterBy(Arg.Any <Expression<Func<BomDetail, bool>>>()).Returns(details.AsQueryable());
+            this.BomDetailRepository.FilterBy(Arg.Any<Expression<Func<BomDetail, bool>>>())
+                .Returns(details.AsQueryable());
 
             var bom1 = new Bom { BomId = 1, Part = new Part { PartNumber = "ASS 007" } };
             var bom2 = new Bom { BomId = 2, Part = new Part { PartNumber = "ASS 007" } };

@@ -23,7 +23,7 @@
             this.detail = new BomDetail { DetailId = 1, PartNumber = "OLD 001", Qty = 1, BomId = 1 };
             this.BomDetailRepository.FindById(1).Returns(this.detail);
 
-            this.bom = new Bom {BomId = 1, Part = new Part {PartNumber = "ASS 007"}};
+            this.bom = new Bom { BomId = 1, Part = new Part { PartNumber = "ASS 007" } };
             this.BomRepository.FindById(1).Returns(this.bom);
 
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(12);
@@ -33,8 +33,8 @@
                                    DocumentNumber = 1,
                                    ChangeState = "PROPOS",
                                    ChangeRequestType = "REPLACE",
-                                   OldPart = new Part {PartNumber = "OLD 001"},
-                                   NewPart = new Part {PartNumber = "NEW 002"}
+                                   OldPart = new Part { PartNumber = "OLD 001" },
+                                   NewPart = new Part { PartNumber = "NEW 002" }
                                };
 
 
