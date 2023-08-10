@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text.RegularExpressions;
 
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
@@ -390,7 +391,8 @@
                     existingSupplierContact.IsMainOrderContact = supplierContact.IsMainOrderContact;
 
                     existingSupplierContact.PhoneNumber = supplierContact.PhoneNumber;
-                    existingSupplierContact.EmailAddress = supplierContact.EmailAddress;
+                    existingSupplierContact.EmailAddress = string.IsNullOrEmpty(supplierContact.EmailAddress) 
+                        ? null : Regex.Replace(supplierContact.EmailAddress, @"\s+", string.Empty);
                     existingSupplierContact.JobTitle = supplierContact.JobTitle;
                     existingSupplierContact.Comments = supplierContact.Comments;
                     var person = this.personRepository.FindById(supplierContact.Person.Id);
