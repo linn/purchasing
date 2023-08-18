@@ -125,7 +125,7 @@
 
                 reportLayout.SetGridData(values);
                 var partSupplier = group.First().PartSupplierRecord;
-                reportLayout.ReportTitle = $"{partSupplier.PartNumber} - "
+                reportLayout.ReportTitle = $"{partSupplier.PartNumber} - {partSupplier.Part.Description} - "
                                            + $"UOM: {partSupplier.Part.OurUnitOfMeasure} - "
                                            + $"LEAD TIME: {partSupplier.LeadTimeWeeks} WEEKS";
 
