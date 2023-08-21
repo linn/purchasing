@@ -49,7 +49,6 @@ function PurchaseOrdersSearch() {
         )
     );
     const [orderNumber, setOrderNumber] = useState('');
-    const search = () => history.push(`/purchasing/purchase-orders/${orderNumber}/`);
     const applicationState = useSelector(reduxState =>
         itemSelectorHelpers.getApplicationState(reduxState.purchaseOrders)
     );
@@ -78,7 +77,7 @@ function PurchaseOrdersSearch() {
                         textFieldProps={{
                             onKeyDown: data => {
                                 if (data.keyCode === 13 || data.keyCode === 9) {
-                                    search();
+                                    history.push(`/purchasing/purchase-orders/${orderNumber}/`);
                                 }
                             }
                         }}
@@ -89,7 +88,7 @@ function PurchaseOrdersSearch() {
                         variant="outlined"
                         color="primary"
                         className={classes.button}
-                        onClick={search}
+                        onClick={() => history.push(`/purchasing/purchase-orders/${orderNumber}/`)}
                     >
                         Go
                     </Button>
