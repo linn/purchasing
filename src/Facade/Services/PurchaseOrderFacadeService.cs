@@ -398,8 +398,7 @@
                     || x.InternalComments.ToUpper().Contains(searchResource.SearchTerm.Trim().ToUpper()));
             }
 
-            return x => x.OrderNumber.ToString().Equals(searchResource.OrderNumber)
-                || x.Details.Any();
+            return x => x.OrderNumber.ToString().Equals(searchResource.OrderNumber);
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> FindExpression(
