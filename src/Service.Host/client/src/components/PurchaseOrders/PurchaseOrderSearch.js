@@ -22,7 +22,7 @@ import purchaseOrdersActions from '../../actions/purchaseOrdersActions';
 import history from '../../history';
 import config from '../../config';
 
-function PurchaseOrderLookUp() {
+function PurchaseOrderSearch() {
     const useStyles = makeStyles(theme => ({
         button: {
             marginLeft: theme.spacing(1),
@@ -127,4 +127,4 @@ function PurchaseOrderLookUp() {
     );
 }
 
-export default PurchaseOrderLookUp;
+export default PurchaseOrderSearch;
