@@ -391,7 +391,15 @@
                     && a.OrderDate <= DateTime.Parse(searchResource.EndDate);
             }
 
-            return x => x.OrderNumber.ToString().Equals(searchResource.OrderNumber);
+            if (!string.IsNullOrEmpty(searchResource.SearchTerm))
+            {
+                return a => a.Details.Any(
+                    x => x.SuppliersDesignation.ToUpper().Contains(searchResource.SearchTerm.Trim().ToUpper())
+                    || x.InternalComments.ToUpper().Contains(searchResource.SearchTerm.Trim().ToUpper()));
+            }
+
+            return x => x.OrderNumber.ToString().Equals(searchResource.OrderNumber)
+                || x.Details.Any();
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> FindExpression(
