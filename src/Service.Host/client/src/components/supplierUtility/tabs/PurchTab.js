@@ -31,7 +31,8 @@ function PurchTab({
     openHoldDialog,
     bulkUpdateLeadTimesUrl,
     groupId,
-    receivesPurchaseOrderReminders
+    receivesPurchaseOrderReminders,
+    printTerms
 }) {
     const reduxDispatch = useDispatch();
 
@@ -201,6 +202,13 @@ function PurchTab({
                     }
                 />
             </Grid>
+            <Grid item xs={12}>
+                <CheckboxWithLabel
+                    label="Ts and Cs are printed on Order pdfs"
+                    checked={printTerms}
+                    onChange={() => handleFieldChange('printTerms', !printTerms)}
+                />
+            </Grid>
             <Grid item xs={3}>
                 <InputField
                     fullWidth
@@ -255,7 +263,8 @@ PurchTab.propTypes = {
     openHoldDialog: PropTypes.func.isRequired,
     bulkUpdateLeadTimesUrl: PropTypes.string,
     groupId: PropTypes.number,
-    receivesPurchaseOrderReminders: PropTypes.bool.isRequired
+    receivesPurchaseOrderReminders: PropTypes.bool.isRequired,
+    printTerms: PropTypes.bool.isRequired
 };
 
 PurchTab.defaultProps = {

@@ -90,6 +90,7 @@
                                    ? (AddressResource)this.addressResourceBuilder.Build(entity.OrderAddress, new List<string>())
                                    : null,
                            ReceivesPurchaseOrderReminders = entity.ReceivesOrderReminders == "Y",
+                           PrintTerms = entity.PrintTerms == "Y",
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }
