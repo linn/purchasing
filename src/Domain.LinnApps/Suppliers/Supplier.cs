@@ -87,5 +87,7 @@
         public SupplierGroup Group { get; set; }
 
         public string ReceivesOrderReminders { get; set; }
+
+        public string PrintTerms { get; set; }
     }
 }
