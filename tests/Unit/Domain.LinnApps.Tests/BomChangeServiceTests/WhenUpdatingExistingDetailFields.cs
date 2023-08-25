@@ -58,7 +58,7 @@
             this.BomChangeRepository.FindBy(Arg.Any<Expression<Func<BomChange, bool>>>())
                 .Returns(new BomChange { ChangeId = 666, DocumentNumber = 100 });
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(new Part { DecrementRule = "YES", BomType = "C" });
+                .Returns(new Part { DecrementRule = "YES", BomType = "A" });
             this.Sut.ProcessTreeUpdate(tree, 100, 33087);
         }
 

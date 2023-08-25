@@ -6,6 +6,7 @@
     using System.Linq.Expressions;
 
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NSubstitute;
 
@@ -33,6 +34,8 @@
                                   ChangeState = "PROPOS",
                                   BomId = 123
                               };
+            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
+                .Returns(new Part { PartNumber = "BOM", BomType = "A", DecrementRule = "YES" });
             this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(this.destBom);
             this.BomChangeRepository.FilterBy(Arg.Any<Expression<Func<BomChange, bool>>>()).Returns(
                 new List<BomChange> { this.change }.AsQueryable());

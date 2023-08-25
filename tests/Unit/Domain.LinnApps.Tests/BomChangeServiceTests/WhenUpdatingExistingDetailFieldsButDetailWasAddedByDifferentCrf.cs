@@ -55,7 +55,7 @@
                     });
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(111);
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(new Part { DecrementRule = "YES", BomType = "C" });
+                .Returns(new Part { DecrementRule = "YES", BomType = "A" });
             this.action = () => this.Sut.ProcessTreeUpdate(tree, 100, 33087);
         }
 

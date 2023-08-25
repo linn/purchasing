@@ -33,7 +33,9 @@
             this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(
                 new Bom { BomName = "BOM", BomId = 123, Details = new List<BomDetailViewEntry>() });
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(new Part { BomType = "C" });
+                .Returns(
+                    new Part { BomType = "A" },
+                    new Part { BomType = "C" });
             this.action = () => this.Sut.ProcessTreeUpdate(tree, 100, 33087);
         }
 
