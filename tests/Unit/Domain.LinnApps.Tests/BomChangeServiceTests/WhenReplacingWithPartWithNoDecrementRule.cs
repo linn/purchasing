@@ -85,7 +85,7 @@
                                           AddChange = new BomChange { DocumentNumber = 999 }
                                       };
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(new Part { BomType = "C" });
+                .Returns(new Part { BomType = "A" });
 
             this.BomDetailRepository.FindById(4567)
                 .Returns(this.replacedDetail);

@@ -71,7 +71,9 @@
                     Details = new List<BomDetailViewEntry>()
                 });
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(new Part { DecrementRule = "YES", BomType = "C" });
+                .Returns(
+                    new Part { DecrementRule = "YES", BomType = "A" },
+                    new Part { DecrementRule = "YES", BomType = "C" });
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(1, 2);
             this.DatabaseService.GetIdSequence("BOMDET_SEQ").Returns(1, 2, 3);
             this.Sut.ProcessTreeUpdate(this.newTree, 100, 33087);
