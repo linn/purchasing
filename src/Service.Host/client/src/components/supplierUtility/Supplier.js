@@ -380,6 +380,7 @@ function Supplier({ creating }) {
                                                         state.supplier
                                                             .receivesPurchaseOrderReminders
                                                     }
+                                                    printTerms={state.supplier.printTerms}
                                                 />
                                             </Box>
                                         )}

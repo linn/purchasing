@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
+namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,6 @@
 
     using FluentAssertions;
 
-    using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -15,7 +14,7 @@
 
     using NUnit.Framework;
 
-    public class WhenAddingPhasedWhenAddingPartWithNoDecrementRuleOutPartToBom : ContextBase
+    public class WhenAddingToAComponent : ContextBase
     {
         private Action action;
 
@@ -24,18 +23,15 @@
         {
             var tree = new BomTreeNode
                            {
-                               Name = "BOM",
+                               Name = "COMP",
                                Qty = 1,
                                Type = "A",
                                AssemblyHasChanges = true,
                                Children = new List<BomTreeNode> { new BomTreeNode { Name = "CAP 001", ParentName = "BOM" } }
                            };
-            this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(
-                new Bom { BomName = "BOM", BomId = 123, Details = new List<BomDetailViewEntry>() });
+            
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(
-                    new Part { BomType = "A" },
-                    new Part { BomType = "C" });
+                .Returns(new Part { PartNumber = "COMP", BomType = "C", DecrementRule = "YES" });
             this.action = () => this.Sut.ProcessTreeUpdate(tree, 100, 33087);
         }
 
@@ -43,7 +39,7 @@
         public void ShouldThrow()
         {
             this.action.Should().Throw<InvalidBomChangeException>()
-                .WithMessage($"Can't add CAP 001 to BOM - part has no decrement rule!");
+                .WithMessage($"COMP is a Component! Can't add to its BOM");
         }
     }
 }

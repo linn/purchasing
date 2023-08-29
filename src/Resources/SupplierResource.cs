@@ -101,5 +101,7 @@
         public AddressResource OrderAddress { get; set; }
 
         public bool ReceivesPurchaseOrderReminders { get; set; }
+
+        public bool PrintTerms { get; set; }
     }
 }

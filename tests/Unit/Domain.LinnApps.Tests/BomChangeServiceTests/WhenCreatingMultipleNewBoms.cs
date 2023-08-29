@@ -39,7 +39,8 @@
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(456, 457);
 
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(this.rootPart, this.subAssembly, this.subAssembly, this.component, this.component);
+                .Returns( this.rootPart,
+                this.rootPart, this.subAssembly, this.subAssembly, this.component, this.component);
             
             this.Sut.ProcessTreeUpdate(
                 new BomTreeNode

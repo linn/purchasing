@@ -300,7 +300,7 @@
             IPurchaseOrderFacadeService purchaseOrderFacadeService,
             int numberToTake = 50)
         {
-            var resource = new PurchaseOrderSearchResource { OrderNumber = searchTerm, StartDate = startDate, EndDate = endDate };
+            var resource = new PurchaseOrderSearchResource { OrderNumber = searchTerm, StartDate = startDate, EndDate = endDate, SearchTerm = searchTerm};
             var result = purchaseOrderFacadeService.FilterBy(resource, numberToTake, req.HttpContext.GetPrivileges());
             await res.Negotiate(result);
         }

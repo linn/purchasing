@@ -84,7 +84,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeServiceTests
                     Details = new List<BomDetailViewEntry>()
                 });
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(new Part { DecrementRule = "YES", BomType = "C" });
+                .Returns(new Part { DecrementRule = "YES", BomType = "A" });
             this.BomDetailRepository.FindById(345).Returns(new BomDetail { Qty = 2, GenerateRequirement = "Y" });
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(1, 2);
             this.DatabaseService.GetIdSequence("BOMDET_SEQ").Returns(1, 2, 3);

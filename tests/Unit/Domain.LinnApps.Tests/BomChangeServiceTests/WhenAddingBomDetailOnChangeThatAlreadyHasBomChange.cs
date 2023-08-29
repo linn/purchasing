@@ -2,8 +2,6 @@
 {
     using System.Collections.Generic;
 
-    using FluentAssertions;
-
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
@@ -14,8 +12,6 @@
     public class WhenAddingBomDetailOnChangeThatAlreadyHasBomChange : ContextBase
     {
         private Bom bom;
-
-        private BomDetail detail;
 
         private ChangeRequest request;
 

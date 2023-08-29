@@ -85,7 +85,7 @@
                                entity.AuthorisedById.HasValue
                                    ? new EmployeeResource
                                          {
-                                             Id = (int) entity.AuthorisedById, FullName = entity.AuthorisedBy?.FullName
+                                             Id = (int)entity.AuthorisedById, FullName = entity.AuthorisedBy?.FullName
                                          }
                                    : null,
                            SentByMethod = entity.SentByMethod,
@@ -98,7 +98,8 @@
                                    {
                                        Id = entity.Supplier.SupplierId,
                                        Name = entity.Supplier.Name,
-                                       VendorManagerId = entity.Supplier.VendorManagerId
+                                       VendorManagerId = entity.Supplier.VendorManagerId,
+                                       InvoiceGoesToId = entity.Supplier.InvoiceGoesTo?.SupplierId
                                    },
                            OrderAddress =
                                entity.OrderAddress != null

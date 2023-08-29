@@ -44,6 +44,12 @@
 
         public void ProcessTreeUpdate(BomTreeNode tree, int changeRequestNumber, int enteredBy)
         {
+            var part = this.partRepository.FindBy(x => x.PartNumber == tree.Name);
+            if (part.BomType == "C") 
+            {
+                throw new InvalidBomChangeException($"{part.PartNumber} is a Component! Can't add to its BOM");
+            }
+
             // traversing the updated tree to enact changes to all boms involved in this change...
             var q = new Queue<BomTreeNode>();
             q.Enqueue(tree);
@@ -82,6 +88,12 @@
         public void CopyBom(
             string srcPartNumber, string destBomPartNumber, int changedBy, int crfNumber, string addOrOverwrite)
         {
+            var part = this.partRepository.FindBy(x => x.PartNumber == destBomPartNumber);
+            if (part.BomType == "C") 
+            {
+                throw new InvalidBomChangeException($"{part.PartNumber} is a Component! Can't add to its BOM");
+            }
+
             var change = this.GetOrCreateBomChange(
                 destBomPartNumber, crfNumber, changedBy, this.GetOrCreateBom(destBomPartNumber));
             this.bomPack.CopyBom(srcPartNumber, change.BomId, change.ChangeId, change.ChangeState, addOrOverwrite);
@@ -109,6 +121,12 @@
 
         public void ExplodeSubAssembly(string bomName, int crfNumber, string subAssembly, int changedBy)
         {
+            var part = this.partRepository.FindBy(x => x.PartNumber == bomName);
+            if (part.BomType == "C") 
+            {
+                throw new InvalidBomChangeException($"{part.PartNumber} is a Component! Can't add to its BOM");
+            }
+            
             var change = this.GetOrCreateBomChange(
                 bomName, crfNumber, changedBy, this.GetOrCreateBom(bomName));
             this.bomPack.ExplodeSubAssembly(change.BomId, change.ChangeId, change.ChangeState, subAssembly);

@@ -36,6 +36,7 @@
                                                                      PartNumber = "PART A",
                                                                      Part = new Part
                                                                                 {
+                                                                                    Description = "Desc A",
                                                                                     PartNumber = "PART A",
                                                                                     OurUnitOfMeasure = "ONES"
                                                                                 }
@@ -69,6 +70,7 @@
                                                                      LeadTimeWeeks = 1,
                                                                      Part = new Part
                                                                                 {
+                                                                                    Description = "Desc A",
                                                                                     PartNumber = "PART A",
                                                                                     OurUnitOfMeasure = "ONES"
                                                                                 }
@@ -100,6 +102,7 @@
                                                                      PartNumber = "PART B",
                                                                      Part = new Part
                                                                                 {
+                                                                                    Description = "Desc B",
                                                                                     OurUnitOfMeasure = "TWOS",
                                                                                     PartNumber = "PART B",
                                                                                 }
@@ -127,8 +130,8 @@
         public void ShouldReturnReportForEachPartGroup()
         {
             this.results.Count().Should().Be(2);
-            this.results.First().ReportTitle.DisplayValue.Should().Be("PART A - UOM: ONES - LEAD TIME: 1 WEEKS");
-            this.results.Last().ReportTitle.DisplayValue.Should().Be("PART B - UOM: TWOS - LEAD TIME: 2 WEEKS");
+            this.results.First().ReportTitle.DisplayValue.Should().Be("PART A - Desc A - UOM: ONES - LEAD TIME: 1 WEEKS");
+            this.results.Last().ReportTitle.DisplayValue.Should().Be("PART B - Desc B - UOM: TWOS - LEAD TIME: 2 WEEKS");
         }
 
         [Test]
