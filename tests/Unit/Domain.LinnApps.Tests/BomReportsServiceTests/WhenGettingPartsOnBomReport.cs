@@ -30,6 +30,7 @@
                                        Part = new Part { PartNumber = "CAP 001" },
                                        PartNumber = "CAP 001",
                                        BomPartNumber = this.bomName,
+                                       ChangeState = "LIVE",
                                        Components = new List<BomDetailComponent>
                                                         {
                                                             new BomDetailComponent { CircuitRef = "U001" },
