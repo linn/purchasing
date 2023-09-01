@@ -43,7 +43,7 @@
 
         public ResultsModel GetPartsOnBomReport(string bomName)
         {
-            var lines = this.bomDetailViewRepository.FindAll().Where(d => d.BomPartNumber == bomName)
+            var lines = this.bomDetailViewRepository.FindAll().Where(d => d.BomPartNumber == bomName && d.ChangeState == "LIVE")
                 .OrderBy(x => x.PartNumber);
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
