@@ -122,7 +122,7 @@
                 AddChange = new BomChange { DocumentNumber = 999 }
             };
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(new Part { DecrementRule = "YES", BomType = "C" });
+                .Returns(new Part { DecrementRule = "YES", BomType = "A" });
 
             this.BomDetailRepository.FilterBy(Arg.Any<Expression<Func<BomDetail, bool>>>())
                 .Returns(new List<BomDetail>

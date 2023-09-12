@@ -395,23 +395,30 @@
         </div>
 
         <hr class="hr"/>
-
-        <div>
-            <pre>
-                Deliveries marked '#' are amended deliveries.
-                Liquidated damages for late delivery will apply at the rate of @Model.DamagesPercent % of the order value per week.
-                All invoices and delivery notes must always quote the above order numbers.
-                All prices on orders are exclusive of value added tax.
-                For conditions of purchase see below.
-                Please confirm all deliveries on this purchase order within 48 hours via reply to the sender of this order.
-                </pre>
-        </div>
+        @{
+            if (Model.Supplier.PrintTerms == "Y")
+            {
+                <div>
+                    <pre>
+                        Deliveries marked '#' are amended deliveries.
+                        Liquidated damages for late delivery will apply at the rate of @Model.DamagesPercent % of the order value per week.
+                        All invoices and delivery notes must always quote the above order numbers.
+                        All prices on orders are exclusive of value added tax.
+                        For conditions of purchase see below.
+                        Please confirm all deliveries on this purchase order within 48 hours via reply to the sender of this order.
+                    </pre>
+                </div> 
+            } 
+        }
     </div>
+    <div> 
 
-    <div>
-        <span class="conditions-of-purch">Conditions Of Purchase</span>
-        <div class="two-column-grid-container">
-        <div class="column1-page2">
+    @{
+        if (Model.Supplier.PrintTerms == "Y")
+        {
+          <span class="conditions-of-purch">Conditions Of Purchase</span>
+          <div class="two-column-grid-container">
+          <div class="column1-page2">
             <pre class="no-margin">
     1. DEFINITIONS
     1.1 "The Order will mean a Linn Products Limited Purchase Order under which goods are to be
@@ -546,12 +553,10 @@
     despatched, addressed to the company at the place of destination of the Goods.
     12.3 All invoices and statements must show separately the VAT rate and the amount of VAT
     charged and the Seller's VAT registration number.
-    </pre>
-        </div>
-
-        <div class="column2-page2">
+            </pre>
+          </div>
+          <div class="column2-page2">
             <pre class="no-margin">
-
     13. OWNERSHIP
     13.1 The property and risk in the Goods will remain in the Seller until delivery to the point specified
     in the Order.
@@ -683,8 +688,11 @@
     27. LAW
     27.1 The construction, validity or performance of this contract shall be governed by the Law of
     Scotland to the jurisdiction of whose courts the parties agree to submit.
-    </pre>
-        </div>
-        </div>
-    </div>
+            </pre>
+          </div>
+      </div>
+    }
+  }
+  </div>
+
 }

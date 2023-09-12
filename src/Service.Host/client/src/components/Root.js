@@ -48,7 +48,7 @@ import RunMrp from './RunMrp';
 import ApplyForecastingPercentageChange from './ApplyForecastingPercentageChange';
 import EdiOrders from './EdiOrders';
 import PurchaseOrderUtility from './PurchaseOrders/PurchaseOrderUtility';
-import PurchaseOrdersSearch from './PurchaseOrders/PurchaseOrdersSearch';
+import PurchaseOrderSearch from './PurchaseOrders/PurchaseOrderSearch';
 import MrUsedOnReport from './reports/MrUsedOnReport';
 import AcknowledgeOrdersUtility from './AcknowledgeOrdersUtility';
 import MaterialRequirements from './materialRequirements/MaterialRequirementsOptions';
@@ -292,7 +292,7 @@ const Root = ({ store }) => (
                                 <Route
                                     exact
                                     path="/purchasing/purchase-orders/"
-                                    component={PurchaseOrdersSearch}
+                                    component={PurchaseOrderSearch}
                                 />
                                 <Route
                                     exact
