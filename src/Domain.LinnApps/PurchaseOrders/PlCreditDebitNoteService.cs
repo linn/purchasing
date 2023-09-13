@@ -174,54 +174,107 @@
         {
             if (order.DocumentTypeName == "CO" || order.DocumentTypeName == "RO")
             {
-                var note = new PlCreditDebitNote
+                PurchaseOrder originalOrder;
+                var originalOrderNumber = order.Details.First().OriginalOrderNumber;
+                if (originalOrderNumber != null)
                 {
-                    CreatedBy = order.EnteredById,
-                    NoteNumber = this.databaseService.GetNextVal("PLCDN_SEQ"),
-                    PartNumber = order.Details.First().PartNumber,
-                    OrderQty = order.Details.First().OrderQty.GetValueOrDefault(),
-                    ReturnsOrderNumber = order.OrderNumber,
-                    ReturnsOrderLine = 1,
-                    NetTotal = order.Details.First().NetTotalCurrency,
-                    Total = order.Details.First().DetailTotalCurrency.GetValueOrDefault(),
-                    OrderUnitPrice = order.Details.First().OrderUnitPriceCurrency.GetValueOrDefault(),
-                    OrderUnitOfMeasure = order.Details.First().OrderUnitOfMeasure,
-                    VatTotal = order.Details.First().VatTotalCurrency.GetValueOrDefault(),
-                    Notes = null,
-                    DateClosed = null,
-                    DateCreated = DateTime.Now,
-                    ClosedBy = null,
-                    ReasonClosed = null,
-                    Supplier = this.supplierRepository.FindById(order.SupplierId),
-                    SuppliersDesignation = order.Details.First().SuppliersDesignation,
-                    Currency = order.Currency,
-                    VatRate = this.salesTaxPack.GetVatRateSupplier(order.SupplierId),
-                    CancelledBy = null,
-                    DateCancelled = null,
-                    ReasonCancelled = null,
-                    NoteType = this.noteTypesRepository.FindById("D"),
-                    CreditOrReplace = order.DocumentTypeName == "CO" ? "CREDIT" : "REPLACE",
-                    OriginalOrderNumber = order.Details.First().OriginalOrderNumber,
-                    OriginalOrderLine = order.Details.First().OriginalOrderLine
-                };
+                    originalOrder =
+                        this.purchaseOrderRepository.FindById(originalOrderNumber.Value);
+                }
+                else
+                {
+                    throw new PurchaseOrderException(
+                        $"Cannot create a debit note for order {order.OrderNumber} as no original order specified");
+                }
 
-                note.Details = order.Details.Select(detail => new PlCreditDebitNoteDetail
+                var unitPrice = originalOrder.Details.First().OrderUnitPriceCurrency.GetValueOrDefault();
+                var netTotal = Math.Round(
+                    unitPrice * order.Details.First().OrderQty.GetValueOrDefault(),
+                    2,
+                    MidpointRounding.AwayFromZero);
+                var vatRate = this.salesTaxPack.GetVatRateSupplier(order.SupplierId);
+                var vatTotal = Math.Round(
+                    netTotal * vatRate / 100,
+                    2,
+                    MidpointRounding.AwayFromZero);
+                var total = netTotal + vatTotal;
+                var note = new PlCreditDebitNote
+                               {
+                                   CreatedBy = order.EnteredById,
+                                   NoteNumber = this.databaseService.GetNextVal("PLCDN_SEQ"),
+                                   PartNumber = order.Details.First().PartNumber,
+                                   OrderQty = order.Details.First().OrderQty.GetValueOrDefault(),
+                                   ReturnsOrderNumber = order.OrderNumber,
+                                   ReturnsOrderLine = 1,
+                                   NetTotal = netTotal,
+                                   Total = total,
+                                   OrderUnitPrice = originalOrder.Details.First().OrderUnitPriceCurrency.GetValueOrDefault(),
+                                   OrderUnitOfMeasure = originalOrder.Details.First().OrderUnitOfMeasure,
+                                   VatTotal = vatTotal,
+                                   Notes = null,
+                                   DateClosed = null,
+                                   DateCreated = DateTime.Now,
+                                   ClosedBy = null,
+                                   ReasonClosed = null,
+                                   Supplier = this.supplierRepository.FindById(order.SupplierId),
+                                   SuppliersDesignation = order.Details.First().SuppliersDesignation,
+                                   Currency = order.Currency,
+                                   VatRate = vatRate,
+                                   CancelledBy = null,
+                                   DateCancelled = null,
+                                   ReasonCancelled = null,
+                                   NoteType = this.noteTypesRepository.FindById("D"),
+                                   CreditOrReplace = order.DocumentTypeName == "CO" ? "CREDIT" : "REPLACE",
+                                   OriginalOrderNumber = originalOrderNumber,
+                                   OriginalOrderLine = order.Details.First().OriginalOrderLine
+                               };
+
+                var details = new List<PlCreditDebitNoteDetail>();
+
+                foreach (var purchaseOrderDetail in order.Details)
                 {
-                    NoteNumber = note.NoteNumber,
-                    LineNumber = detail.Line,
-                    PartNumber = detail.PartNumber,
-                    OrderQty = detail.OrderQty.GetValueOrDefault(),
-                    OriginalOrderLine = detail.OriginalOrderLine,
-                    ReturnsOrderLine = detail.Line,
-                    NetTotal = detail.NetTotalCurrency,
-                    Total = detail.DetailTotalCurrency.GetValueOrDefault(),
-                    OrderUnitPrice = detail.OrderUnitPriceCurrency.GetValueOrDefault(),
-                    OrderUnitOfMeasure = detail.OrderUnitOfMeasure,
-                    VatTotal = detail.VatTotalCurrency.GetValueOrDefault(),
-                    Notes = null,
-                    SuppliersDesignation = detail.SuppliersDesignation,
-                    Header = note
-                }).ToList();
+                    originalOrderNumber = purchaseOrderDetail.OriginalOrderNumber;
+                    if (originalOrderNumber != null)
+                    {
+                        originalOrder = this.purchaseOrderRepository.FindById(originalOrderNumber.Value);
+                    }
+                    else
+                    {
+                        throw new PurchaseOrderException(
+                            $"Cannot create a debit note for order {order.OrderNumber} as no original order specified");
+                    }
+
+                    unitPrice = originalOrder.Details.First(a => a.Line == purchaseOrderDetail.OriginalOrderLine).OrderUnitPriceCurrency.GetValueOrDefault();
+                    netTotal = Math.Round(
+                        unitPrice * purchaseOrderDetail.OrderQty.GetValueOrDefault(),
+                        2,
+                        MidpointRounding.AwayFromZero);
+                    vatRate = this.salesTaxPack.GetVatRateSupplier(order.SupplierId);
+                    vatTotal = Math.Round(
+                        netTotal * vatRate / 100,
+                        2,
+                        MidpointRounding.AwayFromZero);
+                    total = netTotal + vatTotal;
+                    details.Add(new PlCreditDebitNoteDetail
+                                    {
+                                        NoteNumber = note.NoteNumber,
+                                        LineNumber = purchaseOrderDetail.Line,
+                                        PartNumber = purchaseOrderDetail.PartNumber,
+                                        OrderQty = purchaseOrderDetail.OrderQty.GetValueOrDefault(),
+                                        OriginalOrderLine = purchaseOrderDetail.OriginalOrderLine,
+                                        ReturnsOrderLine = purchaseOrderDetail.Line,
+                                        NetTotal = netTotal,
+                                        Total = total,
+                                        OrderUnitPrice = unitPrice,
+                                        OrderUnitOfMeasure = purchaseOrderDetail.OrderUnitOfMeasure,
+                                        VatTotal = vatTotal,
+                                        Notes = null,
+                                        SuppliersDesignation = purchaseOrderDetail.SuppliersDesignation,
+                                        Header = note
+                                    });
+                }
+
+                note.Details = details;
 
                 this.repository.Add(note);
             }

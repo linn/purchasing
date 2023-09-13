@@ -796,7 +796,6 @@ function PurchaseOrderUtility({ creating }) {
                                     <Stack direction="row" spacing={2}>
                                         <Tooltip title="View invoices in pop-up">
                                             <Button
-                                                className={classes.buttonMarginTop}
                                                 aria-label="Pl Inv/Rec"
                                                 onClick={() => setInvRecDialogOpen(true)}
                                                 disabled={creating}
@@ -809,7 +808,6 @@ function PurchaseOrderUtility({ creating }) {
                                                 <Link
                                                     variant="body1"
                                                     href={`${config.proxyRoot}/ledgers/purchase/inv-post?orderNumber=${order?.orderNumber}`}
-                                                    style={{ marginTop: '35px' }}
                                                 >
                                                     Invoices
                                                 </Link>
