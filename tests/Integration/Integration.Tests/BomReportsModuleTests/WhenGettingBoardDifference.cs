@@ -23,6 +23,8 @@
 
         private string revisionCode2;
 
+        private bool liveOnly;
+
         [SetUp]
         public void SetUp()
         {
@@ -30,6 +32,7 @@
             this.revisionCode1 = "L1R1";
             this.boardCode2 = "1";
             this.revisionCode2 = "L1R2";
+            this.liveOnly = true;
 
             var reportResult = new ResultsModel
                                    {
@@ -37,11 +40,16 @@
                                    };
 
             this.DomainService
-                .GetBoardDifferenceReport(this.boardCode1, this.revisionCode1, this.boardCode2, this.revisionCode2)
+                .GetBoardDifferenceReport(
+                    this.boardCode1,
+                    this.revisionCode1,
+                    this.boardCode2,
+                    this.revisionCode2,
+                    this.liveOnly)
                 .Returns(reportResult);
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/board-difference/report?boardCode1={this.boardCode1}&revisionCode1={this.revisionCode1}&boardCode2={this.boardCode2}&revisionCode2={this.revisionCode2}",
+                $"/purchasing/reports/board-difference/report?boardCode1={this.boardCode1}&revisionCode1={this.revisionCode1}&boardCode2={this.boardCode2}&revisionCode2={this.revisionCode2}&liveOnly={this.liveOnly}",
                 with => { with.Accept("application/json"); }).Result;
         }
 
@@ -52,7 +60,8 @@
                 this.boardCode1,
                 this.revisionCode1,
                 this.boardCode2,
-                this.revisionCode2);
+                this.revisionCode2,
+                this.liveOnly);
         }
 
         [Test]

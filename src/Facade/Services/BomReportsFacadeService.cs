@@ -83,7 +83,8 @@
                     resource.BoardCode1,
                     resource.RevisionCode1,
                     resource.BoardCode2,
-                    resource.RevisionCode2);
+                    resource.RevisionCode2,
+                    resource.LiveOnly);
             }
             catch (DomainException exception)
             {

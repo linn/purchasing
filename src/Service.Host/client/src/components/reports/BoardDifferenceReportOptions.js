@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import { Page, Title, InputField } from '@linn-it/linn-form-components-library';
+import { Page, Title, InputField, Dropdown } from '@linn-it/linn-form-components-library';
 import history from '../../history';
 import config from '../../config';
 
@@ -10,11 +10,14 @@ function BoardDifferenceReportOptions() {
     const [revisionCode1, setRevisionCode1] = useState('L1R1');
     const [boardCode2, setBoardCode2] = useState(null);
     const [revisionCode2, setRevisionCode2] = useState('L1R2');
+    const [liveOnly, setLiveOnly] = useState('N');
 
     const handleClick = () =>
         history.push({
             pathname: `/purchasing/reports/board-difference/report`,
-            search: `?boardCode1=${boardCode1}&revisionCode1=${revisionCode1}&boardCode2=${boardCode2}&revisionCode2=${revisionCode2}`
+            search: `?boardCode1=${boardCode1}&revisionCode1=${revisionCode1}&boardCode2=${boardCode2}&revisionCode2=${revisionCode2}&liveOnly=${
+                liveOnly === 'Y'
+            }`
         });
 
     return (
@@ -57,6 +60,20 @@ function BoardDifferenceReportOptions() {
                     />
                 </Grid>
                 <Grid item xs={2} />
+                <Grid item xs={3}>
+                    <Dropdown
+                        value={liveOnly}
+                        label="Live Changes Only"
+                        propertyName="liveOnly"
+                        items={[
+                            { id: 'N', displayText: 'No' },
+                            { id: 'Y', displayText: 'Yes' }
+                        ]}
+                        allowNoValue={false}
+                        onChange={(_, value) => setLiveOnly(value)}
+                    />
+                </Grid>
+                <Grid item xs={9} />
                 <Grid item xs={3}>
                     <Button
                         variant="contained"
