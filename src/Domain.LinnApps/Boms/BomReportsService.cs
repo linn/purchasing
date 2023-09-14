@@ -52,16 +52,16 @@
                 null,
                 new List<AxisDetailsModel>
                     {
-                        new("Qty", "Qty", GridDisplayType.Value) { DecimalPlaces = 5 },
-                        new("Units", "Units", GridDisplayType.TextValue),
-                        new("PartNumber", "Part Number",  GridDisplayType.TextValue),
-                        new("Description", "Description",  GridDisplayType.TextValue),
-                        new("BomType", "Bom Type", GridDisplayType.TextValue),
-                        new("GenerateReqt", "Reqt?", GridDisplayType.TextValue),
-                        new("DecrementRule", "Decr?", GridDisplayType.TextValue),
-                        new("DrawingRef", "Drawing Ref?", GridDisplayType.TextValue),
-                        new("PcasLine", "PCAS?", GridDisplayType.TextValue),
-                        new("Crefs", "Crefs", GridDisplayType.TextValue)
+                        new AxisDetailsModel("Qty", "Qty", GridDisplayType.Value) { DecimalPlaces = 5 },
+                        new AxisDetailsModel("Units", "Units", GridDisplayType.TextValue),
+                        new AxisDetailsModel("PartNumber", "Part Number",  GridDisplayType.TextValue),
+                        new AxisDetailsModel("Description", "Description",  GridDisplayType.TextValue),
+                        new AxisDetailsModel("BomType", "Bom Type", GridDisplayType.TextValue),
+                        new AxisDetailsModel("GenerateReqt", "Reqt?", GridDisplayType.TextValue),
+                        new AxisDetailsModel("DecrementRule", "Decr?", GridDisplayType.TextValue),
+                        new AxisDetailsModel("DrawingRef", "Drawing Ref?", GridDisplayType.TextValue),
+                        new AxisDetailsModel("PcasLine", "PCAS?", GridDisplayType.TextValue),
+                        new AxisDetailsModel("Crefs", "Crefs", GridDisplayType.TextValue)
                     });
 
             var values = new List<CalculationValueModel>();
@@ -184,14 +184,14 @@
                     null,
                     new List<AxisDetailsModel>
                         {
-                            new("PartNumber", "PartNumber", GridDisplayType.TextValue),
-                            new("Desc", "Desc", GridDisplayType.TextValue),
-                            new("Type", "Type", GridDisplayType.TextValue),
-                            new("PreferredSupplier", GridDisplayType.TextValue),
-                            new("Qty", "Qty", GridDisplayType.Value) { DecimalPlaces = 4 },
-                            new("StdPrice", "Std Price", GridDisplayType.Value) { DecimalPlaces = 5 },
-                            new("MaterialPrice", "Mat Price",  GridDisplayType.Value) { DecimalPlaces = 5 },
-                            new("TotalMaterial", "Total Material",  GridDisplayType.Value) { DecimalPlaces = 5 },
+                            new AxisDetailsModel("PartNumber", "PartNumber", GridDisplayType.TextValue),
+                            new AxisDetailsModel("Desc", "Desc", GridDisplayType.TextValue),
+                            new AxisDetailsModel("Type", "Type", GridDisplayType.TextValue),
+                            new AxisDetailsModel("PreferredSupplier", GridDisplayType.TextValue),
+                            new AxisDetailsModel("Qty", "Qty", GridDisplayType.Value) { DecimalPlaces = 4 },
+                            new AxisDetailsModel("StdPrice", "Std Price", GridDisplayType.Value) { DecimalPlaces = 5 },
+                            new AxisDetailsModel("MaterialPrice", "Mat Price",  GridDisplayType.Value) { DecimalPlaces = 5 },
+                            new AxisDetailsModel("TotalMaterial", "Total Material",  GridDisplayType.Value) { DecimalPlaces = 5 },
                         });
 
                 var values = new List<CalculationValueModel>();
@@ -274,7 +274,8 @@
             string boardCode1,
             string revisionCode1,
             string boardCode2,
-            string revisionCode2)
+            string revisionCode2,
+            bool liveOnly)
         {
             if (string.IsNullOrWhiteSpace(boardCode1) || string.IsNullOrWhiteSpace(revisionCode1)
                                                       || string.IsNullOrWhiteSpace(boardCode2)
@@ -294,8 +295,8 @@
 
             var revision1 = board1.Layouts.SelectMany(a => a.Revisions).First(a => a.RevisionCode == revisionCode1.ToUpper());
             var revision2 = board2.Layouts.SelectMany(a => a.Revisions).First(a => a.RevisionCode == revisionCode2.ToUpper());
-            var components1 = board1.ComponentsOnRevision(revision1.LayoutSequence, revision1.VersionNumber);
-            var components2 = board2.ComponentsOnRevision(revision2.LayoutSequence, revision2.VersionNumber);
+            var components1 = board1.ComponentsOnRevision(revision1.LayoutSequence, revision1.VersionNumber, liveOnly);
+            var components2 = board2.ComponentsOnRevision(revision2.LayoutSequence, revision2.VersionNumber, liveOnly);
 
             var results = new ResultsModel
                               {

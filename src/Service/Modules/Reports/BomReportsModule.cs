@@ -31,6 +31,7 @@
             string boardCode2,
             string revisionCode1,
             string revisionCode2,
+            bool? liveOnly,
             IBomReportsFacadeService bomReportsFacadeService)
         {
             var resource = new BomDifferenceReportRequestResource
@@ -38,7 +39,8 @@
                                    BoardCode1 = boardCode1,
                                    RevisionCode1 = revisionCode1,
                                    BoardCode2 = boardCode2,
-                                   RevisionCode2 = revisionCode2
+                                   RevisionCode2 = revisionCode2,
+                                   LiveOnly = liveOnly ?? false
                                };
 
             var results = bomReportsFacadeService.GetBoardDifferenceReport(resource);
