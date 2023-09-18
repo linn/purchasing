@@ -22,7 +22,7 @@
             string revisionCode2,
             bool liveOnly);
 
-        ResultsModel GetBomDifferencesReport(string bom1, string bom2);
+        ResultsModel GetBomDifferencesReport(string bom1, string bom2, bool singleLevel = true);
 
         ResultsModel GetBoardComponentSummaryReport(
             string boardCode,

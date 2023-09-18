@@ -416,13 +416,43 @@
             return results;
         }
 
-        public ResultsModel GetBomDifferencesReport(string bom1, string bom2)
+        public ResultsModel GetBomDifferencesReport(string bom1, string bom2, bool singleLevel = true)
         {
-            var first = this.bomDetailViewRepository
-                .FilterBy(x => x.ChangeState == "LIVE" && x.BomPartNumber == bom1).ToList();
-            var second = this.bomDetailViewRepository
-                .FilterBy(x => x.ChangeState == "LIVE" && x.BomPartNumber == bom2).ToList();
 
+            IEnumerable<BomDetailViewEntry> first;
+
+            IEnumerable<BomDetailViewEntry> second;
+
+            if (singleLevel)
+            {
+                first = this.bomDetailViewRepository
+                    .FilterBy(x => x.ChangeState == "LIVE" && x.BomPartNumber == bom1).ToList();
+                second = this.bomDetailViewRepository
+                    .FilterBy(x => x.ChangeState == "LIVE" && x.BomPartNumber == bom2).ToList();
+            }
+            else
+            {
+                first = this.bomTreeService.FlattenBomTree(bom1, 0, false, false).Select(
+                    x => new BomDetailViewEntry
+                             {
+                                 PartNumber = x.Name,
+                                 Qty = x.Qty,
+                                 Part = new Part
+                                            {
+                                                ExpectedUnitPrice = x.Cost
+                                            }
+                             }).Where(d => d.PartNumber != bom1);
+                second = this.bomTreeService.FlattenBomTree(bom2, 0, false, false)
+                    .Select(x => new BomDetailViewEntry
+                                     {
+                                         PartNumber = x.Name,
+                                         Qty = x.Qty, Part = new Part
+                                                                 {
+                                                                     ExpectedUnitPrice = x.Cost
+                                                                 }
+                                     }).Where(d => d.PartNumber != bom2); ;
+            }
+            
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
 
             reportLayout.AddColumnComponent(
@@ -438,15 +468,16 @@
                         new("Diff", "Diff", GridDisplayType.Value) { DecimalPlaces = 5 }
                     });
 
-            reportLayout.ReportTitle = $"Single Level BOM differences between {bom1.ToUpper()} and {bom2.ToUpper()}";
+            reportLayout.ReportTitle = singleLevel ? $"Single Level BOM differences between {bom1.ToUpper()} and {bom2.ToUpper()}"
+                                           : $"Flattened BOM differences between {bom1.ToUpper()} and {bom2.ToUpper()}";
 
             var values = new List<CalculationValueModel>();
             var diffTotal = 0m;
 
             foreach (var detail in first)
             {
-                var inSecond = second.SingleOrDefault(x => x.PartNumber == detail.PartNumber);
-                if (inSecond == null)
+                var inSecond = second.Where(x => x.PartNumber == detail.PartNumber);
+                if (!inSecond.Any())
                 {
                     values.Add(
                         new CalculationValueModel
@@ -498,7 +529,7 @@
                             });
                     diffTotal += diff;
                 }
-                else if (inSecond.Qty == detail.Qty)
+                else if (inSecond.Sum(x => x.Qty) == first.Where(x => x.PartNumber == inSecond.First().PartNumber).Sum(x => x.Qty))
                 {
                     continue;
                 }
@@ -506,7 +537,7 @@
                 {
                     var inFirst = first.First(x => x.PartNumber == detail.PartNumber);
                     var cost1 = inFirst.Part.ExpectedUnitPrice.GetValueOrDefault() * inFirst.Qty;
-                    var cost2 = inSecond.Part.ExpectedUnitPrice.GetValueOrDefault() * inSecond.Qty;
+                    var cost2 = inSecond.First().Part.ExpectedUnitPrice.GetValueOrDefault() * inSecond.Sum(x => x.Qty);
                     values.Add(
                         new CalculationValueModel
                             {
@@ -540,7 +571,7 @@
                             {
                                 RowId = detail.PartNumber,
                                 ColumnId = "Qty2",
-                                TextDisplay = inSecond.Qty.ToString("0.#####")
+                                TextDisplay = inSecond.Sum(x => x.Qty).ToString("0.#####")
                         });
                     values.Add(
                         new CalculationValueModel
@@ -548,7 +579,7 @@
                                 RowId = detail.PartNumber,
                                 ColumnId = "Cost2",
                                 TextDisplay 
-                                    = inSecond.Part.ExpectedUnitPrice.GetValueOrDefault().ToString("0.#####")
+                                    = inSecond.First().Part.ExpectedUnitPrice.GetValueOrDefault().ToString("0.#####")
                         });
                     values.Add(
                         new CalculationValueModel
@@ -563,8 +594,8 @@
 
             foreach (var detail in second)
             {
-                var inFirst = first.SingleOrDefault(x => x.PartNumber == detail.PartNumber);
-                if (inFirst == null)
+                var inFirst = first.Where(x => x.PartNumber == detail.PartNumber);
+                if (!inFirst.Any())
                 {
                     values.Add(
                         new CalculationValueModel

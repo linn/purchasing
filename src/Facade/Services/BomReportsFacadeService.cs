@@ -52,7 +52,7 @@
             var resource = 
                 this.reportReturnResourceBuilder
                     .Build(this.domainService.GetBomDifferencesReport(
-                        bom1.Trim().ToUpper(), bom2.Trim().ToUpper()));
+                        bom1.Trim().ToUpper(), bom2.Trim().ToUpper(), false));
 
             return new SuccessResult<ReportReturnResource>(resource);
         }
