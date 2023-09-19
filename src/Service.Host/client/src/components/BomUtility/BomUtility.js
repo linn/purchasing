@@ -1018,42 +1018,47 @@ function BomUtility() {
                         />
                     </div>
                 </Grid>
-                <Grid
-                    item
-                    xs={8}
-                    sx={{
-                        paddingTop: '0px ! important',
-                        height: '85vh',
-                        overflowY: bomTreeLoading ? 'hidden' : 'scroll'
-                    }}
-                >
-                    <DataGrid
+                <Grid item xs={8}>
+                    <Grid item xs={12}>
+                        <Typography variant="h6">{selected?.description}</Typography>
+                    </Grid>
+                    <Grid
+                        item
+                        xs={12}
                         sx={{
-                            '& .propos.MuiDataGrid-row:hover': {
-                                bgcolor: '#FFD580'
-                            },
-                            '& .propos': {
-                                bgcolor: '#FFD580'
-                            },
-                            '& .accept.MuiDataGrid-row:hover': {
-                                bgcolor: '#b0f7b9'
-                            },
-                            '& .accept': {
-                                bgcolor: '#b0f7b9'
-                            },
-                            border: 0
+                            paddingTop: '0px ! important',
+                            height: '85vh',
+                            overflowY: bomTreeLoading ? 'hidden' : 'scroll'
                         }}
-                        columnBuffer={6}
-                        rows={getRows()}
-                        loading={bomTreeLoading}
-                        processRowUpdate={processRowUpdate}
-                        onProcessRowUpdateError={() => {}}
-                        autoHeight
-                        experimentalFeatures={{ newEditingApi: true }}
-                        disableSelectionOnClick
-                        columns={columns}
-                        getRowClassName={params => params.row.changeState?.toLowerCase()}
-                    />
+                    >
+                        <DataGrid
+                            sx={{
+                                '& .propos.MuiDataGrid-row:hover': {
+                                    bgcolor: '#FFD580'
+                                },
+                                '& .propos': {
+                                    bgcolor: '#FFD580'
+                                },
+                                '& .accept.MuiDataGrid-row:hover': {
+                                    bgcolor: '#b0f7b9'
+                                },
+                                '& .accept': {
+                                    bgcolor: '#b0f7b9'
+                                },
+                                border: 0
+                            }}
+                            columnBuffer={6}
+                            rows={getRows()}
+                            loading={bomTreeLoading}
+                            processRowUpdate={processRowUpdate}
+                            onProcessRowUpdateError={() => {}}
+                            autoHeight
+                            experimentalFeatures={{ newEditingApi: true }}
+                            disableSelectionOnClick
+                            columns={columns}
+                            getRowClassName={params => params.row.changeState?.toLowerCase()}
+                        />
+                    </Grid>
                     {contextMenu && crNumber && (
                         <Menu
                             open={contextMenu !== null}

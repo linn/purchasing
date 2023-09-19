@@ -5,7 +5,8 @@ import {
     Page,
     Title,
     Search,
-    collectionSelectorHelpers
+    collectionSelectorHelpers,
+    OnOffSwitch
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -36,7 +37,12 @@ function BomDifferenceReport() {
         collectionSelectorHelpers.getSearchLoading(state[parts.item])
     );
 
-    const [options, setOptions] = useState({});
+    const [options, setOptions] = useState({
+        singleLevel: true,
+        showDescriptions: false,
+        bom1: '360/SM/001/E',
+        bom2: '360/SM/002/E'
+    });
 
     const handleOptionChange = (propName, newVal) =>
         setOptions(o => ({ ...o, [propName]: newVal }));
@@ -81,6 +87,26 @@ function BomDifferenceReport() {
                         label="Bom 2"
                         searchResults={searchResults}
                         loading={searchLoading}
+                    />
+                </Grid>
+                <Grid item xs={6}>
+                    <OnOffSwitch
+                        label="Single Level? (will be slow if switched off)"
+                        value={options.singleLevel}
+                        onChange={() => {
+                            setOptions(o => ({ ...o, singleLevel: !o.singleLevel }));
+                        }}
+                        propertyName="singleLevel"
+                    />
+                </Grid>
+                <Grid item xs={6}>
+                    <OnOffSwitch
+                        label="Show Descriptions?"
+                        value={options.showDescriptions}
+                        onChange={() => {
+                            setOptions(o => ({ ...o, showDescriptions: !o.showDescriptions }));
+                        }}
+                        propertyName="showDescriptions"
                     />
                 </Grid>
                 <Grid item xs={12}>

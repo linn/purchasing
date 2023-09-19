@@ -12,7 +12,8 @@
     {
         IResult<ReportReturnResource> GetPartsOnBomReport(string bomName);
 
-        IResult<ReportReturnResource> GetBomDifferencesReport(string bom1, string bom2);
+        IResult<ReportReturnResource> GetBomDifferencesReport(
+            string bom1, string bom2, bool singleLevel, bool showDescriptions);
 
         IResult<IEnumerable<BomCostReportResource>> GetBomCostReport(
             string bomName,

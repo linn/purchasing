@@ -38,12 +38,14 @@
         }
         
         [Test]
-        public void ShouldDispatchMonthlyForecastMessages()
+        public Task ShouldDispatchMonthlyForecastMessages()
         {
             this.EmailMonthlyForecastMessageDispatcher
                 .Received().Dispatch(Arg.Is<EmailMonthlyForecastReportMessageResource>(x =>
                     x.ForSupplier == 3
                     && x.ToAddress == "monthlyforecastperson@gmail.com"));
+
+            return Task.CompletedTask;
         }
     }
 }

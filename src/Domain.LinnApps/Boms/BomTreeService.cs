@@ -194,6 +194,7 @@
                                  {
                                      Name = d.Part.PartNumber,
                                      Description = d.Part.Description,
+                                     Cost = d.Part.ExpectedUnitPrice,
                                      Qty = d.Qty,
                                      AddChangeId = d.AddChangeId,
                                      DeleteChangeId = d.DeleteChangeId,
@@ -235,6 +236,7 @@
                                 Qty = child.Qty,
                                 ParentName = child.ParentName,
                                 Id = child.Id,
+                                Cost = child.Cost,
                                 Type = child.Type,
                                 AddChangeId = child.AddChangeId,
                                 DeleteChangeId = child.DeleteChangeId,
@@ -252,6 +254,7 @@
                                                     ParentName = child.Name,
                                                     AddChangeId = detail.AddChangeId,
                                                     DeleteChangeId = detail.DeleteChangeId,
+                                                    Cost = detail.Part.ExpectedUnitPrice,
                                                     ParentId = child.Id,
                                                     Id = detail.DetailId.ToString()
                                                 })
