@@ -1018,19 +1018,19 @@ function BomUtility() {
                         />
                     </div>
                 </Grid>
-                <Grid
-                    item
-                    xs={8}
-                    sx={{
-                        paddingTop: '0px ! important',
-                        height: '85vh',
-                        overflowY: bomTreeLoading ? 'hidden' : 'scroll'
-                    }}
-                >
+                <Grid item xs={8}>
                     <Grid item xs={12}>
                         <Typography variant="h6">{selected?.description}</Typography>
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid
+                        item
+                        xs={12}
+                        sx={{
+                            paddingTop: '0px ! important',
+                            height: '85vh',
+                            overflowY: bomTreeLoading ? 'hidden' : 'scroll'
+                        }}
+                    >
                         <DataGrid
                             sx={{
                                 '& .propos.MuiDataGrid-row:hover': {
