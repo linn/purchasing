@@ -53,8 +53,8 @@
             HttpResponse response,
             string bom1,
             string bom2,
-            bool singleLevel,
-            bool showDescriptions,
+            bool? singleLevel,
+            bool? showDescriptions,
             IBomReportsFacadeService bomReportsFacadeService)
         {
             if (string.IsNullOrEmpty(bom1))
@@ -63,7 +63,8 @@
             }
             else
             {
-                var results = bomReportsFacadeService.GetBomDifferencesReport(bom1, bom2, singleLevel, showDescriptions);
+                var results = bomReportsFacadeService.GetBomDifferencesReport(
+                    bom1, bom2, singleLevel.GetValueOrDefault(), showDescriptions.GetValueOrDefault());
 
                 await response.Negotiate(results);
             }
