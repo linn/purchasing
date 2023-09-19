@@ -28,7 +28,7 @@
         }
 
         [Test]
-        public void ShouldDispatchMessage()
+        public Task ShouldDispatchMessage()
         {
             // since this supplier has two deliveries with qty outstanding and advised to arrive in two days
             this.Dispatcher.Received().Dispatch(Arg.Is<EmailPurchaseOrderReminderMessageResource>(x =>
@@ -58,6 +58,8 @@
             this.Dispatcher.DidNotReceive().Dispatch(
                 Arg.Is<EmailPurchaseOrderReminderMessageResource>(
                     x => x.Deliveries.Any(d => d.OrderNumber == 789)));
+
+            return Task.CompletedTask;
         }
     }
 }
