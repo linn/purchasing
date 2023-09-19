@@ -1027,33 +1027,38 @@ function BomUtility() {
                         overflowY: bomTreeLoading ? 'hidden' : 'scroll'
                     }}
                 >
-                    <DataGrid
-                        sx={{
-                            '& .propos.MuiDataGrid-row:hover': {
-                                bgcolor: '#FFD580'
-                            },
-                            '& .propos': {
-                                bgcolor: '#FFD580'
-                            },
-                            '& .accept.MuiDataGrid-row:hover': {
-                                bgcolor: '#b0f7b9'
-                            },
-                            '& .accept': {
-                                bgcolor: '#b0f7b9'
-                            },
-                            border: 0
-                        }}
-                        columnBuffer={6}
-                        rows={getRows()}
-                        loading={bomTreeLoading}
-                        processRowUpdate={processRowUpdate}
-                        onProcessRowUpdateError={() => {}}
-                        autoHeight
-                        experimentalFeatures={{ newEditingApi: true }}
-                        disableSelectionOnClick
-                        columns={columns}
-                        getRowClassName={params => params.row.changeState?.toLowerCase()}
-                    />
+                    <Grid item xs={12}>
+                        <Typography variant="h6">{selected?.description}</Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <DataGrid
+                            sx={{
+                                '& .propos.MuiDataGrid-row:hover': {
+                                    bgcolor: '#FFD580'
+                                },
+                                '& .propos': {
+                                    bgcolor: '#FFD580'
+                                },
+                                '& .accept.MuiDataGrid-row:hover': {
+                                    bgcolor: '#b0f7b9'
+                                },
+                                '& .accept': {
+                                    bgcolor: '#b0f7b9'
+                                },
+                                border: 0
+                            }}
+                            columnBuffer={6}
+                            rows={getRows()}
+                            loading={bomTreeLoading}
+                            processRowUpdate={processRowUpdate}
+                            onProcessRowUpdateError={() => {}}
+                            autoHeight
+                            experimentalFeatures={{ newEditingApi: true }}
+                            disableSelectionOnClick
+                            columns={columns}
+                            getRowClassName={params => params.row.changeState?.toLowerCase()}
+                        />
+                    </Grid>
                     {contextMenu && crNumber && (
                         <Menu
                             open={contextMenu !== null}
