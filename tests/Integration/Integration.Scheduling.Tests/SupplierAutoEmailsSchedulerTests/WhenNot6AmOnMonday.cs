@@ -40,10 +40,12 @@
         }
         
         [Test]
-        public void ShouldNotDispatchForecastMessages()
+        public Task ShouldNotDispatchForecastMessages()
         {
             this.EmailMonthlyForecastMessageDispatcher
                 .DidNotReceive().Dispatch(Arg.Any<EmailMonthlyForecastReportMessageResource>());
+
+            return Task.CompletedTask;
         }
     }
 }

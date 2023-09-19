@@ -35,10 +35,10 @@
             this.results = new ResultsModel { ReportTitle = new NameModel(this.reportTitle) };
 
             this.DomainService.GetBomDifferencesReport(
-                this.bom1.Trim().ToUpper(), this.bom2.Trim().ToUpper(), false).Returns(this.results);
+                this.bom1.Trim().ToUpper(), this.bom2.Trim().ToUpper(), true, false).Returns(this.results);
 
             this.Response = this.Client.Get(
-                $"/purchasing/boms/reports/diff?bom1={this.bom1}&bom2={this.bom2}",
+                $"/purchasing/boms/reports/diff?bom1={this.bom1}&bom2={this.bom2}&singleLevel=True&showDescriptions=False",
                 with => { with.Accept("application/json"); }).Result;
         }
 
@@ -53,7 +53,7 @@
         public void ShouldPassCorrectOptionsToDomainService()
         {
             this.DomainService.Received()
-                .GetBomDifferencesReport(this.bom1.Trim().ToUpper(), this.bom2.Trim().ToUpper(), false);
+                .GetBomDifferencesReport(this.bom1.Trim().ToUpper(), this.bom2.Trim().ToUpper(), true, false);
         }
 
         [Test]
