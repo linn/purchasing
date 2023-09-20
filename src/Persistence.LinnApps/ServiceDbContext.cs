@@ -2237,7 +2237,6 @@
             entity.Property(a => a.AnnualUsage).HasColumnName("ANNUAL_USAGE");
             entity.HasOne(a => a.BomDetailViewEntry).WithOne(b => b.PartRequirement).HasForeignKey<BomDetailViewEntry>(a => a.PartNumber);
             entity.HasOne(a => a.Part).WithOne(b => b.PartRequirement).HasForeignKey<Part>(a => a.PartNumber);
-
         }
 
         private void BuildBomCostDetails(ModelBuilder builder)
