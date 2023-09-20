@@ -30,7 +30,8 @@
                 .Include(d => d.PartRequirement)
                 .Include(d => d.AddChange)
                 .Include(d => d.DeleteChange)
-                .Include(d => d.BomPart).Where(expression)
+                .Include(d => d.BomPart).ThenInclude(b => b.PartRequirement)
+                .Where(expression)
                 .AsNoTracking();
         }
 

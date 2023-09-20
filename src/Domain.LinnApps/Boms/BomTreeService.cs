@@ -291,14 +291,15 @@
                                    Id = "-1",
                                    Children = this.detailViewRepository.FilterBy(d => d.PartNumber == partNumber)
                                        .Where(c => !requirementOnly
-                                                   || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0))
+                                                   || (c.BomPart.PartRequirement != null && c.BomPart.PartRequirement.AnnualUsage > 0))
+                                       .Where(x => showChanges || x.ChangeState == "LIVE")
                                        .Select(c => new BomTreeNode
                                                         {
                                                             Name = c.BomPart.PartNumber,
                                                             Description = c.BomPart.Description,
                                                             Qty = c.Qty,
                                                             Id = c.DetailId.ToString(),
-                                                            DeleteChangeDocumentNumber =  c.DeleteChange != null ?
+                                                            DeleteChangeDocumentNumber = c.DeleteChange != null ?
                                                                 c.DeleteChange.DocumentNumber : null,
                                                             AddReplaceSeq = c.AddReplaceSeq,
                                                             DeleteReplaceSeq = c.DeleteReplaceSeq,
@@ -329,7 +330,7 @@
                                 .FilterBy(x => x.PartNumber == child.Name)
                                 .Where(x => showChanges || x.ChangeState == "LIVE")
                                 .Where(c => !requirementOnly
-                                            || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0));
+                                            || (c.BomPart.PartRequirement != null && c.BomPart.PartRequirement.AnnualUsage > 0));
 
                             var node = new BomTreeNode
                             {
@@ -338,7 +339,7 @@
                                 Qty = child.Qty,
                                 Type = child.Type,
                                 Id = child.Id,
-                                DeleteChangeDocumentNumber  = child.DeleteChangeDocumentNumber,
+                                DeleteChangeDocumentNumber = child.DeleteChangeDocumentNumber,
                                 AddReplaceSeq = child.AddReplaceSeq,
                                 DeleteReplaceSeq = child.DeleteReplaceSeq,
                                 ChangeState = child.ChangeState,
@@ -397,7 +398,8 @@
                 Qty = 0,
                 Children = this.detailViewRepository.FilterBy(d => d.PartNumber == partNumber)
                     .Where(c => !requirementOnly
-                                || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0))
+                                || (c.BomPart.PartRequirement != null && c.BomPart.PartRequirement.AnnualUsage > 0))
+                    .Where(x => showChanges || x.ChangeState == "LIVE")
                                        .Select(c => new BomTreeNode
                                        {
                                            Name = c.BomPart.PartNumber,
@@ -435,7 +437,7 @@
                                 .FilterBy(x => x.PartNumber == child.Name)
                                 .Where(x => showChanges || x.ChangeState == "LIVE")
                                 .Where(c => !requirementOnly
-                                            || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0));
+                                            || (c.BomPart.PartRequirement != null && c.BomPart.PartRequirement.AnnualUsage > 0));
 
                             var node = new BomTreeNode
                             {
