@@ -290,6 +290,8 @@
                                    Qty = 0,
                                    Id = "-1",
                                    Children = this.detailViewRepository.FilterBy(d => d.PartNumber == partNumber)
+                                       .Where(c => !requirementOnly
+                                                   || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0))
                                        .Select(c => new BomTreeNode
                                                         {
                                                             Name = c.BomPart.PartNumber,
@@ -394,6 +396,8 @@
                 Name = partNumber,
                 Qty = 0,
                 Children = this.detailViewRepository.FilterBy(d => d.PartNumber == partNumber)
+                    .Where(c => !requirementOnly
+                                || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0))
                                        .Select(c => new BomTreeNode
                                        {
                                            Name = c.BomPart.PartNumber,
