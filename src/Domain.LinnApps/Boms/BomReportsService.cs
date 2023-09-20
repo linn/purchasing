@@ -7,7 +7,6 @@
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Layouts;
     using Linn.Common.Reporting.Models;
-    using Linn.Common.Reporting.Resources.Extensions;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Parts;
