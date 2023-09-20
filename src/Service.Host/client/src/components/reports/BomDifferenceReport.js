@@ -39,9 +39,7 @@ function BomDifferenceReport() {
 
     const [options, setOptions] = useState({
         singleLevel: true,
-        showDescriptions: false,
-        bom1: '360/SM/001/E',
-        bom2: '360/SM/002/E'
+        showDescriptions: false
     });
 
     const handleOptionChange = (propName, newVal) =>
