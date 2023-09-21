@@ -80,3 +80,5 @@ local-update.sh
 .idea*
 
 *nCrunchTemp*
+
+*.DS_Store

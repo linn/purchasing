@@ -38,20 +38,24 @@
         }
         
         [Test]
-        public void ShouldDispatchOrderBookMessages()
+        public Task ShouldDispatchOrderBookMessages()
         {
             this.EmailOrderBookMessageDispatcher.Received().Dispatch(Arg.Is<EmailOrderBookMessageResource>(x => 
                 x.ForSupplier == 1
                 && x.ToAddress == "orderbookperson@gmail.com"));
+
+            return Task.CompletedTask;
         }
         
         [Test]
-        public void ShouldDispatchWeeklyForecastMessages()
+        public Task ShouldDispatchWeeklyForecastMessages()
         {
             this.EmailMonthlyForecastMessageDispatcher
                 .Received().Dispatch(Arg.Is<EmailMonthlyForecastReportMessageResource>(x =>
                 x.ForSupplier == 2
                 && x.ToAddress == "weeklyforecastperson@gmail.com"));
+            
+            return Task.CompletedTask;
         }
     }
 }

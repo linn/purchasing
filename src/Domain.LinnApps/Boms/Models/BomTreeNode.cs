@@ -58,5 +58,7 @@
         public DateTime? AddedOn { get; set; }
 
         public DateTime? DeletedOn { get; set; }
+
+        public decimal? Cost { get; set; }
     }
 }

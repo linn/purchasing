@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.BomReportsServiceTests
+namespace Linn.Purchasing.Domain.LinnApps.Tests.BomReportsServiceTests
 {
     using System;
     using System.Collections.Generic;
@@ -8,51 +8,51 @@
     using FluentAssertions;
 
     using Linn.Common.Reporting.Models;
-    using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NSubstitute;
 
     using NUnit.Framework;
 
-    public class WhenGettingBomDifferencesReport : ContextBase
+    public class WhenGettingFlattenedBomDifferenceReport : ContextBase
     {
         private ResultsModel result;
-
+        
         [SetUp]
         public void Setup()
         {
-            var firstBomDetails = new List<BomDetailViewEntry>
+            var firstBomDetails = new List<BomTreeNode>
                                       {
-                                          new BomDetailViewEntry { PartNumber = "C1", Qty = 1, Part = new Part { ExpectedUnitPrice = 12.3m } },
-                                          new BomDetailViewEntry { PartNumber = "C2", Qty = 2, Part = new Part { ExpectedUnitPrice = 1.0m } },
-                                          new BomDetailViewEntry { PartNumber = "A3", Qty = 2, Part = new Part { ExpectedUnitPrice = 12m } },
-                                          new BomDetailViewEntry { PartNumber = "P4", Qty = 1, Part = new Part { ExpectedUnitPrice = 0.5m } },
-                                          new BomDetailViewEntry { PartNumber = "C5", Qty = 12, Part = new Part { ExpectedUnitPrice = 0.1m } }
+                                          new BomTreeNode { Name = "C1", Qty = 1, Cost = 12.3m },
+                                          new BomTreeNode { Name = "C2", Qty = 2, Cost = 1.0m },
+                                          new BomTreeNode { Name = "A3", Qty = 2, Cost = 12m },
+                                          new BomTreeNode { Name = "P4", Qty = 1, Cost = 0.5m },
+                                          new BomTreeNode { Name = "C5", Qty = 12, Cost = 0.1m }
                                       }; 
 
-            var secondBomDetails = new List<BomDetailViewEntry>
+            var secondBomDetails = new List<BomTreeNode>
                                        {
-                                           new BomDetailViewEntry { PartNumber = "A3", Qty = 2, Part = new Part { ExpectedUnitPrice = 12m } },
-                                           new BomDetailViewEntry { PartNumber = "P4", Qty = 5, Part = new Part { ExpectedUnitPrice = 0.5m } },
-                                           new BomDetailViewEntry { PartNumber = "C5", Qty = 2, Part = new Part { ExpectedUnitPrice = 1m } },
-                                           new BomDetailViewEntry { PartNumber = "C6", Qty = 20, Part = new Part { ExpectedUnitPrice = 0.1m } },
+                                           new BomTreeNode { Name = "A3", Qty = 2, Cost = 12m },
+                                           new BomTreeNode { Name = "P4", Qty = 5, Cost = 0.5m },
+                                           new BomTreeNode { Name = "C5", Qty = 2, Cost = 1m },
+                                           new BomTreeNode { Name = "C6", Qty = 20, Cost = 0.1m }
                                        };
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>()).Returns(
                 new Part { MaterialPrice = 1001.1m},
                 new Part { MaterialPrice = 2002.2m});
-            this.BomDetailViewRepository.FilterBy(Arg.Any<Expression<Func<BomDetailViewEntry, bool>>>())
+            this.BomTreeService.FlattenBomTree(Arg.Any<string>(), 0, false, false)
                 .Returns(firstBomDetails.AsQueryable(), secondBomDetails.AsQueryable());
 
-            this.result = this.Sut.GetBomDifferencesReport("BOM1", "BOM2");
+            this.result = this.Sut.GetBomDifferencesReport("BOM1", "BOM2", false);
         }
-
+        
         [Test]
         public void ShouldReturnCorrectNumberOfRows()
         {
             this.result.Rows.Count().Should().Be(7);
         }
-
+        
         [Test]
         public void ShouldIncludePartsExclusivelyOnBom1()
         {

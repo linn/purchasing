@@ -11,3 +11,5 @@ dotnet run false all
 Example send to a test address for selected suppliers 
 
 dotnet run true 12345,456778,333456 youremail@domain.com
+
+you will also need a config.env file in the same directory as the executable - see config-example.env
