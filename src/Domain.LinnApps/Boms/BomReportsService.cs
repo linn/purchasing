@@ -360,12 +360,33 @@
                                     });
             }
 
-            var combined = components1.Concat(components2);
+            var com1 = components1.Select(
+                a => new BoardCrefReportModel
+                         {
+                             CRef = a.CRef,
+                             PartNumber = a.PartNumber,
+                             BoardLine = a.BoardLine,
+                             Sequence = 1,
+                             AssemblyTechnology = a.AssemblyTechnology,
+                             Quantity = a.Quantity
+                         });
+            var com2 = components2.Select(
+                a => new BoardCrefReportModel
+                         {
+                             CRef = a.CRef,
+                             PartNumber = a.PartNumber,
+                             BoardLine = a.BoardLine,
+                             Sequence = 2,
+                             AssemblyTechnology = a.AssemblyTechnology,
+                             Quantity = a.Quantity
+                         });
+
+            var combined = com1.Concat(com2);
             var crefGroups = combined.GroupBy(a => a.CRef);
 
             foreach (var crefGroup in crefGroups)
             {
-                var crefGroupOrdered = crefGroup.OrderBy(a => a.BoardLine).ToList();
+                var crefGroupOrdered = crefGroup.OrderBy(a => a.Sequence).ThenBy(b => b.BoardLine).ToList();
                 if (crefGroupOrdered.Count >= 2 && crefGroupOrdered.First().PartNumber != crefGroupOrdered.Last().PartNumber)
                 {
                     valueModels.Add(new CalculationValueModel
