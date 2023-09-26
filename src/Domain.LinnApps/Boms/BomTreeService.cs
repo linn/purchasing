@@ -309,7 +309,7 @@
                                        }).OrderBy(c => c.Name)
 
                                };
-            var currentDepth = 0;
+            var currentDepth = 1;
             var q = new Queue<BomTreeNode>();
             q.Enqueue(rootNode);
             while (q.Count != 0)
