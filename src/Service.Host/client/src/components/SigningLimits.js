@@ -316,6 +316,7 @@ function SigningLimits() {
                 <IconButton
                     aria-label="delete"
                     size="small"
+                    disabled={!editingAllowed}
                     onClick={() => handleDeleteRow(params)}
                 >
                     <DeleteIcon fontSize="inherit" />
