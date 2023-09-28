@@ -290,14 +290,30 @@ function BoardChange({ item, creating, handleFieldChange }) {
                             </Grid>
                         </>
                     ) : (
-                        <Grid item xs={4}>
-                            <InputField
-                                value={item?.newPartNumber}
-                                label="PCAS Part#"
-                                propertyName="newPartNumber"
-                                disabled
-                            />
-                        </Grid>
+                        <>
+                            <Grid item xs={4} />
+                            <Grid item xs={4}>
+                                <InputField
+                                    value={item?.newPartNumber}
+                                    label="PCAS Part#"
+                                    propertyName="newPartNumber"
+                                    disabled
+                                />
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Button
+                                    disabled={!replaceUri}
+                                    style={{ marginTop: '30px' }}
+                                    onClick={() => {
+                                        history.push(
+                                            `/purchasing/change-requests/replace?documentNumber=${item?.documentNumber}`
+                                        );
+                                    }}
+                                >
+                                    Add
+                                </Button>
+                            </Grid>
+                        </>
                     )}
 
                     <Grid item xs={12}>
