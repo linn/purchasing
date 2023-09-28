@@ -13,5 +13,7 @@
         public string PartNumber1 { get; set; }
 
         public string PartNumber2 { get; set; }
+
+        public bool LiveOnly { get; set; }
     }
 }

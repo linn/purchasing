@@ -27,9 +27,11 @@
         }
 
         [Test]
-        public void ShouldNotDispatchMessage()
+        public Task ShouldNotDispatchMessage()
         {
             this.Dispatcher.DidNotReceive().Dispatch(Arg.Any<EmailPurchaseOrderReminderMessageResource>());
+            
+            return Task.CompletedTask;
         }
     }
 }

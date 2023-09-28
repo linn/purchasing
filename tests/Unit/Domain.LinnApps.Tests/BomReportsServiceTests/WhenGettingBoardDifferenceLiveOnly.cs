@@ -12,7 +12,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingBoardDifference : ContextBase
+    public class WhenGettingBoardDifferenceLiveOnly : ContextBase
     {
         private ResultsModel results;
 
@@ -31,7 +31,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.liveOnly = false;
+            this.liveOnly = true;
             this.boardCode1 = "1";
             this.revisionCode1 = "L1R1";
             this.boardCode2 = "1";
@@ -91,7 +91,7 @@
                                              CRef = "C002",
                                              PartNumber = "CAP 123",
                                              AssemblyTechnology = "SM",
-                                             ChangeState = "PROPOS",
+                                             ChangeState = "LIVE",
                                              FromLayoutVersion = 1,
                                              FromRevisionVersion = 1,
                                              ToLayoutVersion = 1,
@@ -107,7 +107,7 @@
                                              CRef = "C002",
                                              PartNumber = "CAP 124",
                                              AssemblyTechnology = "SM",
-                                             ChangeState = "PROPOS",
+                                             ChangeState = "LIVE",
                                              FromLayoutVersion = 1,
                                              FromRevisionVersion = 2,
                                              ToLayoutVersion = null,
@@ -123,7 +123,7 @@
                                              CRef = "C003",
                                              PartNumber = "CAP 125",
                                              AssemblyTechnology = "SM",
-                                             ChangeState = "PROPOS",
+                                             ChangeState = "LIVE",
                                              FromLayoutVersion = 1,
                                              FromRevisionVersion = 1,
                                              ToLayoutVersion = 1,
@@ -170,7 +170,7 @@
         [Test]
         public void ShouldReturnReport()
         {
-            this.results.Rows.Count().Should().Be(3);
+            this.results.Rows.Count().Should().Be(2);
             this.results.GetGridTextValue(0, 0).Should().Be("CAP 123");
             this.results.GetGridTextValue(0, 1).Should().Be("SM");
             this.results.GetGridTextValue(0, 2).Should().Be("1.0");
@@ -183,12 +183,6 @@
             this.results.GetGridTextValue(1, 3).Should().BeNull();
             this.results.GetGridTextValue(1, 4).Should().BeNull();
             this.results.GetGridTextValue(1, 5).Should().BeNull();
-            this.results.GetGridTextValue(2, 0).Should().BeNull();
-            this.results.GetGridTextValue(2, 1).Should().BeNull();
-            this.results.GetGridTextValue(2, 2).Should().BeNull();
-            this.results.GetGridTextValue(2, 3).Should().Be("CAP 126");
-            this.results.GetGridTextValue(2, 4).Should().Be("SM");
-            this.results.GetGridTextValue(2, 5).Should().Be("1.0");
         }
     }
 }

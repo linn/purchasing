@@ -43,7 +43,7 @@
 
         public ResultsModel GetPartsOnBomReport(string bomName)
         {
-            var lines = this.bomDetailViewRepository.FindAll().Where(d => d.BomPartNumber == bomName)
+            var lines = this.bomDetailViewRepository.FindAll().Where(d => d.BomPartNumber == bomName && d.ChangeState == "LIVE")
                 .OrderBy(x => x.PartNumber);
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
@@ -52,16 +52,16 @@
                 null,
                 new List<AxisDetailsModel>
                     {
-                        new("Qty", "Qty", GridDisplayType.Value) { DecimalPlaces = 5 },
-                        new("Units", "Units", GridDisplayType.TextValue),
-                        new("PartNumber", "Part Number",  GridDisplayType.TextValue),
-                        new("Description", "Description",  GridDisplayType.TextValue),
-                        new("BomType", "Bom Type", GridDisplayType.TextValue),
-                        new("GenerateReqt", "Reqt?", GridDisplayType.TextValue),
-                        new("DecrementRule", "Decr?", GridDisplayType.TextValue),
-                        new("DrawingRef", "Drawing Ref?", GridDisplayType.TextValue),
-                        new("PcasLine", "PCAS?", GridDisplayType.TextValue),
-                        new("Crefs", "Crefs", GridDisplayType.TextValue)
+                        new AxisDetailsModel("Qty", "Qty", GridDisplayType.Value) { DecimalPlaces = 5 },
+                        new AxisDetailsModel("Units", "Units", GridDisplayType.TextValue),
+                        new AxisDetailsModel("PartNumber", "Part Number",  GridDisplayType.TextValue),
+                        new AxisDetailsModel("Description", "Description",  GridDisplayType.TextValue),
+                        new AxisDetailsModel("BomType", "Bom Type", GridDisplayType.TextValue),
+                        new AxisDetailsModel("GenerateReqt", "Reqt?", GridDisplayType.TextValue),
+                        new AxisDetailsModel("DecrementRule", "Decr?", GridDisplayType.TextValue),
+                        new AxisDetailsModel("DrawingRef", "Drawing Ref?", GridDisplayType.TextValue),
+                        new AxisDetailsModel("PcasLine", "PCAS?", GridDisplayType.TextValue),
+                        new AxisDetailsModel("Crefs", "Crefs", GridDisplayType.TextValue)
                     });
 
             var values = new List<CalculationValueModel>();
@@ -184,14 +184,14 @@
                     null,
                     new List<AxisDetailsModel>
                         {
-                            new("PartNumber", "PartNumber", GridDisplayType.TextValue),
-                            new("Desc", "Desc", GridDisplayType.TextValue),
-                            new("Type", "Type", GridDisplayType.TextValue),
-                            new("PreferredSupplier", GridDisplayType.TextValue),
-                            new("Qty", "Qty", GridDisplayType.Value) { DecimalPlaces = 4 },
-                            new("StdPrice", "Std Price", GridDisplayType.Value) { DecimalPlaces = 5 },
-                            new("MaterialPrice", "Mat Price",  GridDisplayType.Value) { DecimalPlaces = 5 },
-                            new("TotalMaterial", "Total Material",  GridDisplayType.Value) { DecimalPlaces = 5 },
+                            new AxisDetailsModel("PartNumber", "PartNumber", GridDisplayType.TextValue),
+                            new AxisDetailsModel("Desc", "Desc", GridDisplayType.TextValue),
+                            new AxisDetailsModel("Type", "Type", GridDisplayType.TextValue),
+                            new AxisDetailsModel("PreferredSupplier", GridDisplayType.TextValue),
+                            new AxisDetailsModel("Qty", "Qty", GridDisplayType.Value) { DecimalPlaces = 4 },
+                            new AxisDetailsModel("StdPrice", "Std Price", GridDisplayType.Value) { DecimalPlaces = 5 },
+                            new AxisDetailsModel("MaterialPrice", "Mat Price",  GridDisplayType.Value) { DecimalPlaces = 5 },
+                            new AxisDetailsModel("TotalMaterial", "Total Material",  GridDisplayType.Value) { DecimalPlaces = 5 },
                         });
 
                 var values = new List<CalculationValueModel>();
@@ -274,7 +274,8 @@
             string boardCode1,
             string revisionCode1,
             string boardCode2,
-            string revisionCode2)
+            string revisionCode2,
+            bool liveOnly)
         {
             if (string.IsNullOrWhiteSpace(boardCode1) || string.IsNullOrWhiteSpace(revisionCode1)
                                                       || string.IsNullOrWhiteSpace(boardCode2)
@@ -294,8 +295,8 @@
 
             var revision1 = board1.Layouts.SelectMany(a => a.Revisions).First(a => a.RevisionCode == revisionCode1.ToUpper());
             var revision2 = board2.Layouts.SelectMany(a => a.Revisions).First(a => a.RevisionCode == revisionCode2.ToUpper());
-            var components1 = board1.ComponentsOnRevision(revision1.LayoutSequence, revision1.VersionNumber);
-            var components2 = board2.ComponentsOnRevision(revision2.LayoutSequence, revision2.VersionNumber);
+            var components1 = board1.ComponentsOnRevision(revision1.LayoutSequence, revision1.VersionNumber, liveOnly);
+            var components2 = board2.ComponentsOnRevision(revision2.LayoutSequence, revision2.VersionNumber, liveOnly);
 
             var results = new ResultsModel
                               {
@@ -359,12 +360,33 @@
                                     });
             }
 
-            var combined = components1.Concat(components2);
+            var com1 = components1.Select(
+                a => new BoardCrefReportModel
+                         {
+                             CRef = a.CRef,
+                             PartNumber = a.PartNumber,
+                             BoardLine = a.BoardLine,
+                             Sequence = 1,
+                             AssemblyTechnology = a.AssemblyTechnology,
+                             Quantity = a.Quantity
+                         });
+            var com2 = components2.Select(
+                a => new BoardCrefReportModel
+                         {
+                             CRef = a.CRef,
+                             PartNumber = a.PartNumber,
+                             BoardLine = a.BoardLine,
+                             Sequence = 2,
+                             AssemblyTechnology = a.AssemblyTechnology,
+                             Quantity = a.Quantity
+                         });
+
+            var combined = com1.Concat(com2);
             var crefGroups = combined.GroupBy(a => a.CRef);
 
             foreach (var crefGroup in crefGroups)
             {
-                var crefGroupOrdered = crefGroup.OrderBy(a => a.BoardLine).ToList();
+                var crefGroupOrdered = crefGroup.OrderBy(a => a.Sequence).ThenBy(b => b.BoardLine).ToList();
                 if (crefGroupOrdered.Count >= 2 && crefGroupOrdered.First().PartNumber != crefGroupOrdered.Last().PartNumber)
                 {
                     valueModels.Add(new CalculationValueModel
@@ -415,38 +437,94 @@
             return results;
         }
 
-        public ResultsModel GetBomDifferencesReport(string bom1, string bom2)
+        public ResultsModel GetBomDifferencesReport(
+            string bom1, 
+            string bom2, 
+            bool singleLevel = true, 
+            bool showDescriptions = false)
         {
-            var first = this.bomDetailViewRepository
-                .FilterBy(x => x.ChangeState == "LIVE" && x.BomPartNumber == bom1).ToList();
-            var second = this.bomDetailViewRepository
-                .FilterBy(x => x.ChangeState == "LIVE" && x.BomPartNumber == bom2).ToList();
 
+            IEnumerable<BomDetailViewEntry> first;
+
+            IEnumerable<BomDetailViewEntry> second;
+
+            if (singleLevel)
+            {
+                first = this.bomDetailViewRepository
+                    .FilterBy(x => x.ChangeState == "LIVE" && x.BomPartNumber == bom1).ToList();
+                second = this.bomDetailViewRepository
+                    .FilterBy(x => x.ChangeState == "LIVE" && x.BomPartNumber == bom2).ToList();
+            }
+            else
+            {
+                first = this.bomTreeService.FlattenBomTree(bom1, 0, false, false).Select(
+                    x => new BomDetailViewEntry
+                             {
+                                 PartNumber = x.Name,
+                                 Qty = x.Qty,
+                                 Part = new Part
+                                            {
+                                                ExpectedUnitPrice = x.Cost,
+                                                Description = x.Description
+                                            }
+                             }).Where(d => d.PartNumber != bom1).ToList();
+                second = this.bomTreeService.FlattenBomTree(bom2, 0, false, false)
+                    .Select(x => new BomDetailViewEntry
+                                     {
+                                         PartNumber = x.Name,
+                                         Qty = x.Qty, Part = new Part
+                                                                 {
+                                                                     ExpectedUnitPrice = x.Cost,
+                                                                     Description = x.Description
+                                                                 }
+                                     }).Where(d => d.PartNumber != bom2).ToList();
+            }
+            
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
+            var cols = new List<AxisDetailsModel>
+                           {
+                               new ("PartNumber1", bom1, GridDisplayType.TextValue),
+                           };
 
-            reportLayout.AddColumnComponent(
-                null,
-                new List<AxisDetailsModel>
-                    {
-                        new("PartNumber1", bom1, GridDisplayType.TextValue),
-                        new("Qty1", "Qty", GridDisplayType.TextValue),
-                        new("Cost1", "Cost", GridDisplayType.TextValue),
-                        new("PartNumber2", bom2, GridDisplayType.TextValue),
-                        new("Qty2", "Qty",  GridDisplayType.TextValue),
-                        new("Cost2", "Cost",  GridDisplayType.TextValue),
-                        new("Diff", "Diff", GridDisplayType.Value) { DecimalPlaces = 5 }
-                    });
+            if (showDescriptions)
+            {
+                cols.Add(new AxisDetailsModel("Desc1", "Desc", GridDisplayType.TextValue));
+            }
 
-            reportLayout.ReportTitle = $"Single Level BOM differences between {bom1.ToUpper()} and {bom2.ToUpper()}";
+            cols.Add(new AxisDetailsModel("Qty1", "Qty", GridDisplayType.TextValue));
+            cols.Add(new AxisDetailsModel("Cost1", "Cost", GridDisplayType.TextValue));
+            cols.Add(new AxisDetailsModel("PartNumber2", bom2, GridDisplayType.TextValue));
+            
+            if (showDescriptions)
+            {
+                cols.Add(new AxisDetailsModel("Desc2", "Desc", GridDisplayType.TextValue));
+            }
+
+            cols.Add(new AxisDetailsModel("Qty2", "Qty", GridDisplayType.TextValue));
+            cols.Add(new AxisDetailsModel("Cost2", "Cost", GridDisplayType.TextValue));
+            cols.Add(new AxisDetailsModel("Diff", "Diff", GridDisplayType.Value)
+                         {
+                             DecimalPlaces = 5
+                         });
+            
+            reportLayout.AddColumnComponent(null, cols);
+
+            reportLayout.ReportTitle = singleLevel ? $"Single Level BOM differences between {bom1.ToUpper()} and {bom2.ToUpper()}"
+                                           : $"Flattened BOM differences between {bom1.ToUpper()} and {bom2.ToUpper()}";
 
             var values = new List<CalculationValueModel>();
             var diffTotal = 0m;
 
-            foreach (var detail in first)
+            var inBoth = new List<BomDetailViewEntry>();
+
+            foreach (var detail in first.DistinctBy(z => z.PartNumber))
             {
-                var inSecond = second.SingleOrDefault(x => x.PartNumber == detail.PartNumber);
-                if (inSecond == null)
+                var inSecond = second.Where(x => x.PartNumber == detail.PartNumber).ToList();
+                var inFirst = first.Where(x => x.PartNumber == detail.PartNumber).ToList();
+                
+                if (!inSecond.Any())
                 {
+                    // parts only in the first bom
                     values.Add(
                         new CalculationValueModel
                             {
@@ -454,12 +532,22 @@
                                 ColumnId = "PartNumber1",
                                 TextDisplay = detail.PartNumber
                             });
+                    if (showDescriptions)
+                    {
+                        values.Add(
+                            new CalculationValueModel
+                                {
+                                    RowId = detail.PartNumber,
+                                    ColumnId = "Desc1",
+                                    TextDisplay = detail.Part.Description
+                                });
+                    }
                     values.Add(
                         new CalculationValueModel
                             {
                                 RowId = detail.PartNumber,
                                 ColumnId = "Qty1",
-                                TextDisplay = detail.Qty.ToString("0.#####")
+                                TextDisplay = inFirst.Sum(x => x.Qty).ToString("0.#####")
                             });
                     values.Add(
                         new CalculationValueModel
@@ -497,15 +585,27 @@
                             });
                     diffTotal += diff;
                 }
-                else if (inSecond.Qty == detail.Qty)
+                else if (inSecond.Sum(x => x.Qty) == inFirst.Sum(x => x.Qty))
                 {
                     continue;
                 }
                 else
                 {
-                    var inFirst = first.First(x => x.PartNumber == detail.PartNumber);
-                    var cost1 = inFirst.Part.ExpectedUnitPrice.GetValueOrDefault() * inFirst.Qty;
-                    var cost2 = inSecond.Part.ExpectedUnitPrice.GetValueOrDefault() * inSecond.Qty;
+                    // part is in both boms
+                    inBoth.Add(detail);
+                }
+            }
+
+            foreach (var detail in inBoth)
+            {
+                    var inSecond = second.Where(x => x.PartNumber == detail.PartNumber).ToList();
+                    var inFirst = first.Where(x => x.PartNumber == detail.PartNumber).ToList();
+                    var cost1 = inFirst.First().Part.ExpectedUnitPrice.GetValueOrDefault() * inFirst.Sum(x => x.Qty);
+                    var cost2 = inSecond.First().Part.ExpectedUnitPrice.GetValueOrDefault() * inSecond.Sum(x => x.Qty);
+                    if (detail.PartNumber == "MECH 515")
+                    {
+                        var stop = 10;
+                    }
                     values.Add(
                         new CalculationValueModel
                             {
@@ -513,12 +613,22 @@
                                 ColumnId = "PartNumber1",
                                 TextDisplay = detail.PartNumber
                             });
+                    if (showDescriptions)
+                    {
+                        values.Add(
+                            new CalculationValueModel
+                                {
+                                    RowId = detail.PartNumber,
+                                    ColumnId = "Desc1",
+                                    TextDisplay = detail.Part.Description
+                                });
+                    }
                     values.Add(
                         new CalculationValueModel
                             {
                                 RowId = detail.PartNumber,
                                 ColumnId = "Qty1",
-                                TextDisplay = detail.Qty.ToString("0.#####")
+                                TextDisplay = inFirst.Sum(x => x.Qty).ToString("0.#####")
                         });
                     values.Add(
                         new CalculationValueModel
@@ -534,20 +644,29 @@
                                 ColumnId = "PartNumber2",
                                 TextDisplay = detail.PartNumber
                             });
+                    if (showDescriptions)
+                    {
+                        values.Add(
+                            new CalculationValueModel
+                                {
+                                    RowId = detail.PartNumber,
+                                    ColumnId = "Desc2",
+                                    TextDisplay = detail.Part.Description
+                                });
+                    }
                     values.Add(
                         new CalculationValueModel
                             {
                                 RowId = detail.PartNumber,
                                 ColumnId = "Qty2",
-                                TextDisplay = inSecond.Qty.ToString("0.#####")
+                                TextDisplay = inSecond.Sum(x => x.Qty).ToString("0.#####")
                         });
                     values.Add(
                         new CalculationValueModel
                             {
                                 RowId = detail.PartNumber,
                                 ColumnId = "Cost2",
-                                TextDisplay 
-                                    = inSecond.Part.ExpectedUnitPrice.GetValueOrDefault().ToString("0.#####")
+                                TextDisplay = cost2.ToString("0.#####")
                         });
                     values.Add(
                         new CalculationValueModel
@@ -557,13 +676,14 @@
                                 Value = cost2 - cost1
                             });
                     diffTotal += cost2 - cost1;
-                }
             }
 
-            foreach (var detail in second)
+            foreach (var detail in second.DistinctBy(x => x.PartNumber))
             {
-                var inFirst = first.SingleOrDefault(x => x.PartNumber == detail.PartNumber);
-                if (inFirst == null)
+                // parts only in the second bom
+                var inFirst = first.Where(x => x.PartNumber == detail.PartNumber);
+                var inSecond = second.Where(x => x.PartNumber == detail.PartNumber);
+                if (!inFirst.Any())
                 {
                     values.Add(
                         new CalculationValueModel
@@ -590,6 +710,16 @@
                             ColumnId = "PartNumber2",
                             TextDisplay = detail.PartNumber
                         });
+                    if (showDescriptions)
+                    {
+                        values.Add(
+                            new CalculationValueModel
+                                {
+                                    RowId = detail.PartNumber,
+                                    ColumnId = "Desc2",
+                                    TextDisplay = detail.Part.Description
+                                });
+                    }
                     values.Add(
                         new CalculationValueModel
                         {
@@ -602,7 +732,7 @@
                         {
                             RowId = detail.PartNumber,
                             ColumnId = "Cost2",
-                            TextDisplay = detail.Part.ExpectedUnitPrice.GetValueOrDefault().ToString("0.#####")
+                            TextDisplay = (inSecond.Sum(x => x.Qty) * detail.Part.ExpectedUnitPrice.GetValueOrDefault()).ToString("0.#####")
                         });
                     var diff = 0 - detail.Qty * detail.Part.ExpectedUnitPrice.GetValueOrDefault();
                     values.Add(
@@ -615,7 +745,7 @@
                     diffTotal += diff;
                 }
             }
-
+            
             values.Add(
                 new CalculationValueModel
                     {

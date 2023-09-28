@@ -19,9 +19,14 @@
             string boardCode1,
             string revisionCode1,
             string boardCode2,
-            string revisionCode2);
+            string revisionCode2,
+            bool liveOnly);
 
-        ResultsModel GetBomDifferencesReport(string bom1, string bom2);
+        ResultsModel GetBomDifferencesReport(
+            string bom1, 
+            string bom2, 
+            bool singleLevel = true,
+            bool showDescriptions = false);
 
         ResultsModel GetBoardComponentSummaryReport(
             string boardCode,

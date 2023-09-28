@@ -6,6 +6,7 @@
     using System.Net;
 
     using FluentAssertions;
+    using FluentAssertions.Extensions;
 
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Integration.Tests.Extensions;
@@ -29,11 +30,11 @@
                                           BomName = "SK HUB"
                                       }
                               };
-            this.MockDomainService.GetReport("SK HUB", DateTime.UnixEpoch, DateTime.UnixEpoch.AddDays(1))
+            this.MockDomainService.GetReport("SK HUB", 19.September(2023), 19.September(2023).AddDays(1))
                 .Returns(this.result);
             this.Response = this.Client.Get(
                 $"/purchasing/reports/bom-history?"
-                + $"bomName=SK HUB&from={DateTime.UnixEpoch:o}&to={DateTime.UnixEpoch.AddDays(1):o}"
+                + $"bomName=SK HUB&from={19.September(2023):o}&to={19.September(2023).AddDays(1):o}"
                 + $"&includeSubAssemblies=false",
                 with => { with.Accept("application/json"); }).Result;
         }
@@ -47,7 +48,7 @@
         [Test]
         public void ShouldCallDomain()
         {
-            this.MockDomainService.Received().GetReport("SK HUB", DateTime.UnixEpoch, DateTime.UnixEpoch.AddDays(1));
+            this.MockDomainService.Received().GetReport("SK HUB", 19.September(2023), 19.September(2023).AddDays(1));
         }
 
         [Test]

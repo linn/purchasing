@@ -33,7 +33,7 @@
 
         public IList<BoardComponent> Components { get; set; }
 
-        public IList<BoardComponent> ComponentsOnRevision(int layoutSequence, int versionNumber)
+        public IList<BoardComponent> ComponentsOnRevision(int layoutSequence, int versionNumber, bool liveOnly = false)
         {
             return this.Components.Where(
                 a => this.RevisionInRange(
@@ -43,7 +43,8 @@
                     a.FromRevisionVersion,
                     a.ToLayoutVersion,
                     a.ToRevisionVersion,
-                    a.ChangeState)).ToList();
+                    a.ChangeState,
+                    liveOnly)).ToList();
         }
 
         private bool RevisionInRange(
@@ -53,9 +54,15 @@
             int fromRevisionVersion,
             int? toLayoutVersion,
             int? toRevisionVersion,
-            string changeState)
+            string changeState,
+            bool liveOnly = false)
         {
             if (changeState != "LIVE" && changeState != "PROPOS" && changeState != "ACCEPT")
+            {
+                return false;
+            }
+
+            if ((changeState == "PROPOS" || changeState == "ACCEPT") && liveOnly)
             {
                 return false;
             }

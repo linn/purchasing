@@ -28,9 +28,11 @@
         }
 
         [Test]
-        public void ShouldNotDispatchMessages()
+        public Task ShouldNotDispatchMessages()
         {
             this.EmailOrderBookMessageDispatcher.DidNotReceive().Dispatch(Arg.Any<EmailOrderBookMessageResource>());
+
+            return Task.CompletedTask;
         }
     }
 }

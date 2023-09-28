@@ -194,6 +194,7 @@
                                  {
                                      Name = d.Part.PartNumber,
                                      Description = d.Part.Description,
+                                     Cost = d.Part.ExpectedUnitPrice,
                                      Qty = d.Qty,
                                      AddChangeId = d.AddChangeId,
                                      DeleteChangeId = d.DeleteChangeId,
@@ -235,6 +236,7 @@
                                 Qty = child.Qty,
                                 ParentName = child.ParentName,
                                 Id = child.Id,
+                                Cost = child.Cost,
                                 Type = child.Type,
                                 AddChangeId = child.AddChangeId,
                                 DeleteChangeId = child.DeleteChangeId,
@@ -252,6 +254,7 @@
                                                     ParentName = child.Name,
                                                     AddChangeId = detail.AddChangeId,
                                                     DeleteChangeId = detail.DeleteChangeId,
+                                                    Cost = detail.Part.ExpectedUnitPrice,
                                                     ParentId = child.Id,
                                                     Id = detail.DetailId.ToString()
                                                 })
@@ -287,13 +290,16 @@
                                    Qty = 0,
                                    Id = "-1",
                                    Children = this.detailViewRepository.FilterBy(d => d.PartNumber == partNumber)
+                                       .Where(c => !requirementOnly
+                                                   || (c.BomPart.PartRequirement != null && c.BomPart.PartRequirement.AnnualUsage > 0))
+                                       .Where(x => showChanges || x.ChangeState == "LIVE")
                                        .Select(c => new BomTreeNode
                                                         {
                                                             Name = c.BomPart.PartNumber,
                                                             Description = c.BomPart.Description,
                                                             Qty = c.Qty,
                                                             Id = c.DetailId.ToString(),
-                                                            DeleteChangeDocumentNumber =  c.DeleteChange != null ?
+                                                            DeleteChangeDocumentNumber = c.DeleteChange != null ?
                                                                 c.DeleteChange.DocumentNumber : null,
                                                             AddReplaceSeq = c.AddReplaceSeq,
                                                             DeleteReplaceSeq = c.DeleteReplaceSeq,
@@ -303,7 +309,7 @@
                                        }).OrderBy(c => c.Name)
 
                                };
-            var currentDepth = 0;
+            var currentDepth = 1;
             var q = new Queue<BomTreeNode>();
             q.Enqueue(rootNode);
             while (q.Count != 0)
@@ -324,7 +330,7 @@
                                 .FilterBy(x => x.PartNumber == child.Name)
                                 .Where(x => showChanges || x.ChangeState == "LIVE")
                                 .Where(c => !requirementOnly
-                                            || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0));
+                                            || (c.BomPart.PartRequirement != null && c.BomPart.PartRequirement.AnnualUsage > 0));
 
                             var node = new BomTreeNode
                             {
@@ -333,7 +339,7 @@
                                 Qty = child.Qty,
                                 Type = child.Type,
                                 Id = child.Id,
-                                DeleteChangeDocumentNumber  = child.DeleteChangeDocumentNumber,
+                                DeleteChangeDocumentNumber = child.DeleteChangeDocumentNumber,
                                 AddReplaceSeq = child.AddReplaceSeq,
                                 DeleteReplaceSeq = child.DeleteReplaceSeq,
                                 ChangeState = child.ChangeState,
@@ -391,6 +397,9 @@
                 Name = partNumber,
                 Qty = 0,
                 Children = this.detailViewRepository.FilterBy(d => d.PartNumber == partNumber)
+                    .Where(c => !requirementOnly
+                                || (c.BomPart.PartRequirement != null && c.BomPart.PartRequirement.AnnualUsage > 0))
+                    .Where(x => showChanges || x.ChangeState == "LIVE")
                                        .Select(c => new BomTreeNode
                                        {
                                            Name = c.BomPart.PartNumber,
@@ -428,7 +437,7 @@
                                 .FilterBy(x => x.PartNumber == child.Name)
                                 .Where(x => showChanges || x.ChangeState == "LIVE")
                                 .Where(c => !requirementOnly
-                                            || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0));
+                                            || (c.BomPart.PartRequirement != null && c.BomPart.PartRequirement.AnnualUsage > 0));
 
                             var node = new BomTreeNode
                             {

@@ -31,7 +31,7 @@
             this.revisionCode2 = "L1R2";
 
             this.DomainService
-                .GetBoardDifferenceReport(this.boardCode1, this.revisionCode1, this.boardCode2, this.revisionCode2)
+                .GetBoardDifferenceReport(this.boardCode1, this.revisionCode1, this.boardCode2, this.revisionCode2, false)
                 .Throws(new ItemNotFoundException("not found"));
 
             this.Response = this.Client.Get(
@@ -46,7 +46,8 @@
                 this.boardCode1,
                 this.revisionCode1,
                 this.boardCode2,
-                this.revisionCode2);
+                this.revisionCode2,
+                false);
         }
 
         [Test]

@@ -28,7 +28,6 @@ import history from '../../history';
 import config from '../../config';
 import suggestedPurchaseOrderValuesActions from '../../actions/suggestedPurchaseOrderValuesActions';
 import reducer from './purchaseOrderReducer';
-import purchaseOrdersActions from '../../actions/purchaseOrdersActions';
 import purchaseOrderActions from '../../actions/purchaseOrderActions';
 
 function CreatePurchaseOrderUt() {
@@ -107,9 +106,9 @@ function CreatePurchaseOrderUt() {
     );
     const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
 
-    const previousOrderResults = useSelector(state => state.purchaseOrders.searchItems);
+    const previousOrderResult = useSelector(state => state.purchaseOrder.item);
     const previousOrderLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.purchaseOrders)
+        collectionSelectorHelpers.getLoading(state.purchaseOrder)
     );
 
     const allowedToCreate = () => item?.links?.some(l => l.rel === 'create');
@@ -199,26 +198,28 @@ function CreatePurchaseOrderUt() {
     const detail = order ? order.details[0] : {};
 
     useEffect(() => {
-        if (previousOrderResults && previousOrderResults[0]) {
-            const prevOrder = previousOrderResults[0];
+        if (previousOrderResult) {
             dispatch({
-                payload: { id: prevOrder.supplier.id, name: prevOrder.supplier.name },
+                payload: {
+                    id: previousOrderResult.supplier.id,
+                    name: previousOrderResult.supplier.name
+                },
                 type: 'supplierChange'
             });
             dispatch({
                 payload: {
                     lineNumber: 1,
                     fieldName: 'partNumber',
-                    value: prevOrder.details[0].partNumber
+                    value: previousOrderResult.details[0].partNumber
                 },
                 type: 'detailFieldUpdate'
             });
-            setPartSearchTerm(prevOrder.details[0].partNumber);
+            setPartSearchTerm(previousOrderResult.details[0].partNumber);
             dispatch({
                 payload: {
                     lineNumber: 1,
                     fieldName: 'ourQty',
-                    value: prevOrder.details[0].ourQty
+                    value: previousOrderResult.details[0].ourQty
                 },
                 type: 'detailFieldUpdate'
             });
@@ -226,7 +227,7 @@ function CreatePurchaseOrderUt() {
                 payload: {
                     lineNumber: 1,
                     fieldName: 'ourUnitPriceCurrency',
-                    value: prevOrder.details[0].ourUnitPriceCurrency
+                    value: previousOrderResult.details[0].ourUnitPriceCurrency
                 },
                 type: 'detailFieldUpdate'
             });
@@ -261,7 +262,7 @@ function CreatePurchaseOrderUt() {
                 type: 'detailFieldUpdate'
             });
         }
-    }, [previousOrderResults]);
+    }, [previousOrderResult]);
 
     useEffect(() => {
         const partSuppliersWithCorrectPart = partSuppliersSearchResults?.filter(
@@ -306,13 +307,7 @@ function CreatePurchaseOrderUt() {
     const isCreditOrReturn = () =>
         order?.documentType?.name === 'CO' || order?.documentType?.name === 'RO';
     const lookUpOriginalOrder = () => {
-        reduxDispatch(purchaseOrdersActions.clearSearch());
-        reduxDispatch(
-            purchaseOrdersActions.searchWithOptions(
-                '',
-                `&numberToTake=1&searchTerm=${detail.originalOrderNumber}`
-            )
-        );
+        reduxDispatch(purchaseOrderActions.fetch(detail.originalOrderNumber));
     };
 
     const setPartWithoutSearch = () => {

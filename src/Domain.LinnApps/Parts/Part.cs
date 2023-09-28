@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -59,6 +60,8 @@
         public string AssemblyTechnology { get; set; }
 
         public decimal? ExpectedUnitPrice { get; set; }
+        
+        public PartRequirement PartRequirement { get; set; }
 
         public bool SupplierAssembly()
         {

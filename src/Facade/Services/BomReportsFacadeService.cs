@@ -47,12 +47,13 @@
             return new SuccessResult<ReportReturnResource>(resource);
         }
 
-        public IResult<ReportReturnResource> GetBomDifferencesReport(string bom1, string bom2)
+        public IResult<ReportReturnResource> GetBomDifferencesReport(
+            string bom1, string bom2, bool singleLevel, bool showDescriptions)
         {
             var resource = 
                 this.reportReturnResourceBuilder
                     .Build(this.domainService.GetBomDifferencesReport(
-                        bom1.Trim().ToUpper(), bom2.Trim().ToUpper()));
+                        bom1.Trim().ToUpper(), bom2.Trim().ToUpper(), singleLevel, showDescriptions));
 
             return new SuccessResult<ReportReturnResource>(resource);
         }
@@ -83,7 +84,8 @@
                     resource.BoardCode1,
                     resource.RevisionCode1,
                     resource.BoardCode2,
-                    resource.RevisionCode2);
+                    resource.RevisionCode2,
+                    resource.LiveOnly);
             }
             catch (DomainException exception)
             {
