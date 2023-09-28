@@ -101,7 +101,7 @@
                 return false;
             }
 
-            if ((this.ChangeRequestType == "REPLACE") || ((this.ChangeRequestType == "BOARDEDIT") && (this.OldPart.PartNumber != this.NewPart.PartNumber)) )
+            if ((this.ChangeRequestType == "REPLACE") || (this.ChangeRequestType == "BOARDEDIT"))
             {
                 if (this.ChangeState == "PROPOS")
                 {
