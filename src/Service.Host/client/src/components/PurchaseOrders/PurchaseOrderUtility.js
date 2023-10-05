@@ -86,6 +86,7 @@ function PurchaseOrderUtility({ creating }) {
 
     useEffect(() => {
         if (creating) {
+            reduxDispatch(purchaseOrderActions.clearItem());
             reduxDispatch(purchaseOrderActions.fetchState());
         }
     }, [reduxDispatch, creating]);
@@ -758,7 +759,7 @@ function PurchaseOrderUtility({ creating }) {
                                     <Typography variant="h6" display="inline">
                                         Purchase Order {!creating && item?.orderNumber}
                                     </Typography>
-                                    {order?.cancelled === 'Y' && (
+                                    {item?.cancelled === 'Y' && (
                                         <>
                                             {' '}
                                             <Typography
