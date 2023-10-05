@@ -86,6 +86,7 @@ function PurchaseOrderUtility({ creating }) {
 
     useEffect(() => {
         if (creating) {
+            reduxDispatch(purchaseOrderActions.clearItem());
             reduxDispatch(purchaseOrderActions.fetchState());
         }
     }, [reduxDispatch, creating]);
