@@ -758,7 +758,7 @@ function PurchaseOrderUtility({ creating }) {
                                     <Typography variant="h6" display="inline">
                                         Purchase Order {!creating && item?.orderNumber}
                                     </Typography>
-                                    {item?.cancelled === 'Y' && (
+                                    {order?.cancelled === 'Y' && (
                                         <>
                                             {' '}
                                             <Typography
