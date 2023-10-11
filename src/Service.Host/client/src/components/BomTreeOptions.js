@@ -27,7 +27,7 @@ export default function BomTreeOptions() {
     const { bomName } = queryString.parse(search);
     const [searchTerm, setSearchTerm] = useState(null);
     const [explode, setExplode] = useState(0);
-    const [requirementOnly, setRequirementOnly] = useState(true);
+    const [requirementOnly, setRequirementOnly] = useState(false);
     const [showChanges, setShowChanges] = useState(false);
     const [whereUsed, setWhereUsed] = useState(true);
 
