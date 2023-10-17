@@ -602,10 +602,7 @@
                     var inFirst = first.Where(x => x.PartNumber == detail.PartNumber).ToList();
                     var cost1 = inFirst.First().Part.ExpectedUnitPrice.GetValueOrDefault() * inFirst.Sum(x => x.Qty);
                     var cost2 = inSecond.First().Part.ExpectedUnitPrice.GetValueOrDefault() * inSecond.Sum(x => x.Qty);
-                    if (detail.PartNumber == "MECH 515")
-                    {
-                        var stop = 10;
-                    }
+                    
                     values.Add(
                         new CalculationValueModel
                             {
