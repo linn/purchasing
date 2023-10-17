@@ -71,10 +71,10 @@
 
         public void MakeLive(Employee appliedBy)
         {
-            var duplicates = this.AddedBomDetails.GroupBy(x => x.PartNumber)
+            var duplicates = this.AddedBomDetails?.GroupBy(x => x.PartNumber)
                 .Where(x => x.ToList().Count > 1);
-            var enumerable = duplicates.ToList();
-            if (enumerable.Any())
+            var enumerable = duplicates?.ToList();
+            if (enumerable != null && enumerable.Any())
             {
                 throw new InvalidBomChangeException(
                     "Can't add duplicate bom details: " + enumerable.Select(x => x.Key).Aggregate(
