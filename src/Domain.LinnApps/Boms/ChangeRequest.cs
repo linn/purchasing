@@ -192,8 +192,9 @@
             {
                 var allLive = true;
                 var bomChangeIds = selectedBomChangeIds?.ToList() ?? Enumerable.Empty<int>().ToList();
+
                 var pcasChangeIds = selectedPcasChangeIds?.ToList() ?? Enumerable.Empty<int>().ToList();
-                
+
                 var globalLive = !(bomChangeIds?.Any() ?? false) && !(pcasChangeIds?.Any() ?? false);
 
                 if (this.BomChanges != null)
