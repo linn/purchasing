@@ -4,6 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
+
     public class BomChange
     {
         public int ChangeId { get; set; }
@@ -69,6 +71,17 @@
 
         public void MakeLive(Employee appliedBy)
         {
+            var duplicates = this.AddedBomDetails?.GroupBy(x => x.PartNumber)
+                .Where(x => x.ToList().Count > 1);
+            var enumerable = duplicates?.ToList();
+            if (enumerable != null && enumerable.Any())
+            {
+                throw new InvalidBomChangeException(
+                    "Can't add duplicate bom details: " + enumerable.Select(x => x.Key).Aggregate(
+                        string.Empty,
+                        (current, next) => current + $"{next}, "));
+            }
+
             if (this.CanMakeLive() && (appliedBy != null))
             {
                 this.ChangeState = "LIVE";
