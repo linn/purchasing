@@ -51,5 +51,7 @@
         public const string AdminChangeRequest = "change-request.admin";
 
         public const string MakeLiveChangeRequest = "change-request.make-live";
+     
+        public const string PurchaseLedgerAdmin = "finance.purchase-ledger.admin";
     }
 }

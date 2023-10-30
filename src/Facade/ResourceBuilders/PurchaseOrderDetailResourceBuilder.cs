@@ -4,7 +4,10 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Linn.Common.Authorisation;
     using Linn.Common.Facade;
+    using Linn.Common.Resources;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 
@@ -14,16 +17,22 @@
 
         private readonly IBuilder<PurchaseOrderPosting> postingResourceBuilder;
 
+        private readonly IAuthorisationService authService;
+
         public PurchaseOrderDetailResourceBuilder(
             IBuilder<PurchaseOrderDelivery> deliveryResourceBuilder,
-            IBuilder<PurchaseOrderPosting> postingResourceBuilder)
+            IBuilder<PurchaseOrderPosting> postingResourceBuilder,
+            IAuthorisationService authService)
         {
             this.deliveryResourceBuilder = deliveryResourceBuilder;
             this.postingResourceBuilder = postingResourceBuilder;
+            this.authService = authService;
         }
 
         public PurchaseOrderDetailResource Build(PurchaseOrderDetail entity, IEnumerable<string> claims)
         {
+            var claimsList = claims.ToList();
+
             return new PurchaseOrderDetailResource
                        {
                            Line = entity.Line,
@@ -37,7 +46,7 @@
                            OrderQty = entity.OrderQty,
                            PurchaseDeliveries =
                                entity.PurchaseDeliveries?.Select(
-                                   d => (PurchaseOrderDeliveryResource)this.deliveryResourceBuilder.Build(d, claims)),
+                                   d => (PurchaseOrderDeliveryResource)this.deliveryResourceBuilder.Build(d, claimsList)),
                            RohsCompliant = entity.RohsCompliant,
                            SuppliersDesignation = entity.SuppliersDesignation,
                            StockPoolCode = entity.StockPoolCode,
@@ -82,8 +91,9 @@
                            OrderPosting = entity.OrderPosting != null
                                               ? (PurchaseOrderPostingResource)this.postingResourceBuilder.Build(
                                                   entity.OrderPosting,
-                                                  claims)
-                                              : null
+                                                  claimsList)
+                                              : null,
+                           Links = this.BuildLinks(entity, claimsList).ToArray(),
                        };
         }
 
@@ -95,6 +105,17 @@
         object IBuilder<PurchaseOrderDetail>.Build(PurchaseOrderDetail entity, IEnumerable<string> claims)
         {
             return this.Build(entity, claims);
+        }
+
+        private IEnumerable<LinkResource> BuildLinks(PurchaseOrderDetail item, IEnumerable<string> claims)
+        {
+            if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseLedgerAdmin, claims))
+            {
+                if (item.CanBeAutoBooked())
+                {
+                    yield return new LinkResource { Rel = "auto-book-in", Href = "/ledgers/purchase/auto-book-stock" };
+                }
+            }
         }
     }
 }

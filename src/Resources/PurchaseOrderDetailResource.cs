@@ -2,7 +2,9 @@
 {
     using System.Collections.Generic;
 
-    public class PurchaseOrderDetailResource
+    using Linn.Common.Resources;
+
+    public class PurchaseOrderDetailResource : HypermediaResource
     {
         public decimal? BaseDetailTotal { get; set; }
 
