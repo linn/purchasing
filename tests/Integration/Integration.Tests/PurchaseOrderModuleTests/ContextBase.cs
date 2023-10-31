@@ -104,7 +104,8 @@
                 this.MockAuthService,
                 new PurchaseOrderDetailResourceBuilder(
                     new PurchaseOrderDeliveryResourceBuilder(),
-                    new PurchaseOrderPostingResourceBuilder(this.MockNominalAccountRepository)),
+                    new PurchaseOrderPostingResourceBuilder(this.MockNominalAccountRepository),
+                    this.MockAuthService),
                 new LinnDeliveryAddressResourceBuilder(),
                 new AddressResourceBuilder(this.MockFullAddressRepository));
 

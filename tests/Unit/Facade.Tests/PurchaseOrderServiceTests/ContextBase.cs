@@ -68,7 +68,8 @@
 
             this.PurchaseOrderDetailResourceBuilder = new PurchaseOrderDetailResourceBuilder(
                 this.PurchaseOrderDeliveryResourceBuilder,
-                this.PurchaseOrderPostingResourceBuilder);
+                this.PurchaseOrderPostingResourceBuilder,
+                this.AuthService);
 
             this.Builder = new PurchaseOrderResourceBuilder(
                 this.AuthService,

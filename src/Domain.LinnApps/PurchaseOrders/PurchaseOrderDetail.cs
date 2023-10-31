@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
@@ -92,5 +93,13 @@
         public decimal OverbookQtyAllowed { get; set; }
 
         public string DrawingReference { get; set; }
+
+        public bool CanBeAutoBooked()
+        {
+            return this.Part.StockControlled != "Y" 
+                   && this.PurchaseOrder.AuthorisedById.HasValue 
+                   && this.OurQty == 1
+                   && this.PurchaseDeliveries.All(a => a.QtyNetReceived == 0);
+        }
     }
 }
