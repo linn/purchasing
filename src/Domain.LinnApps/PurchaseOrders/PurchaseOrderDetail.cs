@@ -96,9 +96,11 @@
 
         public bool CanBeAutoBooked()
         {
-            return this.Part.StockControlled != "Y" 
+            return this.Part?.StockControlled == "N" 
+                   && this.PurchaseOrder != null
                    && this.PurchaseOrder.AuthorisedById.HasValue 
                    && this.OurQty == 1
+                   && this.PurchaseDeliveries != null 
                    && this.PurchaseDeliveries.All(a => a.QtyNetReceived == 0);
         }
     }
