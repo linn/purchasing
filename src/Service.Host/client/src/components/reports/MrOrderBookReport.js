@@ -74,7 +74,7 @@ function MrOrderBookReport() {
                     </Button>
                     <ExportButton
                         disabled={!options.supplierId}
-                        href={`${config.appRoot}/purchasing/reports/mr-order-book?supplierId=${options.supplierId}`}
+                        href={`${config.appRoot}/purchasing/reports/mr-order-book-export?supplierId=${options.supplierId}`}
                         buttonText="Order Book"
                     />
                 </Grid>

@@ -33,7 +33,6 @@
 
   <ItemGroup>
     <Folder Include="ForecastingModuleTests\" />
-    <Folder Include="MrOrderBookReportModuleTests\" />
     <Folder Include="BomStandardPriceModuleTests\" />
     <Folder Include="BomHistoryReportModuleTests\" />
     <Folder Include="PartDataSheetValuesModuleTests\" />

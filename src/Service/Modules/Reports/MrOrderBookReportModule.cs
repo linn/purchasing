@@ -18,6 +18,7 @@
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/purchasing/reports/mr-order-book", this.GetReport);
+            app.MapGet("/purchasing/reports/mr-order-book-export", this.GetExportStyleReport);
         }
 
         private async Task GetReport(
@@ -35,6 +36,16 @@
                 var results = service.GetReport(supplierId.Value);
                 await res.Negotiate(results);
             }
+        }
+
+        private async Task GetExportStyleReport(
+            HttpRequest req,
+            HttpResponse res,
+            int supplierId,
+            IMrOrderBookReportFacadeService service)
+        {
+            var results = service.GetExportReport(supplierId);
+            await res.Negotiate(results);
         }
     }
 }
