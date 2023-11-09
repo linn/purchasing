@@ -26,5 +26,13 @@
             
             return new SuccessResult<ReportReturnResource>(resource);
         }
+
+        public IResult<ReportReturnResource> GetExportReport(int supplierId)
+        {
+            var resource = this.resultsModelResourceBuilder.Build(
+                this.domainService.GetOrderBookExport(supplierId));
+
+            return new SuccessResult<ReportReturnResource>(resource);
+        }
     }
 }

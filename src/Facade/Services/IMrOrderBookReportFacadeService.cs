@@ -6,5 +6,7 @@
     public interface IMrOrderBookReportFacadeService
     {
         IResult<ReportReturnResource> GetReport(int supplierId);
+
+        IResult<ReportReturnResource> GetExportReport(int supplierId);
     }
 }
