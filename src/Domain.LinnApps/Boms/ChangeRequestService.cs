@@ -33,6 +33,8 @@
 
         private readonly IRepository<CircuitBoard, string> boardRepository;
 
+        private readonly IRepository<Bom, int> bomRepository;
+
         public ChangeRequestService(
             IAuthorisationService authService,
             IRepository<ChangeRequest, int> repository,
@@ -42,7 +44,8 @@
             IBomPack bomPack,
             IPcasPack pcasPack,
             IBomChangeService bomChangeService,
-            IRepository<CircuitBoard, string> boardRepository)
+            IRepository<CircuitBoard, string> boardRepository,
+            IRepository<Bom, int> bomRepository)
         {
             this.authService = authService;
             this.repository = repository;
@@ -53,6 +56,7 @@
             this.pcasPack = pcasPack;
             this.bomChangeService = bomChangeService;
             this.boardRepository = boardRepository;
+            this.bomRepository = bomRepository;
         }
 
         public Part ValidPartNumber(string partNumber)
@@ -122,7 +126,8 @@
                 throw new ItemNotFoundException("Employee not found");
             }
 
-            if (request.ChangeState == "ACCEPT" && !this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges))
+            if (request.ChangeState == "ACCEPT" 
+                && !this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges))
             {
                 throw new UnauthorisedActionException(
                     "You are not authorised to cancel change requests");
@@ -148,11 +153,34 @@
             IEnumerable<string> privileges = null)
         {
             var request = this.repository.FindById(documentNumber);
+
             if (request == null)
             {
                 throw new ItemNotFoundException("Change Request not found");
             }
 
+            if (request.BomChanges != null)
+            {
+                foreach (var c in request.BomChanges)
+                {
+                    var currentLiveDetails 
+                        = this.bomRepository
+                            .FindBy(x => x.BomId == c.BomId)?.Details?.Where(
+                                d => d.ChangeState == "LIVE")?.Select(d => d.PartNumber).ToList();
+                    if (c.AddedBomDetails != null)
+                    {
+                        foreach (var d in c.AddedBomDetails)
+                        {
+                            if (currentLiveDetails != null && currentLiveDetails.Contains(d.PartNumber))
+                            {
+                                throw new InvalidBomChangeException(
+                                    $"{d.PartNumber} is already live on {c.BomName}!!");
+                            }
+                        }
+                    }
+                }
+            }
+            
             var employee = this.employeeRepository.FindById(appliedById);
             if (employee == null)
             {
@@ -177,7 +205,12 @@
             return request;
         }
 
-        public ChangeRequest PhaseInChanges(int documentNumber, int? linnWeekNumber, DateTime? linnWeekStartDate, IEnumerable<int> selectedBomChangeIds, IEnumerable<string> privileges = null)
+        public ChangeRequest PhaseInChanges(
+            int documentNumber, 
+            int? linnWeekNumber, 
+            DateTime? linnWeekStartDate, 
+            IEnumerable<int> selectedBomChangeIds, 
+            IEnumerable<string> privileges = null)
         {
             var request = this.repository.FindById(documentNumber);
             if (request == null)
@@ -194,7 +227,8 @@
             {
                 var weekDate = ((DateTime)linnWeekStartDate).Date;
                 
-                // if you don't do weekNumber > 0 then for this week you also get the Now week and Jacki doesn't want that
+                // if you don't do weekNumber > 0 then for this week you also get the Now week
+                // and Jacki doesn't want that
                 week = this.weekRepository.FindBy(
                     d => d.StartsOn <= weekDate && d.EndsOn >= weekDate && d.WeekNumber > 0);
             }
@@ -286,7 +320,8 @@
                 throw new ItemNotFoundException("Change Request not found");
             }
 
-            if (request.ChangeState == "ACCEPT" && !this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges))
+            if (request.ChangeState == "ACCEPT" 
+                && !this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges))
             {
                 throw new UnauthorisedActionException(
                     "You are not authorised to do change requests replace");
@@ -345,7 +380,17 @@
 
                     var qty = newQty ?? Convert.ToDecimal(keys[3]);
 
-                    this.pcasPack.ReplacePartWith(board.BoardCode, revision.RevisionCode, revision.LayoutSequence, revision.VersionNumber, request.DocumentNumber, request.ChangeState, replacedBy, keys[2], request.OldPartNumber, request.NewPartNumber, qty, keys[4]);
+                    this.pcasPack.ReplacePartWith(
+                        board.BoardCode, 
+                        revision.RevisionCode, 
+                        revision.LayoutSequence, 
+                        revision.VersionNumber, 
+                        request.DocumentNumber, 
+                        request.ChangeState, 
+                        replacedBy, 
+                        keys[2], 
+                        request.OldPartNumber, 
+                        request.NewPartNumber, qty, keys[4]);
                 }
             }
 
@@ -360,7 +405,8 @@
             return request;
         }
 
-        public Expression<Func<ChangeRequest, bool>> SearchExpression(string searchTerm, bool? outstanding, int? lastMonths)
+        public Expression<Func<ChangeRequest, bool>> SearchExpression(
+            string searchTerm, bool? outstanding, int? lastMonths)
         {
             DateTime fromDate;
 
@@ -383,13 +429,18 @@
             // supports IC*, *3, *LEWIS*, PCAS*L1R1 but not multiple * e.g. PCAS */L1*
             if (string.IsNullOrEmpty(searchPartNumber))
             {
-                return r => (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive)
-                         && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+                return r 
+                    => (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive)
+                       && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
             }
             
             if (!searchPartNumber.Contains("*"))
             {
-                return r => (r.NewPartNumber.Equals(searchPartNumber) || r.OldPartNumber.Equals(searchPartNumber)) && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+                return r 
+                    => (r.NewPartNumber.Equals(searchPartNumber) 
+                        || r.OldPartNumber.Equals(searchPartNumber)) 
+                       && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) 
+                       && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
             }
             
             if (searchPartNumber.EndsWith("*"))
@@ -397,20 +448,42 @@
                 // supporting *LEWIS*
                 if (searchPartNumber.StartsWith("*"))
                 {
-                    return r => (r.NewPartNumber.Contains(partSearch[1]) || r.OldPartNumber.Contains(partSearch[1])) && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+                    return r => (r.NewPartNumber.Contains(partSearch[1]) 
+                                 || r.OldPartNumber.Contains(partSearch[1])) 
+                                && (r.ChangeState == "PROPOS" 
+                                    || r.ChangeState == "ACCEPT" 
+                                    || r.ChangeState == inclLive) 
+                                && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
                 }
                 else
                 {
-                    return r => (r.NewPartNumber.StartsWith(partSearch.First()) || r.OldPartNumber.StartsWith(partSearch.First())) && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+                    return r => (r.NewPartNumber.StartsWith(partSearch.First()) 
+                                 || r.OldPartNumber.StartsWith(partSearch.First())) 
+                                && (r.ChangeState == "PROPOS" 
+                                    || r.ChangeState == "ACCEPT" 
+                                    || r.ChangeState == inclLive) 
+                                && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
                 }
             }
             
             if (searchPartNumber.StartsWith("*"))
             {
-                return r => (r.NewPartNumber.EndsWith(partSearch.Last()) || r.OldPartNumber.EndsWith(partSearch.Last())) && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+                return r => (r.NewPartNumber.EndsWith(partSearch.Last()) 
+                             || r.OldPartNumber.EndsWith(partSearch.Last())) 
+                            && (r.ChangeState == "PROPOS" 
+                                || r.ChangeState == "ACCEPT" 
+                                || r.ChangeState == inclLive) 
+                            && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
             }
 
-            return r => ((r.NewPartNumber.StartsWith(partSearch.First()) && r.NewPartNumber.EndsWith(partSearch.Last())) || (r.OldPartNumber.StartsWith(partSearch.First()) && r.OldPartNumber.EndsWith(partSearch.Last()))) && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+            return r => ((r.NewPartNumber.StartsWith(partSearch.First()) 
+                          && r.NewPartNumber.EndsWith(partSearch.Last())) 
+                         || (r.OldPartNumber.StartsWith(partSearch.First()) 
+                             && r.OldPartNumber.EndsWith(partSearch.Last()))) 
+                        && (r.ChangeState == "PROPOS"
+                            || r.ChangeState == "ACCEPT" 
+                            || r.ChangeState == inclLive) 
+                        && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
         }
     }
 }

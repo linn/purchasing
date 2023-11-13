@@ -45,6 +45,8 @@
 
         protected ChangeRequestFacadeService Sut { get; private set; }
 
+        protected IRepository<Bom, int> BomRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -60,6 +62,7 @@
             this.BomPack = Substitute.For<IBomPack>();
             this.PcasPack = Substitute.For<IPcasPack>();
             this.BomChangeService = Substitute.For<IBomChangeService>();
+            this.BomRepository = Substitute.For<IRepository<Bom, int>>();
             this.Logger = Substitute.For<ILog>();
 
             this.Sut = new ChangeRequestFacadeService(
@@ -78,7 +81,8 @@
                 this.BomPack,
                 this.PcasPack,
                 this.BomChangeService,
-                this.BoardRepository),
+                this.BoardRepository,
+                this.BomRepository),
                 this.DatabaseService, 
                 this.BomTreeService,
                 this.Logger);
