@@ -31,7 +31,7 @@
 
         protected IBomChangeService BomChangeService { get; private set; }
 
-        protected IRepository<Bom, int> BomRepository { get; private set; }
+        protected IRepository<BomDetail, int> BomDetailRepository { get; private set; }
 
         [SetUp]
         public void SetUpContext()
@@ -42,7 +42,7 @@
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
             this.WeekRepository = Substitute.For<IRepository<LinnWeek, int>>();
             this.BoardRepository = Substitute.For<IRepository<CircuitBoard, string>>();
-            this.BomRepository = Substitute.For<IRepository<Bom, int>>();
+            this.BomDetailRepository = Substitute.For<IRepository<BomDetail, int>>();
             this.BomPack = Substitute.For<IBomPack>();
             this.PcasPack = Substitute.For<IPcasPack>();
             this.BomChangeService = Substitute.For<IBomChangeService>();
@@ -56,7 +56,7 @@
                 this.PcasPack,
                 this.BomChangeService,
                 this.BoardRepository,
-                this.BomRepository);
+                this.BomDetailRepository);
         }
     }
 }
