@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using FluentAssertions;
@@ -48,14 +49,11 @@
                 .HasPermissionFor(AuthorisedAction.MakeLiveChangeRequest, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
-            this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(
-                new Bom 
-                    { 
-                        Details = new List<BomDetailViewEntry>
+            this.BomDetailRepository.FilterBy(Arg.Any<Expression<Func<BomDetail, bool>>>()).Returns(
+                 new List<BomDetail>
                                         {
-                                            new BomDetailViewEntry { PartNumber = "PACK 117", ChangeState = "LIVE" }
-                                        }
-                    });
+                                            new BomDetail { PartNumber = "PACK 117", ChangeState = "LIVE" }
+                                        }.AsQueryable());
 
             this.action = () => this.Sut.MakeLive(1, 7, null, null, new List<string>());
         }

@@ -33,7 +33,7 @@
 
         private readonly IRepository<CircuitBoard, string> boardRepository;
 
-        private readonly IRepository<Bom, int> bomRepository;
+        private readonly IRepository<BomDetail, int> bomDetailRepository;
 
         public ChangeRequestService(
             IAuthorisationService authService,
@@ -45,7 +45,7 @@
             IPcasPack pcasPack,
             IBomChangeService bomChangeService,
             IRepository<CircuitBoard, string> boardRepository,
-            IRepository<Bom, int> bomRepository)
+            IRepository<BomDetail, int> bomDetailRepository)
         {
             this.authService = authService;
             this.repository = repository;
@@ -56,7 +56,7 @@
             this.pcasPack = pcasPack;
             this.bomChangeService = bomChangeService;
             this.boardRepository = boardRepository;
-            this.bomRepository = bomRepository;
+            this.bomDetailRepository = bomDetailRepository;
         }
 
         public Part ValidPartNumber(string partNumber)
@@ -164,14 +164,19 @@
                 foreach (var c in request.BomChanges)
                 {
                     var currentLiveDetails 
-                        = this.bomRepository
-                            .FindBy(x => x.BomId == c.BomId)?.Details?.Where(
-                                d => d.ChangeState == "LIVE")?.Select(d => d.PartNumber).ToList();
-                    var bomPart = this.partRepository.FindBy(p => p.PartNumber == c.BomName);
-                    if (c.AddedBomDetails != null)
+                        = this.bomDetailRepository
+                            .FilterBy(x => x.BomId == c.BomId && c.ChangeState == "LIVE")?.Select(
+                                d => d.PartNumber).ToList();
+
+                    var detailsToCheck = selectedBomChangeIds == null || !selectedBomChangeIds.Any()
+                                             ? c.AddedBomDetails
+                                             : this.bomDetailRepository.FilterBy(x => selectedBomChangeIds.Contains(x.DetailId));
+
+                    if (detailsToCheck != null)
                     {
-                        foreach (var d in c.AddedBomDetails)
+                        foreach (var d in detailsToCheck)
                         {
+                            var bomPart = this.partRepository.FindBy(p => p.BomId == d.BomId);
                             if (currentLiveDetails != null && currentLiveDetails.Contains(d.PartNumber))
                             {
                                 throw new InvalidBomChangeException(
