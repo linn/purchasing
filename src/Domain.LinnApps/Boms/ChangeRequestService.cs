@@ -167,6 +167,7 @@
                         = this.bomRepository
                             .FindBy(x => x.BomId == c.BomId)?.Details?.Where(
                                 d => d.ChangeState == "LIVE")?.Select(d => d.PartNumber).ToList();
+                    var bomPart = this.partRepository.FindBy(p => p.PartNumber == c.BomName);
                     if (c.AddedBomDetails != null)
                     {
                         foreach (var d in c.AddedBomDetails)
@@ -175,6 +176,12 @@
                             {
                                 throw new InvalidBomChangeException(
                                     $"{d.PartNumber} is already live on {c.BomName}!!");
+                            }
+
+                            if (bomPart.DateLive.HasValue && !d.Part.DateLive.HasValue)
+                            {
+                                throw new InvalidBomChangeException(
+                                    $"Cannot add NON-LIVE {d.PartNumber} onto BOM of {bomPart.PartNumber}, which IS LIVE!!");
                             }
                         }
                     }
