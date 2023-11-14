@@ -49,6 +49,8 @@
 
         protected IRepository<CircuitBoard, string> BoardRepository { get; set; }
 
+        protected IRepository<Bom, int> BomRepository { get; set; }
+
         protected IBomTreeService BomTreeService { get; private set; }
 
         protected IBomPack BomPack { get; private set; }
@@ -81,7 +83,7 @@
             this.BomChangeService = Substitute.For<IBomChangeService>();
             this.PcasChangeCompView = Substitute.For<IQueryRepository<PcasChangeComponent>>();
             this.PcasChangeComponentsService = new PcasChangeComponentsService(this.PcasChangeCompView);
-
+            this.BomRepository = Substitute.For<IRepository<Bom, int>>();
             this.FacadeService = new ChangeRequestFacadeService(
                 this.Repository,
                 this.TransactionManager,
@@ -96,7 +98,8 @@
                     this.BomPack,
                     this.PcasPack,
                     this.BomChangeService,
-                    this.BoardRepository),
+                    this.BoardRepository,
+                    this.BomRepository),
                     this.DatabaseService,
                     this.BomTreeService,
                     this.Logger);
