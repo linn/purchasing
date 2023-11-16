@@ -1,6 +1,8 @@
 ﻿namespace Linn.Purchasing.Resources
 {
-    public class VendorManagerResource
+    using Linn.Common.Resources;
+
+    public class VendorManagerResource : HypermediaResource
     {
         public string VmId { get; set; }
 
