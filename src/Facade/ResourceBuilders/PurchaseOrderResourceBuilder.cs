@@ -9,6 +9,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
 
     public class PurchaseOrderResourceBuilder : IBuilder<PurchaseOrder>
@@ -21,16 +22,20 @@
 
         private readonly IBuilder<PurchaseOrderDetail> detailResourceBuilder;
 
+        private readonly IBuilder<Supplier> supplierResourceBuilder;
+
         public PurchaseOrderResourceBuilder(
             IAuthorisationService authService,
             IBuilder<PurchaseOrderDetail> detailResourceBuilder,
             IBuilder<LinnDeliveryAddress> deliveryAddressResourceBuilder,
-            IBuilder<Address> addressResourceBuilder)
+            IBuilder<Address> addressResourceBuilder,
+            IBuilder<Supplier> supplierResourceBuilder)
         {
             this.authService = authService;
             this.detailResourceBuilder = detailResourceBuilder;
             this.deliveryAddressResourceBuilder = deliveryAddressResourceBuilder;
             this.addressResourceBuilder = addressResourceBuilder;
+            this.supplierResourceBuilder = supplierResourceBuilder;
         }
 
         public PurchaseOrderResource Build(PurchaseOrder entity, IEnumerable<string> claims)
@@ -93,14 +98,7 @@
                            Remarks = entity.Remarks,
                            DateFilCancelled = entity.DateFilCancelled?.ToString("O"),
                            PeriodFilCancelled = entity.PeriodFilCancelled,
-                           Supplier =
-                               new SupplierResource
-                                   {
-                                       Id = entity.Supplier.SupplierId,
-                                       Name = entity.Supplier.Name,
-                                       VendorManagerId = entity.Supplier.VendorManagerId,
-                                       InvoiceGoesToId = entity.Supplier.InvoiceGoesTo?.SupplierId
-                                   },
+                           Supplier = (SupplierResource)this.supplierResourceBuilder.Build(entity.Supplier, null),
                            OrderAddress =
                                entity.OrderAddress != null
                                    ? (AddressResource)this.addressResourceBuilder.Build(entity.OrderAddress, claimsList)

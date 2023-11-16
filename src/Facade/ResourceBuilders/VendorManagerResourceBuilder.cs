@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.ResourceBuilders
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using Linn.Common.Facade;
     using Linn.Common.Resources;
@@ -15,7 +16,8 @@
             {
                 VmId = entity.Id,
                 Name = entity.Employee.FullName,
-                UserNumber = entity.UserNumber
+                UserNumber = entity.UserNumber,
+                Links = this.BuildLinks(entity, claims).ToArray()
             };
         }
 
