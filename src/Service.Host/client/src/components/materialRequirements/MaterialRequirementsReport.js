@@ -23,6 +23,7 @@ import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutl
 import Link from '@mui/material/Link';
 import { DataGrid } from '@mui/x-data-grid';
 import makeStyles from '@mui/styles/makeStyles';
+import { CSVLink } from 'react-csv';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -509,6 +510,31 @@ function MaterialRequirementsReport() {
 
         return mapItems(item.details.filter(a => a.segment === segment));
     };
+
+    const getCsvRows = () => {
+        if (selectedItem && selectedItem.details) {
+            return selectedItem.details.map(b => ({
+                lineType: b.title,
+                immediate: b.immediateItem?.textValue || b.immediateItem?.value,
+                week0: b.week0Item?.textValue || b.week0Item?.value,
+                week1: b.week1Item?.textValue || b.week1Item?.value,
+                week2: b.week2Item?.textValue || b.week2Item?.value,
+                week3: b.week3Item?.textValue || b.week3Item?.value,
+                week4: b.week4Item?.textValue || b.week4Item?.value,
+                week5: b.week5Item?.textValue || b.week5Item?.value,
+                week6: b.week6Item?.textValue || b.week6Item?.value,
+                week7: b.week7Item?.textValue || b.week7Item?.value,
+                week8: b.week8Item?.textValue || b.week8Item?.value,
+                week9: b.week9Item?.textValue || b.week9Item?.value,
+                week10: b.week10Item?.textValue || b.week10Item?.value,
+                week11: b.week11Item?.textValue || b.week11Item?.value,
+                week12: b.week12Item?.textValue || b.week12Item?.value
+            }));
+        }
+
+        return [];
+    };
+
     const nextSegment = () => {
         if (selectedSegment < 5) {
             setSelectedSegment(selectedSegment + 1);
@@ -649,7 +675,7 @@ function MaterialRequirementsReport() {
                             <Grid container spacing={1}>
                                 <Grid
                                     item
-                                    xs={6}
+                                    xs={5}
                                     style={{ paddingBottom: '10px' }}
                                     className="hide-when-printing"
                                 >
@@ -685,7 +711,7 @@ function MaterialRequirementsReport() {
                                 </Grid>
                                 <Grid
                                     item
-                                    xs={4}
+                                    xs={5}
                                     style={{ paddingBottom: '10px' }}
                                     className="hide-when-printing"
                                 >
@@ -735,6 +761,22 @@ function MaterialRequirementsReport() {
                                                 Used On
                                             </Button>
                                         </Tooltip>
+                                        <CSVLink
+                                            data={getCsvRows()}
+                                            filename={
+                                                selectedItem
+                                                    ? `MR ${selectedItem.partNumber} ${selectedItem.jobRef}`
+                                                    : 'export'
+                                            }
+                                        >
+                                            <Button
+                                                style={{ float: 'right' }}
+                                                color="navBut"
+                                                size="small"
+                                            >
+                                                Export
+                                            </Button>
+                                        </CSVLink>
                                     </Stack>
                                 </Grid>
                                 <Grid
