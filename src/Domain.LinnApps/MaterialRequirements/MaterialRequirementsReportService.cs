@@ -281,8 +281,8 @@
                                  SupplierIdOption = supplierId,
                                  MinimumLeadTimeWeeks = minimumLeadTimeWeeks,
                                  MinimumAnnualUsage = minimumAnnualUsage,
-                                 RunDateOption = runDate
-                             };
+                                 RunDateOption = runLog.RunDate
+            };
             return report;
         }
 
@@ -320,6 +320,9 @@
                                                 },
                                             new ReportOption("part", "Part Number", 1)
                                         };
+            var runs = this.runLogRepository
+                .FilterBy(a => !string.IsNullOrEmpty(a.JobRef) && a.Success == "Y" && a.DateTidied == null)
+                .OrderByDescending(a => a.JobRef).Take(750);
 
             var planners = this.plannerRepository.FindAll();
 
@@ -340,7 +343,8 @@
                            PartSelectorOptions = this.partSelectorOptions,
                            StockLevelOptions = stockLevelOptions,
                            PartOptions = partOptions,
-                           OrderByOptions = orderByOptions
+                           OrderByOptions = orderByOptions,
+                           AvailableJobRefs = runs.OrderBy(a => a.JobRef)
                        };
         }
 

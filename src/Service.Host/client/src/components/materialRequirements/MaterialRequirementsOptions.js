@@ -7,8 +7,7 @@ import {
     Typeahead,
     Dropdown,
     collectionSelectorHelpers,
-    InputField,
-    DatePicker
+    InputField
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import Snackbar from '@mui/material/Snackbar';
@@ -17,6 +16,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Button } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
+import moment from 'moment';
 import config from '../../config';
 
 import mrMasterActions from '../../actions/mrMasterActions';
@@ -167,7 +167,7 @@ function MaterialRequirementsOptions() {
             }
 
             if (mrReport.runDateOption) {
-                setRunDate(new Date(mrReport.runDateOption));
+                setRunDate(mrReport.runDateOption);
             }
         }
     }, [mrReportOptions, mrReport]);
@@ -219,7 +219,7 @@ function MaterialRequirementsOptions() {
             partOption,
             minimumAnnualUsage,
             minimumLeadTimeWeeks,
-            runDate: runDate ? runDate.toISOString() : null
+            runDate
         };
         history.push('/purchasing/material-requirements/report', body);
     };
@@ -314,12 +314,16 @@ function MaterialRequirementsOptions() {
                     />
                 </Grid>
                 <Grid item xs={4}>
-                    <DatePicker
-                        label="Date Of Run"
+                    <Dropdown
+                        propertyName="runDate"
+                        label="Run Date"
                         value={runDate}
-                        onChange={newValue => setRunDate(newValue)}
-                        minDate="01/01/1970"
-                        maxDate="01/01/2100"
+                        items={mrReportOptions?.availableJobRefs.map(e => ({
+                            displayText: `${moment(e.runDate).format('DD MMM YYYY')} - ${e.jobRef}`,
+                            id: e.runDate
+                        }))}
+                        optionsLoading={mrReportOptionsLoading}
+                        onChange={(_, value) => setRunDate(value)}
                     />
                 </Grid>
                 {getOptionTag(mrReportOptions?.partSelectorOptions, partSelector) === 'parts' && (
