@@ -11,5 +11,7 @@
         public IEnumerable<ReportOptionResource> OrderByOptions { get; set; }
 
         public IEnumerable<ReportOptionResource> PartOptions { get; set; }
+
+        public IEnumerable<MrpRunLogResource> AvailableJobRefs { get; set; }
     }
 }
