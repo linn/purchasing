@@ -12,31 +12,20 @@ module.exports = {
     entry: {
         app: [
             'babel-polyfill',
-            'react-hot-loader/patch', // activate HMR for React
+            //'react-hot-loader/patch', // activate HMR for React
             'webpack-dev-server/client?http://localhost:3000', // bundle the client for webpack-dev-server and connect to the provided endpoint
-            'webpack/hot/only-dev-server', // bundle the client for hot reloading (only- means to only hot reload for successful updates)
+            //'webpack/hot/only-dev-server', // bundle the client for hot reloading (only- means to only hot reload for successful updates)
             './client/src/index.js' // the entry point of our app
         ],
         'silent-renew': './client/silent-renew/index.js'
     },
     output: {
-        path: path.join(__dirname, '../client/build/'),
+        path: path.join(__dirname, '../client/build'),
         filename: '[name].js',
         publicPath: '/purchasing/build/'
     },
     module: {
         rules: [
-            {
-                enforce: 'pre',
-                test: /\.js$/,
-                exclude: /(node_modules)/,
-                use: {
-                    loader: 'eslint-loader',
-                    options: {
-                        emitWarning: true
-                    }
-                }
-            },
             {
                 test: /.js$/,
                 use: {
@@ -86,18 +75,11 @@ module.exports = {
     },
     resolve: {
         alias: {
+            '@material-ui/pickers': path.resolve('./node_modules/@material-ui/pickers'),
             'react-redux': path.resolve('./node_modules/react-redux'),
             react: path.resolve('./node_modules/react'),
             notistack: path.resolve('./node_modules/notistack'),
             '@material-ui/styles': path.resolve('./node_modules/@material-ui/styles')
-        },
-        fallback: {
-            process: path.resolve('./node_modules/process'),
-            zlib: path.resolve('./node_modules/browserify-zlib/lib/index.js'),
-            stream: path.resolve('./node_modules/stream-browserify/index.js'),
-            util: path.resolve('./node_modules/util'),
-            buffer: path.resolve('./node_modules/buffer'),
-            asset: path.resolve('./node_modules/assert')
         }
         //modules: [path.resolve('node_modules'), 'node_modules'].concat(/* ... */)
     },
@@ -107,10 +89,6 @@ module.exports = {
     devtool: 'eval-cheap-module-source-map',
     // From https://github.com/gaearon/react-hot-boilerplate/blob/next/webpack.config.js
     plugins: [
-        new webpack.ProvidePlugin({
-            Buffer: ['buffer', 'Buffer'],
-            process: 'process/browser'
-        }),
         new webpack.NoEmitOnErrorsPlugin(), // do not emit compiled assets that include errors
         new webpack.DefinePlugin({
             'PROCESS.ENV': {

@@ -1711,7 +1711,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     }
                                                     label="Description"
                                                     disabled
-                                                    propertyName="nominalDescription"
+                                                    propertyName="deptDescription"
                                                 />
                                             </Grid>
                                             <Grid item xs={4}>
