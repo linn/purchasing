@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import { DataGrid } from '@mui/x-data-grid';
@@ -42,28 +42,7 @@ function ContactTab({ contacts, updateContact, addContact, deleteContacts }) {
 
         { field: 'personId', headerName: 'Id', width: 100, hide: true }
     ];
-    const [editRowsModel, setEditRowsModel] = useState({});
 
-    const handleEditRowsModelChange = useCallback(
-        model => {
-            setEditRowsModel(model);
-
-            if (model && Object.keys(model)[0]) {
-                const id = parseInt(Object.keys(model)[0], 10);
-                const propertyName = Object.keys(model[id])[0];
-                if (
-                    model &&
-                    model[id] &&
-                    model[id][propertyName] &&
-                    model[id][propertyName].value
-                ) {
-                    const newValue = model[id][propertyName].value;
-                    updateContact(id, propertyName, newValue);
-                }
-            }
-        },
-        [updateContact]
-    );
     const [selectedRows, setSelectedRows] = useState([]);
 
     const handleSelectionModelChange = model => {
@@ -83,8 +62,10 @@ function ContactTab({ contacts, updateContact, addContact, deleteContacts }) {
                     autoHeight
                     loading={false}
                     hideFooter
-                    editRowsModel={editRowsModel}
-                    onEditRowsModelChange={handleEditRowsModelChange}
+                    processRowUpdate={newRow => {
+                        updateContact(newRow);
+                        return newRow;
+                    }}
                 />
             </Grid>
             <Grid item xs={3}>

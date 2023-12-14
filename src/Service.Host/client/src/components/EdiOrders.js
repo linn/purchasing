@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
@@ -44,7 +44,6 @@ function EdiOrder() {
     const [rows, setRows] = useState([]);
     const suppliers = useSelector(state => collectionSelectorHelpers.getItems(state.ediSuppliers));
     const [selectedSuppliers, setSelectedSuppliers] = useState(null);
-    const [editRowsModel, setEditRowsModel] = useState({});
 
     const suppliersLoading = useSelector(state =>
         collectionSelectorHelpers.getLoading(state.ediSuppliers)
@@ -89,28 +88,20 @@ function EdiOrder() {
         setRows(!suppliers ? [] : suppliers.map(s => ({ ...s, id: s.supplierId })));
     }, [suppliers]);
 
-    const handleEditRowsModelChange = useCallback(model => {
-        setEditRowsModel(model);
-
-        if (model && Object.keys(model)[0]) {
-            const id = parseInt(Object.keys(model)[0], 10);
-            if (
-                model &&
-                model[id] &&
-                model[id].ediEmailAddress &&
-                model[id].ediEmailAddress.value
-            ) {
-                const newValue = model[id].ediEmailAddress.value;
-                setRows(r =>
-                    r.map(row =>
-                        row.id === id
-                            ? { ...row, ediEmailAddress: newValue, alternativeEmail: true }
-                            : row
-                    )
-                );
-            }
-        }
-    }, []);
+    const processRowUpdate = newRow => {
+        setRows(r =>
+            r.map(x =>
+                x.id === newRow.id
+                    ? {
+                          ...newRow,
+                          ediEmailAddress: newRow,
+                          alternativeEmail: true
+                      }
+                    : x
+            )
+        );
+        return newRow;
+    };
 
     const ordersLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.ediOrders)
@@ -211,8 +202,7 @@ function EdiOrder() {
                         columns={columns}
                         checkboxSelection
                         onSelectionModelChange={handleSelectRow}
-                        editRowsModel={editRowsModel}
-                        onEditRowsModelChange={handleEditRowsModelChange}
+                        processRowUpdate={processRowUpdate}
                         density="compact"
                         rowHeight={34}
                         autoHeight

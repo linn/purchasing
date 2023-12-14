@@ -129,7 +129,7 @@ import boardComponentSummaryReport from './boardComponentSummaryReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
-const rootReducer = history =>
+const rootReducer = () =>
     combineReducers({
         oidc,
         historyStore,

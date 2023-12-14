@@ -167,28 +167,6 @@ function AutomaticPurchaseOrderSuggestions() {
             dispatch(automaticPurchaseOrderActions.add(proposedAutoOrder));
         }
     };
-    const updateRow = (rowId, fieldName, newValue) => {
-        const newRows = rows.map(r =>
-            r.id === rowId
-                ? {
-                      ...r,
-                      [fieldName]: newValue,
-                      updating: true
-                  }
-                : r
-        );
-        setRows(newRows);
-    };
-
-    const handleEditRowsModelChange = model => {
-        if (model && Object.keys(model)[0]) {
-            const key = parseInt(Object.keys(model)[0], 10);
-            const key2 = Object.keys(model[key])[0];
-            if (model && model[key] && model[key][key2] && model[key][key2].value) {
-                updateRow(key, key2, model[key][key2].value);
-            }
-        }
-    };
 
     const columns = [
         { field: 'partNumber', headerName: 'Part Number', minWidth: 140 },
@@ -303,7 +281,14 @@ function AutomaticPurchaseOrderSuggestions() {
                             rowHeight={34}
                             autoHeight
                             loading={suggestionsLoading}
-                            onEditRowsModelChange={handleEditRowsModelChange}
+                            processRowUpdate={newRow => {
+                                setRows(r =>
+                                    r.map(x =>
+                                        x.id === newRow.id ? { ...newRow, updating: true } : x
+                                    )
+                                );
+                                return newRow;
+                            }}
                         />
                     </div>
                 </Grid>
