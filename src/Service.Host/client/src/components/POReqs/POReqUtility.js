@@ -25,7 +25,6 @@ import {
     Page,
     SaveBackCancelButtons,
     collectionSelectorHelpers,
-    Typeahead,
     InputField,
     SnackbarMessage,
     itemSelectorHelpers,
@@ -35,7 +34,6 @@ import {
     getItemError,
     ErrorCard,
     processSelectorHelpers,
-    getPreviousPaths,
     utilities,
     OnOffSwitch,
     Search
@@ -60,13 +58,12 @@ import {
     sendPurchaseOrderPdfEmail
 } from '../../itemTypes';
 import checkIfCanAuthorisePurchaseOrderActions from '../../actions/checkIfCanAuthorisePurchaseOrderActions';
-import handleBackClick from '../../helpers/handleBackClick';
 import sendPurchaseOrderPdfEmailActionTypes from '../../actions/sendPurchaseOrderPdfEmailActions';
 
 function POReqUtility({ creating }) {
     const dispatch = useDispatch();
     const suppliersSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.suppliers, 100, 'id', 'id', 'name')
+        collectionSelectorHelpers.getSearchItems(state.suppliers, 100, 'id', 'name', 'name')
     );
     const suppliersSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.suppliers)
@@ -113,8 +110,6 @@ function POReqUtility({ creating }) {
 
     const currentUserId = useSelector(state => userSelectors.getUserNumber(state));
     const currentUserName = useSelector(state => userSelectors.getName(state));
-
-    const previousPaths = useSelector(state => getPreviousPaths(state));
 
     const defaultCreatingReq = {
         requestedBy: {
@@ -281,8 +276,7 @@ function POReqUtility({ creating }) {
     const editingValueFieldsAllowed = req?.state === 'DRAFT' || req?.state === 'AUTHORISE WAIT';
 
     const inputIsInvalid = () =>
-        !`${req.supplier?.id}`?.length ||
-        !req.supplier?.name?.length ||
+        typeof Number(req.supplier?.id) !== 'number' ||
         !req.state.length ||
         !req.reqDate.length ||
         !`${req.qty}`.length ||
@@ -290,7 +284,7 @@ function POReqUtility({ creating }) {
         !`${req.unitPrice}`.length ||
         !req.unitPrice > 0 ||
         !req.currency?.code?.length ||
-        !req.country?.countryCode?.length ||
+        req.country?.countryCode?.length !== 2 ||
         !req.nominal?.nominalCode.length ||
         !req.department?.departmentCode.length ||
         !req.dateRequired?.length;
@@ -991,6 +985,7 @@ function POReqUtility({ creating }) {
                                 }
                                 search={searchSuppliers}
                                 displayChips
+                                autoFocus={false}
                                 searchResults={suppliersSearchResults.map(s => ({
                                     ...s,
                                     chips: [
@@ -1005,31 +1000,6 @@ function POReqUtility({ creating }) {
                                 onResultSelect={handleSupplierChange}
                                 clearSearch={() => {}}
                             />
-                            {/* <Typeahead
-                                onSelect={newValue => {
-                                    handleSupplierChange(newValue);
-                                }}
-                                label="Supplier"
-                                modal
-                                propertyName="supplierId"
-                                items={suppliersSearchResults.map(s => ({
-                                    ...s,
-                                    description: `${s.description} ${
-                                        s.dateClosed ? ' (Closed)' : ''
-                                    }`
-                                }))}
-                                value={req.supplier ? req.supplier.id : null}
-                                loading={suppliersSearchLoading}
-                                fetchItems={searchSuppliers}
-                                links={false}
-                                text
-                                clearSearch={() => {}}
-                                placeholder="Search Suppliers"
-                                minimumSearchTermLength={3}
-                                fullWidth
-                                disabled={!editingAllowed || !creating}
-                                required
-                            /> */}
                         </Grid>
                         <Grid item xs={6}>
                             <InputField
@@ -1125,8 +1095,26 @@ function POReqUtility({ creating }) {
                         </Grid>
                         <Grid item xs={5} />
                         <Grid item xs={4}>
-                            <Typeahead
-                                onSelect={newValue => {
+                            <Search
+                                propertyName="countryCode"
+                                label="Country Lookup"
+                                resultsInModal
+                                resultLimit={100}
+                                value={req.country?.countryCode}
+                                handleValueChange={(_, newVal) =>
+                                    setReq(r => ({ ...r, country: { countryCode: newVal } }))
+                                }
+                                search={searchCountries}
+                                autoFocus={false}
+                                searchResults={countriesSearchResults}
+                                loading={countriesSearchLoading}
+                                priorityFunction={(i, searchTerm) => {
+                                    if (i.countryCode === searchTerm?.toUpperCase()) {
+                                        return 1;
+                                    }
+                                    return 0;
+                                }}
+                                onResultSelect={newValue => {
                                     setReq(a => ({
                                         ...a,
                                         country: {
@@ -1135,25 +1123,7 @@ function POReqUtility({ creating }) {
                                         }
                                     }));
                                 }}
-                                label="Country Lookup"
-                                modal
-                                propertyName="countryCode"
-                                items={countriesSearchResults}
-                                value={req.country?.countryCode}
-                                loading={countriesSearchLoading}
-                                fetchItems={searchCountries}
-                                links={false}
-                                priorityFunction={(i, searchTerm) => {
-                                    if (i.countryCode === searchTerm?.toUpperCase()) {
-                                        return 1;
-                                    }
-                                    return 0;
-                                }}
-                                text
-                                placeholder="Search by Name or Code"
-                                minimumSearchTermLength={2}
-                                disabled={!editingAllowed}
-                                required
+                                clearSearch={() => {}}
                             />
                         </Grid>
                         <Grid item xs={5}>
@@ -1473,7 +1443,7 @@ function POReqUtility({ creating }) {
                         <Grid item xs={6}>
                             <SaveBackCancelButtons
                                 saveDisabled={!canSave()}
-                                backClick={() => handleBackClick(previousPaths, history.goBack)}
+                                showBackButton={false}
                                 saveClick={() => {
                                     setEditStatus('view');
                                     clearErrors();
