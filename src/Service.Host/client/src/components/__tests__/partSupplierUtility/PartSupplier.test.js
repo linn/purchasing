@@ -148,7 +148,7 @@ describe('When item loaded...', () => {
     });
 
     test('Page shows correct icon and tooltip...', async () => {
-        fireEvent.mouseOver(screen.getByTestId('EditOffIcon'));
+        fireEvent.mouseEnter(screen.getByTestId('EditOffIcon'));
         expect(
             await screen.findByText('You do not have write access to Part Suppliers')
         ).toBeInTheDocument();
@@ -169,7 +169,7 @@ describe('When user can edit...', () => {
     });
 
     test('Page shows correct icon tooltip...', async () => {
-        fireEvent.mouseOver(screen.getByTestId('ModeEditIcon'));
+        fireEvent.mouseEnter(screen.getByTestId('ModeEditIcon'));
         expect(
             await screen.findByText('You have write access to Part Suppliers')
         ).toBeInTheDocument();

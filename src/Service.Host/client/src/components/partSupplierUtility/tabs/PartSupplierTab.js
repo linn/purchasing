@@ -32,6 +32,7 @@ function PartSupplierTab({
                     resultsInModal
                     resultLimit={100}
                     value={partNumber}
+                    autoFocus={false}
                     handleValueChange={handleFieldChange}
                     disabled={!creating}
                     search={searchParts}
@@ -60,6 +61,7 @@ function PartSupplierTab({
                     propertyName="supplierId"
                     label="Supplier"
                     resultsInModal
+                    autoFocus={false}
                     resultLimit={100}
                     value={supplierId}
                     handleValueChange={handleFieldChange}
