@@ -356,8 +356,7 @@ function AcknowledgeOrdersUtility() {
                                     label="Advised Date"
                                     value={newValues.dateAdvised}
                                     propertyName="dateAdvised"
-                                    minDate="01/01/2000"
-                                    maxDate="01/01/2100"
+                                    format="DD/MM/YYYY"
                                     onChange={newVal =>
                                         setNewValues(o => ({ ...o, dateAdvised: newVal }))
                                     }
@@ -516,7 +515,16 @@ function AcknowledgeOrdersUtility() {
                                         loading={itemsLoading || uploadLoading}
                                         hideFooter
                                         checkboxSelection
-                                        onSelectionModelChange={handleSelectRow}
+                                        selected={rows.filter(r => r.selected).map(r => r.id)}
+                                        onRowSelectionModelChange={selected => {
+                                            setRows(rs =>
+                                                rs.map(r =>
+                                                    selected.includes(r.id)
+                                                        ? { ...r, selected: true }
+                                                        : { ...r, selected: false }
+                                                )
+                                            );
+                                        }}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>

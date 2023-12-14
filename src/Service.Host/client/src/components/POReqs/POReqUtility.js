@@ -279,9 +279,9 @@ function POReqUtility({ creating }) {
         typeof Number(req.supplier?.id) !== 'number' ||
         !req.state.length ||
         !req.reqDate.length ||
-        !`${req.qty}`.length ||
+        !req.qty ||
         !req.qty > 0 ||
-        !`${req.unitPrice}`.length ||
+        !req.unitPrice ||
         !req.unitPrice > 0 ||
         !req.currency?.code?.length ||
         req.country?.countryCode?.length !== 2 ||

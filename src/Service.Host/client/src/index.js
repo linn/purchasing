@@ -24,9 +24,9 @@ const render = Component => {
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={linnTheme}>
                 <SnackbarProvider dense maxSnack={5}>
-                        <LocalizationProvider dateAdapter={AdapterMoment} locale="en-GB">
-                            <Component store={store} />
-                        </LocalizationProvider>
+                    <LocalizationProvider dateAdapter={AdapterMoment} locale="en-GB">
+                        <Component store={store} />
+                    </LocalizationProvider>
                 </SnackbarProvider>
             </ThemeProvider>
         </StyledEngineProvider>

@@ -4,7 +4,6 @@ import { DataGrid } from '@mui/x-data-grid';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import {
     Page,
@@ -15,7 +14,6 @@ import {
     ErrorCard,
     InputField
 } from '@linn-it/linn-form-components-library';
-import { DatePicker } from '@mui/x-date-pickers';
 import history from '../history';
 import config from '../config';
 import purchaseOrderDeliveriesActions from '../actions/purchaseOrderDeliveriesActions';
@@ -43,14 +41,6 @@ function PurchaseOrderDeliveriesUtility({
     const [rows, setRows] = useState(deliveries);
     const [changesMade, setChangesMade] = useState(false);
 
-    const getDateString = isoString => {
-        if (!isoString) {
-            return '__/__/____';
-        }
-        const date = new Date(isoString);
-        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-    };
-
     const columns = [
         { field: 'id', headerName: 'Id', width: 100, hide: true },
         { field: 'deliverySeq', headerName: 'Delivery', width: 100 },
@@ -59,47 +49,17 @@ function PurchaseOrderDeliveriesUtility({
             field: 'dateRequested',
             headerName: 'Request Date',
             width: 200,
-            renderCell: params => (
-                <DatePicker
-                    label=""
-                    value={params.row.dateRequested}
-                    onChange={newValue => {
-                        setChangesMade(true);
-                        setRows(r =>
-                            r.map(x => (x.id === params.id ? { ...x, dateRequested: newValue } : x))
-                        );
-                    }}
-                    renderInput={({ inputRef, InputProps }) => (
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <span>{getDateString(params.row.dateRequested)}</span>
-                            <span ref={inputRef}> {InputProps?.endAdornment}</span>
-                        </Box>
-                    )}
-                />
-            )
+            type: 'date',
+            valueGetter: params =>
+                params.row.dateRequested ? new Date(params.row.dateRequested) : null
         },
         {
             field: 'dateAdvised',
-            headerName: 'Advised Date',
+            headerName: 'Date Advised',
             width: 200,
-            renderCell: params => (
-                <DatePicker
-                    label=""
-                    value={params.row.dateAdvised}
-                    onChange={newValue => {
-                        setChangesMade(true);
-                        setRows(r =>
-                            r.map(x => (x.id === params.id ? { ...x, dateAdvised: newValue } : x))
-                        );
-                    }}
-                    renderInput={({ inputRef, InputProps }) => (
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <span>{getDateString(params.row.dateAdvised)}</span>
-                            <span ref={inputRef}> {InputProps?.endAdornment}</span>
-                        </Box>
-                    )}
-                />
-            )
+            type: 'date',
+            valueGetter: params =>
+                params.row.dateAdvised ? new Date(params.row.dateAdvised) : null
         },
         {
             field: 'availableAtSupplier',
@@ -110,33 +70,12 @@ function PurchaseOrderDeliveriesUtility({
             editable: true
         }
     ];
-    const [editRowsModel, setEditRowsModel] = useState({});
 
     useEffect(() => {
         if (deliveries && order?.orderNumber !== orderNumber) {
             dispatch(purchaseOrderActions.fetch(deliveries[0].orderNumber));
         }
     }, [deliveries, dispatch, order, orderNumber]);
-
-    const handleEditRowsModelChange = model => {
-        setEditRowsModel(model);
-        setChangesMade(true);
-        if (model && Object.keys(model)[0]) {
-            const id = Object.keys(model)[0];
-            const propertyName = Object.keys(model[id])[0];
-            if (model && model[id] && model[id][propertyName]) {
-                const newValue = model[id][propertyName].value;
-                setRows(r => r.map(x => (x.id === id ? { ...x, [propertyName]: newValue } : x)));
-            }
-        }
-    };
-    const handleSelectRow = selected => {
-        setRows(
-            rows.map(r =>
-                selected.includes(r.id) ? { ...r, selected: true } : { ...r, selected: false }
-            )
-        );
-    };
 
     const deleteSelected = () => {
         setRows(r => r.filter(x => !x.selected));
@@ -221,9 +160,21 @@ function PurchaseOrderDeliveriesUtility({
                     loading={loading}
                     hideFooter
                     checkboxSelection
-                    onSelectionModelChange={handleSelectRow}
-                    editRowsModel={editRowsModel}
-                    onEditRowsModelChange={handleEditRowsModelChange}
+                    selected={rows.filter(r => r.selected).map(r => r.id)}
+                    onRowSelectionModelChange={selected => {
+                        setRows(rs =>
+                            rs.map(r =>
+                                selected.includes(r.id)
+                                    ? { ...r, selected: true }
+                                    : { ...r, selected: false }
+                            )
+                        );
+                    }}
+                    processRowUpdate={newRow => {
+                        setChangesMade(true);
+                        setRows(r => r.map(x => (x.id === newRow.id ? newRow : x)));
+                        return newRow;
+                    }}
                 />
             </Grid>
             <Grid item xs={1}>
