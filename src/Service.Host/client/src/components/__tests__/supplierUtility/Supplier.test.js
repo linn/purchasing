@@ -5,7 +5,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
 import { screen, fireEvent } from '@testing-library/react';
-import routeData from 'react-router';
+import { useParams } from 'react-router-dom';
 import render from '../../../test-utils';
 import supplierActions from '../../../actions/supplierActions';
 import putSupplierOnHoldActions from '../../../actions/putSupplierOnHoldActions';
@@ -19,12 +19,12 @@ jest.mock('react-redux', () => ({
     useSelector: jest.fn()
 }));
 
-const mockParams = {
-    id: 123
-};
-beforeEach(() => {
-    jest.spyOn(routeData, 'useParams').mockReturnValue(mockParams);
-});
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useParams: jest.fn()
+}));
+
+useParams.mockImplementation(() => ({ id: 123 }));
 
 const clearSupplierErrorsSpy = jest.spyOn(supplierActions, 'clearErrorsForItem');
 const fetchSupplierSpy = jest.spyOn(supplierActions, 'fetch');

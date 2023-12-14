@@ -234,21 +234,6 @@ function AcknowledgeOrdersUtility() {
             );
         }
     };
-    const handleSelectRow = selected => {
-        setRows(
-            rows.map(r =>
-                selected.includes(r.id) ? { ...r, selected: true } : { ...r, selected: false }
-            )
-        );
-        if (selected.length) {
-            setNewValues(nv => ({
-                ...nv,
-                dateAdvised:
-                    moment(rows.find(x => x.id === selected[selected.length - 1])?.dateAdvised) ||
-                    moment()
-            }));
-        }
-    };
 
     const uploadLoading = useSelector(state =>
         processSelectorHelpers.getWorking(state[batchPurchaseOrderDeliveriesUpload.item])

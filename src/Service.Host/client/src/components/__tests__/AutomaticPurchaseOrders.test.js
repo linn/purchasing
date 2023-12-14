@@ -5,7 +5,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
 import { cleanup, screen } from '@testing-library/react';
-import routeData from 'react-router';
+import { useParams } from 'react-router-dom';
 import render from '../../test-utils';
 import AutomaticPurchaseOrders from '../AutomaticPurchaseOrders';
 import automaticPurchaseOrderActions from '../../actions/automaticPurchaseOrderActions';
@@ -16,6 +16,12 @@ jest.mock('react-redux', () => ({
 }));
 
 const fetchSpy = jest.spyOn(automaticPurchaseOrderActions, 'fetch');
+
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useParams: jest.fn()
+}));
+useParams.mockImplementation(() => ({ id: 1315946 }));
 
 const initialState = {};
 const stateWithOrder = {
@@ -52,13 +58,6 @@ const stateWithOrder = {
         }
     }
 };
-
-const idParam = {
-    id: 1315946
-};
-beforeEach(() => {
-    jest.spyOn(routeData, 'useParams').mockReturnValue(idParam);
-});
 
 describe('When component mounts...', () => {
     beforeEach(() => {

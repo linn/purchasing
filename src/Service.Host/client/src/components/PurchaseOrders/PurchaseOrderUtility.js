@@ -467,14 +467,6 @@ function PurchaseOrderUtility({ creating }) {
     const [overridingOrderPrice, setOverridingOrderPrice] = useState(false);
     const [overridingOrderQty, setOverridingOrderQty] = useState(false);
 
-    const getDateString = isoString => {
-        if (!isoString) {
-            return null;
-        }
-        const date = new Date(isoString);
-        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-    };
-
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [currentLine, setCurrentLine] = useState(1);
     const [filCancelDialogOpen, setFilCancelDialogOpen] = useState(false);
@@ -1848,11 +1840,10 @@ function PurchaseOrderUtility({ creating }) {
                                                                     x => ({
                                                                         ...x,
                                                                         id: `${x.deliverySeq}`,
-                                                                        dateRequested:
-                                                                            getDateString(
-                                                                                x.dateRequested
-                                                                            ),
-                                                                        dateAdvised: getDateString(
+                                                                        dateRequested: new Date(
+                                                                            x.dateRequested
+                                                                        ),
+                                                                        dateAdvised: new Date(
                                                                             x.dateAdvised
                                                                         )
                                                                     })

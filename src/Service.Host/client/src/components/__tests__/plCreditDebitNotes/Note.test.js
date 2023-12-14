@@ -5,7 +5,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
 import { screen, fireEvent } from '@testing-library/react';
-import routeData from 'react-router';
+import { useParams } from 'react-router-dom';
 import render from '../../../test-utils';
 import plCreditDebitNoteActions from '../../../actions/plCreditDebitNoteActions';
 import Note from '../../plDebitCreditNotes/Note';
@@ -16,12 +16,11 @@ jest.mock('../../../helpers/pdf', () => ({
     emailPdf: jest.fn()
 }));
 
-const mockParams = {
-    id: 123
-};
-beforeEach(() => {
-    jest.spyOn(routeData, 'useParams').mockReturnValue(mockParams);
-});
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useParams: jest.fn()
+}));
+useParams.mockImplementation(() => ({ id: 123 }));
 
 jest.mock('react-redux', () => ({
     ...jest.requireActual('react-redux'),

@@ -8,7 +8,7 @@
         "prettier:format": "prettier --write \"{,client/src/**/}*.{md,json,js,jsx,css,scss}\"",
         "start": "node ./webpack/server.js",
         "build": "webpack --config ./webpack/webpack.prod.config.js",
-        "test": "jest",
+        "test": "jest ./",
         "test:watch": "jest --watch",
         "eslint-check": "eslint --print-config . | eslint-config-prettier-check"
     },
