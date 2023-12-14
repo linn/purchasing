@@ -39,7 +39,6 @@ function ContactTab({ contacts, updateContact, addContact, deleteContacts }) {
             editable: true
         },
         { field: 'comments', headerName: 'Comments', width: 250, editable: true },
-
         { field: 'personId', headerName: 'Id', width: 100, hide: true }
     ];
 

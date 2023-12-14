@@ -2,9 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { InputField, LinkButton, utilities } from '@linn-it/linn-form-components-library';
+import { InputField, LinkButton, utilities, Search } from '@linn-it/linn-form-components-library';
 import config from '../../../config';
-import Search from '../../Search';
 
 function PartSupplierTab({
     partNumber,

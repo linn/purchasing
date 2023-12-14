@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { collectionSelectorHelpers, Page } from '@linn-it/linn-form-components-library';
+import { collectionSelectorHelpers, Page, Search } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import partsActions from '../../actions/partsActions';
 import history from '../../history';
 import config from '../../config';
-import Search from '../Search';
 
 function BomUtilitySearch() {
     const dispatch = useDispatch();

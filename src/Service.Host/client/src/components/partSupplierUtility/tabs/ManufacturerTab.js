@@ -2,8 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 
-import { InputField } from '@linn-it/linn-form-components-library';
-import Search from '../../Search';
+import { InputField, Search } from '@linn-it/linn-form-components-library';
 
 function ManufacturerTab({
     handleFieldChange,
