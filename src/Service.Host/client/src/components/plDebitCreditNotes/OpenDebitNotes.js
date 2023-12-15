@@ -220,7 +220,6 @@ function OpenDebitNotes() {
                                             rowHeight={34}
                                             checkboxSelection
                                             columnBuffer={10}
-                                            selected={rows.filter(r => r.selected).map(r => r.id)}
                                             onRowSelectionModelChange={selected => {
                                                 setRows(rs =>
                                                     rs.map(r =>
@@ -259,6 +258,7 @@ function OpenDebitNotes() {
                                         style={{ marginTop: '22px' }}
                                         colour="primary"
                                         variant="outlined"
+                                        disabled={!rows.some(r => r.selected)}
                                         onClick={() => {
                                             setDialogOpen(true);
                                         }}

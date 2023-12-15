@@ -19,7 +19,6 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
-import moment from 'moment';
 import history from '../history';
 import config from '../config';
 import { automaticPurchaseOrder } from '../itemTypes';
@@ -179,7 +178,7 @@ function AutomaticPurchaseOrderSuggestions() {
             minWidth: 160,
             editable: true,
             type: 'date',
-            valueGetter: ({ value }) => value && moment(value).format('DD MMM YYYY')
+            valueGetter: ({ value }) => new Date(value)
         },
         { field: 'orderMethod', headerName: 'Method', minWidth: 100 },
         {

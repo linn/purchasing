@@ -7,7 +7,6 @@ import {
     Page,
     collectionSelectorHelpers,
     CheckboxWithLabel,
-    DatePicker,
     Dropdown,
     processSelectorHelpers,
     FileUploader,
@@ -19,6 +18,7 @@ import {
 import Grid from '@mui/material/Grid';
 import moment from 'moment';
 import Dialog from '@mui/material/Dialog';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { makeStyles } from '@mui/styles';
 import Accordion from '@mui/material/Accordion';
 import Button from '@mui/material/Button';
@@ -340,7 +340,6 @@ function AcknowledgeOrdersUtility() {
                                 <DatePicker
                                     label="Advised Date"
                                     value={newValues.dateAdvised}
-                                    propertyName="dateAdvised"
                                     format="DD/MM/YYYY"
                                     onChange={newVal =>
                                         setNewValues(o => ({ ...o, dateAdvised: newVal }))
@@ -500,7 +499,6 @@ function AcknowledgeOrdersUtility() {
                                         loading={itemsLoading || uploadLoading}
                                         hideFooter
                                         checkboxSelection
-                                        selected={rows.filter(r => r.selected).map(r => r.id)}
                                         onRowSelectionModelChange={selected => {
                                             setRows(rs =>
                                                 rs.map(r =>

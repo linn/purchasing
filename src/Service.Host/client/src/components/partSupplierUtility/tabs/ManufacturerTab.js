@@ -21,6 +21,7 @@ function ManufacturerTab({
                     propertyName="manufacturerCode"
                     label="Manufacturer"
                     resultsInModal
+                    autoFocus={false}
                     resultLimit={100}
                     value={manufacturer}
                     handleValueChange={handleFieldChange}

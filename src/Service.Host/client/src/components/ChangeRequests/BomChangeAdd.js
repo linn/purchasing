@@ -43,6 +43,7 @@ function BomChangeAdd({ addBoms, addAddBomsItem, deleteAddBomsItem, defaultQty, 
         {
             field: 'qty',
             headerName: 'Qty',
+            type: 'number',
             width: 150,
             editable: true
         },

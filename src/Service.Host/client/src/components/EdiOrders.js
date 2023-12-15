@@ -43,7 +43,6 @@ function EdiOrder() {
 
     const [rows, setRows] = useState([]);
     const suppliers = useSelector(state => collectionSelectorHelpers.getItems(state.ediSuppliers));
-    const [selectedSuppliers, setSelectedSuppliers] = useState(null);
 
     const suppliersLoading = useSelector(state =>
         collectionSelectorHelpers.getLoading(state.ediSuppliers)
@@ -53,7 +52,7 @@ function EdiOrder() {
         { field: 'supplierId', headerName: 'Supplier', width: 90 },
         { field: 'supplierName', headerName: 'Name', width: 260 },
         { field: 'vendorManangerName', headerName: 'Vendor Manager', width: 170 },
-        { field: 'ediEmailAddress', headerName: 'Email', width: 170, editable: true },
+        { field: 'ediEmailAddress', headerName: 'Email', width: 250, editable: true },
         {
             field: 'numOrders',
             headerName: 'Orders',
@@ -94,7 +93,7 @@ function EdiOrder() {
                 x.id === newRow.id
                     ? {
                           ...newRow,
-                          ediEmailAddress: newRow,
+                          ediEmailAddress: newRow.ediEmailAddress,
                           alternativeEmail: true
                       }
                     : x
@@ -120,12 +119,6 @@ function EdiOrder() {
     const [additionalText, setAdditionalText] = useState('');
 
     const sendEdiUrl = utilities.getHref(applicationState, 'edi');
-
-    const handleSelectRow = selected => {
-        const newRows = rows.map(r => ({ ...r, selected: selected.includes(r.id) }));
-        setRows(newRows);
-        setSelectedSuppliers(selected);
-    };
 
     const handleFieldChange = (propertyName, newValue) => {
         if (propertyName === 'additionalText') {
@@ -201,7 +194,15 @@ function EdiOrder() {
                         rows={rows}
                         columns={columns}
                         checkboxSelection
-                        onSelectionModelChange={handleSelectRow}
+                        onRowSelectionModelChange={selected => {
+                            setRows(rs =>
+                                rs.map(r =>
+                                    selected.includes(r.id)
+                                        ? { ...r, selected: true }
+                                        : { ...r, selected: false }
+                                )
+                            );
+                        }}
                         processRowUpdate={processRowUpdate}
                         density="compact"
                         rowHeight={34}
@@ -225,7 +226,7 @@ function EdiOrder() {
                     ) : (
                         <Button
                             variant="contained"
-                            disabled={!sendEdiUrl || !selectedSuppliers || emailSentResult}
+                            disabled={!sendEdiUrl || !rows.some(x => x.selected) || emailSentResult}
                             onClick={() => handleSendEdiEmail()}
                         >
                             Send Emails
