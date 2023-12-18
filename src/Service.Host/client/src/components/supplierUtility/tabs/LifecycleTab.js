@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 
 import { useSelector, useDispatch } from 'react-redux';
-
+import { DatePicker } from '@mui/x-date-pickers';
+import moment from 'moment';
 import {
     collectionSelectorHelpers,
     InputField,
-    Typeahead,
-    DatePicker
+    Typeahead
 } from '@linn-it/linn-form-components-library';
 
 import employeesActions from '../../../actions/employeesActions';
@@ -67,10 +67,9 @@ function LifecycleTab({
             <Grid item xs={4}>
                 <DatePicker
                     label="Date"
-                    value={dateOpened || new Date()}
+                    value={moment(dateOpened) || moment()}
                     onChange={newValue => handleFieldChange('dateOpened', newValue)}
-                    minDate="01/01/1970"
-                    maxDate="01/01/2100"
+                    format="DD/MM/YYYY"
                     disabled
                 />
             </Grid>
@@ -107,10 +106,9 @@ function LifecycleTab({
             <Grid item xs={4}>
                 <DatePicker
                     label="Date"
-                    value={dateClosed}
+                    value={dateClosed ? moment(dateClosed) : null}
                     onChange={newValue => handleFieldChange('dateClosed', newValue)}
-                    minDate="01/01/1970"
-                    maxDate="01/01/2100"
+                    format="DD/MM/YYYY"
                     disabled
                 />
             </Grid>

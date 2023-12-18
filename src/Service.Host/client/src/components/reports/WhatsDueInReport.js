@@ -10,10 +10,11 @@ import {
     ExportButton,
     Loading,
     Dropdown,
-    DatePicker,
     ReportTable
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
+import { DatePicker } from '@mui/x-date-pickers';
+import moment from 'moment';
 import history from '../../history';
 import config from '../../config';
 import suppliersActions from '../../actions/suppliersActions';
@@ -45,12 +46,11 @@ function WhatsDueInReport() {
         collectionSelectorHelpers.getSearchLoading(state.suppliers)
     );
 
-    const defaultStartDate = new Date();
-    defaultStartDate.setMonth(defaultStartDate.getMonth() - 1);
+    const defaultStartDate = moment().subtract(1, 'months');
 
     const [options, setOptions] = useState({
         fromDate: defaultStartDate,
-        toDate: new Date(),
+        toDate: moment(),
         orderBy: 'ORDER NUMBER'
     });
 
@@ -121,8 +121,7 @@ function WhatsDueInReport() {
                                 label="From Date"
                                 value={options.fromDate}
                                 propertyName="fromDate"
-                                minDate="01/01/2000"
-                                maxDate={options.toDate?.toString()}
+                                maxDate={options.toDate}
                                 onChange={newVal => setOptions(o => ({ ...o, fromDate: newVal }))}
                             />
                         </Grid>
@@ -131,8 +130,7 @@ function WhatsDueInReport() {
                                 label="To Date"
                                 propertyName="toDate"
                                 value={options.toDate}
-                                maxDate="01/01/2100"
-                                minDate={options.fromDate?.toString() || '01/01/2000'}
+                                minDate={options.fromDate}
                                 onChange={newVal => setOptions(o => ({ ...o, toDate: newVal }))}
                             />
                         </Grid>

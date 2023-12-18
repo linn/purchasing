@@ -66,7 +66,7 @@ function PcasChangeReplace({ wused, handleSelectChange, documentNumber }) {
                         loading={false}
                         checkboxSelection
                         isRowSelectable={params => !params.row.deleteChangeId}
-                        onSelectionModelChange={handleSelectChange}
+                        onRowSelectionModelChange={handleSelectChange}
                         pageSize={100}
                         hideFooter={!wused || wused.length <= 100}
                     />

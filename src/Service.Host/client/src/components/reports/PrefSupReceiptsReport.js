@@ -6,12 +6,12 @@ import {
     Page,
     Title,
     Loading,
-    DatePicker,
     ExportButton,
     ReportTable
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import queryString from 'query-string';
+import { DatePicker } from '@mui/x-date-pickers';
 import moment from 'moment';
 import history from '../../history';
 import config from '../../config';
@@ -24,8 +24,8 @@ function PrefSupReceiptsReport() {
     const location = useLocation();
     const queryOptions = queryString.parse(location.search);
     const [options, setOptions] = useState({
-        fromDate: queryOptions.fromDate ? new Date(queryOptions.fromDate) : new Date(),
-        toDate: queryOptions.toDate ? new Date(queryOptions.toDate) : new Date()
+        fromDate: queryOptions.fromDate ? moment(queryOptions.fromDate) : moment(),
+        toDate: queryOptions.toDate ? moment(queryOptions.toDate) : moment()
     });
     const [queryLaunched, setQueryLaunched] = useState(false);
 
@@ -65,8 +65,8 @@ function PrefSupReceiptsReport() {
                         label="From Date"
                         value={options.fromDate}
                         propertyName="fromDate"
-                        minDate="01/01/2000"
-                        maxDate={options.toDate?.toString()}
+                        format="DD/MM/YYYY"
+                        maxDate={options.toDate}
                         onChange={newVal => setOptions(o => ({ ...o, fromDate: newVal }))}
                     />
                 </Grid>
@@ -75,8 +75,8 @@ function PrefSupReceiptsReport() {
                         label="To Date"
                         propertyName="toDate"
                         value={options.toDate}
-                        maxDate={new Date()}
-                        minDate={options.fromDate?.toString() || '01/01/2000'}
+                        maxDate={moment()}
+                        minDate={options.fromDate}
                         onChange={newVal => setOptions(o => ({ ...o, toDate: newVal }))}
                     />
                 </Grid>

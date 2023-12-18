@@ -3,7 +3,6 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import {
     Page,
-    DatePicker,
     Dropdown,
     Title,
     Typeahead,
@@ -11,6 +10,8 @@ import {
     reportSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
+import moment from 'moment';
+import { DatePicker } from '@mui/x-date-pickers';
 import history from '../../history';
 import config from '../../config';
 import partsActions from '../../actions/partsActions';
@@ -33,14 +34,13 @@ function OrdersByPartReportOptions() {
 
     const dispatch = useDispatch();
 
-    const defaultStartDate = new Date();
-    defaultStartDate.setMonth(defaultStartDate.getMonth() - 1);
+    const defaultStartDate = moment().subtract(1, 'months');
 
     const [fromDate, setFromDate] = useState(
-        prevOptions?.fromDate ? new Date(prevOptions?.fromDate) : defaultStartDate
+        prevOptions?.fromDate ? moment(prevOptions?.fromDate) : defaultStartDate
     );
     const [toDate, setToDate] = useState(
-        prevOptions?.toDate ? new Date(prevOptions?.toDate) : new Date()
+        prevOptions?.toDate ? moment(prevOptions?.toDate) : moment()
     );
 
     const [part, setPart] = useState(
@@ -89,8 +89,8 @@ function OrdersByPartReportOptions() {
                 <Grid item xs={6}>
                     <DatePicker
                         label="From Date"
-                        value={fromDate.toString()}
-                        minDate="01/01/2000"
+                        value={fromDate}
+                        format="DD/MM/YYYY"
                         maxDate={toDate}
                         onChange={newValue => {
                             setFromDate(newValue);
@@ -100,8 +100,9 @@ function OrdersByPartReportOptions() {
                 <Grid item xs={6}>
                     <DatePicker
                         label="To Date"
-                        value={toDate.toString()}
-                        minDate={fromDate.toString()}
+                        value={toDate}
+                        format="DD/MM/YYYY"
+                        minDate={fromDate}
                         onChange={newValue => {
                             setToDate(newValue);
                         }}

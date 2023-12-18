@@ -6,6 +6,8 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import Tooltip from '@mui/material/Tooltip';
 import Tabs from '@mui/material/Tabs';
+import { useLocation } from 'react-router';
+import queryString from 'query-string';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -26,7 +28,6 @@ import {
     userSelectors,
     LinkButton
 } from '@linn-it/linn-form-components-library';
-import { getQuery } from '../../selectors/routerSelelctors';
 import partSupplierActions from '../../actions/partSupplierActions';
 import history from '../../history';
 import config from '../../config';
@@ -135,8 +136,9 @@ function PartSupplier({ creating }) {
         partSupplier: {},
         prevPart: {}
     });
+    const { search } = useLocation();
 
-    const query = useSelector(reduxState => getQuery(reduxState));
+    const query = queryString.parse(search);
     const loading = useSelector(reduxState => reduxState.partSupplier.loading);
     const snackbarVisible = useSelector(reduxState =>
         itemSelectorHelpers.getSnackbarVisible(reduxState.partSupplier)
@@ -216,7 +218,7 @@ function PartSupplier({ creating }) {
             };
             setValue(tabs[query.tab]);
         }
-    }, [query, reduxDispatch]);
+    }, [query.partId, query.tab, query.supplierId, reduxDispatch]);
 
     useEffect(() => {
         if (creating) {

@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import {
     Page,
-    DatePicker,
     Title,
     collectionSelectorHelpers,
     OnOffSwitch,
     utilities,
     Search
 } from '@linn-it/linn-form-components-library';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useSelector, useDispatch } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
+import moment from 'moment';
 import Typography from '@mui/material/Typography';
 import queryString from 'query-string';
 import history from '../history';
@@ -130,8 +131,8 @@ const BomHistoryReport = () => {
     const [options, setOptions] = useState({
         bomName: '',
         includeSubAssemblies: true,
-        from: new Date('2022-11-01T00:00:00'),
-        to: new Date()
+        from: moment('2022-11-01T00:00:00'),
+        to: moment()
     });
     const handleOptionChange = (propertyName, newValue) => {
         setOptions(o => ({ ...o, [propertyName]: newValue }));
@@ -166,17 +167,18 @@ const BomHistoryReport = () => {
                 <Grid item xs={2}>
                     <DatePicker
                         label="From Date"
-                        value={options.from.toString()}
-                        minDate="01/01/2000"
-                        maxDate={options.to.toString()}
+                        format="DD/MM/YYYY"
+                        value={options.from}
+                        maxDate={options.to}
                         onChange={newVal => setOptions(o => ({ ...o, from: newVal }))}
                     />
                 </Grid>
                 <Grid item xs={2}>
                     <DatePicker
                         label="To Date"
-                        value={options.to.toString()}
-                        minDate={options.from.toString()}
+                        format="DD/MM/YYYY"
+                        value={options.to}
+                        minDate={options.from}
                         onChange={newVal => setOptions(o => ({ ...o, to: newVal }))}
                     />
                 </Grid>
