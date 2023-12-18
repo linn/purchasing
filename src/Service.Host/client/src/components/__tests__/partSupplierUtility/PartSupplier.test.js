@@ -5,6 +5,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
 import { cleanup, screen, fireEvent } from '@testing-library/react';
+import { useLocation } from 'react-router';
 import render from '../../../test-utils';
 import PartSupplier from '../../partSupplierUtility/PartSupplier';
 import partSuppliersActions from '../../../actions/partSuppliersActions';
@@ -21,6 +22,15 @@ import * as itemTypes from '../../../itemTypes';
 jest.mock('react-redux', () => ({
     ...jest.requireActual('react-redux'),
     useSelector: jest.fn()
+}));
+
+jest.mock('react-router', () => ({
+    ...jest.requireActual('react-router'),
+    useLocation: jest.fn()
+}));
+
+useLocation.mockImplementation(() => ({
+    search: 'partId=1&supplierId=2'
 }));
 
 const fetchAppStateActionsSpy = jest.spyOn(partSuppliersActions, 'fetchState');
@@ -459,82 +469,48 @@ describe('When url query params specify tab...', () => {
     });
 
     test('Should render Part and Supplier tab', () => {
-        useSelector.mockImplementation(callback =>
-            callback({
-                ...stateWithItemLoaded,
-                router: {
-                    location: {
-                        pathname: '',
-                        query: { partId: 1, supplierId: 2, tab: 'partAndSupplier' }
-                    }
-                }
-            })
-        );
+        useLocation.mockImplementation(() => ({
+            search: 'partId=1&supplierId=2&tab=partAndSupplier'
+        }));
+        useSelector.mockImplementation(callback => callback(stateWithItemLoaded));
         render(<PartSupplier />);
         expect(screen.getByLabelText('Designation')).toBeInTheDocument();
     });
 
     test('Should render Order Details tab', () => {
-        useSelector.mockImplementation(callback =>
-            callback({
-                ...stateWithItemLoaded,
-                router: {
-                    location: {
-                        pathname: '',
-                        query: { partId: 1, supplierId: 2, tab: 'orderDetails' }
-                    }
-                }
-            })
-        );
+        useLocation.mockImplementation(() => ({
+            search: 'partId=1&supplierId=2&tab=orderDetails'
+        }));
+        useSelector.mockImplementation(callback => callback(stateWithItemLoaded));
         render(<PartSupplier />);
 
         expect(screen.getByLabelText('Order Method')).toBeInTheDocument();
     });
 
     test('Should render Other Details tab', () => {
-        useSelector.mockImplementation(callback =>
-            callback({
-                ...stateWithItemLoaded,
-                router: {
-                    location: {
-                        pathname: '',
-                        query: { partId: 1, supplierId: 2, tab: 'otherDetails' }
-                    }
-                }
-            })
-        );
+        useLocation.mockImplementation(() => ({
+            search: 'partId=1&supplierId=2&tab=otherDetails'
+        }));
+        useSelector.mockImplementation(callback => callback(stateWithItemLoaded));
         render(<PartSupplier />);
         expect(screen.getByLabelText('Lead Time Weeks')).toBeInTheDocument();
     });
 
     test('Should render Lifecycle tab', () => {
-        useSelector.mockImplementation(callback =>
-            callback({
-                ...stateWithItemLoaded,
-                router: {
-                    location: {
-                        pathname: '',
-                        query: { partId: 1, supplierId: 2, tab: 'lifecycle' }
-                    }
-                }
-            })
-        );
+        useLocation.mockImplementation(() => ({
+            search: 'partId=1&supplierId=2&tab=lifecycle'
+        }));
+        useSelector.mockImplementation(callback => callback(stateWithItemLoaded));
         render(<PartSupplier />);
         expect(screen.getByLabelText('Created By')).toBeInTheDocument();
     });
 
     test('Should render Manufacturer tab', () => {
-        useSelector.mockImplementation(callback =>
-            callback({
-                ...stateWithItemLoaded,
-                router: {
-                    location: {
-                        pathname: '',
-                        query: { partId: 1, supplierId: 2, tab: 'manufacturer' }
-                    }
-                }
-            })
-        );
+        useLocation.mockImplementation(() => ({
+            search: 'partId=1&supplierId=2&tab=manufacturer'
+        }));
+
+        useSelector.mockImplementation(callback => callback(stateWithItemLoaded));
         render(<PartSupplier />);
         expect(screen.getByLabelText('Manufacturer')).toBeInTheDocument();
     });
@@ -545,6 +521,9 @@ describe('When part has manufacturers...', () => {
         cleanup();
         jest.clearAllMocks();
         useSelector.mockImplementation(callback => callback(stateWithPart));
+        useLocation.mockImplementation(() => ({
+            search: 'partId=1&supplierId=2'
+        }));
         render(<PartSupplier />);
     });
 
@@ -565,6 +544,9 @@ describe('When no edit link...', () => {
             ...state,
             partSupplier: { item: { links: [] } }
         };
+        useLocation.mockImplementation(() => ({
+            search: 'partId=1&supplierId=2'
+        })); 
         useSelector.mockImplementation(callback => callback(stateWithNoEditLink));
         render(<PartSupplier />);
     });
