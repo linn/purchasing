@@ -161,36 +161,39 @@
 
             if (request.BomChanges != null)
             {
-                foreach (var c in request.BomChanges)
-                {
-                    var currentLiveDetails 
-                        = this.bomDetailRepository
-                            .FilterBy(x => x.BomId == c.BomId && c.ChangeState == "LIVE")?.Select(
-                                d => d.PartNumber).ToList();
+                var hasSpecifiedChanges = (selectedBomChangeIds != null && selectedBomChangeIds.Any())
+                                          || (selectedPcasChangeIds != null && selectedPcasChangeIds.Any());
 
-                    var detailsToCheck = selectedBomChangeIds == null || !selectedBomChangeIds.Any()
-                                             ? c.AddedBomDetails
-                                             : this.bomDetailRepository.FilterBy(x => selectedBomChangeIds.Contains(x.DetailId));
-
-                    if (detailsToCheck != null)
+                var changesToCheck = hasSpecifiedChanges
+                                         ? request.BomChanges.Where(
+                                             x => selectedBomChangeIds != null && selectedBomChangeIds.Contains(x.ChangeId)) : request.BomChanges;
+                
+                    foreach (var c in changesToCheck)
                     {
-                        foreach (var d in detailsToCheck)
-                        {
-                            var bomPart = this.partRepository.FindBy(p => p.BomId == d.BomId);
-                            if (currentLiveDetails != null && currentLiveDetails.Contains(d.PartNumber))
-                            {
-                                throw new InvalidBomChangeException(
-                                    $"{d.PartNumber} is already live on {c.BomName}!!");
-                            }
+                        var currentLiveDetails
+                            = this.bomDetailRepository
+                                .FilterBy(x => x.BomId == c.BomId && c.ChangeState == "LIVE")?.Select(
+                                    d => d.PartNumber).ToList();
 
-                            if (bomPart.DateLive.HasValue && !d.Part.DateLive.HasValue)
+                        if (c.AddedBomDetails != null)
+                        {
+                            foreach (var d in c.AddedBomDetails)
                             {
-                                throw new InvalidBomChangeException(
-                                    $"Cannot add NON-LIVE {d.PartNumber} onto BOM of {bomPart.PartNumber}, which IS LIVE!!");
+                                var bomPart = this.partRepository.FindBy(p => p.BomId == d.BomId);
+                                if (currentLiveDetails != null && currentLiveDetails.Contains(d.PartNumber))
+                                {
+                                    throw new InvalidBomChangeException(
+                                        $"{d.PartNumber} is already live on {c.BomName}!!");
+                                }
+
+                                if (bomPart.DateLive.HasValue && !d.Part.DateLive.HasValue)
+                                {
+                                    throw new InvalidBomChangeException(
+                                        $"Cannot add NON-LIVE {d.PartNumber} onto BOM of {bomPart.PartNumber}, which IS LIVE!!");
+                                }
                             }
                         }
                     }
-                }
             }
             
             var employee = this.employeeRepository.FindById(appliedById);
