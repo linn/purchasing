@@ -107,7 +107,8 @@
                     new PurchaseOrderPostingResourceBuilder(this.MockNominalAccountRepository),
                     this.MockAuthService),
                 new LinnDeliveryAddressResourceBuilder(),
-                new AddressResourceBuilder(this.MockFullAddressRepository));
+                new AddressResourceBuilder(this.MockFullAddressRepository),
+                new SupplierResourceBuilder(this.MockAuthService, new SupplierContactResourceBuilder(), new AddressResourceBuilder(this.MockFullAddressRepository)));
 
             this.Log = Substitute.For<ILog>();
 

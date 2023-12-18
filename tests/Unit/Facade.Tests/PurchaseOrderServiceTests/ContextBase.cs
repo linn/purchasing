@@ -34,6 +34,8 @@
 
         protected AddressResourceBuilder AddressResourceBuilder { get; private set; }
 
+        protected SupplierResourceBuilder SupplierResourceBuilder { get; private set; }
+
         protected IRepository<PurchaseOrder, int> PurchaseOrderRepository { get; private set; }
 
         protected IRepository<FullAddress, int> FullAddressRepository { get; private set; }
@@ -65,7 +67,10 @@
             this.PurchaseOrderPostingResourceBuilder = new PurchaseOrderPostingResourceBuilder(this.MockNominalAccountRepository);
             this.LinnDeliveryAddressResourceBuilder = new LinnDeliveryAddressResourceBuilder();
             this.AddressResourceBuilder = new AddressResourceBuilder(this.FullAddressRepository);
-
+            this.SupplierResourceBuilder = new SupplierResourceBuilder(
+                this.AuthService,
+                new SupplierContactResourceBuilder(),
+                this.AddressResourceBuilder);
             this.PurchaseOrderDetailResourceBuilder = new PurchaseOrderDetailResourceBuilder(
                 this.PurchaseOrderDeliveryResourceBuilder,
                 this.PurchaseOrderPostingResourceBuilder,
@@ -75,7 +80,8 @@
                 this.AuthService,
                 this.PurchaseOrderDetailResourceBuilder,
                 this.LinnDeliveryAddressResourceBuilder,
-                this.AddressResourceBuilder);
+                this.AddressResourceBuilder,
+                this.SupplierResourceBuilder);
 
             this.Logger = Substitute.For<ILog>();
 

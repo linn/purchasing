@@ -110,6 +110,11 @@
             if (model != null)
             {
                 yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
+
+                if (!string.IsNullOrEmpty(model.VendorManagerId))
+                {
+                    yield return new LinkResource { Rel = "vendor-manager", Href = $"/purchasing/vendor-managers/{model.VendorManagerId}" };
+                }
             }
 
             var privileges = claims?.ToList();

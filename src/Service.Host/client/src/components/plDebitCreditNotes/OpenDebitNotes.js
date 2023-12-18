@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Title,
@@ -81,16 +81,6 @@ function OpenDebitNotes() {
         }
     }, [items]);
 
-    const handleSelectRow = selected => {
-        setRows(
-            rows.map(r =>
-                selected.includes(r.id) ? { ...r, selected: true } : { ...r, selected: false }
-            )
-        );
-    };
-
-    const [editRowsModel, setEditRowsModel] = useState({});
-
     const columns = [
         {
             headerName: '#',
@@ -145,17 +135,6 @@ function OpenDebitNotes() {
         }
     ];
 
-    const handleEditRowsModelChange = useCallback(model => {
-        setEditRowsModel(model);
-
-        if (model && Object.keys(model)[0]) {
-            const id = parseInt(Object.keys(model)[0], 10);
-            if (model && model[id] && model[id].notes && model[id].notes.value) {
-                const newValue = model[id].notes.value;
-                setRows(r => r.map(row => (row.id === id ? { ...row, notes: newValue } : row)));
-            }
-        }
-    }, []);
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <SnackbarMessage
@@ -241,9 +220,25 @@ function OpenDebitNotes() {
                                             rowHeight={34}
                                             checkboxSelection
                                             columnBuffer={10}
-                                            onSelectionModelChange={handleSelectRow}
-                                            editRowsModel={editRowsModel}
-                                            onEditRowsModelChange={handleEditRowsModelChange}
+                                            onRowSelectionModelChange={selected => {
+                                                setRows(rs =>
+                                                    rs.map(r =>
+                                                        selected.includes(r.noteNumber)
+                                                            ? { ...r, selected: true }
+                                                            : { ...r, selected: false }
+                                                    )
+                                                );
+                                            }}
+                                            processRowUpdate={newRow => {
+                                                setRows(r =>
+                                                    r.map(x =>
+                                                        x.id === newRow.id
+                                                            ? { ...x, notes: newRow.notes }
+                                                            : x
+                                                    )
+                                                );
+                                                return newRow;
+                                            }}
                                             loading={itemsLoading}
                                             hideFooter
                                             filterModel={{
@@ -263,6 +258,7 @@ function OpenDebitNotes() {
                                         style={{ marginTop: '22px' }}
                                         colour="primary"
                                         variant="outlined"
+                                        disabled={!rows.some(r => r.selected)}
                                         onClick={() => {
                                             setDialogOpen(true);
                                         }}

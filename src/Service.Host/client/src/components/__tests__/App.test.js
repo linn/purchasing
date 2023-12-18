@@ -7,7 +7,6 @@ import '@testing-library/jest-dom/extend-expect';
 import render from '../../test-utils';
 
 import App from '../App';
-import * as actions from '../../actions';
 
 jest.mock('react-redux', () => ({
     ...jest.requireActual('react-redux'),

@@ -48,7 +48,7 @@ function RevisionTab({
                                 density="compact"
                                 hideFooterSelectedRowCount
                                 autoHeight
-                                onSelectionModelChange={newSelectionModel => {
+                                onRowSelectionModelChange={newSelectionModel => {
                                     dispatch({
                                         type: 'setSelectedRevision',
                                         payload: newSelectionModel

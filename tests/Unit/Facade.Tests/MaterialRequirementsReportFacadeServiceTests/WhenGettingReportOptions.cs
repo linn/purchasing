@@ -37,7 +37,8 @@
                                                          },
                                  StockLevelOptions = new List<ReportOption>(),
                                  OrderByOptions = new List<ReportOption>(),
-                                 PartOptions = new List<ReportOption>()
+                                 PartOptions = new List<ReportOption>(),
+                                 AvailableJobRefs = new List<MrpRunLog>()
                              });
 
             this.result = this.Sut.GetOptions(this.privileges);

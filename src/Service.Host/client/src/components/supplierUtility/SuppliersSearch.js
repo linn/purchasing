@@ -4,15 +4,14 @@ import {
     collectionSelectorHelpers,
     CreateButton,
     Page,
+    Search,
     utilities
 } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-
 import suppliersActions from '../../actions/suppliersActions';
 import history from '../../history';
 import config from '../../config';
-import Search from '../Search';
 
 function SuppliersSearch() {
     const dispatch = useDispatch();
@@ -39,7 +38,7 @@ function SuppliersSearch() {
     const createUrl = utilities.getHref(item, 'create');
 
     const getClosedString = dateClosed =>
-        dateClosed ? `CLOSED: ${new Date(dateClosed).toLocaleDateString('en-GB')}` : '';
+        dateClosed ? `closed: ${new Date(dateClosed).toLocaleDateString('en-GB')}` : '';
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
@@ -59,8 +58,16 @@ function SuppliersSearch() {
                         search={searchSuppliers}
                         searchResults={searchResults.map(s => ({
                             ...s,
-                            description: `${getClosedString(s.dateClosed)}`
+                            chips: [
+                                {
+                                    text: s.dateClosed
+                                        ? `${getClosedString(s.dateClosed)}`
+                                        : 'open',
+                                    color: s.dateClosed ? 'red' : 'green'
+                                }
+                            ]
                         }))}
+                        displayChips
                         loading={searchLoading}
                         priorityFunction="closestMatchesFirst"
                         onResultSelect={res => history.push(utilities.getSelfHref(res))}

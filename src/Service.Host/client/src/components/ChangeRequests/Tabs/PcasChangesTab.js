@@ -71,7 +71,7 @@ function PcasChangesTab({ pcasChanges, handleSelectChange }) {
                         autoHeight
                         loading={false}
                         checkboxSelection
-                        onSelectionModelChange={handleSelectChange}
+                        onRowSelectionModelChange={handleSelectChange}
                         pageSize={100}
                         hideFooter={!pcasChanges || pcasChanges.length <= 100}
                     />

@@ -120,25 +120,25 @@
                                           };
                     model.ReportTitle = reportTitle;
                     model.AddColumn("Description", "Description");
+                    model.AddColumn("Supplier", "Supplier");
+                    model.AddColumn("SupplierName", "Supplier Name");
                     model.AddColumn("QtyAvailable", "Qty Available");
                     model.AddColumn("TotalWOReqt", "Needed for Works Orders");
                     model.AddColumn("TotalBEReqt", "To achieve Minimum Build");
                     model.AddColumn("TotalBIReqt", "To achieve Priority Build");
                     model.AddColumn("TotalBTReqt", "To achieve Ideal Build");
-                    model.AddColumn("Supplier", "Supplier");
-                    model.AddColumn("SupplierName", "Supplier Name");
                     model.AddColumn("PlannerStory", "Comments");
 
                     var row = model.AddRow(partEntryRow.PartNumber);
 
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("Description"), partEntryRow.Description);
+                    model.SetGridTextValue(row.RowIndex, model.ColumnIndex("Supplier"), partEntryRow.PreferredSupplier.ToString());
+                    model.SetGridTextValue(row.RowIndex, model.ColumnIndex("SupplierName"), partEntryRow.SupplierName);
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("QtyAvailable"), partEntryRow.QtyAvailable.ToString());
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("TotalWOReqt"), partEntryRow.TotalWoReqt.ToString());
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("TotalBEReqt"), partEntryRow.TotalBeReqt.ToString());
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("TotalBIReqt"), partEntryRow.TotalBiReqt.ToString());
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("TotalBTReqt"), partEntryRow.TotalBtReqt.ToString());
-                    model.SetGridTextValue(row.RowIndex, model.ColumnIndex("Supplier"), partEntryRow.PreferredSupplier.ToString());
-                    model.SetGridTextValue(row.RowIndex, model.ColumnIndex("SupplierName"), partEntryRow.SupplierName);
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("PlannerStory"), partEntryRow.PlannerStory);
 
                     returnResults.Add(model);

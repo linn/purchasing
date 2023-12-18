@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
-
 import { Dropdown, DatePicker } from '@linn-it/linn-form-components-library';
+import moment from 'moment';
 
 function LifecycleTab({
     handleFieldChange,
@@ -27,10 +27,9 @@ function LifecycleTab({
             <Grid item xs={4}>
                 <DatePicker
                     label="Date"
-                    value={dateCreated || new Date()}
+                    format="DD/MM/YYYY"
+                    value={moment(dateCreated)}
                     onChange={newValue => handleFieldChange('dateCreated', newValue)}
-                    minDate="01/01/1970"
-                    maxDate="01/01/2100"
                 />
             </Grid>
             <Grid item xs={8}>
@@ -46,10 +45,9 @@ function LifecycleTab({
             <Grid item xs={4}>
                 <DatePicker
                     label="Date"
-                    value={dateInvalid}
+                    format="DD/MM/YYYY"
+                    value={dateInvalid ? moment(dateInvalid) : null}
                     onChange={newValue => handleFieldChange('dateInvalid', newValue)}
-                    minDate="01/01/1970"
-                    maxDate="01/01/2100"
                 />
             </Grid>
         </Grid>

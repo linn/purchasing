@@ -161,6 +161,9 @@ describe('When updating comment...', () => {
             .querySelector('input');
         fireEvent.change(comment, { target: { value: 'NEW COMMENT' } });
 
+        // need to press enter to actually commit the change
+        fireEvent.keyDown(comment, { key: 'Enter', keyCode: 13 });
+
         // select the row
         const firstCheckbox = screen.getAllByRole('checkbox')[1];
         fireEvent.click(firstCheckbox);

@@ -93,7 +93,7 @@ function BomChangesTab({ bomChanges, handleSelectChange, phaseInsUri, phaseIn })
                         autoHeight
                         loading={false}
                         checkboxSelection
-                        onSelectionModelChange={handleSelectChange}
+                        onRowSelectionModelChange={handleSelectChange}
                         pageSize={100}
                         hideFooter={!bomChanges || bomChanges.length <= 100}
                     />

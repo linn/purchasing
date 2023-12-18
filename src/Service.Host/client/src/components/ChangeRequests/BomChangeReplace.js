@@ -67,7 +67,7 @@ function BomChangeReplace({ wused, handleSelectChange, documentNumber }) {
                         isRowSelectable={params =>
                             !params.row.deleteChangeDocumentNumber && params.row.pcasLine !== 'Y'
                         }
-                        onSelectionModelChange={handleSelectChange}
+                        onRowSelectionModelChange={handleSelectChange}
                         pageSize={100}
                         hideFooter={!wused || wused.length <= 100}
                     />

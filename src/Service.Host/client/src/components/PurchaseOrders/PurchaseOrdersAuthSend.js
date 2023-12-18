@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     collectionSelectorHelpers,
     Page,
-    DatePicker,
     utilities,
     userSelectors,
     processSelectorHelpers,
-    Dropdown
+    Dropdown,
+    DatePicker
 } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
 import { DataGrid } from '@mui/x-data-grid';
@@ -284,18 +284,20 @@ function PurchaseOrdersAuthSend() {
                         label="Start Date"
                         value={options.startDate}
                         propertyName="startDate"
-                        minDate={(new Date().getMonth() - 12).toString()}
-                        maxDate={new Date().toString()}
+                        format="DD/MM/YYYY"
+                        minDate={moment().subtract(12, 'months')}
+                        maxDate={moment()}
                         onChange={newVal => setOptions(o => ({ ...o, startDate: newVal }))}
                     />
                 </Grid>
                 <Grid item xs={3}>
                     <DatePicker
                         label="End Date"
-                        propertyName="endDate"
                         value={options.endDate}
-                        minDate={(new Date().getMonth() - 12).toString()}
-                        maxDate={new Date().toString()}
+                        propertyName="endDate"
+                        format="DD/MM/YYYY"
+                        minDate={moment().subtract(12, 'months')}
+                        maxDate={moment()}
                         onChange={newVal => setOptions(o => ({ ...o, endDate: newVal }))}
                     />
                 </Grid>
@@ -453,7 +455,7 @@ function PurchaseOrdersAuthSend() {
                         columnBuffer={9}
                         autoHeight
                         checkboxSelection
-                        onSelectionModelChange={handleSelectionModelChange}
+                        onRowSelectionModelChange={handleSelectionModelChange}
                         loading={searchLoading}
                     />
                 </Grid>

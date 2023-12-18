@@ -59,6 +59,12 @@ const stateWithOptions = {
                     displayText: 'Danger Levels 0 - 2',
                     displaySequence: 1
                 }
+            ],
+            availableJobRefs: [
+                {
+                    jobRef: 'AAJADE',
+                    runDate: '2022-05-04T09:48:49.0000000'
+                }
             ]
         }
     },

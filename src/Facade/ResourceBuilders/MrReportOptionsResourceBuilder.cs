@@ -18,7 +18,13 @@
                                model.PartSelectorOptions.Select(this.BuildOptionResource),
                            StockLevelOptions = model.StockLevelOptions.Select(this.BuildOptionResource),
                            OrderByOptions = model.OrderByOptions.Select(this.BuildOptionResource),
-                           PartOptions = model.PartOptions.Select(this.BuildOptionResource)
+                           PartOptions = model.PartOptions.Select(this.BuildOptionResource),
+                           AvailableJobRefs = model.AvailableJobRefs.Select(a => new MrpRunLogResource
+                               {
+                                   MrRunLogId = a.MrRunLogId,
+                                   JobRef = a.JobRef,
+                                   RunDate = a.RunDate.ToString("o")
+                               })
                        };
         }
 

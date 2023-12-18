@@ -7,14 +7,14 @@ import {
     Page,
     collectionSelectorHelpers,
     CheckboxWithLabel,
-    DatePicker,
     Dropdown,
     processSelectorHelpers,
     FileUploader,
     getItemError,
     ErrorCard,
     SaveBackCancelButtons,
-    utilities
+    utilities,
+    DatePicker
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import moment from 'moment';
@@ -234,21 +234,6 @@ function AcknowledgeOrdersUtility() {
             );
         }
     };
-    const handleSelectRow = selected => {
-        setRows(
-            rows.map(r =>
-                selected.includes(r.id) ? { ...r, selected: true } : { ...r, selected: false }
-            )
-        );
-        if (selected.length) {
-            setNewValues(nv => ({
-                ...nv,
-                dateAdvised:
-                    moment(rows.find(x => x.id === selected[selected.length - 1])?.dateAdvised) ||
-                    moment()
-            }));
-        }
-    };
 
     const uploadLoading = useSelector(state =>
         processSelectorHelpers.getWorking(state[batchPurchaseOrderDeliveriesUpload.item])
@@ -354,10 +339,8 @@ function AcknowledgeOrdersUtility() {
                             <Grid item xs={3}>
                                 <DatePicker
                                     label="Advised Date"
-                                    value={newValues.dateAdvised}
-                                    propertyName="dateAdvised"
-                                    minDate="01/01/2000"
-                                    maxDate="01/01/2100"
+                                    value={newValues.dateAdvised.toISOString()}
+                                    format="DD/MM/YYYY"
                                     onChange={newVal =>
                                         setNewValues(o => ({ ...o, dateAdvised: newVal }))
                                     }
@@ -516,7 +499,15 @@ function AcknowledgeOrdersUtility() {
                                         loading={itemsLoading || uploadLoading}
                                         hideFooter
                                         checkboxSelection
-                                        onSelectionModelChange={handleSelectRow}
+                                        onRowSelectionModelChange={selected => {
+                                            setRows(rs =>
+                                                rs.map(r =>
+                                                    selected.includes(r.id)
+                                                        ? { ...r, selected: true }
+                                                        : { ...r, selected: false }
+                                                )
+                                            );
+                                        }}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
