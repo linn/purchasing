@@ -546,7 +546,7 @@ describe('When no edit link...', () => {
         };
         useLocation.mockImplementation(() => ({
             search: 'partId=1&supplierId=2'
-        })); 
+        }));
         useSelector.mockImplementation(callback => callback(stateWithNoEditLink));
         render(<PartSupplier />);
     });

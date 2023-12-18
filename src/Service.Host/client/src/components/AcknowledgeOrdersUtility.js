@@ -366,7 +366,7 @@ function AcknowledgeOrdersUtility() {
                                         'DECOMMIT',
                                         'IGNORE',
                                         'REQUESTED',
-                                        'RESCHEDULE OUT'
+                                        'RESCHEDULED OUT'
                                     ]}
                                 />
                             </Grid>
