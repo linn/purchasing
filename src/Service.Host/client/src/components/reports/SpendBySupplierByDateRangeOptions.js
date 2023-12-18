@@ -8,11 +8,11 @@ import {
     Title,
     collectionSelectorHelpers,
     reportSelectorHelpers,
-    Loading
+    Loading,
+    DatePicker
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
-import { DatePicker } from '@mui/x-date-pickers';
 import history from '../../history';
 import config from '../../config';
 import vendorManagersActions from '../../actions/vendorManagersActions';

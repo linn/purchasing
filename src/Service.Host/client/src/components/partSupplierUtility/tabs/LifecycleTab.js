@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { Dropdown } from '@linn-it/linn-form-components-library';
+import { Dropdown, DatePicker } from '@linn-it/linn-form-components-library';
 import moment from 'moment';
 
 function LifecycleTab({

@@ -6,7 +6,8 @@ import {
     utilities,
     userSelectors,
     processSelectorHelpers,
-    Dropdown
+    Dropdown,
+    DatePicker
 } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
 import { DataGrid } from '@mui/x-data-grid';
@@ -22,7 +23,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import { DatePicker } from '@mui/x-date-pickers';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import DialogContentText from '@mui/material/DialogContentText';

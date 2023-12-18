@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { DatePicker } from '@mui/x-date-pickers';
 import moment from 'moment';
 import {
     collectionSelectorHelpers,
     InputField,
-    Typeahead
+    Typeahead,
+    DatePicker
 } from '@linn-it/linn-form-components-library';
 
 import employeesActions from '../../../actions/employeesActions';

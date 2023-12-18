@@ -13,12 +13,12 @@ import {
     getItemError,
     ErrorCard,
     SaveBackCancelButtons,
-    utilities
+    utilities,
+    DatePicker
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import moment from 'moment';
 import Dialog from '@mui/material/Dialog';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { makeStyles } from '@mui/styles';
 import Accordion from '@mui/material/Accordion';
 import Button from '@mui/material/Button';
@@ -339,7 +339,7 @@ function AcknowledgeOrdersUtility() {
                             <Grid item xs={3}>
                                 <DatePicker
                                     label="Advised Date"
-                                    value={newValues.dateAdvised}
+                                    value={newValues.dateAdvised.toISOString()}
                                     format="DD/MM/YYYY"
                                     onChange={newVal =>
                                         setNewValues(o => ({ ...o, dateAdvised: newVal }))

@@ -5,9 +5,9 @@ import {
     collectionSelectorHelpers,
     OnOffSwitch,
     utilities,
-    Search
+    Search,
+    DatePicker
 } from '@linn-it/linn-form-components-library';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useSelector, useDispatch } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';

@@ -11,10 +11,10 @@ import {
     Loading,
     Dropdown,
     ReportTable,
-    ExportButton
+    ExportButton,
+    DatePicker
 } from '@linn-it/linn-form-components-library';
 import moment from 'moment';
-import { DatePicker } from '@mui/x-date-pickers';
 import { useSelector, useDispatch } from 'react-redux';
 import history from '../../history';
 import config from '../../config';

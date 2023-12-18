@@ -7,11 +7,11 @@ import {
     Title,
     Loading,
     ExportButton,
-    ReportTable
+    ReportTable,
+    DatePicker
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import queryString from 'query-string';
-import { DatePicker } from '@mui/x-date-pickers';
 import moment from 'moment';
 import history from '../../history';
 import config from '../../config';

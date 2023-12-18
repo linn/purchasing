@@ -10,11 +10,10 @@ import {
     ExportButton,
     Loading,
     Dropdown,
-    ReportTable
+    ReportTable,
+    DatePicker
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
-import { DatePicker } from '@mui/x-date-pickers';
-import moment from 'moment';
 import history from '../../history';
 import config from '../../config';
 import suppliersActions from '../../actions/suppliersActions';
@@ -46,11 +45,12 @@ function WhatsDueInReport() {
         collectionSelectorHelpers.getSearchLoading(state.suppliers)
     );
 
-    const defaultStartDate = moment().subtract(1, 'months');
+    const defaultStartDate = new Date();
+    defaultStartDate.setMonth(defaultStartDate.getMonth() - 1);
 
     const [options, setOptions] = useState({
         fromDate: defaultStartDate,
-        toDate: moment(),
+        toDate: new Date(),
         orderBy: 'ORDER NUMBER'
     });
 
@@ -121,7 +121,7 @@ function WhatsDueInReport() {
                                 label="From Date"
                                 value={options.fromDate}
                                 propertyName="fromDate"
-                                maxDate={options.toDate}
+                                maxDate={options.toDate?.toString() || null}
                                 onChange={newVal => setOptions(o => ({ ...o, fromDate: newVal }))}
                             />
                         </Grid>
@@ -130,8 +130,10 @@ function WhatsDueInReport() {
                                 label="To Date"
                                 propertyName="toDate"
                                 value={options.toDate}
-                                minDate={options.fromDate}
-                                onChange={newVal => setOptions(o => ({ ...o, toDate: newVal }))}
+                                minDate={options.fromDate || null}
+                                onChange={newVal => {
+                                    setOptions(o => ({ ...o, toDate: newVal }));
+                                }}
                             />
                         </Grid>
                         <Grid item xs={6} />
