@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { useSelector } from 'react-redux';
-import routeData from 'react-router';
+import { useParams } from 'react-router-dom';
 import '@testing-library/jest-dom/extend-expect';
 import { cleanup, screen, fireEvent } from '@testing-library/react';
 import render from '../../../test-utils';
@@ -15,12 +15,13 @@ jest.mock('react-redux', () => ({
     useSelector: jest.fn()
 }));
 
-const fetchSpy = jest.spyOn(boardComponentsActions, 'fetch');
-const idParam = {
-    id: '649'
-};
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useParams: jest.fn()
+}));
 
-jest.spyOn(routeData, 'useParams').mockReturnValue(idParam);
+const fetchSpy = jest.spyOn(boardComponentsActions, 'fetch');
+useParams.mockImplementation(() => ({ id: 808 }));
 
 const stateAtInitialLoad = {
     boardComponents: {

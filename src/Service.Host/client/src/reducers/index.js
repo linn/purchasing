@@ -2,7 +2,6 @@ import {
     reducers as sharedLibraryReducers,
     fetchErrorReducer
 } from '@linn-it/linn-form-components-library';
-import { connectRouter } from 'connected-react-router';
 import { combineReducers } from 'redux';
 import { reducer as oidc } from 'redux-oidc';
 import historyStore from './history';
@@ -130,7 +129,7 @@ import boardComponentSummaryReport from './boardComponentSummaryReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
-const rootReducer = history =>
+const rootReducer = () =>
     combineReducers({
         oidc,
         historyStore,
@@ -221,7 +220,6 @@ const rootReducer = history =>
         sendPurchaseOrderDeptEmail,
         purchaseOrders,
         putSupplierOnHold,
-        router: connectRouter(history),
         runMrp,
         sendEdiEmail,
         sendPlNoteEmail,

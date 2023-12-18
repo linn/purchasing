@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { useSelector } from 'react-redux';
-import routeData from 'react-router';
+import { useParams } from 'react-router-dom';
 import '@testing-library/jest-dom/extend-expect';
 import { cleanup, screen, fireEvent } from '@testing-library/react';
 import render from '../../test-utils';
@@ -18,11 +18,11 @@ jest.mock('react-redux', () => ({
 
 const addSpy = jest.spyOn(bomVerificationHistoryActions, 'add');
 const fetchSpy = jest.spyOn(bomVerificationHistoryActions, 'fetch');
-const idParam = {
-    id: 123456
-};
-
-jest.spyOn(routeData, 'useParams').mockReturnValue(idParam);
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useParams: jest.fn()
+}));
+useParams.mockImplementation(() => ({ id: 123456 }));
 
 const initialState = {
     bomVerificationHistory: {

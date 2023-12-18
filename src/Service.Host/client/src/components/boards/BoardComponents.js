@@ -719,7 +719,7 @@ function BoardComponents() {
                                     selectionModel={state.layoutSelectionModel}
                                     density="compact"
                                     autoHeight
-                                    onSelectionModelChange={newSelectionModel => {
+                                    onRowSelectionModelChange={newSelectionModel => {
                                         if (!crfNumber > 0) {
                                             dispatch({
                                                 type: 'setSelectedLayout',
@@ -749,7 +749,7 @@ function BoardComponents() {
                                     density="compact"
                                     hideFooterSelectedRowCount
                                     autoHeight
-                                    onSelectionModelChange={newSelectionModel => {
+                                    onRowSelectionModelChange={newSelectionModel => {
                                         if (!crfNumber > 0) {
                                             dispatch({
                                                 type: 'setSelectedRevision',
@@ -794,13 +794,12 @@ function BoardComponents() {
                                     selectionModel={state.componentSelectionModel}
                                     density="compact"
                                     autoHeight
-                                    onSelectionModelChange={newSelectionModel => {
+                                    onRowSelectionModelChange={newSelectionModel => {
                                         dispatch({
                                             type: 'setSelectedComponent',
                                             payload: newSelectionModel
                                         });
                                     }}
-                                    experimentalFeatures={{ newEditingApi: true }}
                                     processRowUpdate={processRowUpdate}
                                     loading={loading}
                                     hideFooterSelectedRowCount

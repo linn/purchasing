@@ -30,8 +30,8 @@ const batchUpdateSpy = jest.spyOn(batchPurchaseOrderDeliveriesUpdateActions, 're
 const searchResults = [
     {
         cancelled: 'Y',
-        dateAdvised: '2022-05-30T00:00:00.0000000',
-        dateRequested: '2022-04-30T00:00:00.0000000',
+        dateAdvised: '2022-05-30T00:00:00.000Z',
+        dateRequested: '2022-04-30T00:00:00.000Z',
         deliverySeq: 1,
         netTotalCurrency: 375,
         baseNetTotal: 375,
@@ -41,7 +41,7 @@ const searchResults = [
         ourDeliveryQty: 7500,
         qtyNetReceived: 0,
         quantityOutstanding: 15000,
-        callOffDate: '1993-09-03T00:00:00.0000000',
+        callOffDate: '1993-09-03T00:00:00.000Z',
         baseOurUnitPrice: 0.025,
         supplierConfirmationComment: 'a new comment',
         ourUnitPriceCurrency: 0.025,
@@ -72,7 +72,7 @@ const searchResults = [
         ourDeliveryQty: 7500,
         qtyNetReceived: 0,
         quantityOutstanding: 15000,
-        callOffDate: '1993-09-03T00:00:00.0000000',
+        callOffDate: '1993-09-03T00:00:00.000Z',
         baseOurUnitPrice: 0.025,
         supplierConfirmationComment: 'a different comment',
         ourUnitPriceCurrency: 0.025,
@@ -239,7 +239,7 @@ describe('When Updating', () => {
                     deliverySequence: 1,
                     orderLine: 1,
                     orderNumber: 123463,
-                    dateRequested: '2022-04-30T00:00:00.0000000',
+                    dateRequested: '2022-04-30T00:00:00.000Z',
                     qty: 7500,
                     reason: 'DECOMMIT',
                     availableAtSupplier: 'Y',
@@ -302,20 +302,23 @@ describe('When Updating Deliveries', () => {
         expect(screen.getAllByRole('row').length).toBe(2);
     });
 
-    test('Should post when save clicked', () => {
-        // trigger a change to a cell to enable the Save button
-        const cells = screen.getAllByRole('cell');
-        fireEvent.doubleClick(cells[2]);
+    test('Should post when save clicked', async () => {
+        // delete a row again
+        const firstCheckbox = screen.getAllByRole('checkbox')[1];
+        fireEvent.click(firstCheckbox);
 
+        const delButton = screen.getByRole('button', { name: '-' });
+        expect(delButton).toBeInTheDocument();
+        fireEvent.click(delButton);
+
+        // click save
         const saveButton = screen.getByRole('button', { name: 'Save' });
         fireEvent.click(saveButton);
 
+        // check post was called with the remaining row
         expect(postByHrefSpy).toHaveBeenCalledWith(
             '/purchasing/purchase-orders/deliveries/123463/1',
-            expect.arrayContaining([
-                expect.objectContaining({ id: '123463/1/1' }),
-                expect.objectContaining({ id: '123463/1/2' })
-            ])
+            expect.arrayContaining([expect.objectContaining({ id: '123463/1/2' })])
         );
     });
 });

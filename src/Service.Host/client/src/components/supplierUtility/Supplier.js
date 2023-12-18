@@ -196,21 +196,9 @@ function Supplier({ creating }) {
             payload: ids
         });
     };
-    const updateContact = (contactId, propertyName, newValue) => {
+    const updateContact = newRow => {
         setEditStatus('edit');
-        if (propertyName === 'isMainOrderContact' || propertyName === 'isMainInvoiceContact') {
-            dispatch({
-                type: 'updateMainContact',
-                propertyName,
-                payload: { id: contactId, newValue }
-            });
-        } else {
-            dispatch({
-                type: 'updateContactDetail',
-                propertyName,
-                payload: { id: contactId, newValue }
-            });
-        }
+        dispatch({ type: 'updateContact', payload: newRow });
     };
     return (
         <Page history={history} homeUrl={config.appRoot}>

@@ -10,10 +10,11 @@ import {
     CheckboxWithLabel,
     Loading,
     Dropdown,
-    DatePicker,
     ReportTable,
-    ExportButton
+    ExportButton,
+    DatePicker
 } from '@linn-it/linn-form-components-library';
+import moment from 'moment';
 import { useSelector, useDispatch } from 'react-redux';
 import history from '../../history';
 import config from '../../config';
@@ -47,13 +48,12 @@ function PartsReceivedReport() {
         collectionSelectorHelpers.getSearchLoading(state.suppliers)
     );
 
-    const defaultStartDate = new Date();
-    defaultStartDate.setMonth(defaultStartDate.getMonth() - 1);
+    const defaultStartDate = moment().subtract(1, 'months');
 
     const [options, setOptions] = useState({
         jobref: '',
         fromDate: defaultStartDate,
-        toDate: new Date(),
+        toDate: moment(),
         orderBy: 'DATE BOOKED',
         includeNegativeValues: true
     });
@@ -135,19 +135,18 @@ function PartsReceivedReport() {
                             <DatePicker
                                 label="From Date"
                                 value={options.fromDate}
-                                propertyName="fromDate"
-                                minDate="01/01/2000"
-                                maxDate={options.toDate?.toString()}
+                                format="DD/MM/YYYY"
+                                maxDate={options.toDate}
                                 onChange={newVal => setOptions(o => ({ ...o, fromDate: newVal }))}
                             />
                         </Grid>
                         <Grid item xs={3}>
                             <DatePicker
                                 label="To Date"
-                                propertyName="toDate"
                                 value={options.toDate}
-                                maxDate={new Date()}
-                                minDate={options.fromDate?.toString() || '01/01/2000'}
+                                format="DD/MM/YYYY"
+                                maxDate={moment()}
+                                minDate={options.fromDate}
                                 onChange={newVal => setOptions(o => ({ ...o, toDate: newVal }))}
                             />
                         </Grid>

@@ -3,15 +3,16 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import {
     Page,
-    DatePicker,
     Dropdown,
     Typeahead,
     Title,
     collectionSelectorHelpers,
     reportSelectorHelpers,
-    Loading
+    Loading,
+    DatePicker
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
+import moment from 'moment';
 import history from '../../history';
 import config from '../../config';
 import vendorManagersActions from '../../actions/vendorManagersActions';
@@ -44,14 +45,14 @@ function SpendBySupplierByDateRangeReportOptions() {
     const [supplier, setSupplier] = useState(
         prevOptions?.id ? { id: prevOptions.id, name: '' } : null
     );
-    const defaultStartDate = new Date();
-    defaultStartDate.setMonth(defaultStartDate.getMonth() - 1);
+    const defaultStartDate = moment().subtract(1, 'months');
 
     const [fromDate, setFromDate] = useState(
-        prevOptions?.fromDate ? new Date(prevOptions?.fromDate) : defaultStartDate
+        prevOptions?.fromDate ? moment(prevOptions?.fromDate) : defaultStartDate
     );
+
     const [toDate, setToDate] = useState(
-        prevOptions?.toDate ? new Date(prevOptions?.toDate) : new Date()
+        prevOptions?.toDate ? moment(prevOptions?.toDate) : moment()
     );
 
     const handleSupplierChange = selectedsupplier => {
@@ -116,22 +117,19 @@ function SpendBySupplierByDateRangeReportOptions() {
                         <Grid item xs={6}>
                             <DatePicker
                                 label="From Date"
-                                value={fromDate.toString()}
-                                minDate="01/01/2000"
-                                maxDate={toDate.toString()}
-                                onChange={newValue => {
-                                    setFromDate(newValue);
-                                }}
+                                value={fromDate}
+                                maxDate={toDate}
+                                format="DD/MM/YYYY"
+                                onChange={setFromDate}
                             />
                         </Grid>
                         <Grid item xs={6}>
                             <DatePicker
                                 label="To Date"
-                                value={toDate.toString()}
-                                minDate={fromDate.toString()}
-                                onChange={newValue => {
-                                    setToDate(newValue);
-                                }}
+                                value={toDate}
+                                format="DD/MM/YYYY"
+                                minDate={fromDate}
+                                onChange={setToDate}
                             />
                         </Grid>
                         <Grid item xs={12} data-testid="supplierSearch">

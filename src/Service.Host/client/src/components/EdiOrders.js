@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
@@ -43,8 +43,6 @@ function EdiOrder() {
 
     const [rows, setRows] = useState([]);
     const suppliers = useSelector(state => collectionSelectorHelpers.getItems(state.ediSuppliers));
-    const [selectedSuppliers, setSelectedSuppliers] = useState(null);
-    const [editRowsModel, setEditRowsModel] = useState({});
 
     const suppliersLoading = useSelector(state =>
         collectionSelectorHelpers.getLoading(state.ediSuppliers)
@@ -54,7 +52,7 @@ function EdiOrder() {
         { field: 'supplierId', headerName: 'Supplier', width: 90 },
         { field: 'supplierName', headerName: 'Name', width: 260 },
         { field: 'vendorManangerName', headerName: 'Vendor Manager', width: 170 },
-        { field: 'ediEmailAddress', headerName: 'Email', width: 170, editable: true },
+        { field: 'ediEmailAddress', headerName: 'Email', width: 250, editable: true },
         {
             field: 'numOrders',
             headerName: 'Orders',
@@ -89,28 +87,20 @@ function EdiOrder() {
         setRows(!suppliers ? [] : suppliers.map(s => ({ ...s, id: s.supplierId })));
     }, [suppliers]);
 
-    const handleEditRowsModelChange = useCallback(model => {
-        setEditRowsModel(model);
-
-        if (model && Object.keys(model)[0]) {
-            const id = parseInt(Object.keys(model)[0], 10);
-            if (
-                model &&
-                model[id] &&
-                model[id].ediEmailAddress &&
-                model[id].ediEmailAddress.value
-            ) {
-                const newValue = model[id].ediEmailAddress.value;
-                setRows(r =>
-                    r.map(row =>
-                        row.id === id
-                            ? { ...row, ediEmailAddress: newValue, alternativeEmail: true }
-                            : row
-                    )
-                );
-            }
-        }
-    }, []);
+    const processRowUpdate = newRow => {
+        setRows(r =>
+            r.map(x =>
+                x.id === newRow.id
+                    ? {
+                          ...newRow,
+                          ediEmailAddress: newRow.ediEmailAddress,
+                          alternativeEmail: true
+                      }
+                    : x
+            )
+        );
+        return newRow;
+    };
 
     const ordersLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.ediOrders)
@@ -129,12 +119,6 @@ function EdiOrder() {
     const [additionalText, setAdditionalText] = useState('');
 
     const sendEdiUrl = utilities.getHref(applicationState, 'edi');
-
-    const handleSelectRow = selected => {
-        const newRows = rows.map(r => ({ ...r, selected: selected.includes(r.id) }));
-        setRows(newRows);
-        setSelectedSuppliers(selected);
-    };
 
     const handleFieldChange = (propertyName, newValue) => {
         if (propertyName === 'additionalText') {
@@ -210,9 +194,16 @@ function EdiOrder() {
                         rows={rows}
                         columns={columns}
                         checkboxSelection
-                        onSelectionModelChange={handleSelectRow}
-                        editRowsModel={editRowsModel}
-                        onEditRowsModelChange={handleEditRowsModelChange}
+                        onRowSelectionModelChange={selected => {
+                            setRows(rs =>
+                                rs.map(r =>
+                                    selected.includes(r.id)
+                                        ? { ...r, selected: true }
+                                        : { ...r, selected: false }
+                                )
+                            );
+                        }}
+                        processRowUpdate={processRowUpdate}
                         density="compact"
                         rowHeight={34}
                         autoHeight
@@ -235,7 +226,7 @@ function EdiOrder() {
                     ) : (
                         <Button
                             variant="contained"
-                            disabled={!sendEdiUrl || !selectedSuppliers || emailSentResult}
+                            disabled={!sendEdiUrl || !rows.some(x => x.selected) || emailSentResult}
                             onClick={() => handleSendEdiEmail()}
                         >
                             Send Emails

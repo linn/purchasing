@@ -2,9 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { InputField, LinkButton, utilities } from '@linn-it/linn-form-components-library';
+import { InputField, LinkButton, utilities, Search } from '@linn-it/linn-form-components-library';
 import config from '../../../config';
-import Search from '../../Search';
 
 function PartSupplierTab({
     partNumber,
@@ -33,6 +32,7 @@ function PartSupplierTab({
                     resultsInModal
                     resultLimit={100}
                     value={partNumber}
+                    autoFocus={false}
                     handleValueChange={handleFieldChange}
                     disabled={!creating}
                     search={searchParts}
@@ -61,6 +61,7 @@ function PartSupplierTab({
                     propertyName="supplierId"
                     label="Supplier"
                     resultsInModal
+                    autoFocus={false}
                     resultLimit={100}
                     value={supplierId}
                     handleValueChange={handleFieldChange}

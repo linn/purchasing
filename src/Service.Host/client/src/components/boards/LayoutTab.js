@@ -43,7 +43,7 @@ function LayoutTab({
                                 selectionModel={selectedLayout}
                                 density="compact"
                                 autoHeight
-                                onSelectionModelChange={newSelectionModel => {
+                                onRowSelectionModelChange={newSelectionModel => {
                                     dispatch({
                                         type: 'setSelectedLayout',
                                         payload: newSelectionModel

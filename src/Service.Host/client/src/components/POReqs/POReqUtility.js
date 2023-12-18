@@ -25,20 +25,18 @@ import {
     Page,
     SaveBackCancelButtons,
     collectionSelectorHelpers,
-    Typeahead,
     InputField,
     SnackbarMessage,
     itemSelectorHelpers,
     Loading,
     Dropdown,
-    TypeaheadTable,
     userSelectors,
     getItemError,
     ErrorCard,
     processSelectorHelpers,
-    getPreviousPaths,
     utilities,
-    OnOffSwitch
+    OnOffSwitch,
+    Search
 } from '@linn-it/linn-form-components-library';
 import currenciesActions from '../../actions/currenciesActions';
 import employeesActions from '../../actions/employeesActions';
@@ -60,13 +58,12 @@ import {
     sendPurchaseOrderPdfEmail
 } from '../../itemTypes';
 import checkIfCanAuthorisePurchaseOrderActions from '../../actions/checkIfCanAuthorisePurchaseOrderActions';
-import handleBackClick from '../../helpers/handleBackClick';
 import sendPurchaseOrderPdfEmailActionTypes from '../../actions/sendPurchaseOrderPdfEmailActions';
 
 function POReqUtility({ creating }) {
     const dispatch = useDispatch();
     const suppliersSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.suppliers, 100, 'id', 'id', 'name')
+        collectionSelectorHelpers.getSearchItems(state.suppliers, 100, 'id', 'name', 'name')
     );
     const suppliersSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.suppliers)
@@ -107,17 +104,12 @@ function POReqUtility({ creating }) {
         collectionSelectorHelpers.getItems(state.purchaseOrderReqStates)
     );
 
-    const nominalsSearchItems = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.nominals)
-    );
     const nominalsSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.nominals)
     );
 
     const currentUserId = useSelector(state => userSelectors.getUserNumber(state));
     const currentUserName = useSelector(state => userSelectors.getName(state));
-
-    const previousPaths = useSelector(state => getPreviousPaths(state));
 
     const defaultCreatingReq = {
         requestedBy: {
@@ -246,19 +238,25 @@ function POReqUtility({ creating }) {
         }));
     };
 
-    const nominalAccountsTable = {
-        totalItemCount: nominalsSearchItems.length,
-        rows: nominalsSearchItems?.map(nom => ({
-            id: nom.nominalAccountId,
-            values: [
-                { id: 'nominalCode', value: `${nom.nominalCode}` },
-                { id: 'description', value: `${nom.description || ''}` },
-                { id: 'departmentCode', value: `${nom.departmentCode || ''}` },
-                { id: 'departmentDescription', value: `${nom.departmentDescription || ''}` }
-            ],
-            links: nom.links
-        }))
-    };
+    const deptSearchResults = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(
+            state.nominals,
+            100,
+            'departmentCode',
+            'departmentCode',
+            'departmentDescription'
+        )
+    );
+
+    const nominalSearchResults = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(
+            state.nominals,
+            100,
+            'nominalCode',
+            'nominalCode',
+            'description'
+        )
+    );
 
     const allowedToCancel = () => !creating && req.links?.some(l => l.rel === 'cancel');
     const allowedToAuthorise = () => !creating && req.state === 'AUTHORISE WAIT';
@@ -278,16 +276,15 @@ function POReqUtility({ creating }) {
     const editingValueFieldsAllowed = req?.state === 'DRAFT' || req?.state === 'AUTHORISE WAIT';
 
     const inputIsInvalid = () =>
-        !`${req.supplier?.id}`?.length ||
-        !req.supplier?.name?.length ||
+        typeof Number(req.supplier?.id) !== 'number' ||
         !req.state.length ||
         !req.reqDate.length ||
-        !`${req.qty}`.length ||
+        !req.qty ||
         !req.qty > 0 ||
-        !`${req.unitPrice}`.length ||
+        !req.unitPrice ||
         !req.unitPrice > 0 ||
         !req.currency?.code?.length ||
-        !req.country?.countryCode?.length ||
+        req.country?.countryCode?.length !== 2 ||
         !req.nominal?.nominalCode.length ||
         !req.department?.departmentCode.length ||
         !req.dateRequired?.length;
@@ -394,18 +391,16 @@ function POReqUtility({ creating }) {
 
     const handleNominalUpdate = newNominal => {
         setEditStatus('edit');
+        const nominal = {
+            nominalCode: newNominal.nominalCode,
+            description: newNominal.description
+        };
+        const department = {
+            departmentCode: newNominal.departmentCode,
+            departmentDescription: newNominal.departmentDescription
+        };
 
-        setReq(r => ({
-            ...r,
-            nominal: {
-                nominalCode: newNominal.values.find(x => x.id === 'nominalCode')?.value,
-                description: newNominal.values.find(x => x.id === 'description')?.value
-            },
-            department: {
-                departmentCode: newNominal.values.find(x => x.id === 'departmentCode')?.value,
-                description: newNominal.values.find(x => x.id === 'departmentDescription')?.value
-            }
-        }));
+        setReq(r => ({ ...r, nominal, department }));
     };
 
     const [showCostWarning, setShowCostWarning] = useState(false);
@@ -851,26 +846,22 @@ function POReqUtility({ creating }) {
                         </Grid>
                         <Grid item xs={5} container spacing={1}>
                             <Grid item xs={8}>
-                                <Typeahead
+                                <Search
+                                    propertyName="partNumber"
                                     label="Part"
-                                    title="Search for a part"
-                                    onSelect={newPart => {
+                                    resultsInModal
+                                    resultLimit={100}
+                                    value={req.partNumber}
+                                    handleValueChange={handleFieldChange}
+                                    search={searchTerm => dispatch(partsActions.search(searchTerm))}
+                                    searchResults={partsSearchResults}
+                                    loading={partsSearchLoading}
+                                    priorityFunction="closestMatchesFirst"
+                                    onResultSelect={newPart => {
                                         handleFieldChange('partNumber', newPart.id);
                                         handleFieldChange('description', newPart.description);
                                     }}
-                                    items={partsSearchResults}
-                                    loading={partsSearchLoading}
-                                    fetchItems={searchTerm =>
-                                        dispatch(partsActions.search(searchTerm))
-                                    }
-                                    clearSearch={() => dispatch(partsActions.clearSearch)}
-                                    value={req.partNumber ? `${req.partNumber}` : null}
-                                    modal
-                                    links={false}
-                                    debounce={1000}
-                                    minimumSearchTermLength={2}
-                                    disabled={!editingAllowed}
-                                    placeholder="click to set part"
+                                    clearSearch={() => {}}
                                 />
                             </Grid>
                             <Grid item xs={4}>
@@ -983,30 +974,31 @@ function POReqUtility({ creating }) {
                         </Grid>
                         <Grid item xs={12} />
                         <Grid item xs={3}>
-                            <Typeahead
-                                onSelect={newValue => {
-                                    handleSupplierChange(newValue);
-                                }}
-                                label="Supplier"
-                                modal
+                            <Search
                                 propertyName="supplierId"
-                                items={suppliersSearchResults.map(s => ({
+                                label="Supplier"
+                                resultsInModal
+                                resultLimit={100}
+                                value={req.supplier?.id}
+                                handleValueChange={(_, newVal) =>
+                                    setReq(r => ({ ...r, supplier: { id: newVal } }))
+                                }
+                                search={searchSuppliers}
+                                displayChips
+                                autoFocus={false}
+                                searchResults={suppliersSearchResults.map(s => ({
                                     ...s,
-                                    description: `${s.description} ${
-                                        s.dateClosed ? ' (Closed)' : ''
-                                    }`
+                                    chips: [
+                                        {
+                                            text: s.dateClosed ? 'closed' : 'open',
+                                            color: s.dateClosed ? 'red' : 'green'
+                                        }
+                                    ]
                                 }))}
-                                value={req.supplier ? req.supplier.id : null}
                                 loading={suppliersSearchLoading}
-                                fetchItems={searchSuppliers}
-                                links={false}
-                                text
+                                priorityFunction="closestMatchesFirst"
+                                onResultSelect={handleSupplierChange}
                                 clearSearch={() => {}}
-                                placeholder="Search Suppliers"
-                                minimumSearchTermLength={3}
-                                fullWidth
-                                disabled={!editingAllowed || !creating}
-                                required
                             />
                         </Grid>
                         <Grid item xs={6}>
@@ -1103,8 +1095,26 @@ function POReqUtility({ creating }) {
                         </Grid>
                         <Grid item xs={5} />
                         <Grid item xs={4}>
-                            <Typeahead
-                                onSelect={newValue => {
+                            <Search
+                                propertyName="countryCode"
+                                label="Country Lookup"
+                                resultsInModal
+                                resultLimit={100}
+                                value={req.country?.countryCode}
+                                handleValueChange={(_, newVal) =>
+                                    setReq(r => ({ ...r, country: { countryCode: newVal } }))
+                                }
+                                search={searchCountries}
+                                autoFocus={false}
+                                searchResults={countriesSearchResults}
+                                loading={countriesSearchLoading}
+                                priorityFunction={(i, searchTerm) => {
+                                    if (i.countryCode === searchTerm?.toUpperCase()) {
+                                        return 1;
+                                    }
+                                    return 0;
+                                }}
+                                onResultSelect={newValue => {
                                     setReq(a => ({
                                         ...a,
                                         country: {
@@ -1113,25 +1123,7 @@ function POReqUtility({ creating }) {
                                         }
                                     }));
                                 }}
-                                label="Country Lookup"
-                                modal
-                                propertyName="countryCode"
-                                items={countriesSearchResults}
-                                value={req.country?.countryCode}
-                                loading={countriesSearchLoading}
-                                fetchItems={searchCountries}
-                                links={false}
-                                priorityFunction={(i, searchTerm) => {
-                                    if (i.countryCode === searchTerm?.toUpperCase()) {
-                                        return 1;
-                                    }
-                                    return 0;
-                                }}
-                                text
-                                placeholder="Search by Name or Code"
-                                minimumSearchTermLength={2}
-                                disabled={!editingAllowed}
-                                required
+                                clearSearch={() => {}}
                             />
                         </Grid>
                         <Grid item xs={5}>
@@ -1166,53 +1158,87 @@ function POReqUtility({ creating }) {
                                 required
                             />
                         </Grid>
-                        <Grid item xs={12} />
                         <Grid item xs={4}>
-                            <TypeaheadTable
-                                table={nominalAccountsTable}
-                                columnNames={['Nominal', 'Description', 'Dept', 'Name']}
-                                fetchItems={searchTerm =>
-                                    dispatch(nominalsActions.search(searchTerm))
-                                }
-                                modal
-                                placeholder="Search Dept/Nominal"
-                                links={false}
-                                clearSearch={() => dispatch(nominalsActions.clearSearch)}
-                                loading={nominalsSearchLoading}
-                                label="Department"
-                                title="Search on Department or Nominal"
+                            <Search
+                                propertyName="deptCode"
+                                label="Search Departments"
+                                resultsInModal
+                                autoFocus={false}
+                                resultLimit={100}
                                 value={req.department?.departmentCode}
-                                onSelect={newValue => handleNominalUpdate(newValue)}
-                                debounce={1000}
-                                minimumSearchTermLength={2}
-                                disabled={!editingAllowed}
-                                required
+                                handleValueChange={(_, newValue) => {
+                                    setReq(r => ({
+                                        ...r,
+                                        department: {
+                                            departmentCode: newValue
+                                        }
+                                    }));
+                                }}
+                                search={searchTerm => dispatch(nominalsActions.search(searchTerm))}
+                                searchResults={[
+                                    ...new Set(deptSearchResults.map(n => n.departmentCode))
+                                ].map(r => ({
+                                    ...deptSearchResults.find(s => s.departmentCode === r)
+                                }))}
+                                loading={nominalsSearchLoading}
+                                priorityFunction="closestMatchesFirst"
+                                onResultSelect={newValue => {
+                                    setReq(r => ({
+                                        ...r,
+                                        department: {
+                                            departmentCode: newValue.departmentCode,
+                                            departmentDescription: newValue.departmentDescription
+                                        }
+                                    }));
+                                }}
+                                clearSearch={() => {}}
                             />
                         </Grid>
+
                         <Grid item xs={8}>
                             <InputField
                                 fullWidth
-                                value={req.department?.description}
+                                value={req?.department?.departmentDescription}
                                 label="Description"
                                 disabled
-                                propertyName="nominalDescription"
+                                propertyName="deptDescription"
                             />
                         </Grid>
                         <Grid item xs={4}>
-                            <InputField
-                                fullWidth
-                                value={req.nominal?.nominalCode}
-                                label="Nominal"
-                                onChange={() => {}}
+                            <Search
                                 propertyName="nominalCode"
-                                required
-                                disabled
+                                label="Search Nominals"
+                                resultsInModal
+                                autoFocus={false}
+                                resultLimit={100}
+                                value={req?.nominal?.nominalCode}
+                                handleValueChange={(_, newValue) => {
+                                    setReq(r => ({
+                                        ...r,
+                                        nominal: {
+                                            nominalCode: newValue
+                                        }
+                                    }));
+                                }}
+                                search={searchTerm => dispatch(nominalsActions.search(searchTerm))}
+                                searchResults={nominalSearchResults.filter(
+                                    x =>
+                                        !req?.department?.departmentCode ||
+                                        x.departmentCode.endsWith(req?.department.departmentCode)
+                                )}
+                                loading={nominalsSearchLoading}
+                                priorityFunction="closestMatchesFirst"
+                                onResultSelect={newValue => {
+                                    handleNominalUpdate(newValue);
+                                }}
+                                clearSearch={() => {}}
                             />
                         </Grid>
+
                         <Grid item xs={8}>
                             <InputField
                                 fullWidth
-                                value={req.nominal?.description}
+                                value={req?.nominal?.description}
                                 label="Description"
                                 propertyName="nominalDescription"
                                 onChange={() => {}}
@@ -1417,7 +1443,7 @@ function POReqUtility({ creating }) {
                         <Grid item xs={6}>
                             <SaveBackCancelButtons
                                 saveDisabled={!canSave()}
-                                backClick={() => handleBackClick(previousPaths, history.goBack)}
+                                showBackButton={false}
                                 saveClick={() => {
                                     setEditStatus('view');
                                     clearErrors();

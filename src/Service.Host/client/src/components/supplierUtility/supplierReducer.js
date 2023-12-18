@@ -19,30 +19,13 @@ export default function partReducer(state = initialState, action) {
                 ...state,
                 supplier: { ...state.supplier, [action.fieldName]: action.payload }
             };
-        case 'updateMainContact':
+        case 'updateContact':
             return {
                 ...state,
                 supplier: {
                     ...state.supplier,
                     supplierContacts: state.supplier.supplierContacts.map(c =>
-                        c.id === action.payload.id
-                            ? { ...c, [action.propertyName]: action.payload.newValue }
-                            : c
-                    )
-                }
-            };
-        case 'updateContactDetail':
-            return {
-                ...state,
-                supplier: {
-                    ...state.supplier,
-                    supplierContacts: state.supplier.supplierContacts.map(c =>
-                        c.id === action.payload.id
-                            ? {
-                                  ...c,
-                                  [action.propertyName]: action.payload.newValue
-                              }
-                            : c
+                        c.id === action.payload.id ? action.payload : c
                     )
                 }
             };

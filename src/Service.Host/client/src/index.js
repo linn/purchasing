@@ -1,6 +1,5 @@
 ﻿import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { AppContainer } from 'react-hot-loader';
 import { SnackbarProvider } from 'notistack';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { linnTheme } from '@linn-it/linn-form-components-library';
@@ -25,11 +24,9 @@ const render = Component => {
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={linnTheme}>
                 <SnackbarProvider dense maxSnack={5}>
-                    <AppContainer>
-                        <LocalizationProvider dateAdapter={AdapterMoment} locale="en-GB">
-                            <Component store={store} />
-                        </LocalizationProvider>
-                    </AppContainer>
+                    <LocalizationProvider dateAdapter={AdapterMoment} locale="en-GB">
+                        <Component store={store} />
+                    </LocalizationProvider>
                 </SnackbarProvider>
             </ThemeProvider>
         </StyledEngineProvider>

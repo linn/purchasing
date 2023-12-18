@@ -35,13 +35,6 @@ const SetBomStandardPriceUtility = () => {
         { field: 'allocLines', headerName: 'Alloc Lines', width: 100 }
     ];
 
-    const handleSelectRow = selected => {
-        setRequestBody(b => ({
-            ...b,
-            lines: result?.lines.filter(x => selected.includes(x.bomName))
-        }));
-    };
-
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
@@ -61,7 +54,12 @@ const SetBomStandardPriceUtility = () => {
                             rows={result?.lines?.map(l => ({ ...l, id: l.bomName })) ?? []}
                             checkboxSelection
                             hideFooter
-                            onSelectionModelChange={handleSelectRow}
+                            onRowSelectionModelChange={selected => {
+                                setRequestBody(b => ({
+                                    ...b,
+                                    lines: result?.lines.filter(x => selected.includes(x.bomName))
+                                }));
+                            }}
                         />
                     </Grid>
                     <Grid item xs={12}>

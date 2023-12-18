@@ -38,8 +38,7 @@ import {
     utilities,
     SaveBackCancelButtons,
     OnOffSwitch,
-    processSelectorHelpers,
-    getPreviousPaths
+    processSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import queryString from 'query-string';
 import currenciesActions from '../../actions/currenciesActions';
@@ -68,7 +67,6 @@ import vendorManagersActions from '../../actions/vendorManagersActions';
 import CancelUnCancelDialog from './CancelUnCancelDialog';
 import FilCancelUnCancelDialog from './FilCancelUnCancelDialog';
 import PlInvRecDialog from './PlInvRecDialog';
-import handleBackClick from '../../helpers/handleBackClick';
 
 function PurchaseOrderUtility({ creating }) {
     const reduxDispatch = useDispatch();
@@ -319,7 +317,6 @@ function PurchaseOrderUtility({ creating }) {
             type: 'currencyChange'
         });
     };
-    const previousPaths = useSelector(state => getPreviousPaths(state));
 
     const handleDetailValueFieldChange = (propertyName, basePropertyName, newValue, detail) => {
         const { exchangeRate } = order;
@@ -469,14 +466,6 @@ function PurchaseOrderUtility({ creating }) {
     const screenIsSmall = useMediaQuery({ query: `(max-width: 1200px)` });
     const [overridingOrderPrice, setOverridingOrderPrice] = useState(false);
     const [overridingOrderQty, setOverridingOrderQty] = useState(false);
-
-    const getDateString = isoString => {
-        if (!isoString) {
-            return null;
-        }
-        const date = new Date(isoString);
-        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-    };
 
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [currentLine, setCurrentLine] = useState(1);
@@ -1711,7 +1700,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     }
                                                     label="Description"
                                                     disabled
-                                                    propertyName="nominalDescription"
+                                                    propertyName="deptDescription"
                                                 />
                                             </Grid>
                                             <Grid item xs={4}>
@@ -1851,11 +1840,10 @@ function PurchaseOrderUtility({ creating }) {
                                                                     x => ({
                                                                         ...x,
                                                                         id: `${x.deliverySeq}`,
-                                                                        dateRequested:
-                                                                            getDateString(
-                                                                                x.dateRequested
-                                                                            ),
-                                                                        dateAdvised: getDateString(
+                                                                        dateRequested: new Date(
+                                                                            x.dateRequested
+                                                                        ),
+                                                                        dateAdvised: new Date(
                                                                             x.dateAdvised
                                                                         )
                                                                     })
@@ -1935,9 +1923,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 dispatch(item);
                                             }
                                         }}
-                                        backClick={() =>
-                                            handleBackClick(previousPaths, history.goBack)
-                                        }
+                                        showBackButton={false}
                                     />
                                 </Grid>
                             </Grid>

@@ -1053,7 +1053,6 @@ function BomUtility() {
                             processRowUpdate={processRowUpdate}
                             onProcessRowUpdateError={() => {}}
                             autoHeight
-                            experimentalFeatures={{ newEditingApi: true }}
                             disableSelectionOnClick
                             columns={columns}
                             getRowClassName={params => params.row.changeState?.toLowerCase()}

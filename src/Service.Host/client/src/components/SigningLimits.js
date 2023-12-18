@@ -191,19 +191,12 @@ function SigningLimits() {
         />
     );
 
-    const handleEditRowsModelChange = useCallback(
-        model => {
-            if (model && Object.keys(model)[0]) {
-                setEditing(true);
-                const key = parseInt(Object.keys(model)[0], 10);
-                const key2 = Object.keys(model[key])[0];
-                if (model && model[key] && model[key][key2] && model[key][key2].value) {
-                    updateRow(key, key2, model[key][key2].value);
-                }
-            }
-        },
-        [updateRow]
-    );
+    const processRowUpdate = newRow => {
+        setEditing(true);
+        setRows(r => r.map(x => (x.id === newRow.id ? { ...newRow, updating: true } : x)));
+
+        return newRow;
+    };
 
     const handleSave = () => {
         rows.forEach(a => {
@@ -365,8 +358,8 @@ function SigningLimits() {
                             autoHeight
                             loading={signingLimitsLoading}
                             hideFooter
-                            onEditRowsModelChange={handleEditRowsModelChange}
                             getRowClassName={getBackgroundColourClass}
+                            processRowUpdate={processRowUpdate}
                         />
                         <SaveBackCancelButtons
                             saveDisabled={!editing}

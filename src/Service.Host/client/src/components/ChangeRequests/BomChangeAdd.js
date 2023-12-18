@@ -20,18 +20,6 @@ function BomChangeAdd({ addBoms, addAddBomsItem, deleteAddBomsItem, defaultQty, 
 
     const dispatch = useDispatch();
 
-    const handleEditRowsModelChange = model => {
-        /* you can only edit qty */
-        if (model && Object.keys(model)[0]) {
-            const id = Object.keys(model)[0];
-            if (model && model[id] && model[id].qty) {
-                const newValue = parseInt(model[id].qty.value, 10);
-                const newAddBoms = addBoms.map(x => (x.name === id ? { ...x, qty: newValue } : x));
-                setAddBoms(newAddBoms);
-            }
-        }
-    };
-
     const [bomName, setBomName] = useState('');
     const [selectedBom, setSelectedBom] = useState('');
 
@@ -55,6 +43,7 @@ function BomChangeAdd({ addBoms, addAddBomsItem, deleteAddBomsItem, defaultQty, 
         {
             field: 'qty',
             headerName: 'Qty',
+            type: 'number',
             width: 150,
             editable: true
         },
@@ -94,7 +83,12 @@ function BomChangeAdd({ addBoms, addAddBomsItem, deleteAddBomsItem, defaultQty, 
                         density="compact"
                         rowHeight={34}
                         headerHeight={34}
-                        onEditRowsModelChange={handleEditRowsModelChange}
+                        processRowUpdate={newRow => {
+                            setAddBoms(r =>
+                                r.map(x => (x.id === newRow.id ? { ...x, qty: newRow.qty } : x))
+                            );
+                            return newRow;
+                        }}
                         autoHeight
                         hideFooter
                     />
