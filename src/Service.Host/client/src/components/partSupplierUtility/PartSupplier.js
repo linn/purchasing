@@ -85,7 +85,7 @@ function PartSupplier({ creating }) {
 
     const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
     const suppliersSearchResults = useSelector(reduxState =>
-        collectionSelectorHelpers.getSearchItems(reduxState.suppliers, 100, null, 'id', 'name')
+        collectionSelectorHelpers.getSearchItems(reduxState.suppliers, 100, 'id', 'id', 'name')
     );
     const suppliersSearchLoading = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchLoading(reduxState.suppliers)
