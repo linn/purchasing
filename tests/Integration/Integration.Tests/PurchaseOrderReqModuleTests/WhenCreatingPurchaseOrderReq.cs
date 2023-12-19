@@ -60,7 +60,7 @@
                                     Nominal = new NominalResource { NominalCode = "00001234", Description = "hing" },
                                     RemarksForOrder = "needed asap",
                                     InternalNotes = "pls approv",
-                                    Department = new DepartmentResource { DepartmentCode = "00002345", Description = "Team 1" },
+                                    Department = new DepartmentResource { DepartmentCode = "00002345", DepartmentDescription = "Team 1" },
                                 };
 
             var req = new PurchaseOrderReq

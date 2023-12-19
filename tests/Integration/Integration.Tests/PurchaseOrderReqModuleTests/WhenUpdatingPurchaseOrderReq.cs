@@ -63,7 +63,7 @@
                                     InternalNotes = "pls approv",
                                     Department = new DepartmentResource
                                                      {
-                                                         DepartmentCode = "00002345", Description = "Team 1"
+                                                         DepartmentCode = "00002345", DepartmentDescription = "Team 1"
                                                      }
                                 };
 

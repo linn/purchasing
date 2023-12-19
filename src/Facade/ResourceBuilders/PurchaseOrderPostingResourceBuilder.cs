@@ -33,7 +33,7 @@
                                        AccountId = (int)entity.NominalAccountId,
                                        Department = new DepartmentResource
                                                         {
-                                                            Description = nomacc.Department?.Description,
+                                                            DepartmentDescription = nomacc.Department?.Description,
                                                             DepartmentCode = nomacc.Department
                                                                 ?.DepartmentCode
                                                         },
