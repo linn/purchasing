@@ -113,7 +113,7 @@
                                                                                            Department =
                                                                                                new DepartmentResource
                                                                                                    {
-                                                                                                       Description =
+                                                                                                       DepartmentDescription =
                                                                                                            "dpt1",
                                                                                                        DepartmentCode =
                                                                                                            "0001111"

@@ -36,8 +36,10 @@ import {
     processSelectorHelpers,
     utilities,
     OnOffSwitch,
-    Search
+    Search,
+    DatePicker
 } from '@linn-it/linn-form-components-library';
+import moment from 'moment';
 import currenciesActions from '../../actions/currenciesActions';
 import employeesActions from '../../actions/employeesActions';
 import nominalsActions from '../../actions/nominalsActions';
@@ -858,6 +860,7 @@ function POReqUtility({ creating }) {
                                     loading={partsSearchLoading}
                                     priorityFunction="closestMatchesFirst"
                                     onResultSelect={newPart => {
+                                        setEditStatus('edit');
                                         handleFieldChange('partNumber', newPart.id);
                                         handleFieldChange('description', newPart.description);
                                     }}
@@ -980,9 +983,10 @@ function POReqUtility({ creating }) {
                                 resultsInModal
                                 resultLimit={100}
                                 value={req.supplier?.id}
-                                handleValueChange={(_, newVal) =>
-                                    setReq(r => ({ ...r, supplier: { id: newVal } }))
-                                }
+                                handleValueChange={(_, newVal) => {
+                                    setReq(r => ({ ...r, supplier: { id: newVal } }));
+                                    setEditStatus('edit');
+                                }}
                                 search={searchSuppliers}
                                 displayChips
                                 autoFocus={false}
@@ -1115,6 +1119,7 @@ function POReqUtility({ creating }) {
                                     return 0;
                                 }}
                                 onResultSelect={newValue => {
+                                    setEditStatus('edit');
                                     setReq(a => ({
                                         ...a,
                                         country: {
@@ -1147,15 +1152,14 @@ function POReqUtility({ creating }) {
                             />
                         </Grid>
                         <Grid item xs={4}>
-                            <InputField
-                                fullWidth
-                                value={req.dateRequired}
+                            <DatePicker
                                 label="Date Required"
-                                propertyName="dateRequired"
-                                onChange={handleFieldChange}
-                                type="date"
-                                disabled={!editingAllowed}
-                                required
+                                value={req.dateRequired ? moment(req.dateRequired) : null}
+                                format="DD/MM/YYYY"
+                                isabled={!editingAllowed}
+                                onChange={newVal =>
+                                    handleFieldChange('dateRequired', newVal?.toISOString?.())
+                                }
                             />
                         </Grid>
                         <Grid item xs={4}>
@@ -1183,6 +1187,7 @@ function POReqUtility({ creating }) {
                                 loading={nominalsSearchLoading}
                                 priorityFunction="closestMatchesFirst"
                                 onResultSelect={newValue => {
+                                    setEditStatus('edit');
                                     setReq(r => ({
                                         ...r,
                                         department: {
@@ -1213,6 +1218,7 @@ function POReqUtility({ creating }) {
                                 resultLimit={100}
                                 value={req?.nominal?.nominalCode}
                                 handleValueChange={(_, newValue) => {
+                                    setEditStatus('edit');
                                     setReq(r => ({
                                         ...r,
                                         nominal: {

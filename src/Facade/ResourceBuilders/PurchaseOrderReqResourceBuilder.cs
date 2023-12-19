@@ -117,7 +117,7 @@
                                             ? new DepartmentResource
                                                   {
                                                       DepartmentCode = entity.Department.DepartmentCode,
-                                                      Description = entity.Department.Description
+                                                      DepartmentDescription = entity.Department.Description
                                                   }
                                             : null,
                            Links = this.BuildLinks(entity, claims).ToArray()
