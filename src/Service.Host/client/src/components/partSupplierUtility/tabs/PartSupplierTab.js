@@ -23,6 +23,9 @@ function PartSupplierTab({
     canEdit,
     creating
 }) {
+    const getClosedString = dateClosed =>
+        dateClosed ? `closed: ${new Date(dateClosed).toLocaleDateString('en-GB')}` : '';
+
     return (
         <Grid container spacing={3}>
             <Grid item xs={4}>
@@ -63,11 +66,20 @@ function PartSupplierTab({
                     resultsInModal
                     autoFocus={false}
                     resultLimit={100}
+                    displayChips
                     value={supplierId}
                     handleValueChange={handleFieldChange}
                     disabled={!creating}
                     search={searchSuppliers}
-                    searchResults={suppliersSearchResults}
+                    searchResults={suppliersSearchResults.map(s => ({
+                        ...s,
+                        chips: [
+                            {
+                                text: s.dateClosed ? `${getClosedString(s.dateClosed)}` : 'open',
+                                color: s.dateClosed ? 'red' : 'green'
+                            }
+                        ]
+                    }))}
                     loading={suppliersSearchLoading}
                     priorityFunction="closestMatchesFirst"
                     onResultSelect={newValue => {
