@@ -73,6 +73,7 @@ function PartSupplierTab({
                     search={searchSuppliers}
                     searchResults={suppliersSearchResults.map(s => ({
                         ...s,
+                        name: s.name.toString(),
                         chips: [
                             {
                                 text: s.dateClosed ? `${getClosedString(s.dateClosed)}` : 'open',

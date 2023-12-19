@@ -287,7 +287,7 @@ describe('When save clicked when creating...', () => {
         input = screen.getByLabelText('Supplier');
         fireEvent.click(input);
         fireEvent.keyDown(input, { key: 'Enter', keyCode: 13, charCode: 13 });
-        result = screen.getByRole('button', { name: '123 SOME SUPPLIER' });
+        result = screen.getByRole('button', { name: '123 SOME SUPPLIER open' });
         fireEvent.click(result);
 
         // Order Details tab
