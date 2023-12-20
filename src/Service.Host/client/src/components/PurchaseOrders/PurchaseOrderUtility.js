@@ -206,7 +206,7 @@ function PurchaseOrderUtility({ creating }) {
     const unitsOfMeasure = useSelector(reduxState =>
         collectionSelectorHelpers.getItems(reduxState.unitsOfMeasure)
     );
-    const vendorManagersStoreItem = useSelector(reduxState => reduxState.storeItems);
+    const vendorManagersStoreItem = useSelector(reduxState => reduxState.vendorManagers);
 
     const vendorManagers = collectionSelectorHelpers.getItems(vendorManagersStoreItem);
 
