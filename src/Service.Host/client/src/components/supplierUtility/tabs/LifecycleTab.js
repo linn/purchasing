@@ -69,7 +69,6 @@ function LifecycleTab({
                     label="Date"
                     value={moment(dateOpened) || moment()}
                     onChange={newValue => handleFieldChange('dateOpened', newValue)}
-                    format="DD/MM/YYYY"
                     disabled
                 />
             </Grid>
@@ -108,7 +107,6 @@ function LifecycleTab({
                     label="Date"
                     value={dateClosed ? moment(dateClosed) : null}
                     onChange={newValue => handleFieldChange('dateClosed', newValue)}
-                    format="DD/MM/YYYY"
                     disabled
                 />
             </Grid>

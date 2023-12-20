@@ -90,7 +90,6 @@ function OrdersByPartReportOptions() {
                     <DatePicker
                         label="From Date"
                         value={fromDate}
-                        format="DD/MM/YYYY"
                         maxDate={toDate}
                         onChange={newValue => {
                             setFromDate(newValue);
@@ -101,7 +100,6 @@ function OrdersByPartReportOptions() {
                     <DatePicker
                         label="To Date"
                         value={toDate}
-                        format="DD/MM/YYYY"
                         minDate={fromDate}
                         onChange={newValue => {
                             setToDate(newValue);

@@ -284,7 +284,6 @@ function PurchaseOrdersAuthSend() {
                         label="Start Date"
                         value={options.startDate}
                         propertyName="startDate"
-                        format="DD/MM/YYYY"
                         minDate={moment().subtract(12, 'months')}
                         maxDate={moment()}
                         onChange={newVal => setOptions(o => ({ ...o, startDate: newVal }))}
@@ -295,7 +294,6 @@ function PurchaseOrdersAuthSend() {
                         label="End Date"
                         value={options.endDate}
                         propertyName="endDate"
-                        format="DD/MM/YYYY"
                         minDate={moment().subtract(12, 'months')}
                         maxDate={moment()}
                         onChange={newVal => setOptions(o => ({ ...o, endDate: newVal }))}

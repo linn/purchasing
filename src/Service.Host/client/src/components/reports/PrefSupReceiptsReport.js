@@ -65,7 +65,6 @@ function PrefSupReceiptsReport() {
                         label="From Date"
                         value={options.fromDate}
                         propertyName="fromDate"
-                        format="DD/MM/YYYY"
                         maxDate={options.toDate}
                         onChange={newVal => setOptions(o => ({ ...o, fromDate: newVal }))}
                     />

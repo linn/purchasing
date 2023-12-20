@@ -1155,9 +1155,8 @@ function POReqUtility({ creating }) {
                             <DatePicker
                                 label="Date Required"
                                 value={req.dateRequired ? moment(req.dateRequired) : null}
-                                format="DD/MM/YYYY"
                                 required
-                                isabled={!editingAllowed}
+                                disabled={!editingAllowed}
                                 onChange={newVal =>
                                     handleFieldChange('dateRequired', newVal?.toISOString?.())
                                 }

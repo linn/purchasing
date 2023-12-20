@@ -167,7 +167,6 @@ const BomHistoryReport = () => {
                 <Grid item xs={2}>
                     <DatePicker
                         label="From Date"
-                        format="DD/MM/YYYY"
                         value={options.from}
                         maxDate={options.to}
                         onChange={newVal => setOptions(o => ({ ...o, from: newVal }))}
@@ -176,7 +175,6 @@ const BomHistoryReport = () => {
                 <Grid item xs={2}>
                     <DatePicker
                         label="To Date"
-                        format="DD/MM/YYYY"
                         value={options.to}
                         minDate={options.from}
                         onChange={newVal => setOptions(o => ({ ...o, to: newVal }))}

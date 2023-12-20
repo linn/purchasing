@@ -27,7 +27,6 @@ function LifecycleTab({
             <Grid item xs={4}>
                 <DatePicker
                     label="Date"
-                    format="DD/MM/YYYY"
                     value={moment(dateCreated)}
                     onChange={newValue => handleFieldChange('dateCreated', newValue)}
                 />
@@ -45,7 +44,6 @@ function LifecycleTab({
             <Grid item xs={4}>
                 <DatePicker
                     label="Date"
-                    format="DD/MM/YYYY"
                     value={dateInvalid ? moment(dateInvalid) : null}
                     onChange={newValue => handleFieldChange('dateInvalid', newValue)}
                 />

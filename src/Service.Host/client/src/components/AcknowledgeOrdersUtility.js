@@ -340,7 +340,6 @@ function AcknowledgeOrdersUtility() {
                                 <DatePicker
                                     label="Advised Date"
                                     value={newValues.dateAdvised.toISOString()}
-                                    format="DD/MM/YYYY"
                                     onChange={newVal =>
                                         setNewValues(o => ({ ...o, dateAdvised: newVal }))
                                     }

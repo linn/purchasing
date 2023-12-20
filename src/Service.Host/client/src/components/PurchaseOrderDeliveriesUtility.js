@@ -53,7 +53,6 @@ function PurchaseOrderDeliveriesUtility({
             renderCell: params => (
                 <DatePicker
                     label=""
-                    format="DD/MM/YYYY"
                     value={params.row.dateRequested}
                     onChange={newValue => {
                         setChangesMade(true);
@@ -75,7 +74,6 @@ function PurchaseOrderDeliveriesUtility({
             renderCell: params => (
                 <DatePicker
                     label=""
-                    format="DD/MM/YYYY"
                     value={params.row.dateAdvised}
                     onChange={newValue => {
                         setChangesMade(true);
