@@ -46,14 +46,13 @@ function PurchaseOrderSearch() {
         dispatch(purchaseOrdersActions.fetchState());
         dispatch(purchaseOrdersActions.search(''));
     }, [dispatch]);
-    const searchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(
-            state.purchaseOrders,
-            100,
-            'orderNumber',
-            'orderNumber',
-            'orderNumber'
-        )
+    const purchaseOrdersStoreItem = useSelector(state => state.purchaseOrders);
+    const searchResults = collectionSelectorHelpers.getSearchItems(
+        purchaseOrdersStoreItem,
+        100,
+        'orderNumber',
+        'orderNumber',
+        'orderNumber'
     );
 
     const [recentOrders, setRecentOrders] = useState();
@@ -64,13 +63,10 @@ function PurchaseOrderSearch() {
         }
     }, [searchResults, recentOrders]);
 
-    const searchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.purchaseOrders)
-    );
+    const searchLoading = collectionSelectorHelpers.getSearchLoading(purchaseOrdersStoreItem);
+
     const [orderNumber, setOrderNumber] = useState('');
-    const applicationState = useSelector(reduxState =>
-        itemSelectorHelpers.getApplicationState(reduxState.purchaseOrders)
-    );
+    const applicationState = itemSelectorHelpers.getApplicationState(purchaseOrdersStoreItem);
 
     return (
         <Page history={history} homeUrl={config.appRoot}>

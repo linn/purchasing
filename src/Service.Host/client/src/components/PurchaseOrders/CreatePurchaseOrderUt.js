@@ -97,19 +97,21 @@ function CreatePurchaseOrderUt() {
         currencyUnitPrice,
         dateRequired
     ]);
+    const suppliersStoreItem = useSelector(state => state.suppliers);
+    const suppliersSearchResults = collectionSelectorHelpers.getSearchItems(
+        suppliersStoreItem,
+        100,
+        'id',
+        'id',
+        'name'
+    );
+    const suppliersSearchLoading = collectionSelectorHelpers.getSearchLoading(suppliersStoreItem);
 
-    const suppliersSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.suppliers, 100, 'id', 'id', 'name')
-    );
-    const suppliersSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.suppliers)
-    );
     const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
 
-    const previousOrderResult = useSelector(state => state.purchaseOrder.item);
-    const previousOrderLoading = useSelector(state =>
-        collectionSelectorHelpers.getLoading(state.purchaseOrder)
-    );
+    const purchaseOrderStoreItem = useSelector(state => state.purchaseOrder);
+    const previousOrderResult = purchaseOrderStoreItem.item;
+    const previousOrderLoading = collectionSelectorHelpers.getLoading(purchaseOrderStoreItem);
 
     const allowedToCreate = () => item?.links?.some(l => l.rel === 'create');
 
@@ -147,24 +149,21 @@ function CreatePurchaseOrderUt() {
             type: 'orderTypeChange'
         });
     };
+    const partsStoreItem = useSelector(state => state.parts);
+    const partsSearchResults = collectionSelectorHelpers
+        .getSearchItems(partsStoreItem)
+        .map?.(c => ({
+            id: c.partNumber,
+            name: c.partNumber,
+            partNumber: c.partNumber,
+            description: c.description,
+            stockControlled: c.stockControlled
+        }));
+    const partsSearchLoading = collectionSelectorHelpers.getSearchLoading(partsStoreItem);
 
-    const partsSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.parts)
-    ).map?.(c => ({
-        id: c.partNumber,
-        name: c.partNumber,
-        partNumber: c.partNumber,
-        description: c.description,
-        stockControlled: c.stockControlled
-    }));
-
-    const partSuppliersSearchResults = useSelector(reduxState =>
-        collectionSelectorHelpers.getSearchItems(reduxState.partSuppliers)
-    );
-
-    const partsSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.parts)
-    );
+    const partSuppliersStoreItem = useSelector(state => state.partSuppliers);
+    const partSuppliersSearchResults =
+        collectionSelectorHelpers.getSearchItems(partSuppliersStoreItem);
 
     const useStyles = makeStyles(theme => ({
         buttonMarginTop: {

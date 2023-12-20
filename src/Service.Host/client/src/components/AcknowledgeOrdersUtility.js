@@ -318,7 +318,7 @@ function AcknowledgeOrdersUtility() {
             />
 
             <Grid container spacing={3}>
-                <Dialog open={deliveriesDialogOpen} fullWidth maxWidth="lg">
+                <Dialog open={deliveriesDialogOpen} fullWidth maxWidth="xl">
                     <div className={classes.dialog}>
                         <PurchaseOrderDeliveriesUtility
                             orderNumber={deliveriesToUpdate?.[0]?.orderNumber}
@@ -340,7 +340,6 @@ function AcknowledgeOrdersUtility() {
                                 <DatePicker
                                     label="Advised Date"
                                     value={newValues.dateAdvised.toISOString()}
-                                    format="DD/MM/YYYY"
                                     onChange={newVal =>
                                         setNewValues(o => ({ ...o, dateAdvised: newVal }))
                                     }

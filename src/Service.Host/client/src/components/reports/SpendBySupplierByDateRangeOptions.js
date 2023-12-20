@@ -119,7 +119,6 @@ function SpendBySupplierByDateRangeReportOptions() {
                                 label="From Date"
                                 value={fromDate}
                                 maxDate={toDate}
-                                format="DD/MM/YYYY"
                                 onChange={setFromDate}
                             />
                         </Grid>
@@ -127,7 +126,6 @@ function SpendBySupplierByDateRangeReportOptions() {
                             <DatePicker
                                 label="To Date"
                                 value={toDate}
-                                format="DD/MM/YYYY"
                                 minDate={fromDate}
                                 onChange={setToDate}
                             />

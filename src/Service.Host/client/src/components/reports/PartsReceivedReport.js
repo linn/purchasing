@@ -135,7 +135,6 @@ function PartsReceivedReport() {
                             <DatePicker
                                 label="From Date"
                                 value={options.fromDate}
-                                format="DD/MM/YYYY"
                                 maxDate={options.toDate}
                                 onChange={newVal => setOptions(o => ({ ...o, fromDate: newVal }))}
                             />
@@ -144,7 +143,6 @@ function PartsReceivedReport() {
                             <DatePicker
                                 label="To Date"
                                 value={options.toDate}
-                                format="DD/MM/YYYY"
                                 maxDate={moment()}
                                 minDate={options.fromDate}
                                 onChange={newVal => setOptions(o => ({ ...o, toDate: newVal }))}

@@ -12,7 +12,8 @@ import {
     itemSelectorHelpers,
     getItemError,
     ErrorCard,
-    InputField
+    InputField,
+    DatePicker
 } from '@linn-it/linn-form-components-library';
 import history from '../history';
 import config from '../config';
@@ -49,17 +50,43 @@ function PurchaseOrderDeliveriesUtility({
             field: 'dateRequested',
             headerName: 'Request Date',
             width: 200,
-            type: 'date',
-            valueGetter: params =>
-                params.row.dateRequested ? new Date(params.row.dateRequested) : null
+            renderCell: params => (
+                <DatePicker
+                    label=""
+                    value={params.row.dateRequested}
+                    onChange={newValue => {
+                        setChangesMade(true);
+                        setRows(r =>
+                            r.map(x =>
+                                x.id === params.id
+                                    ? { ...x, dateRequested: newValue.toISOString() }
+                                    : x
+                            )
+                        );
+                    }}
+                />
+            )
         },
         {
             field: 'dateAdvised',
             headerName: 'Date Advised',
             width: 200,
-            type: 'date',
-            valueGetter: params =>
-                params.row.dateAdvised ? new Date(params.row.dateAdvised) : null
+            renderCell: params => (
+                <DatePicker
+                    label=""
+                    value={params.row.dateAdvised}
+                    onChange={newValue => {
+                        setChangesMade(true);
+                        setRows(r =>
+                            r.map(x =>
+                                x.id === params.id
+                                    ? { ...x, dateAdvised: newValue.toISOString() }
+                                    : x
+                            )
+                        );
+                    }}
+                />
+            )
         },
         {
             field: 'availableAtSupplier',
