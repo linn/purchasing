@@ -318,7 +318,7 @@ function AcknowledgeOrdersUtility() {
             />
 
             <Grid container spacing={3}>
-                <Dialog open={deliveriesDialogOpen} fullWidth maxWidth="lg">
+                <Dialog open={deliveriesDialogOpen} fullWidth maxWidth="xl">
                     <div className={classes.dialog}>
                         <PurchaseOrderDeliveriesUtility
                             orderNumber={deliveriesToUpdate?.[0]?.orderNumber}

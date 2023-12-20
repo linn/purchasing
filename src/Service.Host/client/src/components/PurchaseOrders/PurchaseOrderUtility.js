@@ -102,6 +102,7 @@ function PurchaseOrderUtility({ creating }) {
         {
             field: 'dateAdvised',
             headerName: 'Advised Date',
+            type: 'date',
             width: 200
         },
         {
@@ -205,34 +206,28 @@ function PurchaseOrderUtility({ creating }) {
     const unitsOfMeasure = useSelector(reduxState =>
         collectionSelectorHelpers.getItems(reduxState.unitsOfMeasure)
     );
+    const vendorManagersStoreItem = useSelector(reduxState => reduxState.storeItems);
 
-    const vendorManagers = useSelector(reduxState =>
-        collectionSelectorHelpers.getItems(reduxState.vendorManagers)
+    const vendorManagers = collectionSelectorHelpers.getItems(vendorManagersStoreItem);
+
+    const nominalsStoreItem = useSelector(state => state.nominals);
+    const deptSearchResults = collectionSelectorHelpers.getSearchItems(
+        nominalsStoreItem,
+        100,
+        'departmentCode',
+        'departmentCode',
+        'departmentDescription'
     );
 
-    const deptSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(
-            state.nominals,
-            100,
-            'departmentCode',
-            'departmentCode',
-            'departmentDescription'
-        )
+    const nominalSearchResults = collectionSelectorHelpers.getSearchItems(
+        nominalsStoreItem,
+        100,
+        'nominalCode',
+        'nominalCode',
+        'description'
     );
 
-    const nominalSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(
-            state.nominals,
-            100,
-            'nominalCode',
-            'nominalCode',
-            'description'
-        )
-    );
-
-    const nominalsSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.nominals)
-    );
+    const nominalsSearchLoading = collectionSelectorHelpers.getSearchLoading(nominalsStoreItem);
 
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state[purchaseOrder.item])
@@ -659,7 +654,7 @@ function PurchaseOrderUtility({ creating }) {
                                     </div>
                                 </Dialog>
                                 {!creating && selectedDeliveries && (
-                                    <Dialog open={deliveriesDialogOpen} fullWidth maxWidth="md">
+                                    <Dialog open={deliveriesDialogOpen} fullWidth maxWidth="xl">
                                         <div className={classes.centerTextInDialog}>
                                             <IconButton
                                                 className={classes.pullRight}
@@ -674,7 +669,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 inDialogBox
                                                 deliveries={selectedDeliveries.map(d => ({
                                                     ...d,
-                                                    id: `${d.orderNumber}/${d.line}/${d.deliverySeq}`,
+                                                    id: `${d.orderNumber}/${d.orderLine}/${d.deliverySeq}`,
                                                     dateRequested: d.dateRequested,
                                                     dateAdvised: d.dateAdvised
                                                 }))}
@@ -1840,12 +1835,17 @@ function PurchaseOrderUtility({ creating }) {
                                                                     x => ({
                                                                         ...x,
                                                                         id: `${x.deliverySeq}`,
-                                                                        dateRequested: new Date(
+                                                                        dateRequested:
                                                                             x.dateRequested
-                                                                        ),
-                                                                        dateAdvised: new Date(
-                                                                            x.dateAdvised
-                                                                        )
+                                                                                ? new Date(
+                                                                                      x.dateRequested
+                                                                                  )
+                                                                                : null,
+                                                                        dateAdvised: x.dateAdvised
+                                                                            ? new Date(
+                                                                                  x.dateAdvised
+                                                                              )
+                                                                            : null
                                                                     })
                                                                 )}
                                                                 columns={deliveryTableColumns}
