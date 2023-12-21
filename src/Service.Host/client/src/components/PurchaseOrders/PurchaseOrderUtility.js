@@ -365,7 +365,7 @@ function PurchaseOrderUtility({ creating }) {
             },
             department: {
                 departmentCode: newNominal.departmentCode,
-                description: newNominal.departmentDescription
+                departmentDescription: newNominal.departmentDescription
             },
             accountId: newNominal.nominalAccountId
         };
@@ -1691,7 +1691,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     fullWidth
                                                     value={
                                                         detail.orderPosting?.nominalAccount
-                                                            ?.department?.description
+                                                            ?.department?.departmentDescription
                                                     }
                                                     label="Description"
                                                     disabled
