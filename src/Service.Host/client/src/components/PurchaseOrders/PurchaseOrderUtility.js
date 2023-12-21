@@ -365,7 +365,7 @@ function PurchaseOrderUtility({ creating }) {
             },
             department: {
                 departmentCode: newNominal.departmentCode,
-                description: newNominal.departmentDescription
+                departmentDescription: newNominal.departmentDescription
             },
             accountId: newNominal.nominalAccountId
         };
