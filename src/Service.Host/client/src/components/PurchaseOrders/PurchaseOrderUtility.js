@@ -1691,7 +1691,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     fullWidth
                                                     value={
                                                         detail.orderPosting?.nominalAccount
-                                                            ?.department?.description
+                                                            ?.department?.departmentDescription
                                                     }
                                                     label="Description"
                                                     disabled
