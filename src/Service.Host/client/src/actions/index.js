@@ -159,6 +159,8 @@ export const departmentsActionTypes = makeActionTypes(itemTypes.departments.acti
 
 export const nominalsActionTypes = makeActionTypes(itemTypes.nominals.actionType);
 
+export const nominalAccountsActionTypes = makeActionTypes(itemTypes.nominalAccounts.actionType);
+
 export const purchaseOrderReqsActionTypes = makeActionTypes(
     itemTypes.purchaseOrderReqs.actionType,
     true

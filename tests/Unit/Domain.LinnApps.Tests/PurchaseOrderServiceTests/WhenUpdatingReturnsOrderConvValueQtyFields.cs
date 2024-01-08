@@ -1,7 +1,9 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderServiceTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -384,7 +386,16 @@
                         NominalCode = "00009222",
                         DepartmentCode = "0000911"
                 });
-
+            this.NominalAccountRepository.FilterBy(Arg.Any<Expression<Func<NominalAccount, bool>>>()).Returns(
+                new List<NominalAccount>
+                    {
+                        new NominalAccount
+                            {
+                                AccountId = 911,
+                                NominalCode = "00009222",
+                                DepartmentCode = "0000911"
+                            }
+                    }.AsQueryable());
             this.Sut.UpdateOrder(this.current, this.updated, new List<string>());
         }
 

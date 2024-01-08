@@ -1039,6 +1039,26 @@
             current.SuppliersDesignation = updated.SuppliersDesignation;
             current.InternalComments = updated.InternalComments;
 
+            var nominal = updated.OrderPosting.NominalAccount;
+
+            var nominalAccounts = this.nominalAccountRepository.FilterBy(x => x.NominalCode == nominal.NominalCode);
+
+            if (!nominalAccounts.Any())
+            {
+                nominalAccounts = this.nominalAccountRepository.FilterBy(
+                    x => x.NominalCode.EndsWith(nominal.NominalCode));
+            }
+
+            var nominalAccount = nominalAccounts.FirstOrDefault(
+                                     x => x.DepartmentCode == nominal.DepartmentCode)
+                                 ?? nominalAccounts.FirstOrDefault(
+                                     x => x.DepartmentCode.EndsWith(nominal.DepartmentCode));
+
+            if (nominalAccount == null)
+            {
+                throw new ItemNotFoundException("Invalid nominal code/dept");
+            }
+
             if ((documentType != "CO") && (documentType != "RO"))
             {
                 this.PerformDetailCalculations(current, updated, exchangeRate, supplierId);
