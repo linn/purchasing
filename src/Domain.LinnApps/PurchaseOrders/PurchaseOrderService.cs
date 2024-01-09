@@ -1059,6 +1059,8 @@
                 throw new ItemNotFoundException("Invalid nominal code/dept");
             }
 
+            current.OrderPosting.NominalAccount = nominalAccount;
+
             if ((documentType != "CO") && (documentType != "RO"))
             {
                 this.PerformDetailCalculations(current, updated, exchangeRate, supplierId);
