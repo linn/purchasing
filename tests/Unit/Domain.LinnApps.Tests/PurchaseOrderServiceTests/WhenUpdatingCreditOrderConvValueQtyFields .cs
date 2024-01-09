@@ -1,7 +1,9 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderServiceTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -376,7 +378,16 @@
             this.PurchaseOrdersPack.GetVatAmountSupplier(Arg.Any<decimal>(), Arg.Any<int>()).Returns(40.55m);
 
             this.PurchaseLedgerMaster.GetRecord().Returns(new PurchaseLedgerMaster { OkToRaiseOrder = "Y" });
-
+            this.NominalAccountRepository.FilterBy(Arg.Any<Expression<Func<NominalAccount, bool>>>()).Returns(
+                new List<NominalAccount>
+                    {
+                        new NominalAccount
+                            {
+                                AccountId = 911,
+                                NominalCode = "00009222",
+                                DepartmentCode = "0000911"
+                            }
+                    }.AsQueryable());
             this.NominalAccountRepository.FindById(Arg.Any<int>()).Returns(
                 new NominalAccount
                     {

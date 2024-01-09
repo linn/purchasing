@@ -92,7 +92,7 @@ export default function purchaseOrderReducer(state = initialState, action) {
                         : d
                 )
             };
-        case 'nominalChange':
+        case 'nominalCodeChange':
             return {
                 ...state,
                 details: [
@@ -104,8 +104,13 @@ export default function purchaseOrderReducer(state = initialState, action) {
                             ...detail,
                             orderPosting: {
                                 ...detail.orderPosting,
-                                nominalAccount: action.payload,
-                                nominalAccountId: action.payload.accountId
+                                nominalAccount: {
+                                    ...detail.orderPosting.nominalAccount,
+                                    nominal: {
+                                        nominalCode: action.payload.id,
+                                        description: action.payload.description
+                                    }
+                                }
                             }
                         };
                     })
@@ -125,28 +130,10 @@ export default function purchaseOrderReducer(state = initialState, action) {
                                 ...detail.orderPosting,
                                 nominalAccount: {
                                     ...detail.orderPosting.nominalAccount,
-                                    department: { departmentCode: action.payload }
-                                }
-                            }
-                        };
-                    })
-                ]
-            };
-        case 'nominalCodeChange':
-            return {
-                ...state,
-                details: [
-                    ...state.details.map(detail => {
-                        if (detail.line !== action.lineNumber) {
-                            return detail;
-                        }
-                        return {
-                            ...detail,
-                            orderPosting: {
-                                ...detail.orderPosting,
-                                nominalAccount: {
-                                    ...detail.orderPosting.nominalAccount,
-                                    nominal: { nominalCode: action.payload }
+                                    department: {
+                                        departmentCode: action.payload.id,
+                                        departmentDescription: action.payload.description
+                                    }
                                 }
                             }
                         };

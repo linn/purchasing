@@ -184,9 +184,15 @@ export const purchaseOrderReq = new ItemType(
     '/purchasing/purchase-orders/reqs'
 );
 
-export const departments = new ItemType('departments', 'DEPARTMENTS', '/inventory/departments');
+export const departments = new ItemType('departments', 'DEPARTMENTS', '/ledgers/departments');
 
-export const nominals = new ItemType('nominal', 'NOMINAL', '/inventory/nominal-accounts');
+export const nominals = new ItemType('nominals', 'NOMINALS', '/ledgers/nominals');
+
+export const nominalAccounts = new ItemType(
+    'nominalAccounts',
+    'NOMINAL_ACCOUNTS',
+    '/ledgers/nominal-accounts'
+);
 
 export const purchaseOrderReqs = new ItemType(
     'purchaseOrderReqs',

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using FluentAssertions;
@@ -43,6 +44,12 @@
                 .Returns(new Part { StockControlled = "N" });
             this.EmployeeRepository.FindById(this.candidate.RequestedById).Returns(
                 new Employee { FullName = "SOME PERSON" });
+            this.NominalAccountRepository
+                .FilterBy(Arg.Any<Expression<Func<NominalAccount, bool>>>())
+                .Returns(new List<NominalAccount>
+                             {
+                                 new NominalAccount()
+                             }.AsQueryable());
             this.result = this.Sut.Create(this.candidate, new List<string>());
         }
 

@@ -232,7 +232,7 @@
                 {
                     throw new ItemNotFoundException("Invalid nominal code/dept");
                 }
-
+                
                 detail.OrderPosting.NominalAccount = nominalAccount;
 
                 this.SetDetailFieldsForCreation(detail, newOrderNumber);
@@ -1038,6 +1038,28 @@
         {
             current.SuppliersDesignation = updated.SuppliersDesignation;
             current.InternalComments = updated.InternalComments;
+
+            var nominal = updated.OrderPosting.NominalAccount;
+
+            var nominalAccounts = this.nominalAccountRepository.FilterBy(x => x.NominalCode == nominal.NominalCode);
+
+            if (!nominalAccounts.Any())
+            {
+                nominalAccounts = this.nominalAccountRepository.FilterBy(
+                    x => x.NominalCode.EndsWith(nominal.NominalCode));
+            }
+
+            var nominalAccount = nominalAccounts.FirstOrDefault(
+                                     x => x.DepartmentCode == nominal.DepartmentCode)
+                                 ?? nominalAccounts.FirstOrDefault(
+                                     x => x.DepartmentCode.EndsWith(nominal.DepartmentCode));
+
+            if (nominalAccount == null)
+            {
+                throw new ItemNotFoundException("Invalid nominal code/dept");
+            }
+
+            current.OrderPosting.NominalAccount = nominalAccount;
 
             if ((documentType != "CO") && (documentType != "RO"))
             {

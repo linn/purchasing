@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderReqServiceTests
+namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderReqServiceTests
 {
     using System;
     using System.Collections.Generic;
@@ -16,7 +16,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingButClosedSupplier : ContextBase
+    public class WhenUpdatingReqWithInvalidNominalAndDepartment : ContextBase
     {
         private readonly string fromState = "DRAFT";
 
@@ -93,17 +93,14 @@
                 .Returns(new Part { StockControlled = "N" });
 
             this.MockSupplierRepository.FindById(this.supplierId).Returns(
-                new Supplier
-                    {
-                        SupplierId = this.supplierId, Name = "pesto shop", DateClosed = DateTime.Now.AddDays(-1)
-                    });
+                new Supplier { SupplierId = this.supplierId, Name = "pesto shop", DateClosed = null, OrderHold = "N" });
             this.action = () => this.Sut.Update(this.current, this.updated, new List<string>());
         }
 
         [Test]
         public void ShouldThrowException()
         {
-            this.action.Should().Throw<UnauthorisedActionException>();
+            this.action.Should().Throw<ItemNotFoundException>();
         }
     }
 }

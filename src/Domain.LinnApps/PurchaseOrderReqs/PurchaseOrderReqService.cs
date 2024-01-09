@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
 
     using Linn.Common.Authorisation;
     using Linn.Common.Domain.Exceptions;
@@ -142,6 +143,17 @@
             entity.RemarksForOrder = string.IsNullOrEmpty(requestedBy?.FullName)
             ? $"Please send with reference PO Req {entity.OrderNumber}. {Environment.NewLine}{entity.RemarksForOrder}"
             : $"Please send for the attention of {requestedBy.FullName}. {Environment.NewLine}{entity.RemarksForOrder}";
+
+            var nominalAccount 
+                = this.nominalAccountRepository.FilterBy(x => x.DepartmentCode.EndsWith(entity.DepartmentCode) && x.NominalCode.EndsWith(entity.NominalCode)).SingleOrDefault();
+
+            if (nominalAccount == null)
+            {
+                throw new ItemNotFoundException("Invalid nominal/department combination entered");
+            }
+
+            entity.NominalCode = nominalAccount.NominalCode;
+            entity.DepartmentCode = nominalAccount.DepartmentCode;
             return entity;
         }
 
@@ -379,7 +391,6 @@
             }
 
             this.CheckIfCanOrderFromSupplier(entity.SupplierId);
-
             this.CheckPartIsNotStockControlled(entity.PartNumber);
 
             entity.State = updatedEntity.State;
@@ -411,9 +422,16 @@
             entity.DepartmentCode = updatedEntity.DepartmentCode;
 
             var nominalAccount = this.nominalAccountRepository.FindBy(
-                a => a.NominalCode == updatedEntity.NominalCode && a.DepartmentCode == updatedEntity.DepartmentCode);
+                a => a.NominalCode.EndsWith(updatedEntity.NominalCode) && a.DepartmentCode.EndsWith(updatedEntity.DepartmentCode));
+
+            if (nominalAccount == null)
+            {
+                throw new ItemNotFoundException("Invalid nominal/department combination entered");
+            }
             entity.Nominal = nominalAccount.Nominal;
+            entity.NominalCode = nominalAccount.NominalCode;
             entity.Department = nominalAccount.Department;
+            entity.DepartmentCode = nominalAccount.DepartmentCode;
         }
 
         private string GetNextState(string from, bool changeIsFromFunction = false)

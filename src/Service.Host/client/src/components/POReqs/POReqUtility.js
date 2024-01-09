@@ -43,6 +43,8 @@ import moment from 'moment';
 import currenciesActions from '../../actions/currenciesActions';
 import employeesActions from '../../actions/employeesActions';
 import nominalsActions from '../../actions/nominalsActions';
+import departmentsActions from '../../actions/departmentsActions';
+import nominalAccountsActions from '../../actions/nominalAccountsActions';
 import countriesActions from '../../actions/countriesActions';
 import suppliersActions from '../../actions/suppliersActions';
 import partsActions from '../../actions/partsActions';
@@ -64,54 +66,99 @@ import sendPurchaseOrderPdfEmailActionTypes from '../../actions/sendPurchaseOrde
 
 function POReqUtility({ creating }) {
     const dispatch = useDispatch();
-    const suppliersSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.suppliers, 100, 'id', 'name', 'name')
+    const suppliersStoreItem = useSelector(state => state.suppliers);
+    const suppliersSearchResults = collectionSelectorHelpers.getSearchItems(
+        suppliersStoreItem,
+        100,
+        'id',
+        'name',
+        'name'
     );
-    const suppliersSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.suppliers)
-    );
+    const suppliersSearchLoading = collectionSelectorHelpers.getSearchLoading(suppliersStoreItem);
     const searchSuppliers = searchTerm => dispatch(suppliersActions.search(searchTerm));
 
-    const partsSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.parts)
-    ).map?.(c => ({
-        id: c.partNumber,
-        name: c.partNumber,
-        partNumber: c.partNumber,
-        description: c.description
-    }));
+    const partsStoreItem = useSelector(state => state.parts);
 
-    const partsSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.parts)
-    );
+    const partsSearchResults = collectionSelectorHelpers
+        .getSearchItems(partsStoreItem)
+        .map?.(c => ({
+            id: c.partNumber,
+            name: c.partNumber,
+            partNumber: c.partNumber,
+            description: c.description
+        }));
 
-    const countriesSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(
-            state.countries,
-            100,
-            'countryCode',
-            'countryCode',
-            'countryName'
-        )
+    const partsSearchLoading = collectionSelectorHelpers.getSearchLoading(partsStoreItem);
+
+    const countriesStoreItem = useSelector(state => state.countries);
+    const countriesSearchResults = collectionSelectorHelpers.getSearchItems(
+        countriesStoreItem,
+        100,
+        'countryCode',
+        'countryCode',
+        'countryName'
     );
-    const countriesSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.countries)
-    );
+    const countriesSearchLoading = collectionSelectorHelpers.getSearchLoading(countriesStoreItem);
     const searchCountries = searchTerm => dispatch(countriesActions.search(searchTerm));
 
-    const currencies = useSelector(state => collectionSelectorHelpers.getItems(state.currencies));
-    const employees = useSelector(state => collectionSelectorHelpers.getItems(state.employees));
+    const currenciesStoreItem = useSelector(state => state.currencies);
+    const currencies = collectionSelectorHelpers.getItems(currenciesStoreItem);
 
-    const reqStates = useSelector(state =>
-        collectionSelectorHelpers.getItems(state.purchaseOrderReqStates)
-    );
+    const employeesStoreItem = useSelector(state => state.employees);
+    const employees = collectionSelectorHelpers.getItems(employeesStoreItem);
 
-    const nominalsSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.nominals)
-    );
+    const reqStatesStoreItem = useSelector(state => state.purchaseOrderReqStates);
+    const reqStates = collectionSelectorHelpers.getItems(reqStatesStoreItem);
 
     const currentUserId = useSelector(state => userSelectors.getUserNumber(state));
     const currentUserName = useSelector(state => userSelectors.getName(state));
+
+    const nominalsStoreItem = useSelector(state => state.nominals);
+
+    const nominalSearchResults = collectionSelectorHelpers.getSearchItems(
+        nominalsStoreItem,
+        100,
+        'nominalCode',
+        'nominalCode',
+        'description'
+    );
+
+    const nominalsSearchLoading = collectionSelectorHelpers.getSearchLoading(nominalsStoreItem);
+
+    const departmentsStoreItem = useSelector(state => state.departments);
+
+    const departmentsSearchResults = collectionSelectorHelpers.getSearchItems(
+        departmentsStoreItem,
+        100,
+        'departmentCode',
+        'departmentCode',
+        'description'
+    );
+
+    const departmentsSearchLoading =
+        collectionSelectorHelpers.getSearchLoading(departmentsStoreItem);
+
+    const nominalAccountsStoreItem = useSelector(state => state.nominalAccounts);
+
+    const nominalAccountDepartmentsSearchResults = nominalAccountsStoreItem.searchItems
+        ? nominalAccountsStoreItem.searchItems.map(x => ({
+              id: x.department.departmentCode,
+              name: x.department.departmentCode,
+              description: x.department.description
+          }))
+        : [];
+
+    const nominalAccountNominalsSearchResults = nominalAccountsStoreItem.searchItems
+        ? nominalAccountsStoreItem.searchItems.map(x => ({
+              ...x,
+              id: x.nominal.nominalCode,
+              name: x.nominal.nominalCode,
+              description: x.nominal.description
+          }))
+        : [];
+
+    const nominalAccountsSearchLoading =
+        collectionSelectorHelpers.getSearchLoading(nominalAccountsStoreItem);
 
     const defaultCreatingReq = {
         requestedBy: {
@@ -239,26 +286,6 @@ function POReqUtility({ creating }) {
             postCode: newSupplier.orderAddress?.postCode
         }));
     };
-
-    const deptSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(
-            state.nominals,
-            100,
-            'departmentCode',
-            'departmentCode',
-            'departmentDescription'
-        )
-    );
-
-    const nominalSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(
-            state.nominals,
-            100,
-            'nominalCode',
-            'nominalCode',
-            'description'
-        )
-    );
 
     const allowedToCancel = () => !creating && req.links?.some(l => l.rel === 'cancel');
     const allowedToAuthorise = () => !creating && req.state === 'AUTHORISE WAIT';
@@ -389,20 +416,6 @@ function POReqUtility({ creating }) {
                 bcc: purchaseOrderEmailState.bcc
             })
         );
-    };
-
-    const handleNominalUpdate = newNominal => {
-        setEditStatus('edit');
-        const nominal = {
-            nominalCode: newNominal.nominalCode,
-            description: newNominal.description
-        };
-        const department = {
-            departmentCode: newNominal.departmentCode,
-            departmentDescription: newNominal.departmentDescription
-        };
-
-        setReq(r => ({ ...r, nominal, department }));
     };
 
     const [showCostWarning, setShowCostWarning] = useState(false);
@@ -1162,12 +1175,12 @@ function POReqUtility({ creating }) {
                                 }
                             />
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={6}>
                             <Search
                                 propertyName="deptCode"
                                 label="Search Departments"
                                 resultsInModal
-                                autoFocus={false}
+                                helperText="Type something and press enter to search departments. Alternatively press enter without any value input to list all departments for the currently selected nominal. (You can also just enter the dept code directly if you know it and don't need to search)"
                                 resultLimit={100}
                                 value={req.department?.departmentCode}
                                 handleValueChange={(_, newValue) => {
@@ -1178,29 +1191,45 @@ function POReqUtility({ creating }) {
                                         }
                                     }));
                                 }}
-                                search={searchTerm => dispatch(nominalsActions.search(searchTerm))}
-                                searchResults={[
-                                    ...new Set(deptSearchResults.map(n => n.departmentCode))
-                                ].map(r => ({
-                                    ...deptSearchResults.find(s => s.departmentCode === r)
-                                }))}
-                                loading={nominalsSearchLoading}
+                                search={searchTerm => {
+                                    const nominalCode = req?.nominal?.nominalCode;
+                                    if (searchTerm?.trim()) {
+                                        dispatch(departmentsActions.search(searchTerm));
+                                    } else if (nominalCode.trim()) {
+                                        dispatch(
+                                            nominalAccountsActions.searchWithOptions(
+                                                '',
+                                                `&nominalCode=${nominalCode}`
+                                            )
+                                        );
+                                    }
+                                }}
+                                searchResults={
+                                    departmentsSearchResults?.length
+                                        ? departmentsSearchResults.filter(x => !x.dateClosed)
+                                        : nominalAccountDepartmentsSearchResults
+                                }
+                                loading={departmentsSearchLoading || nominalAccountsSearchLoading}
+                                autoFocus={false}
                                 priorityFunction="closestMatchesFirst"
                                 onResultSelect={newValue => {
                                     setEditStatus('edit');
                                     setReq(r => ({
                                         ...r,
                                         department: {
-                                            departmentCode: newValue.departmentCode,
-                                            departmentDescription: newValue.departmentDescription
+                                            departmentCode: newValue.name,
+                                            departmentDescription: newValue.description
                                         }
                                     }));
                                 }}
-                                clearSearch={() => {}}
+                                clearSearch={() => {
+                                    dispatch(departmentsActions.clearSearch());
+                                    dispatch(nominalAccountsActions.clearSearch());
+                                }}
                             />
                         </Grid>
 
-                        <Grid item xs={8}>
+                        <Grid item xs={6}>
                             <InputField
                                 fullWidth
                                 value={req?.department?.departmentDescription}
@@ -1209,13 +1238,14 @@ function POReqUtility({ creating }) {
                                 propertyName="deptDescription"
                             />
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={6}>
                             <Search
                                 propertyName="nominalCode"
                                 label="Search Nominals"
                                 resultsInModal
-                                autoFocus={false}
+                                helperText="Type something and press enter to search nominals. Alternatively press enter without any value input to list all nominals for the currently selected department. (You can also just enter the nominal code directly if you know it and don't need to search)"
                                 resultLimit={100}
+                                autoFocus={false}
                                 value={req?.nominal?.nominalCode}
                                 handleValueChange={(_, newValue) => {
                                     setEditStatus('edit');
@@ -1226,22 +1256,44 @@ function POReqUtility({ creating }) {
                                         }
                                     }));
                                 }}
-                                search={searchTerm => dispatch(nominalsActions.search(searchTerm))}
-                                searchResults={nominalSearchResults.filter(
-                                    x =>
-                                        !req?.department?.departmentCode ||
-                                        x.departmentCode.endsWith(req?.department.departmentCode)
-                                )}
-                                loading={nominalsSearchLoading}
-                                priorityFunction="closestMatchesFirst"
-                                onResultSelect={newValue => {
-                                    handleNominalUpdate(newValue);
+                                search={searchTerm => {
+                                    const deptCode = req.department?.departmentCode;
+                                    if (searchTerm?.trim()) {
+                                        dispatch(nominalsActions.search(searchTerm));
+                                    } else if (deptCode.trim()) {
+                                        dispatch(
+                                            nominalAccountsActions.searchWithOptions(
+                                                '',
+                                                `&departmentCode=${deptCode}`
+                                            )
+                                        );
+                                    }
                                 }}
-                                clearSearch={() => {}}
+                                searchResults={
+                                    nominalSearchResults?.length
+                                        ? nominalSearchResults.filter(x => !x.dateClosed)
+                                        : nominalAccountNominalsSearchResults
+                                }
+                                loading={nominalsSearchLoading || nominalAccountsSearchLoading}
+                                priorityFunction="closestMatchesFirst"
+                                onResultSelect={newNominal => {
+                                    setEditStatus('edit');
+                                    setReq(r => ({
+                                        ...r,
+                                        nominal: {
+                                            nominalCode: newNominal.name,
+                                            description: newNominal.description
+                                        }
+                                    }));
+                                }}
+                                clearSearch={() => {
+                                    dispatch(nominalsActions.clearSearch());
+                                    dispatch(nominalAccountsActions.clearSearch());
+                                }}
                             />
                         </Grid>
 
-                        <Grid item xs={8}>
+                        <Grid item xs={6}>
                             <InputField
                                 fullWidth
                                 value={req?.nominal?.description}

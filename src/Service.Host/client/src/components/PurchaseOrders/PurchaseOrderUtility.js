@@ -43,6 +43,8 @@ import {
 import queryString from 'query-string';
 import currenciesActions from '../../actions/currenciesActions';
 import nominalsActions from '../../actions/nominalsActions';
+import nominalAccountsActions from '../../actions/nominalAccountsActions';
+import departmentsActions from '../../actions/departmentsActions';
 import history from '../../history';
 import config from '../../config';
 import purchaseOrderActions from '../../actions/purchaseOrderActions';
@@ -56,7 +58,10 @@ import {
     sendPurchaseOrderAuthEmail,
     sendPurchaseOrderDeptEmail,
     purchaseOrderDeliveries,
-    suggestedPurchaseOrderValues
+    suggestedPurchaseOrderValues,
+    nominals,
+    departments,
+    nominalAccounts
 } from '../../itemTypes';
 import currencyConvert from '../../helpers/currencyConvert';
 import PurchaseOrderDeliveriesUtility from '../PurchaseOrderDeliveriesUtility';
@@ -210,14 +215,7 @@ function PurchaseOrderUtility({ creating }) {
 
     const vendorManagers = collectionSelectorHelpers.getItems(vendorManagersStoreItem);
 
-    const nominalsStoreItem = useSelector(state => state.nominals);
-    const deptSearchResults = collectionSelectorHelpers.getSearchItems(
-        nominalsStoreItem,
-        100,
-        'departmentCode',
-        'departmentCode',
-        'departmentDescription'
-    );
+    const nominalsStoreItem = useSelector(state => state[nominals.item]);
 
     const nominalSearchResults = collectionSelectorHelpers.getSearchItems(
         nominalsStoreItem,
@@ -228,6 +226,41 @@ function PurchaseOrderUtility({ creating }) {
     );
 
     const nominalsSearchLoading = collectionSelectorHelpers.getSearchLoading(nominalsStoreItem);
+
+    const departmentsStoreItem = useSelector(state => state[departments.item]);
+
+    const departmentsSearchResults = collectionSelectorHelpers.getSearchItems(
+        departmentsStoreItem,
+        100,
+        'departmentCode',
+        'departmentCode',
+        'description'
+    );
+
+    const departmentsSearchLoading =
+        collectionSelectorHelpers.getSearchLoading(departmentsStoreItem);
+
+    const nominalAccountsStoreItem = useSelector(state => state[nominalAccounts.item]);
+
+    const nominalAccountDepartmentsSearchResults = nominalAccountsStoreItem.searchItems
+        ? nominalAccountsStoreItem.searchItems.map(x => ({
+              id: x.department.departmentCode,
+              name: x.department.departmentCode,
+              description: x.department.description
+          }))
+        : [];
+
+    const nominalAccountNominalsSearchResults = nominalAccountsStoreItem.searchItems
+        ? nominalAccountsStoreItem.searchItems.map(x => ({
+              ...x,
+              id: x.nominal.nominalCode,
+              name: x.nominal.nominalCode,
+              description: x.nominal.description
+          }))
+        : [];
+
+    const nominalAccountsSearchLoading =
+        collectionSelectorHelpers.getSearchLoading(nominalAccountsStoreItem);
 
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state[purchaseOrder.item])
@@ -354,26 +387,6 @@ function PurchaseOrderUtility({ creating }) {
                 orderNumber: order?.orderNumber
             })
         );
-    };
-
-    const handleNominalUpdate = (newNominal, lineNumber) => {
-        reduxDispatch(purchaseOrderActions.setEditStatus('edit'));
-        const newNominalAccount = {
-            nominal: {
-                nominalCode: newNominal.nominalCode,
-                description: newNominal.description
-            },
-            department: {
-                departmentCode: newNominal.departmentCode,
-                departmentDescription: newNominal.departmentDescription
-            },
-            accountId: newNominal.nominalAccountId
-        };
-        dispatch({
-            payload: newNominalAccount,
-            lineNumber,
-            type: 'nominalChange'
-        });
     };
 
     const [orderPdfEmailDialogOpen, setOrderPdfEmailDialogOpen] = useState(false);
@@ -745,7 +758,6 @@ function PurchaseOrderUtility({ creating }) {
                                     </Typography>
                                     {item?.cancelled === 'Y' && (
                                         <>
-                                            {' '}
                                             <Typography
                                                 variant="h6"
                                                 display="inline"
@@ -1645,44 +1657,76 @@ function PurchaseOrderUtility({ creating }) {
                                                     propertyName="deptCode"
                                                     label="Search Departments"
                                                     resultsInModal
+                                                    helperText="Type something and press enter to search departments. Alternatively press enter without any value input to list all departments for the currently selected nominal. (You can also just enter the dept code directly if you know it and don't need to search)"
                                                     resultLimit={100}
                                                     value={
                                                         detail.orderPosting?.nominalAccount
                                                             ?.department?.departmentCode
                                                     }
                                                     handleValueChange={(_, newValue) => {
+                                                        reduxDispatch(
+                                                            purchaseOrderActions.setEditStatus(
+                                                                'edit'
+                                                            )
+                                                        );
+                                                        dispatch({
+                                                            payload: { id: newValue },
+                                                            lineNumber: detail.line,
+                                                            type: 'departmentCodeChange'
+                                                        });
+                                                    }}
+                                                    search={searchTerm => {
+                                                        const nominalCode =
+                                                            detail.orderPosting?.nominalAccount
+                                                                ?.nominal?.nominalCode;
+                                                        if (searchTerm?.trim()) {
+                                                            reduxDispatch(
+                                                                departmentsActions.search(
+                                                                    searchTerm
+                                                                )
+                                                            );
+                                                        } else if (nominalCode.trim()) {
+                                                            reduxDispatch(
+                                                                nominalAccountsActions.searchWithOptions(
+                                                                    '',
+                                                                    `&nominalCode=${nominalCode}`
+                                                                )
+                                                            );
+                                                        }
+                                                    }}
+                                                    searchResults={
+                                                        departmentsSearchResults?.length
+                                                            ? departmentsSearchResults.filter(
+                                                                  x => !x.dateClosed
+                                                              )
+                                                            : nominalAccountDepartmentsSearchResults
+                                                    }
+                                                    loading={
+                                                        departmentsSearchLoading ||
+                                                        nominalAccountsSearchLoading
+                                                    }
+                                                    autoFocus={false}
+                                                    priorityFunction="closestMatchesFirst"
+                                                    onResultSelect={newValue => {
+                                                        reduxDispatch(
+                                                            purchaseOrderActions.setEditStatus(
+                                                                'edit'
+                                                            )
+                                                        );
                                                         dispatch({
                                                             payload: newValue,
                                                             lineNumber: detail.line,
                                                             type: 'departmentCodeChange'
                                                         });
                                                     }}
-                                                    search={searchTerm =>
+                                                    clearSearch={() => {
                                                         reduxDispatch(
-                                                            nominalsActions.search(searchTerm)
-                                                        )
-                                                    }
-                                                    searchResults={[
-                                                        ...new Set(
-                                                            deptSearchResults.map(
-                                                                n => n.departmentCode
-                                                            )
-                                                        )
-                                                    ].map(r => ({
-                                                        ...deptSearchResults.find(
-                                                            s => s.departmentCode === r
-                                                        )
-                                                    }))}
-                                                    loading={nominalsSearchLoading}
-                                                    priorityFunction="closestMatchesFirst"
-                                                    onResultSelect={newValue => {
-                                                        dispatch({
-                                                            payload: newValue.departmentCode,
-                                                            lineNumber: detail.line,
-                                                            type: 'departmentCodeChange'
-                                                        });
+                                                            departmentsActions.clearSearch()
+                                                        );
+                                                        reduxDispatch(
+                                                            nominalAccountsActions.clearSearch()
+                                                        );
                                                     }}
-                                                    clearSearch={() => {}}
                                                 />
                                             </Grid>
 
@@ -1703,38 +1747,74 @@ function PurchaseOrderUtility({ creating }) {
                                                     propertyName="nominalCode"
                                                     label="Search Nominals"
                                                     resultsInModal
+                                                    helperText="Type something and press enter to search nominals. Alternatively press enter without any value input to list all nominals for the currently selected department. (You can also just enter the nominal code directly if you know it and don't need to search)"
                                                     resultLimit={100}
+                                                    autoFocus={false}
                                                     value={
                                                         detail.orderPosting?.nominalAccount?.nominal
                                                             ?.nominalCode
                                                     }
                                                     handleValueChange={(_, newValue) => {
+                                                        reduxDispatch(
+                                                            purchaseOrderActions.setEditStatus(
+                                                                'edit'
+                                                            )
+                                                        );
+                                                        dispatch({
+                                                            payload: { id: newValue },
+                                                            lineNumber: detail.line,
+                                                            type: 'nominalCodeChange'
+                                                        });
+                                                    }}
+                                                    search={searchTerm => {
+                                                        const deptCode =
+                                                            detail.orderPosting?.nominalAccount
+                                                                ?.department?.departmentCode;
+                                                        if (searchTerm?.trim()) {
+                                                            reduxDispatch(
+                                                                nominalsActions.search(searchTerm)
+                                                            );
+                                                        } else if (deptCode.trim()) {
+                                                            reduxDispatch(
+                                                                nominalAccountsActions.searchWithOptions(
+                                                                    '',
+                                                                    `&departmentCode=${deptCode}`
+                                                                )
+                                                            );
+                                                        }
+                                                    }}
+                                                    searchResults={
+                                                        nominalSearchResults?.length
+                                                            ? nominalSearchResults.filter(
+                                                                  x => !x.dateClosed
+                                                              )
+                                                            : nominalAccountNominalsSearchResults
+                                                    }
+                                                    loading={
+                                                        nominalsSearchLoading ||
+                                                        nominalAccountsSearchLoading
+                                                    }
+                                                    priorityFunction="closestMatchesFirst"
+                                                    onResultSelect={newValue => {
+                                                        reduxDispatch(
+                                                            purchaseOrderActions.setEditStatus(
+                                                                'edit'
+                                                            )
+                                                        );
                                                         dispatch({
                                                             payload: newValue,
                                                             lineNumber: detail.line,
                                                             type: 'nominalCodeChange'
                                                         });
                                                     }}
-                                                    search={searchTerm =>
+                                                    clearSearch={() => {
                                                         reduxDispatch(
-                                                            nominalsActions.search(searchTerm)
-                                                        )
-                                                    }
-                                                    searchResults={nominalSearchResults.filter(
-                                                        x =>
-                                                            !detail.orderPosting?.nominalAccount
-                                                                ?.department?.departmentCode ||
-                                                            x.departmentCode.endsWith(
-                                                                detail.orderPosting?.nominalAccount
-                                                                    ?.department?.departmentCode
-                                                            )
-                                                    )}
-                                                    loading={nominalsSearchLoading}
-                                                    priorityFunction="closestMatchesFirst"
-                                                    onResultSelect={newValue => {
-                                                        handleNominalUpdate(newValue, detail.line);
+                                                            nominalsActions.clearSearch()
+                                                        );
+                                                        reduxDispatch(
+                                                            nominalAccountsActions.clearSearch()
+                                                        );
                                                     }}
-                                                    clearSearch={() => {}}
                                                 />
                                             </Grid>
 

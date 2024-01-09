@@ -126,6 +126,7 @@ import proposedChangesReport from './proposedChangesReport';
 import outstandingChangesReport from './outstandingChangesReport';
 import currentPhaseInWeeksReport from './currentPhaseInWeeksReport';
 import boardComponentSummaryReport from './boardComponentSummaryReport';
+import nominalAccounts from './nominalAccounts';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -185,6 +186,7 @@ const rootReducer = () =>
         mrReportOptions,
         mrReportOrders,
         mrUsedOnReport,
+        nominalAccounts,
         nominals,
         openDebitNotes,
         orderMethods,

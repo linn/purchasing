@@ -86,8 +86,7 @@
             this.MockAuthService.HasPermissionFor(
                 AuthorisedAction.PurchaseOrderReqFinanceCheck,
                 Arg.Any<List<string>>()).Returns(true);
-
-
+            
             this.MockPurchaseOrderAutoOrderPack.CreateMiniOrderFromReq(
                 this.candidate.NominalCode,
                 this.candidate.DepartmentCode,
