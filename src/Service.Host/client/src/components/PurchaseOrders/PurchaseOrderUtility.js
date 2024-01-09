@@ -1657,7 +1657,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     propertyName="deptCode"
                                                     label="Search Departments"
                                                     resultsInModal
-                                                    helperText="Type a value and press enter to search Departments. Alternatively press enter without any value input to show all departments for the currently selected nominal"
+                                                    helperText="Type something and press enter to search departments. Alternatively press enter without any value input to list all departments for the currently selected nominal. (You can also just enter the dept code if you know it and don't need to search)"
                                                     resultLimit={100}
                                                     value={
                                                         detail.orderPosting?.nominalAccount
@@ -1747,7 +1747,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     propertyName="nominalCode"
                                                     label="Search Nominals"
                                                     resultsInModal
-                                                    helperText="Type a value and press enter to search Nominals. Alternatively press enter without any value input to show all nominals for the currently selected department"
+                                                    helperText="Type something and press enter to search nominals. Alternatively press enter without any value input to list all nominals for the currently selected department. (You can also just enter the nominal code if you know it and don't need to search)"
                                                     resultLimit={100}
                                                     autoFocus={false}
                                                     value={

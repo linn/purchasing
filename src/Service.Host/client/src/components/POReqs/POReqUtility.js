@@ -1180,7 +1180,7 @@ function POReqUtility({ creating }) {
                                 propertyName="deptCode"
                                 label="Search Departments"
                                 resultsInModal
-                                helperText="Just enter the department code if you know it (you don't need the leading zeroes). Otherwise you can type something and press enter to search departments. Alternatively press enter without any value input to list all departments for the currently selected nominal."
+                                helperText="Type something and press enter to search departments. Alternatively press enter without any value input to list all departments for the currently selected nominal. (You can also just enter the dept code if you know it and don't need to search)"
                                 resultLimit={100}
                                 value={req.department?.departmentCode}
                                 handleValueChange={(_, newValue) => {
@@ -1243,7 +1243,7 @@ function POReqUtility({ creating }) {
                                 propertyName="nominalCode"
                                 label="Search Nominals"
                                 resultsInModal
-                                helperText="Just enter the nominal code if you know it (you don't need the leading zeroes). Otherwise you can type something and press enter to search nominals. Alternatively press enter without any value input to list all nominals for the currently selected department."
+                                helperText="Type something and press enter to search nominals. Alternatively press enter without any value input to list all nominals for the currently selected department. (You can also just enter the nominal code if you know it and don't need to search)"
                                 resultLimit={100}
                                 autoFocus={false}
                                 value={req?.nominal?.nominalCode}
