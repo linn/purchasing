@@ -245,7 +245,7 @@ function PurchaseOrderUtility({ creating }) {
     const nominalAccountDepartmentsSearchResults = nominalAccountsStoreItem.searchItems
         ? nominalAccountsStoreItem.searchItems.map(x => ({
               id: x.department.departmentCode,
-              name: x.department.description,
+              name: x.department.departmentCode,
               description: x.department.description
           }))
         : [];
@@ -254,7 +254,7 @@ function PurchaseOrderUtility({ creating }) {
         ? nominalAccountsStoreItem.searchItems.map(x => ({
               ...x,
               id: x.nominal.nominalCode,
-              name: x.nominal.description,
+              name: x.nominal.nominalCode,
               description: x.nominal.description
           }))
         : [];

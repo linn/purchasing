@@ -143,7 +143,7 @@ function POReqUtility({ creating }) {
     const nominalAccountDepartmentsSearchResults = nominalAccountsStoreItem.searchItems
         ? nominalAccountsStoreItem.searchItems.map(x => ({
               id: x.department.departmentCode,
-              name: x.department.description,
+              name: x.department.departmentCode,
               description: x.department.description
           }))
         : [];
@@ -152,7 +152,7 @@ function POReqUtility({ creating }) {
         ? nominalAccountsStoreItem.searchItems.map(x => ({
               ...x,
               id: x.nominal.nominalCode,
-              name: x.nominal.description,
+              name: x.nominal.nominalCode,
               description: x.nominal.description
           }))
         : [];
@@ -1175,12 +1175,12 @@ function POReqUtility({ creating }) {
                                 }
                             />
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={6}>
                             <Search
                                 propertyName="deptCode"
                                 label="Search Departments"
                                 resultsInModal
-                                helperText="Type a value and press enter to search Departments. Alternatively press enter without any value input to show all departments for the currently selected nominal"
+                                helperText="Just enter the department code if you know it (you don't need the leading zeroes). Otherwise you can type something and press enter to search departments. Alternatively press enter without any value input to list all departments for the currently selected nominal."
                                 resultLimit={100}
                                 value={req.department?.departmentCode}
                                 handleValueChange={(_, newValue) => {
@@ -1217,8 +1217,8 @@ function POReqUtility({ creating }) {
                                     setReq(r => ({
                                         ...r,
                                         department: {
-                                            departmentCode: newValue.departmentCode,
-                                            departmentDescription: newValue.departmentDescription
+                                            departmentCode: newValue.name,
+                                            departmentDescription: newValue.description
                                         }
                                     }));
                                 }}
@@ -1229,7 +1229,7 @@ function POReqUtility({ creating }) {
                             />
                         </Grid>
 
-                        <Grid item xs={8}>
+                        <Grid item xs={6}>
                             <InputField
                                 fullWidth
                                 value={req?.department?.departmentDescription}
@@ -1238,12 +1238,12 @@ function POReqUtility({ creating }) {
                                 propertyName="deptDescription"
                             />
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={6}>
                             <Search
                                 propertyName="nominalCode"
                                 label="Search Nominals"
                                 resultsInModal
-                                helperText="Type a value and press enter to search Nominals. Alternatively press enter without any value input to show all nominals for the currently selected department"
+                                helperText="Just enter the nominal code if you know it (you don't need the leading zeroes). Otherwise you can type something and press enter to search nominals. Alternatively press enter without any value input to list all nominals for the currently selected department."
                                 resultLimit={100}
                                 autoFocus={false}
                                 value={req?.nominal?.nominalCode}
@@ -1280,8 +1280,10 @@ function POReqUtility({ creating }) {
                                     setEditStatus('edit');
                                     setReq(r => ({
                                         ...r,
-                                        nominalCode: newNominal.nominalCode,
-                                        description: newNominal.description
+                                        nominal: {
+                                            nominalCode: newNominal.name,
+                                            description: newNominal.description
+                                        }
                                     }));
                                 }}
                                 clearSearch={() => {
@@ -1291,7 +1293,7 @@ function POReqUtility({ creating }) {
                             />
                         </Grid>
 
-                        <Grid item xs={8}>
+                        <Grid item xs={6}>
                             <InputField
                                 fullWidth
                                 value={req?.nominal?.description}

@@ -151,7 +151,9 @@
             {
                 throw new ItemNotFoundException("Invalid nominal/department combination entered");
             }
-            
+
+            entity.NominalCode = nominalAccount.NominalCode;
+            entity.DepartmentCode = nominalAccount.DepartmentCode;
             return entity;
         }
 
@@ -427,7 +429,9 @@
                 throw new ItemNotFoundException("Invalid nominal/department combination entered");
             }
             entity.Nominal = nominalAccount.Nominal;
+            entity.NominalCode = nominalAccount.NominalCode;
             entity.Department = nominalAccount.Department;
+            entity.DepartmentCode = nominalAccount.DepartmentCode;
         }
 
         private string GetNextState(string from, bool changeIsFromFunction = false)
