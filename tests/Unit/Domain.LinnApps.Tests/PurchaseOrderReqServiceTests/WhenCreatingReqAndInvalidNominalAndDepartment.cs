@@ -1,12 +1,12 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderReqServiceTests
+namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderReqServiceTests
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Linq.Expressions;
 
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -15,11 +15,11 @@
 
     using NUnit.Framework;
 
-    public class WhenCreatingAndNoRequestedByName : ContextBase
+    public class WhenCreatingReqAndInvalidNominalAndDepartment : ContextBase
     {
         private PurchaseOrderReq candidate;
-
-        private PurchaseOrderReq result;
+        
+        private Action action;
 
         [SetUp]
         public void SetUp()
@@ -41,24 +41,17 @@
                         DateClosed = null,
                         OrderHold = "N"
                     });
-            this.NominalAccountRepository
-                .FilterBy(Arg.Any<Expression<Func<NominalAccount, bool>>>())
-                .Returns(new List<NominalAccount>
-                             {
-                                 new NominalAccount()
-                             }.AsQueryable());
             this.MockPartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { StockControlled = "N" });
             this.EmployeeRepository.FindById(this.candidate.RequestedById).Returns(
                 new Employee());
-            this.result = this.Sut.Create(this.candidate, new List<string>());
+            this.action = () => this.Sut.Create(this.candidate, new List<string>());
         }
 
         [Test]
-        public void ShouldAppendOrderRefRemark()
+        public void ShouldThrowException()
         {
-            this.result.RemarksForOrder.Should().Be(
-                $"Please send with reference PO Req 666. {Environment.NewLine}Something Remarkable.");
+            this.action.Should().Throw<ItemNotFoundException>();
         }
     }
 }

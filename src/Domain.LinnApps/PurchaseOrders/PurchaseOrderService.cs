@@ -232,7 +232,7 @@
                 {
                     throw new ItemNotFoundException("Invalid nominal code/dept");
                 }
-
+                
                 detail.OrderPosting.NominalAccount = nominalAccount;
 
                 this.SetDetailFieldsForCreation(detail, newOrderNumber);
