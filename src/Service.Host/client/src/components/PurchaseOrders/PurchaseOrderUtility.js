@@ -1696,7 +1696,9 @@ function PurchaseOrderUtility({ creating }) {
                                                     }}
                                                     searchResults={
                                                         departmentsSearchResults?.length
-                                                            ? departmentsSearchResults
+                                                            ? departmentsSearchResults.filter(
+                                                                  x => !x.dateClosed
+                                                              )
                                                             : nominalAccountDepartmentsSearchResults
                                                     }
                                                     loading={
@@ -1783,7 +1785,9 @@ function PurchaseOrderUtility({ creating }) {
                                                     }}
                                                     searchResults={
                                                         nominalSearchResults?.length
-                                                            ? nominalSearchResults
+                                                            ? nominalSearchResults.filter(
+                                                                  x => !x.dateClosed
+                                                              )
                                                             : nominalAccountNominalsSearchResults
                                                     }
                                                     loading={
