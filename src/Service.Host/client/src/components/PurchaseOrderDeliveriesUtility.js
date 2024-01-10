@@ -186,7 +186,7 @@ function PurchaseOrderDeliveriesUtility({
                     disableRowSelectionOnClick
                     loading={loading}
                     hideFooter
-                    checkboxSelection={false}
+                    checkboxSelection
                     selected={rows.filter(r => r.selected).map(r => r.id)}
                     onRowSelectionModelChange={selected => {
                         setRows(rs =>
