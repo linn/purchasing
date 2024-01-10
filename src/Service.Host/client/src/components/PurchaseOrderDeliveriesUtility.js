@@ -183,10 +183,10 @@ function PurchaseOrderDeliveriesUtility({
                     rowHeight={50}
                     autoHeight
                     columnBuffer={6}
-                    disableSelectionOnClick
+                    disableRowSelectionOnClick
                     loading={loading}
                     hideFooter
-                    checkboxSelection
+                    checkboxSelection={false}
                     selected={rows.filter(r => r.selected).map(r => r.id)}
                     onRowSelectionModelChange={selected => {
                         setRows(rs =>
