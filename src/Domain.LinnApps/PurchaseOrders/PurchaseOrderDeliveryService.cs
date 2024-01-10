@@ -430,7 +430,6 @@
             var newDeliveries = updatedDeliveriesForOrderLine.Select(
                 del =>
                 {
-
                     var existing = list.FirstOrDefault(x => x.DeliverySeq == del.DeliverySeq);
 
                     var vatAmount = Math.Round(

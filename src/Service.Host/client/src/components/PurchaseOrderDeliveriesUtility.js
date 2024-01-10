@@ -183,7 +183,7 @@ function PurchaseOrderDeliveriesUtility({
                     rowHeight={50}
                     autoHeight
                     columnBuffer={6}
-                    disableSelectionOnClick
+                    disableRowSelectionOnClick
                     loading={loading}
                     hideFooter
                     checkboxSelection
