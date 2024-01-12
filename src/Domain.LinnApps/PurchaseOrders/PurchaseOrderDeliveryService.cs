@@ -415,7 +415,7 @@
                 throw new PurchaseOrderDeliveryException("Cannot update deliveries - Order is cancelled.");
             }
 
-            if (order.DocumentTypeName != "PO")
+            if (order.DocumentTypeName == "CO")
             {
                 throw new PurchaseOrderDeliveryException("Cannot split deliveries - Order is not a PO.");
             }
