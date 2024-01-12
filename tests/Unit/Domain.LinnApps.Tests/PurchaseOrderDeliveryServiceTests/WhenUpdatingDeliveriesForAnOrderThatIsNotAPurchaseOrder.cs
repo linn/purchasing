@@ -25,7 +25,7 @@
             this.PurchaseLedgerMaster.GetRecord().Returns(new PurchaseLedgerMaster { OkToRaiseOrder = "Y" });
             this.PurchaseOrderRepository.FindById(123456).Returns(new PurchaseOrder
                                                                       {
-                                                                          DocumentType = new DocumentType { Name = "RO" },
+                                                                          DocumentType = new DocumentType { Name = "CO" },
                                                                           Details = new List<PurchaseOrderDetail>
                                                                               {
                                                                                   new PurchaseOrderDetail { Line = 1 }
