@@ -940,8 +940,8 @@ function POReqUtility({ creating }) {
                                     number
                                     propertyName="unitPrice"
                                     onChange={(propertyName, newValue) =>
-                                        newValue < 1
-                                            ? handleFieldChange(propertyName, 1)
+                                        newValue < 0.01
+                                            ? handleFieldChange(propertyName, 0.01)
                                             : handleFieldChange(propertyName, newValue)
                                     }
                                     disabled={!editingValueFieldsAllowed && !userHasFinancePower()}
