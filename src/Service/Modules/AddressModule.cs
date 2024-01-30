@@ -52,11 +52,10 @@
             string searchTerm,
             IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource> addressService)
         {
-            int.TryParse(searchTerm, out var id);
             var result = addressService.FilterBy(
                 new AddressResource
                     {
-                        AddressId = id,
+                        AddressId = int.TryParse(searchTerm, out var id) ? id : null,
                         Addressee = searchTerm?.Trim(),
                         PostCode = searchTerm?.Trim()
                     });
