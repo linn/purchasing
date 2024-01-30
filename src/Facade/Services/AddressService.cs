@@ -78,7 +78,14 @@
 
         protected override Expression<Func<Address, bool>> FilterExpression(AddressResource searchResource)
         {
-            return x => x.Addressee.ToUpper().Contains(searchResource.Addressee.ToUpper());
+            if (searchResource.AddressId.HasValue)
+            {
+                return x => x.AddressId == searchResource.AddressId.Value && !x.DateInvalid.HasValue;
+            }
+            
+            return x => (x.Addressee.ToUpper().Contains(searchResource.Addressee.ToUpper()) 
+                        || string.Equals(x.PostCode, searchResource.PostCode, StringComparison.CurrentCultureIgnoreCase))
+                        && !x.DateInvalid.HasValue;
         }
 
         protected override Expression<Func<Address, bool>> FindExpression(AddressResource searchResource)

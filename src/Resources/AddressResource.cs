@@ -2,7 +2,7 @@
 {
     public class AddressResource
     {
-        public int AddressId { get; set; }
+        public int? AddressId { get; set; }
 
         public string Addressee { get; set; }
 
@@ -23,5 +23,7 @@
         public string CountryName { get; set; }
 
         public string FullAddress { get; set; }
+        
+        public string DateInvalid { get; set; }
     }
 }
