@@ -23,7 +23,5 @@
         public string CountryName { get; set; }
 
         public string FullAddress { get; set; }
-        
-        public string DateInvalid { get; set; }
     }
 }
