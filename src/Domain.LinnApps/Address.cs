@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps
 {
+    using System;
+
     public class Address
     {
         public int AddressId { get; set; }
@@ -21,5 +23,7 @@
         public Country Country { get; set; }
 
         public FullAddress FullAddress { get; set; }
+        
+        public DateTime? DateInvalid { get; set; }
     }
 }

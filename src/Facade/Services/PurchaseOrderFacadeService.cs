@@ -566,7 +566,7 @@
                            ExchangeRate = resource.ExchangeRate,
                            IssuePartsToSupplier = resource.IssuePartsToSupplier,
                            DeliveryAddressId = resource.DeliveryAddress.AddressId,
-                           OrderAddressId = resource.OrderAddress.AddressId,
+                           OrderAddressId = resource.OrderAddress.AddressId.GetValueOrDefault(),
                            InvoiceAddressId = resource.InvoiceAddressId,
                            RequestedById = resource.RequestedBy.Id ?? (int)resource.EnteredBy.Id,
                            EnteredById = (int)resource.EnteredBy.Id,

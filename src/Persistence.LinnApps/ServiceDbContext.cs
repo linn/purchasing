@@ -437,6 +437,7 @@
             entity.Property(e => e.Line4).HasColumnName("ADDRESS_4").HasMaxLength(40);
             entity.HasOne(e => e.Country).WithMany().HasForeignKey("COUNTRY");
             entity.Property(e => e.PostCode).HasColumnName("POSTAL_CODE").HasMaxLength(20);
+            entity.Property(e => e.DateInvalid).HasColumnName("DATE_INVALID");
             entity.HasOne(a => a.FullAddress).WithMany().HasForeignKey(x => x.AddressId);
         }
 

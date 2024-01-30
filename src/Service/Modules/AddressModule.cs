@@ -55,7 +55,9 @@
             var result = addressService.FilterBy(
                 new AddressResource
                     {
-                        Addressee = searchTerm
+                        AddressId = int.TryParse(searchTerm, out var id) ? id : null,
+                        Addressee = searchTerm?.Trim(),
+                        PostCode = searchTerm?.Trim()
                     });
 
             await res.Negotiate(result);
