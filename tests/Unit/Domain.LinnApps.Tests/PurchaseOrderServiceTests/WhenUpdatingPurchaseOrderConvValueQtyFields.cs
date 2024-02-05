@@ -415,7 +415,7 @@
             //updated based on conv factor
             firstDetail.OrderUnitPriceCurrency.Should().Be(400.44m);
 
-            firstDetail.BaseOurUnitPrice.Should().Be(250.28m);
+            firstDetail.BaseOurUnitPrice.Should().Be(250.275m);
 
             // our qty * our unit price
             firstDetail.NetTotalCurrency.Should().Be(19821.78m);
@@ -493,13 +493,13 @@
             delivery.DeliveryTotalCurrency.Should().Be(440.99m);
 
             // base our unit price, base order unit price
-            delivery.BaseOurUnitPrice.Should().Be(250.28m);
+            delivery.BaseOurUnitPrice.Should().Be(250.275m);
             delivery.BaseOrderUnitPrice.Should().Be(500.55m);
 
             // (our delivery qty (2) * base our unit price) + base vat total  = base delivery total
-            delivery.BaseNetTotal.Should().Be(500.56m);
+            delivery.BaseNetTotal.Should().Be(500.55m);
             delivery.BaseVatTotal.Should().Be(50.69m);
-            delivery.BaseDeliveryTotal.Should().Be(551.25m);
+            delivery.BaseDeliveryTotal.Should().Be(551.24m);
         }
        
         [Test]
@@ -524,13 +524,13 @@
             delivery.DeliveryTotalCurrency.Should().Be(5046.05m);
 
             // base our unit price, base order unit price
-            delivery.BaseOurUnitPrice.Should().Be(250.28m);
+            delivery.BaseOurUnitPrice.Should().Be(250.275m);
             delivery.BaseOrderUnitPrice.Should().Be(500.55m);
 
             // (our delivery qty (25) * base our unit price) + base vat total  = base delivery total
-            delivery.BaseNetTotal.Should().Be(6257.00m);
+            delivery.BaseNetTotal.Should().Be(6256.88m);
             delivery.BaseVatTotal.Should().Be(50.69m);
-            delivery.BaseDeliveryTotal.Should().Be(6307.69m);
+            delivery.BaseDeliveryTotal.Should().Be(6307.56m);
         }
     }
 }

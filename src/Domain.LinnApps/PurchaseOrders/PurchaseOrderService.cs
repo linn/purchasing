@@ -1110,11 +1110,11 @@
             current.BaseNetTotal = Math.Round(netTotal / exchangeRate, 2, MidpointRounding.AwayFromZero);
             current.BaseOrderUnitPrice = Math.Round(
                 current.OrderUnitPriceCurrency.GetValueOrDefault() / exchangeRate,
-                2,
+                5,
                 MidpointRounding.AwayFromZero);
             current.BaseOurUnitPrice = Math.Round(
                 current.OurUnitPriceCurrency.GetValueOrDefault() / exchangeRate,
-                2,
+                5,
                 MidpointRounding.AwayFromZero);
 
             current.BaseVatTotal = Math.Round(
