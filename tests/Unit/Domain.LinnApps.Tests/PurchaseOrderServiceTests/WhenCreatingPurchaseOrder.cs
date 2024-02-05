@@ -178,7 +178,7 @@
             // updated based on conv factor
             firstDetail.OrderUnitPriceCurrency.Should().Be(200.22m);
 
-            firstDetail.BaseOurUnitPrice.Should().Be(250.28m);
+            firstDetail.BaseOurUnitPrice.Should().Be(250.275m);
 
             // our qty * our unit price
             firstDetail.NetTotalCurrency.Should().Be(19821.78m);
