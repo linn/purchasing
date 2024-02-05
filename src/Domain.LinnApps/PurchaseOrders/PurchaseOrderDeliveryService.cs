@@ -249,7 +249,7 @@
                         this.purchaseOrdersPack.GetVatAmountSupplier(
                             detail.BaseOurUnitPrice.GetValueOrDefault() * update.Qty,
                             existingDelivery.PurchaseOrderDetail.PurchaseOrder.SupplierId),
-                        2);
+                        5);
                     updatedDeliveries.Add(new PurchaseOrderDelivery
                     {
                         OrderNumber = group.OrderNumber,
@@ -269,10 +269,10 @@
                         BaseDeliveryTotal = Math.Round(
                                                       (update.Qty * detail.BaseOurUnitPrice.GetValueOrDefault())
                                                     + baseVatAmount,
-                                                      2),
+                                                      5),
                         BaseNetTotal = Math.Round(
                                                       update.Qty * detail.BaseOurUnitPrice.GetValueOrDefault(),
-                                                      2),
+                                                      5),
                         OrderDeliveryQty = update.Qty / detail.OrderConversionFactor,
                         BaseOrderUnitPrice = existingDelivery.BaseOrderUnitPrice,
                         VatTotalCurrency = vatAmount,
@@ -442,7 +442,7 @@
                         this.purchaseOrdersPack.GetVatAmountSupplier(
                             detail.BaseOurUnitPrice.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
                             order.SupplierId),
-                        2);
+                        5);
                     var reason = del.DateAdvised.HasValue ? "ADVISED" : "REQUESTED";
 
                     // update the existing record if it exists
@@ -482,12 +482,12 @@
                         existing.BaseOrderUnitPrice = detail.BaseOrderUnitPrice;
                         existing.BaseNetTotal = Math.Round(
                             del.OurDeliveryQty.GetValueOrDefault() * detail.BaseOurUnitPrice.GetValueOrDefault(),
-                            2);
+                            5);
                         existing.BaseVatTotal = baseVatAmount;
                         existing.BaseDeliveryTotal = Math.Round(
                             (del.OurDeliveryQty.GetValueOrDefault() * detail.BaseOurUnitPrice.GetValueOrDefault())
                             + baseVatAmount,
-                            2);
+                            5);
                         existing.RescheduleReason = reason;
                         existing.AvailableAtSupplier = del.AvailableAtSupplier;
                         return existing;
@@ -523,13 +523,13 @@
                         BaseNetTotal = Math.Round(
                                              del.OurDeliveryQty.GetValueOrDefault()
                                              * detail.BaseOurUnitPrice.GetValueOrDefault(),
-                                             2),
+                                             5),
                         BaseVatTotal = baseVatAmount,
                         BaseDeliveryTotal = Math.Round(
                                                  (del.OurDeliveryQty.GetValueOrDefault()
                                                   * detail.BaseOurUnitPrice.GetValueOrDefault())
                                                  + baseVatAmount,
-                                                 2),
+                                                 5),
                         QuantityOutstanding = del.OurDeliveryQty,
                         QtyNetReceived = 0,
                         QtyPassedForPayment = 0,
