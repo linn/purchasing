@@ -147,9 +147,28 @@
                 @{// todo stop hardcoding app.linn and try get bigger linn logo
                   }
             </div>
+            @{
+                String title;
+                switch (@Model.DocumentTypeName)
+                {
+                    case "PO":
+                        title = "Purchase Order";
+                        break;
+                    case "RO":
+                        title = "Returns Order";
+                        break;
+                    case "CO":
+                        title = "Credit Order";
+                        break;
+                    
+                    default:
+                        title = "Purchase Order";
+                        break;
+                }
+            }
             <div class="item1">
                 <p>
-                    <b>Purchase Order</b>
+                    <b>@title</b>
                 </p>
             </div>
 
