@@ -148,9 +148,7 @@
                   }
             </div>
             <div class="item1">
-                <p>
-                    <b>Purchase Order</b>
-                </p>
+                <p>@Model.DocumentType.Description</p>
             </div>
 
             <div class="item2">
@@ -170,7 +168,7 @@
                 <p>Order number: @Model.OrderNumber</p>
             </div>
             <div class="title">
-                <p>Purchase Order</p>
+               <p>@Model.DocumentType.Description</p>
             </div>
             <div class="date">
                 <p>Date: @Model.OrderDate.ToString("dd-MMM-yyyy")</p>
