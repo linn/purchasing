@@ -148,27 +148,7 @@
                   }
             </div>
             <div class="item1">
-                <p>
-                    @{
-                        switch (@Model.DocumentTypeName)
-                        {
-                            case "PO":
-                                @:
-                            <b>Purchase Order</b>
-                                break;
-                            case "RO":
-                                @:<b>Returns Order</b>
-                                break;
-                            case "CO":
-                                @:<p>Credit Order</p>
-                                break;
-
-                            default:
-                                @:<b>Purchase Order</b>
-                                break;
-                        }
-                    }
-                </p>
+                <p>@Model.DocumentType.Description</p>
             </div>
 
             <div class="item2">
@@ -188,24 +168,7 @@
                 <p>Order number: @Model.OrderNumber</p>
             </div>
             <div class="title">
-                @{
-                    switch (@Model.DocumentTypeName)
-                    {
-                        case "PO":
-                            @:<p>Purchase Order</p>
-                            break;
-                        case "RO":
-                            @:<p>Returns Order</p>
-                            break;
-                        case "CO":
-                            @:<p>Credit Order</p>
-                            break;
-
-                        default:
-                            @:<p>Purchase Order</p>
-                            break;
-                    }
-                }
+               <p>@Model.DocumentType.Description</p>
             </div>
             <div class="date">
                 <p>Date: @Model.OrderDate.ToString("dd-MMM-yyyy")</p>
