@@ -214,8 +214,7 @@
                 {
                     throw new PurchaseOrderException($"Cannot order part {detail.PartNumber} as it could not be found");
                 }
-
-
+                
                 if (part.DatePurchPhasedOut.HasValue)
                 {
                     throw new PurchaseOrderException($"Cannot order part {detail.PartNumber} as it has been phased out");
