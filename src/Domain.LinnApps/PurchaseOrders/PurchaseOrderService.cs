@@ -208,7 +208,20 @@
           
             foreach (var detail in order.Details)
             {
-                if (!this.partQueryRepository.FindBy(x => x.PartNumber == detail.PartNumber).DateLive.HasValue)
+                var part = this.partQueryRepository.FindBy(x => x.PartNumber == detail.PartNumber);
+
+                if (part == null)
+                {
+                    throw new PurchaseOrderException($"Cannot order part {detail.PartNumber} as it could not be found");
+                }
+
+
+                if (part.DatePurchPhasedOut.HasValue)
+                {
+                    throw new PurchaseOrderException($"Cannot order part {detail.PartNumber} as it has been phased out");
+                }
+
+                if (!part.DateLive.HasValue)
                 {
                     throw new PurchaseOrderException("Cannot Order Non-Live Part!");
                 }

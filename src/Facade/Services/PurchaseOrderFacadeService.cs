@@ -349,7 +349,17 @@
         {
             var candidate = this.BuildEntityFromResourceHelper(resource);
 
-            var order = this.domainService.CreateOrder(candidate, privileges);
+            PurchaseOrder order;
+            try
+            {
+                order = this.domainService.CreateOrder(candidate, privileges);
+            }
+            catch (DomainException exception)
+            {
+                this.logger.Info($"Failed to create order. {exception.Message}");
+                return new BadRequestResult<PurchaseOrderResource>(exception.Message);
+            }
+
             this.transactionManager.Commit();
 
             this.domainService.CreateMiniOrder(order);
