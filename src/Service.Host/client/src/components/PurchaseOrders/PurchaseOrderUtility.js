@@ -553,7 +553,7 @@ function PurchaseOrderUtility({ creating }) {
                                     <Grid item xs={12}>
                                         <ErrorCard
                                             errorMessage={
-                                                itemError?.details?.error ?? itemError.statusText
+                                                itemError?.details ?? itemError.statusText
                                             }
                                         />
                                     </Grid>
@@ -567,7 +567,7 @@ function PurchaseOrderUtility({ creating }) {
                                     <Grid item xs={12}>
                                         <ErrorCard
                                             errorMessage={
-                                                suggestedValuesError?.details?.error ??
+                                                suggestedValuesError?.details ??
                                                 suggestedValuesError.statusText
                                             }
                                         />

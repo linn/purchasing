@@ -19,7 +19,7 @@
 
     using NUnit.Framework;
 
-    public class WhenCreatingOrderAndPartNotLive : ContextBase
+    public class WhenCreatingOrderAndPartIsPhasedOut : ContextBase
     {
         private readonly int orderNumber = 600179;
 
@@ -51,7 +51,7 @@
                                                      OrderNumber = this.orderNumber,
                                                      OurQty = 99m,
                                                      OrderQty = 12m,
-                                                     PartNumber = "macbookz",
+                                                     PartNumber = "P1",
                                                      RohsCompliant = "No",
                                                      SuppliersDesignation = "updated suppliers designation",
                                                      StockPoolCode = "0141noidea",
@@ -143,7 +143,7 @@
                 new PartSupplier { UnitOfMeasure = "Potatoes", LeadTimeWeeks = 2 });
 
             this.PartQueryRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(new Part { DateLive = null });
+                .Returns(new Part { DateLive = 1.January(2020), DatePurchPhasedOut = 1.January(2021) });
 
             this.action = () => this.Sut.CreateOrder(this.order, new List<string>());
         }
@@ -152,7 +152,7 @@
         public void ShouldThrowException()
         {
             this.action.Should().Throw<PurchaseOrderException>()
-                .WithMessage("Cannot Order Non-Live Part!");
+                .WithMessage($"Cannot order part P1 as it has been phased out");
         }
     }
 }
