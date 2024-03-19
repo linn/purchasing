@@ -5,7 +5,7 @@ import {
     Page,
     Dropdown,
     Title,
-    Typeahead,
+    Search,
     collectionSelectorHelpers,
     reportSelectorHelpers,
     DatePicker
@@ -20,8 +20,9 @@ function OrdersBySupplierReportOptions() {
     const suppliersSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.suppliers)
     )?.map(c => ({
+        ...c,
         id: c.id,
-        name: c.id.toString(),
+        name: c.name,
         description: c.name
     }));
     const suppliersSearchLoading = useSelector(state =>
@@ -59,15 +60,18 @@ function OrdersBySupplierReportOptions() {
         prevOptions?.cancelled ? prevOptions.cancelled : 'N'
     );
 
-    const handleSupplierChange = selectedsupplier => {
-        setSupplier(selectedsupplier);
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const handleSupplierChange = selected => {
+        setSupplier(selected);
+        setSearchTerm(`${selected.id} - ${selected.name}`);
     };
 
     const handleClick = () =>
         history.push({
             pathname: `/purchasing/reports/orders-by-supplier/report`,
             search:
-                `?id=${supplier.id}` +
+                `?id=${supplier.id ?? searchTerm}` +
                 `&fromDate=${fromDate.toISOString()}` +
                 `&toDate=${toDate.toISOString()}` +
                 `&outstanding=${outstandingOnly}` +
@@ -76,25 +80,37 @@ function OrdersBySupplierReportOptions() {
                 `&credits=${credits}` +
                 `&cancelled=${cancelled}`
         });
-
+    const getClosedString = dateClosed =>
+        dateClosed ? `closed: ${new Date(dateClosed).toLocaleDateString('en-GB')}` : '';
     return (
         <Page history={history} homeUrl={config.appRoot} width="s">
             <Title text="Orders By Supplier" />
             <Grid container spacing={3} justifyContent="center">
                 <Grid item xs={12} data-testid="supplierSearch">
-                    <Typeahead
-                        label="Supplier"
-                        title="Search for a supplier"
-                        onSelect={handleSupplierChange}
-                        items={suppliersSearchResults}
+                    <Search
+                        propertyName="supplier"
+                        label="Search for a Supplier"
+                        value={searchTerm}
+                        resultsInModal
+                        fullWidth
+                        handleValueChange={(_, newVal) => setSearchTerm(newVal)}
+                        search={s => dispatch(suppliersActions.search(s))}
+                        searchResults={suppliersSearchResults.map(s => ({
+                            ...s,
+                            chips: [
+                                {
+                                    text: s.dateClosed
+                                        ? `${getClosedString(s.dateClosed)}`
+                                        : 'open',
+                                    color: s.dateClosed ? 'red' : 'green'
+                                }
+                            ]
+                        }))}
+                        displayChips
                         loading={suppliersSearchLoading}
-                        fetchItems={searchTerm => dispatch(suppliersActions.search(searchTerm))}
+                        priorityFunction="closestMatchesFirst"
+                        onResultSelect={handleSupplierChange}
                         clearSearch={() => dispatch(suppliersActions.clearSearch)}
-                        value={`${supplier?.id} - ${supplier?.description}`}
-                        modal
-                        links={false}
-                        debounce={1000}
-                        minimumSearchTermLength={2}
                     />
                 </Grid>
                 <Grid item xs={6}>

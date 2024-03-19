@@ -123,12 +123,12 @@
                                                || (includeCredits == "O" && x.DocumentTypeName == "CO")));
 
             var supplier = this.supplierRepository.FindById(supplierId);
-
+            var closedString = supplier.DateClosed.HasValue ? " **CLOSED**" : string.Empty; 
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
                 CalculationValueModelType.Value,
                 null,
-                $"Purchase Orders By Supplier - {supplierId}: {supplier.Name}");
+                $"Purchase Orders By Supplier - {supplierId}: {supplier.Name}{closedString}");
 
             AddSupplierReportColumns(reportLayout);
 

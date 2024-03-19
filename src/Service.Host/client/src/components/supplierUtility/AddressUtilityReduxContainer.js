@@ -6,7 +6,6 @@ import {
 } from '@linn-it/linn-form-components-library';
 import PropTypes from 'prop-types';
 import AddressUtility from './AddressUtility';
-import { address as addressItemType, addresses, countries } from '../../itemTypes';
 
 // this container just wraps the component in all the redux gubbins necessary to make it work
 // I wanted to common-ise the component and not couple it to redux dispatching and selecting
@@ -17,12 +16,15 @@ function AddressUtilityReduxContainer({
     addressActions,
     addressesActions,
     countriesActions,
-    defaultAddressee
+    defaultAddressee,
+    addressItemType,
+    addressesItemType,
+    countriesItemType
 }) {
     const dispatch = useDispatch();
     const addressStoreItem = useSelector(state => state[addressItemType.item]);
-    const addressesStoreItem = useSelector(state => state[addresses.item]);
-    const countriesStoreItem = useSelector(state => state[countries.item]);
+    const addressesStoreItem = useSelector(state => state[addressesItemType.item]);
+    const countriesStoreItem = useSelector(state => state[countriesItemType.item]);
     const address = addressStoreItem.item;
 
     if (address?.addressId) {
@@ -68,11 +70,17 @@ AddressUtilityReduxContainer.propTypes = {
     addressesActions: PropTypes.shape({ search: PropTypes.func, clearSearch: PropTypes.func })
         .isRequired,
     countriesActions: PropTypes.shape({ search: PropTypes.func, clearSearch: PropTypes.func })
-        .isRequired
+        .isRequired,
+    addressItemType: PropTypes.shape({ item: PropTypes.string }),
+    addressesItemType: PropTypes.shape({ item: PropTypes.string }),
+    countriesItemType: PropTypes.shape({ item: PropTypes.string })
 };
 
 AddressUtilityReduxContainer.defaultProps = {
-    defaultAddressee: null
+    defaultAddressee: null,
+    addressItemType: { item: 'address' },
+    addressesItemType: { item: 'addresses' },
+    countriesItemType: { item: 'countries' }
 };
 
 export default AddressUtilityReduxContainer;

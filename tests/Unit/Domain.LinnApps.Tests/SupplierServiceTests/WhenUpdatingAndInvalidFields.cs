@@ -90,7 +90,7 @@
                 .WithMessage(
                     "The inputs for the following fields are empty/invalid: Supplier Id, "
                     + "Supplier Name, Invoice Contact Method, Payment Days, "
-                    + "Payment Method, Account Controller, Order Addressee, Main Invoice Contact, Main Order Contact, ");
+                    + "Payment Method, Account Controller, Order Addressee, Country, Main Invoice Contact, Main Order Contact, ");
         }
     }
 }

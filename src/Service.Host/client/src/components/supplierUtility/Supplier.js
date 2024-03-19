@@ -220,7 +220,11 @@ function Supplier({ creating }) {
                             <>
                                 {itemError && (
                                     <Grid item xs={12}>
-                                        <ErrorCard errorMessage={itemError.details} />
+                                        <ErrorCard
+                                            errorMessage={
+                                                itemError.details?.error ?? itemError.details
+                                            }
+                                        />
                                     </Grid>
                                 )}
                                 <Dialog open={holdChangeDialogOpen} fullWidth maxWidth="md">
