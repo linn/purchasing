@@ -82,3 +82,4 @@ local-update.sh
 *nCrunchTemp*
 
 *.DS_Store
+src/Service.Host/Service.Host.sln
