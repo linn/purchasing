@@ -4,14 +4,14 @@ import Grid from '@mui/material/Grid';
 import {
     InputField,
     Typeahead,
-    collectionSelectorHelpers
+    collectionSelectorHelpers,
+    AddressUtilityReduxContainer
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import addressesActions from '../../../actions/addressesActions';
 import addressActions from '../../../actions/addressActions';
 import countriesActions from '../../../actions/countriesActions';
-import AddressUtilityReduxContainer from '../AddressUtilityReduxContainer';
 
 function WhereTab({
     orderAddressId,
