@@ -16,7 +16,6 @@ import AddressUtilityReduxContainer from '../AddressUtilityReduxContainer';
 function WhereTab({
     orderAddressId,
     orderFullAddress,
-    // invoiceAddressId,
     invoiceFullAddress,
     country,
     handleFieldChange,
@@ -24,7 +23,6 @@ function WhereTab({
 }) {
     const dispatch = useDispatch();
 
-    // const address = useSelector(state => itemSelectorHelpers.getItem(state.address));
     const countriesSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(
             state.countries,
@@ -38,24 +36,6 @@ function WhereTab({
         collectionSelectorHelpers.getSearchLoading(state.countries)
     );
     const searchCountries = searchTerm => dispatch(countriesActions.search(searchTerm));
-    // useEffect(() => {
-    //     if (address?.addressId) {
-    //         if (orderAddressDialogOpen) {
-    // handleFieldChange('orderAddressId', address.addressId);
-    // handleFieldChange('orderFullAddress', address.fullAddress);
-    // handleFieldChange('orderFullAddress', address.fullAddress);
-    // handleFieldChange('country', address.countryCode);
-    //             setOrderAddressDialogOpen(false);
-    //             dispatch(addressActions.clearItem());
-    //         }
-    //         if (invoiceAddressDialogOpen) {
-    //             handleFieldChange('invoiceAddressId', address.addressId);
-    //             handleFieldChange('invoiceFullAddress', address.fullAddress);
-    //             setInvoiceAddressDialogOpen(false);
-    //             dispatch(addressActions.clearItem());
-    //         }
-    //     }
-    // }, [address, handleFieldChange, orderAddressDialogOpen, invoiceAddressDialogOpen, dispatch]);
     const updateOrderAddress = newAddress => {
         handleFieldChange('orderAddressId', newAddress.addressId);
         handleFieldChange('orderFullAddress', newAddress.fullAddress);
@@ -156,7 +136,6 @@ function WhereTab({
 WhereTab.propTypes = {
     orderAddressId: PropTypes.number,
     orderFullAddress: PropTypes.string,
-    // invoiceAddressId: PropTypes.number,
     invoiceFullAddress: PropTypes.string,
     handleFieldChange: PropTypes.func.isRequired,
     country: PropTypes.string,
@@ -165,7 +144,6 @@ WhereTab.propTypes = {
 WhereTab.defaultProps = {
     orderAddressId: null,
     orderFullAddress: null,
-    // invoiceAddressId: null,
     invoiceFullAddress: null,
     country: null,
     supplierName: null
