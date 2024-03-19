@@ -30,6 +30,7 @@
                                    InvoiceContactMethod = "POST",
                                    OrderContactMethod = "EMAIL",
                                    PaymentDays = 1,
+                                   Country = "GB",
                                    PaymentMethod = "PAYMENT METHOD",
                                    OrderAddress = new Address { FullAddress = new FullAddress { AddressString = "ADDRESS", Id = 1 } },
                                    AccountController = new Employee { Id = 123 },

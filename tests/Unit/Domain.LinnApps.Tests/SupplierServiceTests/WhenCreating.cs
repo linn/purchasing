@@ -27,6 +27,7 @@
                                      InvoiceContactMethod = "METHOD",
                                      PaymentDays = 1,
                                      PaymentMethod = "PAYMENT METHOD",
+                                     Country = "GB",
                                      AccountController = new Employee { Id = 1 },
                                      OrderAddress = new Address { AddressId = 1, FullAddress = new FullAddress { Id = 1 } },
                                      SupplierContacts = new List<SupplierContact>

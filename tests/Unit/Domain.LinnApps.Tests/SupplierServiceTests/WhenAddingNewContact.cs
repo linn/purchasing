@@ -41,6 +41,7 @@
             {
                 Name = "NEW NAME",
                 SupplierId = 1,
+                Country = "GB",
                 VendorManager = new VendorManager { Id = "V" },
                 InvoiceContactMethod = "POST",
                 OrderContactMethod = "EMAIL",
