@@ -51,8 +51,8 @@ function WhereTab({
                 <InputField
                     fullWidth
                     value={orderFullAddress}
-                    label=" Full Address"
-                    propertyName="addressee"
+                    label=" Order Address"
+                    propertyName="orderFullAddress"
                     onChange={() => {}}
                     rows={7}
                 />
@@ -86,7 +86,7 @@ function WhereTab({
                 <InputField
                     fullWidth
                     value={invoiceFullAddress}
-                    label="Full Address"
+                    label="Invoice Address"
                     propertyName="invoiceFullAddress"
                     onChange={() => {}}
                     rows={7}
