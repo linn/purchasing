@@ -323,6 +323,11 @@
                 errors.Add("Order Addressee");
             }
 
+            if (string.IsNullOrEmpty(candidate.Country))
+            {
+                errors.Add("Country");
+            }
+
             if (candidate.SupplierContacts == null)
             {
                 errors.Add("Supplier Contacts is empty");
@@ -370,19 +375,23 @@
 
             var result = new List<SupplierContact>();
 
-            var currentContacts =
-                this.supplierContactRepository.FilterBy(x => x.SupplierId == supplierContacts.First().SupplierId);
+            var currentContacts = supplierContacts.Any() ?
+                this.supplierContactRepository.FilterBy(x => x.SupplierId == supplierContacts.First().SupplierId) 
+                : null;
 
-            var enumerable = supplierContacts.ToList();
-            foreach (var contact in currentContacts)
+            var enumerable = supplierContacts?.ToList();
+            if (currentContacts != null)
             {
-                if (!enumerable.Select(c => c.ContactId).Contains(contact.ContactId))
+                foreach (var contact in currentContacts)
                 {
-                    var toInvalidate = this.supplierContactRepository.FindById(contact.ContactId);
-                    toInvalidate.DateInvalid = DateTime.Today;
-                }
+                    if (!enumerable.Select(c => c.ContactId).Contains(contact.ContactId))
+                    {
+                        var toInvalidate = this.supplierContactRepository.FindById(contact.ContactId);
+                        toInvalidate.DateInvalid = DateTime.Today;
+                    }
+                } 
             }
-
+            
             foreach (var supplierContact in enumerable)
             {
                 var existingSupplierContact = this.supplierContactRepository.FindById(supplierContact.ContactId);

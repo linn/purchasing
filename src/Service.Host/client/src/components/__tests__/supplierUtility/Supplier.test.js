@@ -135,6 +135,9 @@ describe('When changing tabs...', () => {
         jest.clearAllMocks();
         const state = {
             accountingCompanies: { items: [] },
+            address: {},
+            addresses: {},
+            countries: {},
             supplier: {
                 loading: false,
                 item: {
@@ -176,7 +179,7 @@ describe('When changing tabs...', () => {
     test('should switch to Where tab', () => {
         const tab = screen.getByText('Where');
         fireEvent.click(tab);
-        expect(screen.getByLabelText('Order Addressee')).toBeInTheDocument();
+        expect(screen.getByLabelText('Order Address')).toBeInTheDocument();
     });
     test('should switch to Purch tab', () => {
         const tab = screen.getByText('Purch');

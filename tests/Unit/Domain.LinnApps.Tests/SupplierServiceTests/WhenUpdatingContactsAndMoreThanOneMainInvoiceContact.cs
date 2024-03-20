@@ -29,6 +29,7 @@
                 VendorManager = new VendorManager { Id = "V" },
                 InvoiceContactMethod = "POST",
                 OrderContactMethod = "EMAIL",
+                Country = "GB",
                 PaymentDays = 1,
                 PaymentMethod = "PAYMENT METHOD",
                 OrderAddress = new Address { FullAddress = new FullAddress { AddressString = "ADDRESS", Id = 1 } },

@@ -44,10 +44,6 @@ function ContactTab({ contacts, updateContact, addContact, deleteContacts }) {
 
     const [selectedRows, setSelectedRows] = useState([]);
 
-    const handleSelectionModelChange = model => {
-        setSelectedRows(model);
-    };
-
     return (
         <Grid container spacing={3}>
             <Grid item xs={12}>
@@ -56,7 +52,10 @@ function ContactTab({ contacts, updateContact, addContact, deleteContacts }) {
                     rows={contacts}
                     columns={columns}
                     checkboxSelection
-                    onSelectionModelChange={handleSelectionModelChange}
+                    disableRowSelectionOnClick
+                    onRowSelectionModelChange={selected => {
+                        setSelectedRows(selected);
+                    }}
                     rowHeight={34}
                     autoHeight
                     loading={false}

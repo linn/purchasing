@@ -44,6 +44,7 @@
                 SupplierId = 666,
                 Name = "SUPP",
                 InvoiceContactMethod = "EMAIL",
+                Country = "GB",
                 PaymentDays = 14,
                 PaymentMethod = "BACS",
                 AccountController = new Employee(),

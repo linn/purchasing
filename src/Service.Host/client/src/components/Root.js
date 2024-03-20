@@ -24,7 +24,6 @@ import SpendBySupplier from './reports/SpendBySupplier';
 import SpendBySupplierByDateRangeOptions from './reports/SpendBySupplierByDateRangeOptions';
 import SpendBySupplierByDateRange from './reports/SpendBySupplierByDateRange';
 import Supplier from './supplierUtility/Supplier';
-import AddressUtility from './AddressUtility';
 import SuppliersWithUnacknowledgedOrders from './reports/SuppliersWithUnacknowledgedOrders';
 import UnacknowledgedOrdersReport from './reports/UnacknowledgedOrdersReport';
 import SpendByPartOptions from './reports/SpendByPartOptions';
@@ -177,11 +176,6 @@ function Root({ store }) {
                                         path="/purchasing/part-suppliers/create"
                                         // eslint-disable-next-line react/jsx-props-no-spreading
                                         element={<PartSupplier creating />}
-                                    />
-                                    <Route
-                                        exact
-                                        path="/purchasing/addresses"
-                                        element={<AddressUtility />}
                                     />
                                     <Route
                                         exact

@@ -44,6 +44,7 @@
                                            InvoiceContactMethod = "EMAIL",
                                            PaymentDays = 14, 
                                            PaymentMethod = "BACS",
+                                           Country = "GB",
                                            AccountController = new Employee(),
                                            OrderAddress = new Address(),
                                            SupplierContacts = new SupplierContact[]

@@ -39,6 +39,7 @@
                 InvoiceContactMethod = "POST",
                 LiveOnOracle = "Y",
                 OrderContactMethod = "EMAIL",
+                Country = "GB",
                 Planner = new Planner { Id = 1 },
                 SupplierContacts = new List<SupplierContact>
                                        {

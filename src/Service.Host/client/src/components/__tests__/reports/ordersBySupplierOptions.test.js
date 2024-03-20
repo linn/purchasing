@@ -54,7 +54,7 @@ describe('When component mounts...', () => {
     });
 
     test('Displays search fields with correct default values...', () => {
-        expect(screen.getByText('Supplier')).toBeInTheDocument();
+        expect(screen.getByText('Search for a Supplier')).toBeInTheDocument();
         expect(screen.getByText('From Date')).toBeInTheDocument();
         expect(screen.getByText('To Date')).toBeInTheDocument();
 
