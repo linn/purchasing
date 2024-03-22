@@ -138,7 +138,6 @@
 
             this.CheckIfCanOrderFromSupplier(entity.SupplierId);
 
-            this.CheckPartIsNotStockControlled(entity.PartNumber);
             var requestedBy = this.employeeRepository.FindById(entity.RequestedById);
             entity.RemarksForOrder = string.IsNullOrEmpty(requestedBy?.FullName)
             ? $"Please send with reference PO Req {entity.OrderNumber}. {Environment.NewLine}{entity.RemarksForOrder}"
@@ -391,7 +390,6 @@
             }
 
             this.CheckIfCanOrderFromSupplier(entity.SupplierId);
-            this.CheckPartIsNotStockControlled(entity.PartNumber);
 
             entity.State = updatedEntity.State;
             entity.ReqDate = updatedEntity.ReqDate;
@@ -466,14 +464,5 @@
             }
         }
 
-        private void CheckPartIsNotStockControlled(string partNumber)
-        {
-            var part = this.partRepository.FindBy(p => p.PartNumber == partNumber);
-            if (part.StockControlled == "Y")
-            {
-                throw new UnauthorisedActionException(
-                    "Cannot raise a PO Req for stock controlled part");
-            }
-        }
     }
 }
