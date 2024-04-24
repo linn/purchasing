@@ -1,10 +1,13 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderModuleTests
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
+    using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
@@ -32,7 +35,20 @@
                                Overbook = string.Empty,
                                OverbookQty = 1,
                                SupplierId = 1224,
-                               Supplier = new Supplier { SupplierId = 1224 }
+                               Supplier = new Supplier { SupplierId = 1224 },
+                               LedgerEntries = new List<PurchaseLedger>
+                                                   {
+                                                       new PurchaseLedger
+                                                           {
+                                                               Pltref = 123,
+                                                               DocumentUploaded = "Y"
+                                                           },
+                                                       new PurchaseLedger
+                                                           {
+                                                               Pltref = 456,
+                                                               DocumentUploaded = "N"
+                                                           }
+                                                   }
             };
 
             this.MockPurchaseOrderRepository.FindById(this.orderNumber).Returns(
@@ -66,6 +82,14 @@
             resource.OrderNumber.Should().Be(this.order.OrderNumber);
             resource.OverbookQty.Should().Be(this.order.OverbookQty);
             resource.Supplier.Id.Should().Be(this.order.SupplierId);
+        }
+
+        [Test]
+        public void ShouldBuildLedgerEntryLinks()
+        {
+            var resource = this.Response.DeserializeBody<PurchaseOrderResource>();
+            resource.LedgerEntries.Single(x => x.Tref == 123).Links.Any(x => x.Rel == "invoice-pdf").Should().BeTrue();
+            resource.LedgerEntries.Single(x => x.Tref == 456).Links.Any(x => x.Rel == "invoice-pdf").Should().BeFalse();
         }
     }
 }

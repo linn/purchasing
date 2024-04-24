@@ -1,6 +1,8 @@
 ﻿namespace Linn.Purchasing.Resources
 {
-    public class PurchaseLedgerResource
+    using Linn.Common.Resources;
+
+    public class PurchaseLedgerResource : HypermediaResource
     {
         public string TransType { get; set; }
 

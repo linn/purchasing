@@ -61,5 +61,7 @@
         public decimal UnderOver { get; set; }
 
         public TransactionType TransactionType { get; set; }
+
+        public string DocumentUploaded { get; set; }
     }
 }

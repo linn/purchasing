@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Facade.ResourceBuilders
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -129,7 +130,13 @@
                                             InvoiceRef = e.PlInvoiceRef,
                                             BaseVat = e.BaseVatTotal,
                                             InvoiceDate = e.InvoiceDate.ToString("dd/MM/yyyy"),
-                                            Tref = e.Pltref
+                                            Tref = e.Pltref,
+                                            Links = e.DocumentUploaded == "Y" 
+                                                        ? new LinkResource[1] 
+                                                              {
+                                                                  new LinkResource { Rel = "invoice-pdf", Href = $"/ledgers/purchase/invoice-pdfs?tref={e.Pltref}" }
+                                                              }
+                                                        : Array.Empty<LinkResource>()
                                         })
                        };
         }

@@ -978,6 +978,7 @@
             e.Property(p => p.UnderOver).HasColumnName("UNDER_OVER").HasMaxLength(14);
             e.Property(p => p.ExchangeRate).HasColumnName("EXCHANGE_RATE").HasMaxLength(19);
             e.Property(p => p.LedgerStream).HasColumnName("LEDGER_STREAM").HasMaxLength(8);
+            e.Property(p => p.DocumentUploaded).HasColumnName("DOCUMENT_UPLOADED").HasMaxLength(1);
             e.HasOne(a => a.TransactionType).WithMany().HasForeignKey(a => a.PlTransType);
         }
 
