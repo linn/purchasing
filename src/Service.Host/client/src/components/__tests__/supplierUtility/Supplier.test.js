@@ -179,7 +179,7 @@ describe('When changing tabs...', () => {
     test('should switch to Where tab', () => {
         const tab = screen.getByText('Where');
         fireEvent.click(tab);
-        expect(screen.getByLabelText('Order Address')).toBeInTheDocument();
+        expect(screen.getByLabelText('Order Address (456)')).toBeInTheDocument();
     });
     test('should switch to Purch tab', () => {
         const tab = screen.getByText('Purch');

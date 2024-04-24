@@ -16,6 +16,7 @@ import countriesActions from '../../../actions/countriesActions';
 function WhereTab({
     orderAddressId,
     orderFullAddress,
+    invoiceAddressId,
     invoiceFullAddress,
     country,
     handleFieldChange,
@@ -51,7 +52,7 @@ function WhereTab({
                 <InputField
                     fullWidth
                     value={orderFullAddress}
-                    label=" Order Address"
+                    label={` Order Address (${orderAddressId}) `}
                     propertyName="orderFullAddress"
                     onChange={() => {}}
                     rows={7}
@@ -86,7 +87,7 @@ function WhereTab({
                 <InputField
                     fullWidth
                     value={invoiceFullAddress}
-                    label="Invoice Address"
+                    label={`Invoice Address (${invoiceAddressId}) `}
                     propertyName="invoiceFullAddress"
                     onChange={() => {}}
                     rows={7}
@@ -136,6 +137,7 @@ function WhereTab({
 WhereTab.propTypes = {
     orderAddressId: PropTypes.number,
     orderFullAddress: PropTypes.string,
+    invoiceAddressId: PropTypes.number,
     invoiceFullAddress: PropTypes.string,
     handleFieldChange: PropTypes.func.isRequired,
     country: PropTypes.string,
@@ -143,6 +145,7 @@ WhereTab.propTypes = {
 };
 WhereTab.defaultProps = {
     orderAddressId: null,
+    invoiceAddressId: null,
     orderFullAddress: null,
     invoiceFullAddress: null,
     country: null,
