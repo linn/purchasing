@@ -34,14 +34,14 @@
                        {
                            AddressId = this.databaseService.GetNextVal("ADDR_SEQ"),
                            Country = this.countryRepository.FindById(resource.CountryCode),
-                           Line1 = resource.Line1,
-                           Line2 = resource.Line2,
-                           Line3 = resource.Line3,
-                           Line4 = resource.Line4,
-                           PostCode = resource.PostCode,
-                           Addressee = resource.Addressee,
-                           Addressee2 = resource.Addressee2
-                       };
+                           Line1 = resource.Line1?.Trim(),
+                           Line2 = resource.Line2?.Trim(),
+                           Line3 = resource.Line3?.Trim(),
+                           Line4 = resource.Line4?.Trim(),
+                           PostCode = resource.PostCode?.Trim(),
+                           Addressee = resource.Addressee?.Trim(),
+                           Addressee2 = resource.Addressee2?.Trim()
+            };
         }
 
         protected override void UpdateFromResource(Address entity, AddressResource updateResource, IEnumerable<string> privileges = null)
