@@ -289,7 +289,8 @@ function POReqUtility({ creating }) {
 
     const allowedToCancel = () => !creating && req.links?.some(l => l.rel === 'cancel');
     const allowedToAuthorise = () => !creating && req.state === 'AUTHORISE WAIT';
-    const allowedTo2ndAuthorise = () => !creating && req.state === 'AUTHORISE 2ND WAIT';
+    const allowedTo2ndAuthorise = () =>
+        !creating && req.state === 'AUTHORISE WAIT' && req.authorisedBy;
     const userHasFinancePower = () => req.links?.some(l => l.rel === 'finance-check');
     const allowedToFinanceCheck = () =>
         !creating && userHasFinancePower && req.state === 'FINANCE WAIT';

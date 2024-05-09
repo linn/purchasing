@@ -95,7 +95,7 @@
                         {
                             RowId = rowId,
                             ColumnId = "Description",
-                            TextDisplay = datum.Description.Length > 199 
+                            TextDisplay = datum.Description?.Length > 199 
                                               ? datum.Description.Substring(0, 200) : datum.Description
                         });
                 values.Add(
