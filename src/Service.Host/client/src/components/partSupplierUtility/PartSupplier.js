@@ -66,7 +66,12 @@ function PartSupplier({ creating }) {
 
     const classes = useStyles();
     const reduxDispatch = useDispatch();
-
+    useEffect(
+        () => () => {
+            reduxDispatch(partPriceConversionsActions.clearItem());
+        },
+        [reduxDispatch]
+    );
     const [errorMessage, setErrorMessage] = useState(null);
 
     const searchParts = searchTerm => reduxDispatch(partsActions.search(searchTerm));
@@ -184,20 +189,6 @@ function PartSupplier({ creating }) {
         reduxDispatch(packagingGroupActions.fetch());
         reduxDispatch(employeesActions.fetch());
     }, [reduxDispatch]);
-
-    const partPriceConversionsResult = useSelector(reduxState =>
-        itemSelectorHelpers.getItem(reduxState.partPriceConversions)
-    );
-
-    useEffect(() => {
-        if (partPriceConversionsResult) {
-            dispatch({
-                type: 'fieldChange',
-                fieldName: 'baseOurUnitPrice',
-                payload: partPriceConversionsResult.baseNewPrice
-            });
-        }
-    }, [partPriceConversionsResult]);
 
     useEffect(() => {
         if (query.partId && query.supplierId) {
