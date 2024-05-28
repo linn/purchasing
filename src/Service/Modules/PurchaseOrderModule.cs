@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
-    using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
 
@@ -8,8 +7,8 @@
     using Carter.Response;
 
     using Linn.Common.Facade;
+    using Linn.Common.Pdf;
     using Linn.Common.Persistence;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
