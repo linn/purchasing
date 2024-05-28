@@ -4,7 +4,6 @@
 
     using Linn.Common.Pdf;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Facade.Services;
