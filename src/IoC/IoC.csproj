@@ -13,7 +13,7 @@
     <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
     <PackageReference Include="Linn.Common.Logging.AmazonSqs" Version="3.0.0" />
     <PackageReference Include="Linn.Common.Messaging.RabbitMQ" Version="3.0.0" />
-    <PackageReference Include="Linn.Common.Pdf" Version="2.1.0" />
+    <PackageReference Include="Linn.Common.Pdf" Version="4.0.0-alpha" />
     <PackageReference Include="Linn.Common.Persistence.EntityFramework" Version="4.0.0" />
     <PackageReference Include="Linn.Common.Proxy" Version="3.0.1" />
     <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
