@@ -83,21 +83,21 @@
                             {
                                 RowId = rowId,
                                 ColumnId = "QtyOnOrder",
-                                Value = member.OurQuantity
+                                Value = delivery.Quantity
                             });
                         values.Add(
                             new CalculationValueModel
                             {
                                 RowId = rowId,
                                 ColumnId = "Qty",
-                                Value = member.OurQuantity - member.QuantityReceived.GetValueOrDefault()
+                                Value = delivery.Quantity - delivery.QuantityReceived
                             });
                         values.Add(
                             new CalculationValueModel
                             {
                                 RowId = rowId,
                                 ColumnId = "QtyReceived",
-                                Value = member.QuantityReceived.GetValueOrDefault()
+                                Value = delivery.QuantityReceived
                             });
                         values.Add(
                             new CalculationValueModel

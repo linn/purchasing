@@ -11,6 +11,9 @@
     {
         public static IServiceCollection AddCredentialsExtensions(this IServiceCollection services)
         {
+#if DEBUG
+            AWSConfigs.AWSProfileName = "mfa";
+#endif
             return services
                 .AddSingleton<AWSCredentials>(s => FallbackCredentialsFactory.GetCredentials())
                 .AddSingleton<RegionEndpoint>(a => RegionEndpoint.GetBySystemName(AwsCredentialsConfiguration.Region));

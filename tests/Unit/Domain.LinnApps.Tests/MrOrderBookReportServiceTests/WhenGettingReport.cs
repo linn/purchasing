@@ -81,8 +81,8 @@
                                                                  {
                                                                      OrderNumber = 2,
                                                                      DeliverySequence = 1,
-                                                                     Quantity = 1,
-                                                                     QuantityReceived = 0
+                                                                     Quantity = 2,
+                                                                     QuantityReceived = 1
                                                                  },
                                                              new MrPurchaseOrderDelivery
                                                                  {
@@ -139,6 +139,12 @@
         {
             this.results.First().Rows.Count().Should().Be(4);
             this.results.Last().Rows.Count().Should().Be(1);
+            this.results.First().GetGridValue(2, 2).Should().Be(2);
+            this.results.First().GetGridValue(2, 3).Should().Be(1);
+            this.results.First().GetGridValue(2, 4).Should().Be(1);
+            this.results.First().GetGridValue(3, 2).Should().Be(1);
+            this.results.First().GetGridValue(3, 3).Should().Be(1);
+            this.results.First().GetGridValue(3, 4).Should().Be(0);
         }
 
         [Test]
