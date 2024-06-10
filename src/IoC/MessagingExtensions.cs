@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.IoC
 {
-    using Linn.Common.Configuration;
     using Linn.Common.Logging;
     using Linn.Common.Messaging.RabbitMQ.Configuration;
     using Linn.Common.Messaging.RabbitMQ.Dispatchers;
@@ -24,7 +23,7 @@
                                       EmailMonthlyForecastReportMessage.RoutingKey, 
                                       EmailPurchaseOrderReminderMessage.RoutingKey
                                   };
-            return services.AddSingleton<ChannelConfiguration>(d => new ChannelConfiguration("purchasing", routingKeys, "purchasing", false))
+            return services.AddSingleton<ChannelConfiguration>(d => new ChannelConfiguration("purchasing", routingKeys, "purchasing"))
                 .AddSingleton(d => new EventingBasicConsumer(d.GetService<ChannelConfiguration>()?.ConsumerChannel));
         }
 
