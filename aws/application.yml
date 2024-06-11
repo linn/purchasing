@@ -323,7 +323,7 @@ Resources:
         - isTesting
         - !Sub ${TestClusterName}
         - !Sub ${ProductionClusterName}
-      DesiredCount: !If [ isTesting, 0, 0]
+      DesiredCount: !If [ isTesting, 0, 1]
       TaskDefinition: !Ref purchasingMessagingTaskDefinition
   purchasingSchedulingService:
     Type: AWS::ECS::Service
@@ -333,5 +333,5 @@ Resources:
         - isTesting
         - !Sub ${TestClusterName}
         - !Sub ${ProductionClusterName}
-      DesiredCount: !If [ isTesting, 0, 0]
+      DesiredCount: !If [ isTesting, 0, 1]
       TaskDefinition: !Ref purchasingSchedulingTaskDefinition
