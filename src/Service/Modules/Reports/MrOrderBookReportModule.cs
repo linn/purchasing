@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Service.Modules.Reports
 {
-    using System;
     using System.Threading.Tasks;
 
     using Carter;

@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.IO;
-    using System.Net.Mime;
     using System.Threading.Tasks;
 
     using Carter;
@@ -20,8 +19,6 @@
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Routing;
-
-    using ContentDisposition = MimeKit.ContentDisposition;
 
     public class BomModule : ICarterModule
     {

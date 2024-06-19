@@ -23,8 +23,7 @@
                                       EmailMonthlyForecastReportMessage.RoutingKey, 
                                       EmailPurchaseOrderReminderMessage.RoutingKey
                                   };
-
-            return services.AddSingleton<ChannelConfiguration>(d => new ChannelConfiguration("purchasing", routingKeys))
+            return services.AddSingleton<ChannelConfiguration>(d => new ChannelConfiguration("purchasing", routingKeys, "purchasing"))
                 .AddSingleton(d => new EventingBasicConsumer(d.GetService<ChannelConfiguration>()?.ConsumerChannel));
         }
 
