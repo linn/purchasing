@@ -941,7 +941,7 @@ function POReqUtility({ creating }) {
                                     number
                                     propertyName="unitPrice"
                                     onChange={(propertyName, newValue) =>
-                                        newValue < 0.01
+                                        newValue < 0
                                             ? handleFieldChange(propertyName, 0.01)
                                             : handleFieldChange(propertyName, newValue)
                                     }
