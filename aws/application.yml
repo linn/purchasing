@@ -141,11 +141,11 @@ Resources:
         PortMappings:
         - ContainerPort: 5050
         Memory: '500'
-        # LogConfiguration:
-        #   LogDriver: gelf
-        #   Options:
-        #     'gelf-address': 'udp://syslog.linn.co.uk:12201'
-        #     'tag': !Sub purchasing-${dockerTag}-ecs-task
+        LogConfiguration:
+          LogDriver: gelf
+          Options:
+            'gelf-address': 'udp://syslog.linn.co.uk:12201'
+            'tag': !Sub purchasing-${dockerTag}-ecs-task
         Environment:
         - Name: DATABASE_HOST
           Value: !Ref databaseHost
