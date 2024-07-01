@@ -208,7 +208,7 @@
                             { 
                                 RowId = rowId,
                                 ColumnId = "Qty",
-                                Value = datum.OurQuantity - datum.QuantityReceived.GetValueOrDefault()
+                                Value = delivery.Quantity - delivery.QuantityReceived
                             });
                     values.Add(
                         new CalculationValueModel
