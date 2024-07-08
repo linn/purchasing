@@ -114,6 +114,21 @@
             }
 
             var componentsOnRevision = board.ComponentsOnRevision(revision.LayoutSequence, revision.VersionNumber);
+
+            var multiplesAtCref = componentsOnRevision.GroupBy(x => x.CRef).Where(g => g.Count() > 1).ToList();
+
+            if (multiplesAtCref.Any())
+            {
+                foreach (var c in multiplesAtCref)
+                {
+                    message += $"******* ERROR {c.Key} has more than one part situated there on the current layout!  ******* \n";
+                }
+            }
+
+            if (componentsOnRevision.GroupBy(x => x.CRef).Any(g => g.Count() > 1))
+            {
+
+            }
             if (fileType == "SMT")
             {
                 componentsOnRevision = componentsOnRevision.Where(a => a.AssemblyTechnology == "SM").ToList();
@@ -126,7 +141,10 @@
                 Part part = null;
                 if (fileType != "SMT")
                 {
-                    part = this.partRepository.FindBy(a => a.PartNumber == fileComponent.PartNumber.ToUpper());
+                    // see if we can get the part without an extra db look up (i.e. this part is already on the revision)
+                    part = componentsOnRevision.FirstOrDefault(x => x.PartNumber == fileComponent.PartNumber)?.Part
+                           // otherwise the part must be a new part - need to look it up
+                           ?? this.partRepository.FindBy(a => a.PartNumber == fileComponent.PartNumber.ToUpper());
 
                     if (part == null)
                     {
