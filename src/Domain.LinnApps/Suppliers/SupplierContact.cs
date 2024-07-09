@@ -27,5 +27,7 @@
         public DateTime? DateCreated { get; set; }
 
         public DateTime? DateInvalid { get; set; }
+
+        public string OrderCcAddresses { get; set; }
     }
 }

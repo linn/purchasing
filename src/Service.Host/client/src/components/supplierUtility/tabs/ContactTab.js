@@ -23,6 +23,12 @@ function ContactTab({ contacts, updateContact, addContact, deleteContacts }) {
         { field: 'phoneNumber', headerName: 'Phone', width: 150, editable: true, hide: true },
         { field: 'emailAddress', headerName: 'Email', width: 400, editable: true },
         {
+            field: 'ccList',
+            headerName: 'CC list (comma separated if multiple!)',
+            width: 400,
+            editable: true
+        },
+        {
             field: 'isMainOrderContact',
             headerName: 'Main Order',
             width: 100,

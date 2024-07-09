@@ -296,7 +296,10 @@
 
             var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
 
-            this.SendOrderPdfEmail(html, emailAddress, bcc, currentUserId, order, debitNoteHtml);
+            var ccList = order.Supplier?.SupplierContacts?.FirstOrDefault(x => x.IsMainOrderContact == "Y")
+                ?.OrderCcAddresses;
+
+            this.SendOrderPdfEmail(html, emailAddress, bcc, currentUserId, order, debitNoteHtml, ccList);
 
             return new ProcessResult(true, $"Email sent for purchase order {orderNumber} {debitNoteMessage}to {emailAddress}");
         }
@@ -668,6 +671,9 @@
                 var supplierContactEmail = order?.Supplier?.SupplierContacts
                     ?.FirstOrDefault(a => a.IsMainOrderContact == "Y")?.EmailAddress;
 
+                var ccList = order?.Supplier?.SupplierContacts
+                    ?.FirstOrDefault(a => a.IsMainOrderContact == "Y")?.OrderCcAddresses;
+
                 if (order is null)
                 {
                     text += $"Order {orderNumber} could not be found\n";
@@ -693,7 +699,7 @@
                     var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
                     try
                     {
-                        this.SendOrderPdfEmail(html, supplierContactEmail, copyToSelf, userNumber, order, null);
+                        this.SendOrderPdfEmail(html, supplierContactEmail, copyToSelf, userNumber, order, null, ccList);
                         text += $"Order {orderNumber} emailed successfully to {supplierContactEmail}\n";
                         success++;
                     }
@@ -1263,7 +1269,8 @@
             bool bcc,
             int currentUserId,
             PurchaseOrder order,
-            string debitNoteHtml)
+            string debitNoteHtml,
+            string ccList = null)
         {
             var orderPdf = this.pdfService.ConvertHtmlToPdf(html, false);
 
@@ -1289,6 +1296,23 @@
                         });
             }
 
+            List<Dictionary<string, string>> cc = new List<Dictionary<string, string>>();
+
+            if (!string.IsNullOrEmpty(ccList))
+            {
+                var ccArray = ccList.Split(',');
+                foreach (var s in ccArray)
+                {
+                    if (!string.IsNullOrEmpty(s.Trim()))
+                    {
+                        cc.Add(new Dictionary<string, string>
+                                   {
+                                       { "name", s }, { "address", s }
+                                   });
+                    }
+                }
+            }
+
             var attachments = new List<Attachment>
                                   {
                                       new PdfAttachment(orderPdf.Result, $"LinnPurchaseOrder{order.OrderNumber}")
@@ -1312,7 +1336,7 @@
             this.emailService.SendEmail(
                     emailAddress,
                     emailAddress,
-                    null,
+                    cc,
                     bccList,
                     ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
                     "Linn Purchasing",

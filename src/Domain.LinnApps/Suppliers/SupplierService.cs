@@ -83,7 +83,7 @@
         {
             var privilegesList = privileges.ToList();
 
-            if (!string.IsNullOrEmpty(updated.ReasonClosed))
+            if (!current.DateClosed.HasValue && !string.IsNullOrEmpty(updated.ReasonClosed))
             {
                 if (!this.authService.HasPermissionFor(AuthorisedAction.SupplierClose, privilegesList))
                 {
@@ -234,7 +234,8 @@
                                                                DateCreated = DateTime.Today,
                                                                MobileNumber = c.MobileNumber,
                                                                PhoneNumber = c.PhoneNumber,
-                                                               Person = c.Person
+                                                               Person = c.Person,
+                                                               OrderCcAddresses = c.OrderCcAddresses
                                                            });
 
                 candidate.SupplierContacts = this.UpdateContacts(contacts);
@@ -403,6 +404,7 @@
                     existingSupplierContact.PhoneNumber = supplierContact.PhoneNumber;
                     existingSupplierContact.EmailAddress = string.IsNullOrEmpty(supplierContact.EmailAddress) 
                         ? null : Regex.Replace(supplierContact.EmailAddress, @"\s+", string.Empty);
+                    existingSupplierContact.OrderCcAddresses = supplierContact.OrderCcAddresses;
                     existingSupplierContact.JobTitle = supplierContact.JobTitle;
                     existingSupplierContact.Comments = supplierContact.Comments;
                     var person = this.personRepository.FindById(supplierContact.Person.Id);

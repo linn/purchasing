@@ -139,6 +139,7 @@
                                                                               JobTitle = c.JobTitle,
                                                                               MobileNumber = c.MobileNumber,
                                                                               PhoneNumber = c.PhoneNumber,
+                                                                              OrderCcAddresses = c.CcList,
                                                                               Person =
                                                                                   new Person
                                                                                       {

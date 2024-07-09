@@ -25,7 +25,8 @@
                            PersonId = entity.Person?.Id,
                            JobTitle = entity.JobTitle,
                            Comments = entity.Comments,
-                           ContactName = $"{entity.Person?.FirstName} {entity.Person?.LastName}"
+                           ContactName = $"{entity.Person?.FirstName} {entity.Person?.LastName}",
+                           CcList = entity.OrderCcAddresses
                        };
         }
 
