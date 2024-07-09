@@ -711,6 +711,7 @@ function PurchaseOrderUtility({ creating }) {
                                                         fullWidth
                                                         value={purchaseOrderEmailState?.email}
                                                         label="Send PO Email To"
+                                                        helperText="**NOTE: If this supplier's main order contact has a CC List set up in the supplier utility, then this email will also be copied to any address(es) on that list!**"
                                                         number
                                                         propertyName="emailTo"
                                                         onChange={(name, newEmail) => {

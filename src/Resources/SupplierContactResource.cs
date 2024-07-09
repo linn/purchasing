@@ -27,5 +27,7 @@
         public string JobTitle { get; set; }
 
         public string ContactName { get; set; }
+
+        public string CcList { get; set; }
     }
 }

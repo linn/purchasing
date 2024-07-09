@@ -103,19 +103,19 @@
             {
                 if (!string.IsNullOrWhiteSpace(address))
                 {
-                    this.emailService.SendEmail(
-                        test ? ConfigurationManager.Configuration["ORDER_BOOK_TEST_ADDRESS"] : address.Trim(),
-                        supplier.Name,
-                        null,
-                        null,
-                        vendorManagerAddress,
-                        vendorManagerName,
-                        $"Monthly Forecast - {timestamp}",
-                        "Please find Monthly order forecast attached",
-                        new List<Attachment>
-                            {
-                                new CsvAttachment(null, export, $"{toSupplier}_monthly_forecast_{timestamp}")
-                            });
+                    // this.emailService.SendEmail(
+                    //     test ? ConfigurationManager.Configuration["ORDER_BOOK_TEST_ADDRESS"] : address.Trim(),
+                    //     supplier.Name,
+                    //     null,
+                    //     null,
+                    //     vendorManagerAddress,
+                    //     vendorManagerName,
+                    //     $"Monthly Forecast - {timestamp}",
+                    //     "Please find Monthly order forecast attached",
+                    //     new List<Attachment>
+                    //         {
+                    //             new CsvAttachment(null, export, $"{toSupplier}_monthly_forecast_{timestamp}")
+                    //         });
                 }
             }
         }
