@@ -1313,16 +1313,6 @@
                 }
             }
 
-            if (bcc)
-            {
-                var employee = this.employeeRepository.FindById(currentUserId);
-                bccList.Add(
-                    new Dictionary<string, string>
-                        {
-                            { "name", employee.FullName }, { "address", employee.PhoneListEntry?.EmailAddress }
-                        });
-            }
-
             var attachments = new List<Attachment>
                                   {
                                       new PdfAttachment(orderPdf.Result, $"LinnPurchaseOrder{order.OrderNumber}")

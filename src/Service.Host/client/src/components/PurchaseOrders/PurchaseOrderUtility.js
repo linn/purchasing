@@ -495,6 +495,10 @@ function PurchaseOrderUtility({ creating }) {
         }));
     };
 
+    const emailCC = item?.supplier?.supplierContacts?.find(
+        c => c.isMainOrderContact === 'Y'
+    )?.ccList;
+
     return (
         <>
             <div className="hide-when-printing">
@@ -711,7 +715,11 @@ function PurchaseOrderUtility({ creating }) {
                                                         fullWidth
                                                         value={purchaseOrderEmailState?.email}
                                                         label="Send PO Email To"
-                                                        helperText="**NOTE: If this supplier's main order contact has a CC List set up in the supplier utility, then this email will also be copied to any address(es) on that list!**"
+                                                        helperText={
+                                                            emailCC
+                                                                ? `NOTE: supplier's main order contact has the following cc list set up in the supplier ut: ${emailCC}. This email will also be copied to the address(es) on that list!**`
+                                                                : ''
+                                                        }
                                                         number
                                                         propertyName="emailTo"
                                                         onChange={(name, newEmail) => {
