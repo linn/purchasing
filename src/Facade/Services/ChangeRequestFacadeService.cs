@@ -252,9 +252,10 @@
             string searchTerm,
             bool? outstanding, 
             int? lastMonths,
+            bool? cancelled,
             IEnumerable<string> privileges = null)
         {
-            var expression = this.changeRequestService.SearchExpression(searchTerm, outstanding, lastMonths);
+            var expression = this.changeRequestService.SearchExpression(searchTerm, outstanding, lastMonths, cancelled);
             var changeRequests = this.repository.FindAll().Where(expression).OrderByDescending(r => r.DocumentNumber).ToList();
 
             return new SuccessResult<IEnumerable<ChangeRequestResource>>(changeRequests.Select(x => (ChangeRequestResource)this.resourceBuilder.Build(x, privileges)));

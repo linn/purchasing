@@ -43,7 +43,7 @@
                                      }
                              }.AsQueryable());
 
-            this.result = this.Sut.SearchChangeRequests("TEST*", true, null);
+            this.result = this.Sut.SearchChangeRequests("TEST*", true, null, false);
         }
 
         [Test]

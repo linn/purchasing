@@ -38,6 +38,7 @@ function ChangeRequestSearch() {
     const [filter, setFilter] = useState('OUTSTANDING');
     const [outstanding, setOutstanding] = useState(true);
     const [lastMonths, setLastMonths] = useState(60);
+    const [cancelled, setCancelled] = useState(false);
 
     const searchRequestsResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.changeRequests)
@@ -130,9 +131,15 @@ function ChangeRequestSearch() {
         setFilter(newValue);
         if (newValue === 'OUTSTANDING') {
             setOutstanding(true);
+            setCancelled(false);
             setLastMonths(60);
+        } else if (newValue === 'CANCELLED') {
+            setCancelled(true);
+            setLastMonths(0);
+            setOutstanding(false);
         } else {
             setOutstanding(false);
+            setCancelled(false);
             setLastMonths(newValue);
         }
     };
@@ -145,7 +152,7 @@ function ChangeRequestSearch() {
         dispatch(
             changeRequestsActions.searchWithOptions(
                 newPartNumber,
-                `&outstanding=${outstanding}&lastMonths=${lastMonths}`
+                `&outstanding=${outstanding}&lastMonths=${lastMonths}&cancelled=${cancelled}`
             )
         );
 
@@ -201,7 +208,8 @@ function ChangeRequestSearch() {
                             { id: 3, displayText: 'Last 3 Months' },
                             { id: 6, displayText: 'Last 6 Months' },
                             { id: 60, displayText: 'Last 5 Years' },
-                            { id: 0, displayText: 'Forever (might be slow)' }
+                            { id: 0, displayText: 'Forever (might be slow)' },
+                            { id: 'CANCELLED', displayText: 'Include Cancelled (slow)' }
                         ]}
                         propertyName="changeType"
                         onChange={handleDropDownChange}

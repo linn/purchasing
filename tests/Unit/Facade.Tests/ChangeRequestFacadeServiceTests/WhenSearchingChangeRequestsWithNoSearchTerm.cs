@@ -41,7 +41,7 @@
                                      }
                              }.AsQueryable());
 
-            this.result = this.Sut.SearchChangeRequests(string.Empty, true, null);
+            this.result = this.Sut.SearchChangeRequests(string.Empty, true, null, false);
         }
 
         [Test]
