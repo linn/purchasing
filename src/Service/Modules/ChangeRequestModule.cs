@@ -44,7 +44,8 @@
             bool? includeAllForBom,
             bool? includeForBoard,
             bool? outstanding,
-            int? lastMonths)
+            int? lastMonths,
+            bool? cancelled)
         {
             if (string.IsNullOrEmpty(searchTerm) && outstanding == null)
             {
@@ -60,7 +61,7 @@
             }
             else
             {
-                await res.Negotiate(facadeService.SearchChangeRequests(searchTerm, outstanding, lastMonths));
+                await res.Negotiate(facadeService.SearchChangeRequests(searchTerm, outstanding, lastMonths, cancelled));
             }
         }
 

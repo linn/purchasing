@@ -53,7 +53,7 @@
             string bomName, IEnumerable<string> privileges = null);
 
         IResult<IEnumerable<ChangeRequestResource>> SearchChangeRequests(
-            string searchTerm, bool? outstanding, int? lastMonths, IEnumerable<string> privileges = null);
+            string searchTerm, bool? outstanding, int? lastMonths, bool? cancelled, IEnumerable<string> privileges = null);
 
         IResult<ChangeRequestResource> AddAndReplace(
             ChangeRequestResource resource, int createdBy, IEnumerable<string> privileges = null);

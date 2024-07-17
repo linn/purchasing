@@ -421,7 +421,7 @@
         }
 
         public Expression<Func<ChangeRequest, bool>> SearchExpression(
-            string searchTerm, bool? outstanding, int? lastMonths)
+            string searchTerm, bool? outstanding, int? lastMonths, bool? cancelled)
         {
             DateTime fromDate;
 
@@ -437,6 +437,8 @@
             }
 
             var inclLive = (outstanding == false) ? "LIVE" : "JUSTOUTSTANDING";
+            var inclCancelled = (cancelled == true) ? "CANCEL" : "NOTCANCELLED";
+            var exclCancelled = (cancelled == false) ? "CANCEL" : "NOTCANCELLED";
             var searchPartNumber = searchTerm.Trim().ToUpper();
             var partSearch = searchPartNumber.Split('*');
 
@@ -445,7 +447,7 @@
             if (string.IsNullOrEmpty(searchPartNumber))
             {
                 return r 
-                    => (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive)
+                    => (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive || r.ChangeState == inclCancelled)
                        && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
             }
             
@@ -454,8 +456,8 @@
                 return r 
                     => (r.NewPartNumber.Equals(searchPartNumber) 
                         || r.OldPartNumber.Equals(searchPartNumber)) 
-                       && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive) 
-                       && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+                       && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive || r.ChangeState == inclCancelled) 
+                       && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
             }
             
             if (searchPartNumber.EndsWith("*"))
@@ -467,8 +469,9 @@
                                  || r.OldPartNumber.Contains(partSearch[1])) 
                                 && (r.ChangeState == "PROPOS" 
                                     || r.ChangeState == "ACCEPT" 
-                                    || r.ChangeState == inclLive) 
-                                && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+                                    || r.ChangeState == inclLive
+                                    || r.ChangeState == inclCancelled) 
+                                && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
                 }
                 else
                 {
@@ -476,8 +479,9 @@
                                  || r.OldPartNumber.StartsWith(partSearch.First())) 
                                 && (r.ChangeState == "PROPOS" 
                                     || r.ChangeState == "ACCEPT" 
-                                    || r.ChangeState == inclLive) 
-                                && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+                                    || r.ChangeState == inclLive
+                                    || r.ChangeState == inclCancelled) 
+                                && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
                 }
             }
             
@@ -487,8 +491,9 @@
                              || r.OldPartNumber.EndsWith(partSearch.Last())) 
                             && (r.ChangeState == "PROPOS" 
                                 || r.ChangeState == "ACCEPT" 
-                                || r.ChangeState == inclLive) 
-                            && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+                                || r.ChangeState == inclLive
+                                || r.ChangeState == inclCancelled) 
+                            && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
             }
 
             return r => ((r.NewPartNumber.StartsWith(partSearch.First()) 
@@ -497,8 +502,9 @@
                              && r.OldPartNumber.EndsWith(partSearch.Last()))) 
                         && (r.ChangeState == "PROPOS"
                             || r.ChangeState == "ACCEPT" 
-                            || r.ChangeState == inclLive) 
-                        && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+                            || r.ChangeState == inclLive
+                            || r.ChangeState == inclCancelled) 
+                        && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
         }
     }
 }
