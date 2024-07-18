@@ -221,6 +221,8 @@
 
         public DbSet<ChangeRequestPhaseInWeeksView> ChangeRequestPhaseInWeeksView { get; set; }
 
+        public DbSet<BomDetailComponent> BomDetailComponents { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
