@@ -42,7 +42,6 @@ function PrintBomReport() {
     }
 
     const reportData = useSelector(state => state[bomPrintReport.item]?.data);
-    console.log(reportData);
     const partsSearchResults = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchItems(
             reduxState[parts.item],
