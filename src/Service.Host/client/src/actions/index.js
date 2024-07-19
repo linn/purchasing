@@ -421,3 +421,7 @@ export const currentPhaseInWeeksReportActionTypes = makeReportActionTypes(
 export const boardComponentSummaryReportActionTypes = makeReportActionTypes(
     reportTypes.boardComponentSummaryReport.actionType
 );
+
+export const bomPrintReportActionTypes = makeReportActionTypes(
+    reportTypes.bomPrintReport.actionType
+);

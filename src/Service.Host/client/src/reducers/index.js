@@ -127,6 +127,7 @@ import outstandingChangesReport from './outstandingChangesReport';
 import currentPhaseInWeeksReport from './currentPhaseInWeeksReport';
 import boardComponentSummaryReport from './boardComponentSummaryReport';
 import nominalAccounts from './nominalAccounts';
+import bomPrintReport from './bomPrintReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -152,6 +153,7 @@ const rootReducer = () =>
         bomCostReport,
         bomDifferenceReport,
         bomHistoryReport,
+        bomPrintReport,
         bomStandardPrices,
         bomTypeChange,
         bomTree,

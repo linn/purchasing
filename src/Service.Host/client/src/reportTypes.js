@@ -191,3 +191,9 @@ export const boardComponentSummaryReport = new ItemType(
     'BOARD_COMPONENT_SUMMARY_REPORT',
     '/purchasing/boms/reports/board-component-summary/report'
 );
+
+export const bomPrintReport = new ItemType(
+    'bomPrintReport',
+    'BOM_PRINT_REPORT',
+    '/purchasing/boms/reports/bom-print'
+);

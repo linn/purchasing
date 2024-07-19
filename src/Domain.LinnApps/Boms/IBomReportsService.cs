@@ -31,5 +31,7 @@
         ResultsModel GetBoardComponentSummaryReport(
             string boardCode,
             string revisionCode);
+
+        IEnumerable<ResultsModel> GetBomPrintReport(string bomName);
     }
 }

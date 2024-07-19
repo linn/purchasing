@@ -127,5 +127,11 @@
             var pdf = this.pdfService.ConvertHtmlToPdf(html, true).Result;
             return pdf;
         }
+
+        public IResult<ReportReturnResource> GetBomPrintReport(string bomName)
+        {
+            return new SuccessResult<ReportReturnResource>(this.reportReturnResourceBuilder.Build(
+                this.domainService.GetBomPrintReport(bomName)));
+        }
     }
 }

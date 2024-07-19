@@ -5,10 +5,10 @@ import {
     Page,
     Title,
     Loading,
-    ReportTable,
     ExportButton,
     Search,
-    collectionSelectorHelpers
+    collectionSelectorHelpers,
+    MultiReportTable
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
@@ -17,16 +17,16 @@ import queryString from 'query-string';
 import history from '../../history';
 import config from '../../config';
 
-import { partsOnBomReport } from '../../reportTypes';
-import partsOnBomReportActions from '../../actions/partsOnBomReportActions';
+import { bomPrintReport } from '../../reportTypes';
+import bomPrintActions from '../../actions/bomPrintActions';
 import partsActions from '../../actions/partsActions';
 import { parts } from '../../itemTypes';
 
-function PartsOnBomReport() {
+function PrintBomReport() {
     const dispatch = useDispatch();
     const [searchTerm, setSearchTerm] = useState();
 
-    const loading = useSelector(state => state[partsOnBomReport.item]?.loading);
+    const loading = useSelector(state => state[bomPrintReport.item]?.loading);
     const { search } = useLocation();
     const { bomName } = queryString.parse(search);
 
@@ -35,13 +35,13 @@ function PartsOnBomReport() {
         setPrevBomName(bomName);
         setSearchTerm(bomName);
         dispatch(
-            partsOnBomReportActions.fetchReport({
+            bomPrintActions.fetchReport({
                 bomName
             })
         );
     }
 
-    const reportData = useSelector(state => state[partsOnBomReport.item]?.data);
+    const reportData = useSelector(state => state[bomPrintReport.item]?.data);
     const partsSearchResults = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchItems(
             reduxState[parts.item],
@@ -54,11 +54,12 @@ function PartsOnBomReport() {
     const partsSearchLoading = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchLoading(reduxState[parts.item])
     );
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
                 <Grid item xs={12}>
-                    <Title text="List Bill Of Materials" />
+                    <Title text="Print Bom" />
                 </Grid>
                 <Grid item xs={12}>
                     <Search
@@ -86,7 +87,7 @@ function PartsOnBomReport() {
                         variant="contained"
                         color="primary"
                         onClick={() =>
-                            history.push(`/purchasing/boms/reports/list?bomName=${searchTerm}`)
+                            history.push(`/purchasing/boms/reports/bom-print?bomName=${searchTerm}`)
                         }
                     >
                         Run
@@ -103,13 +104,14 @@ function PartsOnBomReport() {
                             <>
                                 <Grid item xs={12}>
                                     <ExportButton
-                                        href={`${config.appRoot}/purchasing/boms/reports/list?bomName=${searchTerm}`}
+                                        href={`${config.appRoot}/purchasing/boms/reports/bom-print?bomName=${searchTerm}`}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <ReportTable
+                                    <MultiReportTable
                                         reportData={reportData}
-                                        title={reportData.title}
+                                        showTotals={false}
+                                        showRowTitles={false}
                                         showTitle
                                         placeholderRows={4}
                                         placeholderColumns={4}
@@ -124,4 +126,4 @@ function PartsOnBomReport() {
     );
 }
 
-export default PartsOnBomReport;
+export default PrintBomReport;

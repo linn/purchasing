@@ -9,6 +9,7 @@
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
     public class BomReportsService : IBomReportsService
@@ -18,6 +19,8 @@
         private readonly IReportingHelper reportingHelper;
 
         private readonly IQueryRepository<BomCostReportDetail> bomCostReportDetails;
+
+        private readonly IQueryRepository<BomDetailComponent> bomDetailComponents;
 
         private readonly IRepository<CircuitBoard, string> boardRepository;
 
@@ -31,7 +34,8 @@
             IBomTreeService bomTreeService,
             IQueryRepository<BomCostReportDetail> bomCostReportDetails,
             IRepository<CircuitBoard, string> boardRepository,
-            IQueryRepository<Part> partRepository)
+            IQueryRepository<Part> partRepository,
+            IQueryRepository<BomDetailComponent> bomDetailComponents)
         {
             this.bomDetailViewRepository = bomDetailViewRepository;
             this.reportingHelper = reportingHelper;
@@ -39,6 +43,7 @@
             this.bomCostReportDetails = bomCostReportDetails;
             this.boardRepository = boardRepository;
             this.partRepository = partRepository;
+            this.bomDetailComponents = bomDetailComponents;
         }
 
         public ResultsModel GetPartsOnBomReport(string bomName)
@@ -936,6 +941,100 @@
 
             reportLayout.SetGridData(values);
             return reportLayout.GetResultsModel();
+        }
+
+        public IEnumerable<ResultsModel> GetBomPrintReport(string bomName)
+        {
+            var results = new List<ResultsModel>();
+            var allDetailsOnBom = this.bomTreeService.FlattenBomTree(bomName, null, false).ToList();
+            var componentIds = allDetailsOnBom.Where(d => d.Type == "C").Select(c => int.Parse(c.Id)).ToList();
+            var components = this.bomDetailComponents.FilterBy(
+                x => componentIds
+                    .Contains(x.DetailId)).ToList();
+            var assemblies = allDetailsOnBom.Where(x => x.Type != "C");
+
+            foreach (var assembly in assemblies)
+            {
+                var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
+                reportLayout.ReportTitle = assembly.Name;
+                reportLayout.AddColumnComponent(null, new List<AxisDetailsModel>
+                                                          {
+                                                              new AxisDetailsModel("Cref", "Cref", GridDisplayType.TextValue),
+                                                              new AxisDetailsModel("Part", "Part", GridDisplayType.TextValue),
+                                                              new AxisDetailsModel("Description", "Description", GridDisplayType.TextValue),
+                                                          });
+                
+                var values = new List<CalculationValueModel>();
+
+                var thisDetailIds = assembly.Children.Where(x => x.Type == "C").ToList().Select(d => int.Parse(d.Id));
+                var thisComponents = components.Where(x => thisDetailIds.Contains(x.DetailId)).OrderBy(c => c.CircuitRef);
+                var nonComponents = assembly.Children.ToList().Where(
+                    x => x.Type == "C" && !thisComponents.Select(c => c.DetailId)
+                             .ToList().Contains(int.Parse(x.Id))).OrderBy(n => n.Name);
+
+                foreach (var n in nonComponents)
+                {
+                    var rowId = n.Id;
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = rowId,
+                                ColumnId = "Cref",
+                                TextDisplay = string.Empty
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = rowId,
+                                ColumnId = "Part",
+                                TextDisplay = n.Name
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = rowId,
+                                ColumnId = "Description",
+                                TextDisplay = n.Description
+                            });
+                }
+                foreach (var c in thisComponents)
+                {
+                    var rowId = c.CircuitRef;
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = rowId,
+                                RowTitle = c.CircuitRef,
+                                ColumnId = "Cref",
+                                TextDisplay = c.CircuitRef
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = rowId,
+                                ColumnId = "Part",
+                                RowTitle = c.CircuitRef,
+                                TextDisplay = c.Component
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = rowId,
+                                ColumnId = "Description",
+                                RowTitle = c.CircuitRef,
+                                TextDisplay = c.DetailViewEntry?.Part?.Description
+                            });
+                }
+
+               
+
+                reportLayout.SetGridData(values);
+                var model = reportLayout.GetResultsModel();
+
+                results.Add(model);
+            }
+ 
+            return results;
         }
     }
 }
