@@ -24,6 +24,8 @@
 
         protected IRepository<CircuitBoard, string> CircuitBoardRepository { get; private set; }
 
+        protected IQueryRepository<BomDetailComponent> BomDetailComponentRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -32,13 +34,16 @@
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.BomCostReportDetailsRepository = Substitute.For<IQueryRepository<BomCostReportDetail>>();
             this.CircuitBoardRepository = Substitute.For<IRepository<CircuitBoard, string>>();
+            this.BomDetailComponentRepository = Substitute.For<IQueryRepository<BomDetailComponent>>();
+
             this.Sut = new BomReportsService(
                 this.BomDetailViewRepository, 
                 new ReportingHelper(), 
                 this.BomTreeService,
                 this.BomCostReportDetailsRepository,
                 this.CircuitBoardRepository,
-                this.PartRepository);
+                this.PartRepository,
+                this.BomDetailComponentRepository);
         }
     }
 }

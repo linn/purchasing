@@ -56,9 +56,11 @@
             app.MapPost("/purchasing/purchase-orders/boms/upload-board-file", this.UploadBoardFile);
             app.MapPost("/purchasing/purchase-orders/boms/upload-smt-file", this.UploadSmtFile);
             app.MapGet("/purchasing/boms/board-components-smt-check", this.GetApp);
+
+            app.MapGet("/purchasing/boms/reports/bom-print", this.GetBomPrintReport);
         }
 
-        private async Task GetApp(HttpRequest req, HttpResponse res)
+        private async Task GetApp(HttpResponse res)
         {
             await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
         }
@@ -375,6 +377,21 @@
             }
 
             await res.Negotiate(result);
+        }
+
+        private async Task GetBomPrintReport(
+            HttpResponse res,
+            IBomReportsFacadeService service,
+            string bomName)
+        {
+            if (string.IsNullOrEmpty(bomName))
+            {
+                await this.GetApp(res);
+            }
+            else
+            {
+                await res.Negotiate(service.GetBomPrintReport(bomName));
+            }
         }
     }
 }

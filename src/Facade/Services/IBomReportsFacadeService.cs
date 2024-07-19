@@ -30,5 +30,7 @@
             bool splitBySubAssembly,
             int levels,
             decimal labourHourlyRate);
+
+        IResult<ReportReturnResource> GetBomPrintReport(string bomName);
     }
 }

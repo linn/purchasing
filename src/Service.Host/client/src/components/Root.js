@@ -102,6 +102,7 @@ import BoardComponentsSmtCheck from './boards/BoardComponentsSmtCheck';
 import CurrentPhaseInWeeksReport from './reports/CurrentPhaseInWeeksReport';
 import BoardComponentSummaryReportOptions from './reports/BoardComponentSummaryReportOptions';
 import BoardComponentSummaryReport from './reports/BoardComponentSummaryReport';
+import BomPrintReport from './reports/BomPrintReport';
 
 function Root({ store }) {
     return (
@@ -532,6 +533,11 @@ function Root({ store }) {
                                         exact
                                         path="/purchasing/boms/reports/list"
                                         element={<PartsOnBomReport />}
+                                    />
+                                    <Route
+                                        exact
+                                        path="/purchasing/boms/reports/bom-print"
+                                        element={<BomPrintReport />}
                                     />
                                     <Route
                                         exact

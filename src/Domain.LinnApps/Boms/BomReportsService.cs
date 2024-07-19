@@ -19,6 +19,8 @@
 
         private readonly IQueryRepository<BomCostReportDetail> bomCostReportDetails;
 
+        private readonly IQueryRepository<BomDetailComponent> bomDetailComponents;
+
         private readonly IRepository<CircuitBoard, string> boardRepository;
 
         private readonly IBomTreeService bomTreeService;
@@ -31,7 +33,8 @@
             IBomTreeService bomTreeService,
             IQueryRepository<BomCostReportDetail> bomCostReportDetails,
             IRepository<CircuitBoard, string> boardRepository,
-            IQueryRepository<Part> partRepository)
+            IQueryRepository<Part> partRepository,
+            IQueryRepository<BomDetailComponent> bomDetailComponents)
         {
             this.bomDetailViewRepository = bomDetailViewRepository;
             this.reportingHelper = reportingHelper;
@@ -39,11 +42,12 @@
             this.bomCostReportDetails = bomCostReportDetails;
             this.boardRepository = boardRepository;
             this.partRepository = partRepository;
+            this.bomDetailComponents = bomDetailComponents;
         }
 
         public ResultsModel GetPartsOnBomReport(string bomName)
         {
-            var lines = this.bomDetailViewRepository.FindAll().Where(d => d.BomPartNumber == bomName && d.ChangeState == "LIVE" && d.Components.All(x => x.Bom == bomName))
+            var lines = this.bomDetailViewRepository.FindAll().Where(d => d.BomPartNumber == bomName && d.ChangeState == "LIVE")
                 .OrderBy(x => x.PartNumber);
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
@@ -936,6 +940,19 @@
 
             reportLayout.SetGridData(values);
             return reportLayout.GetResultsModel();
+        }
+
+        public IEnumerable<ResultsModel> GetBomPrintReport(string bomName)
+        {
+            var allDetailsOnBom = this.bomTreeService.FlattenBomTree(bomName, null, false).ToList();
+            var assemblies = allDetailsOnBom.Where(x => x.Type != "C");
+
+            foreach (var assembly in assemblies)
+            {
+                var x = "stop";
+            }
+
+            throw new NotImplementedException();
         }
     }
 }
