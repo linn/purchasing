@@ -9,6 +9,7 @@
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
     public class BomReportsService : IBomReportsService
@@ -958,7 +959,7 @@
                 reportLayout.ReportTitle = assembly.Name;
                 reportLayout.AddColumnComponent(null, new List<AxisDetailsModel>
                                                           {
-                                                              new AxisDetailsModel("Cref", "Cref", GridDisplayType.TextValue) { SortOrder = 1 },
+                                                              new AxisDetailsModel("Cref", "Cref", GridDisplayType.TextValue),
                                                               new AxisDetailsModel("Part", "Part", GridDisplayType.TextValue),
                                                               new AxisDetailsModel("Description", "Description", GridDisplayType.TextValue),
                                                           });
@@ -998,11 +999,12 @@
                 }
                 foreach (var c in thisComponents)
                 {
-                    var rowId = c.DetailId.ToString();
+                    var rowId = c.CircuitRef;
                     values.Add(
                         new CalculationValueModel
                             {
                                 RowId = rowId,
+                                RowTitle = c.CircuitRef,
                                 ColumnId = "Cref",
                                 TextDisplay = c.CircuitRef
                             });
@@ -1011,6 +1013,7 @@
                             {
                                 RowId = rowId,
                                 ColumnId = "Part",
+                                RowTitle = c.CircuitRef,
                                 TextDisplay = c.Component
                             });
                     values.Add(
@@ -1018,12 +1021,17 @@
                             {
                                 RowId = rowId,
                                 ColumnId = "Description",
+                                RowTitle = c.CircuitRef,
                                 TextDisplay = c.DetailViewEntry?.Part?.Description
                             });
                 }
 
+               
+
                 reportLayout.SetGridData(values);
-                results.Add(reportLayout.GetResultsModel());
+                var model = reportLayout.GetResultsModel();
+
+                results.Add(model);
             }
  
             return results;
