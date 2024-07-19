@@ -5,10 +5,10 @@ import {
     Page,
     Title,
     Loading,
-    ReportTable,
     ExportButton,
     Search,
-    collectionSelectorHelpers
+    collectionSelectorHelpers,
+    MultiReportTable
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
@@ -42,6 +42,7 @@ function PrintBomReport() {
     }
 
     const reportData = useSelector(state => state[bomPrintReport.item]?.data);
+    console.log(reportData);
     const partsSearchResults = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchItems(
             reduxState[parts.item],
@@ -108,9 +109,10 @@ function PrintBomReport() {
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <ReportTable
+                                    <MultiReportTable
                                         reportData={reportData}
-                                        title={reportData.title}
+                                        showTotals={false}
+                                        showRowTitles={false}
                                         showTitle
                                         placeholderRows={4}
                                         placeholderColumns={4}

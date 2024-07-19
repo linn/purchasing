@@ -18,7 +18,7 @@
 
         public override IQueryable<BomDetailComponent> FilterBy(Expression<Func<BomDetailComponent, bool>> expression)
         {
-            return base.FilterBy(expression);
+            return base.FilterBy(expression).Include(c => c.DetailViewEntry).ThenInclude(d => d.Part);
         }
     }
 }
