@@ -13,7 +13,7 @@
 
     using NUnit.Framework;
 
-    public class WhenFinanceCheckingAndNotAllowed : ContextBase
+    public class WhenFinanceCheckingOwnRequest : ContextBase
     {
         private readonly int authoriserUserNumber = 33107;
 
@@ -54,8 +54,8 @@
                                   QuoteRef = "blah",
                                   Email = "LC@gmail",
                                   DateRequired = 1.January(2023),
-                                  RequestedById = 33100,
-                                  AuthorisedById = 33101,
+                                  RequestedById = 33107,
+                                  AuthorisedById = 33108,
                                   SecondAuthById = null,
                                   FinanceCheckById = null,
                                   TurnedIntoOrderById = null,
@@ -65,8 +65,9 @@
                                   DepartmentCode = "00002345"
                               };
 
-            this.MockAuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqFinanceCheck, Arg.Any<List<string>>())
-                .Returns(false);
+            this.MockAuthService.HasPermissionFor(
+                AuthorisedAction.PurchaseOrderReqFinanceCheck,
+                Arg.Any<List<string>>()).Returns(true);
 
             this.action = () => this.Sut.FinanceApprove(this.entity, new List<string>(), this.authoriserUserNumber);
         }
@@ -74,14 +75,7 @@
         [Test]
         public void ShouldThrowUnauthorisedException()
         {
-            this.action.Should().Throw<UnauthorisedActionException>();
-        }
-
-        [Test]
-        public void ShouldNotUpdateStateOrFinanceAuthBy()
-        {
-            this.entity.FinanceCheckById.Should().Be(null);
-            this.entity.State.Should().Be(this.fromState);
+            this.action.Should().Throw<UnauthorisedActionException>().WithMessage("You cannot approve a req that was requested by yourself");
         }
     }
 }
