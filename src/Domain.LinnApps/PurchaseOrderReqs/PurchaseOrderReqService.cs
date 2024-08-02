@@ -79,6 +79,11 @@
                     "Cannot authorise a req that is not in state 'AUTHORISE WAIT'. Please make sure the req is saved in this state and try again");
             }
 
+            if (entity.RequestedById == currentUserId)
+            {
+                throw new UnauthorisedActionException("You cannot authorise a req that was requested by yourself");
+            }
+
             if (!entity.TotalReqPrice.HasValue)
             {
                 throw new PurchaseOrderReqException("Cannot authorise a req that has no value");
@@ -253,6 +258,11 @@
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqFinanceCheck, privileges))
             {
                 throw new UnauthorisedActionException("You are not authorised to perform finance sign off on PO Reqs");
+            }
+
+            if (entity.RequestedById == currentUserId)
+            {
+                throw new UnauthorisedActionException("You cannot approve a req that was requested by yourself");
             }
 
             if (entity.State != "FINANCE WAIT")
