@@ -65,7 +65,7 @@
             
             this.MockDomainService
                 .When(x => x.CreateOrder(Arg.Any<PurchaseOrder>(), Arg.Any<IEnumerable<string>>(), out Arg.Any<bool>()))
-                .Do(call => call[2] = true); // Sets the value of the out parameter
+                .Do(call => call[2] = true);
 
             this.MockDomainService.CreateOrder(
                     Arg.Any<PurchaseOrder>(), Arg.Any<IEnumerable<string>>(), out _)

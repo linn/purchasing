@@ -410,7 +410,6 @@
             }
 
             this.CheckOkToRaiseOrders();
-
             this.UpdateOrderProperties(current, updated);
             this.UpdateDetails(current.Details, updated.Details, updated.SupplierId, updated.ExchangeRate.Value, current.DocumentType.Name);
             this.UpdateMiniOrder(updated);
@@ -1085,6 +1084,14 @@
             if (nominalAccount == null)
             {
                 throw new ItemNotFoundException("Invalid nominal code/dept");
+            }
+
+
+            if (updated.OrderPosting.NominalAccount.AccountId != nominalAccount.AccountId
+                && current.PurchaseDeliveries.Any(d => d.QtyNetReceived > 0))
+            {
+                throw new PurchaseOrderException(
+                    "Cannot update nominal account after some qty of the order has been booked in");
             }
 
             current.OrderPosting.NominalAccount = nominalAccount;

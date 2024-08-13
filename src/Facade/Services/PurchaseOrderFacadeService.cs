@@ -333,21 +333,20 @@
         {
             var candidate = this.BuildEntityFromResourceHelper(resource);
 
-            PurchaseOrder order;
-
-            bool makeCreditNote;
-            order = this.domainService.CreateOrder(candidate, privileges, out makeCreditNote);
+            var order = this.domainService.CreateOrder(candidate, privileges, out var makeCreditNote);
 
             this.transactionManager.Commit();
 
             this.domainService.CreateMiniOrder(order);
             this.transactionManager.Commit();
 
-            if (makeCreditNote)
+            if (!makeCreditNote)
             {
-                this.creditDebitNoteService.CreateDebitOrCreditNoteFromPurchaseOrder(order);
-                this.transactionManager.Commit();
+                return order;
             }
+
+            this.creditDebitNoteService.CreateDebitOrCreditNoteFromPurchaseOrder(order);
+            this.transactionManager.Commit();
 
             return order;
         }
