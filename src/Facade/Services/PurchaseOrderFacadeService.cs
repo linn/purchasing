@@ -268,30 +268,13 @@
                     }
                 }
 
-                var overBookChange = false;
-
-                if (resource.From.Overbook != resource.To.Overbook)
+                if (resource.From.OverbookQty != resource.To.OverbookQty || resource.From.Overbook != resource.To.Overbook)
                 {
-                    overBookChange = true;
                     order = this.domainService.AllowOverbook(
                         order,
                         resource.To.Overbook,
-                        order.OverbookQty,
-                        privilegesList);
-                }
-
-                if (resource.From.OverbookQty != resource.To.OverbookQty)
-                {
-                    overBookChange = true;
-                    order = this.domainService.AllowOverbook(
-                        order,
-                        order.Overbook,
                         resource.To.OverbookQty,
                         privilegesList);
-                }
-
-                if (overBookChange)
-                {
                     var log = new OverbookAllowedByLog
                                   {
                                       OrderNumber = order.OrderNumber,
@@ -344,50 +327,34 @@
             return this.domainService.GetPurchaseOrderAsHtml(orderNumber);
         }
 
-        public new IResult<PurchaseOrderResource> Add(
-            PurchaseOrderResource resource, IEnumerable<string> privileges = null, int? userNumber = null)
+        protected override PurchaseOrder CreateFromResource(
+            PurchaseOrderResource resource,
+            IEnumerable<string> privileges = null)
         {
             var candidate = this.BuildEntityFromResourceHelper(resource);
 
             PurchaseOrder order;
-            try
-            {
-                order = this.domainService.CreateOrder(candidate, privileges);
-            }
-            catch (DomainException exception)
-            {
-                this.logger.Info($"Failed to create order. {exception.Message}");
-                return new BadRequestResult<PurchaseOrderResource>(exception.Message);
-            }
+
+            bool makeCreditNote;
+            order = this.domainService.CreateOrder(candidate, privileges, out makeCreditNote);
 
             this.transactionManager.Commit();
 
             this.domainService.CreateMiniOrder(order);
             this.transactionManager.Commit();
 
-            if (order.DocumentTypeName is "CO" or "RO")
+            if (makeCreditNote)
             {
                 this.creditDebitNoteService.CreateDebitOrCreditNoteFromPurchaseOrder(order);
                 this.transactionManager.Commit();
             }
-            
-            order.Supplier = this.supplierRepository.FindById(order.SupplierId);
 
-            return new CreatedResult<PurchaseOrderResource>(
-                (PurchaseOrderResource)this.resourceBuilder.Build(order, privileges.ToList()));
-        }
-
-        protected override PurchaseOrder CreateFromResource(
-            PurchaseOrderResource resource,
-            IEnumerable<string> privileges = null)
-        {
-            throw new NotImplementedException();
+            return order;
         }
 
         protected override void DeleteOrObsoleteResource(
             PurchaseOrder entity, IEnumerable<string> privileges = null)
         {
-            this.transactionManager.Commit();
             throw new NotImplementedException();
         }
 

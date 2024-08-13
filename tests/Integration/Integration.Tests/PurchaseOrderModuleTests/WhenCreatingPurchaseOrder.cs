@@ -162,8 +162,8 @@
             this.MockNominalAccountRepository.FindById(Arg.Any<int>())
                 .Returns(new NominalAccount { NominalCode = "00030405", DepartmentCode = "00001892", AccountId = 918 });
 
-            this.MockDomainService.CreateOrder(Arg.Any<PurchaseOrder>(), Arg.Any<IEnumerable<string>>())
-                .Returns(new PurchaseOrder { DocumentType = new DocumentType { Name = "PO" } });
+            this.MockDomainService.CreateOrder(Arg.Any<PurchaseOrder>(), Arg.Any<IEnumerable<string>>(), out Arg.Any<bool>())
+                .Returns(new PurchaseOrder { DocumentType = new DocumentType { Name = "PO" }, Supplier = new Supplier() });
 
             this.Response = this.Client.PostAsJsonAsync("/purchasing/purchase-orders", this.resource).Result;
         }
@@ -173,7 +173,8 @@
         {
             this.MockDomainService.Received().CreateOrder(
                 Arg.Any<PurchaseOrder>(),
-                Arg.Any<IEnumerable<string>>());
+                Arg.Any<IEnumerable<string>>(),
+                out Arg.Any<bool>());
         }
 
         [Test]

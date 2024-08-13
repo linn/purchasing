@@ -66,9 +66,18 @@
                                  Nominal = new Nominal()
                              });
 
+            this.MockDomainService
+                .When(x => x.CreateOrder(Arg.Any<PurchaseOrder>(), Arg.Any<IEnumerable<string>>(), out Arg.Any<bool>()))
+                .Do(call => call[2] = true);
+
             this.MockDomainService.CreateOrder(
-                    Arg.Any<PurchaseOrder>(), Arg.Any<IEnumerable<string>>())
-                .Returns(new PurchaseOrder { DocumentType = new DocumentType { Name = "CO" }, DocumentTypeName = "CO" });
+                    Arg.Any<PurchaseOrder>(), Arg.Any<IEnumerable<string>>(), out Arg.Any<bool>())
+                .Returns(new PurchaseOrder
+                             {
+                                 DocumentType = new DocumentType { Name = "CO" },
+                                 DocumentTypeName = "CO",
+                                 Supplier = new Supplier()
+                             });
 
             this.Response =
                 this.Client.PostAsJsonAsync("/purchasing/purchase-orders", this.resource).Result;
@@ -82,7 +91,7 @@
         }
 
         [Test]
-        public void ShouldNotCallCreateDebitNote()
+        public void ShouldNotCreateDebitNote()
         {
             this.MockPlCreditDebitNoteService.Received().CreateDebitOrCreditNoteFromPurchaseOrder(
                 Arg.Any<PurchaseOrder>());

@@ -145,7 +145,7 @@
             this.PartQueryRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { DateLive = 1.January(2020), DatePurchPhasedOut = 1.January(2021) });
 
-            this.action = () => this.Sut.CreateOrder(this.order, new List<string>());
+            this.action = () => this.Sut.CreateOrder(this.order, new List<string>(), out _);
         }
 
         [Test]

@@ -188,7 +188,7 @@
             return order;
         }
 
-        public PurchaseOrder CreateOrder(PurchaseOrder order, IEnumerable<string> privileges)
+        public PurchaseOrder CreateOrder(PurchaseOrder order, IEnumerable<string> privileges, out bool createCreditNote)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
             {
@@ -198,6 +198,7 @@
             this.CheckOkToRaiseOrders();
 
             var newOrderNumber = this.databaseService.GetNextVal("PL_ORDER_SEQ");
+            order.Supplier = this.supplierRepository.FindById(order.SupplierId);
             order.OrderNumber = newOrderNumber;
             order.OrderNetTotal = 0;
             order.BaseOrderNetTotal = 0;
@@ -269,6 +270,15 @@
             order.DamagesPercent = 2m;
 
             this.purchaseOrderRepository.Add(order);
+
+            if (order.DocumentTypeName is "CO" or "RO")
+            {
+                createCreditNote = true;
+            }
+            else
+            {
+                createCreditNote = false;
+            }
 
             return order;
         }

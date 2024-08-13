@@ -145,7 +145,7 @@
             this.PartQueryRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns((Part)null);
 
-            this.action = () => this.Sut.CreateOrder(this.order, new List<string>());
+            this.action = () => this.Sut.CreateOrder(this.order, new List<string>(), out _);
         }
 
         [Test]
