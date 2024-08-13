@@ -102,8 +102,8 @@
                     {
                         new NominalAccount
                             {
-                                AccountId = 911,
-                                NominalCode = "00009222",
+                                AccountId = 3940,
+                                NominalCode = "0001111",
                                 DepartmentCode = "0001111"
                             }
                     }.AsQueryable());

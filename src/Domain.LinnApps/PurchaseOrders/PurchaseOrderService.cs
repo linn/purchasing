@@ -1066,35 +1066,35 @@
             current.SuppliersDesignation = updated.SuppliersDesignation;
             current.InternalComments = updated.InternalComments;
 
-            var nominal = updated.OrderPosting.NominalAccount;
+            var updatedNominal = updated.OrderPosting.NominalAccount;
 
-            var nominalAccounts = this.nominalAccountRepository.FilterBy(x => x.NominalCode == nominal.NominalCode);
+            var nominalAccounts = this.nominalAccountRepository.FilterBy(x => x.NominalCode == updatedNominal.NominalCode);
 
             if (!nominalAccounts.Any())
             {
                 nominalAccounts = this.nominalAccountRepository.FilterBy(
-                    x => x.NominalCode.EndsWith(nominal.NominalCode));
+                    x => x.NominalCode.EndsWith(updatedNominal.NominalCode));
             }
 
-            var nominalAccount = nominalAccounts.FirstOrDefault(
-                                     x => x.DepartmentCode == nominal.DepartmentCode)
+            var updatedNominalAccount = nominalAccounts.FirstOrDefault(
+                                     x => x.DepartmentCode == updatedNominal.DepartmentCode)
                                  ?? nominalAccounts.FirstOrDefault(
-                                     x => x.DepartmentCode.EndsWith(nominal.DepartmentCode));
+                                     x => x.DepartmentCode.EndsWith(updatedNominal.DepartmentCode));
 
-            if (nominalAccount == null)
+            if (updatedNominalAccount == null)
             {
                 throw new ItemNotFoundException("Invalid nominal code/dept");
             }
 
 
-            if (updated.OrderPosting.NominalAccount.AccountId != nominalAccount.AccountId
+            if (current.OrderPosting.NominalAccount.AccountId != updatedNominalAccount.AccountId
                 && current.PurchaseDeliveries.Any(d => d.QtyNetReceived > 0))
             {
                 throw new PurchaseOrderException(
                     "Cannot update nominal account after some qty of the order has been booked in");
             }
 
-            current.OrderPosting.NominalAccount = nominalAccount;
+            current.OrderPosting.NominalAccount = updatedNominalAccount;
 
             if ((documentType != "CO") && (documentType != "RO"))
             {
