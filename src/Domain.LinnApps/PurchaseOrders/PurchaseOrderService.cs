@@ -188,7 +188,7 @@
             return order;
         }
 
-        public PurchaseOrder CreateOrder(PurchaseOrder order, IEnumerable<string> privileges)
+        public PurchaseOrder CreateOrder(PurchaseOrder order, IEnumerable<string> privileges, out bool createCreditNote)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
             {
@@ -198,6 +198,7 @@
             this.CheckOkToRaiseOrders();
 
             var newOrderNumber = this.databaseService.GetNextVal("PL_ORDER_SEQ");
+            order.Supplier = this.supplierRepository.FindById(order.SupplierId);
             order.OrderNumber = newOrderNumber;
             order.OrderNetTotal = 0;
             order.BaseOrderNetTotal = 0;
@@ -269,6 +270,15 @@
             order.DamagesPercent = 2m;
 
             this.purchaseOrderRepository.Add(order);
+
+            if (order.DocumentTypeName is "CO" or "RO")
+            {
+                createCreditNote = true;
+            }
+            else
+            {
+                createCreditNote = false;
+            }
 
             return order;
         }
@@ -400,7 +410,6 @@
             }
 
             this.CheckOkToRaiseOrders();
-
             this.UpdateOrderProperties(current, updated);
             this.UpdateDetails(current.Details, updated.Details, updated.SupplierId, updated.ExchangeRate.Value, current.DocumentType.Name);
             this.UpdateMiniOrder(updated);
@@ -1057,27 +1066,35 @@
             current.SuppliersDesignation = updated.SuppliersDesignation;
             current.InternalComments = updated.InternalComments;
 
-            var nominal = updated.OrderPosting.NominalAccount;
+            var updatedNominal = updated.OrderPosting.NominalAccount;
 
-            var nominalAccounts = this.nominalAccountRepository.FilterBy(x => x.NominalCode == nominal.NominalCode);
+            var nominalAccounts = this.nominalAccountRepository.FilterBy(x => x.NominalCode == updatedNominal.NominalCode);
 
             if (!nominalAccounts.Any())
             {
                 nominalAccounts = this.nominalAccountRepository.FilterBy(
-                    x => x.NominalCode.EndsWith(nominal.NominalCode));
+                    x => x.NominalCode.EndsWith(updatedNominal.NominalCode));
             }
 
-            var nominalAccount = nominalAccounts.FirstOrDefault(
-                                     x => x.DepartmentCode == nominal.DepartmentCode)
+            var updatedNominalAccount = nominalAccounts.FirstOrDefault(
+                                     x => x.DepartmentCode == updatedNominal.DepartmentCode)
                                  ?? nominalAccounts.FirstOrDefault(
-                                     x => x.DepartmentCode.EndsWith(nominal.DepartmentCode));
+                                     x => x.DepartmentCode.EndsWith(updatedNominal.DepartmentCode));
 
-            if (nominalAccount == null)
+            if (updatedNominalAccount == null)
             {
                 throw new ItemNotFoundException("Invalid nominal code/dept");
             }
 
-            current.OrderPosting.NominalAccount = nominalAccount;
+
+            if (current.OrderPosting.NominalAccount.AccountId != updatedNominalAccount.AccountId
+                && current.PurchaseDeliveries.Any(d => d.QtyNetReceived > 0))
+            {
+                throw new PurchaseOrderException(
+                    "Cannot update nominal account after some qty of the order has been booked in");
+            }
+
+            current.OrderPosting.NominalAccount = updatedNominalAccount;
 
             if ((documentType != "CO") && (documentType != "RO"))
             {

@@ -27,9 +27,7 @@
         private readonly ILog logger;
 
         private readonly IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository;
-
-        private readonly IRepository<Supplier, int> supplierRepository;
-
+        
         private readonly IBuilder<PurchaseOrder> resourceBuilder;
 
         private readonly ITransactionManager transactionManager;
@@ -44,7 +42,6 @@
             IBuilder<PurchaseOrder> resourceBuilder,
             IPurchaseOrderService domainService,
             IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository,
-            IRepository<Supplier, int> supplierRepository,
             IPlCreditDebitNoteService creditDebitNoteService,
             ILog logger)
             : base(repository, transactionManager, resourceBuilder)
@@ -54,7 +51,6 @@
             this.transactionManager = transactionManager;
             this.logger = logger;
             this.resourceBuilder = resourceBuilder;
-            this.supplierRepository = supplierRepository;
             this.repository = repository;
             this.creditDebitNoteService = creditDebitNoteService;
         }
@@ -268,30 +264,13 @@
                     }
                 }
 
-                var overBookChange = false;
-
-                if (resource.From.Overbook != resource.To.Overbook)
+                if (resource.From.OverbookQty != resource.To.OverbookQty || resource.From.Overbook != resource.To.Overbook)
                 {
-                    overBookChange = true;
                     order = this.domainService.AllowOverbook(
                         order,
                         resource.To.Overbook,
-                        order.OverbookQty,
-                        privilegesList);
-                }
-
-                if (resource.From.OverbookQty != resource.To.OverbookQty)
-                {
-                    overBookChange = true;
-                    order = this.domainService.AllowOverbook(
-                        order,
-                        order.Overbook,
                         resource.To.OverbookQty,
                         privilegesList);
-                }
-
-                if (overBookChange)
-                {
                     var log = new OverbookAllowedByLog
                                   {
                                       OrderNumber = order.OrderNumber,
@@ -343,36 +322,28 @@
         {
             return this.domainService.GetPurchaseOrderAsHtml(orderNumber);
         }
-
+        
+        // WE NEED THIS BESPOKE .Add() METHOD TO HIDE THE BASE .Add()
+        // since the default additional .Commit() at the end of the base .Add()
+        // causes EFCore to try and insert the order twice for some reason
         public new IResult<PurchaseOrderResource> Add(
             PurchaseOrderResource resource, IEnumerable<string> privileges = null, int? userNumber = null)
         {
             var candidate = this.BuildEntityFromResourceHelper(resource);
 
-            PurchaseOrder order;
-            try
-            {
-                order = this.domainService.CreateOrder(candidate, privileges);
-            }
-            catch (DomainException exception)
-            {
-                this.logger.Info($"Failed to create order. {exception.Message}");
-                return new BadRequestResult<PurchaseOrderResource>(exception.Message);
-            }
+            var order = this.domainService.CreateOrder(candidate, privileges, out var makeCreditNote);
 
             this.transactionManager.Commit();
 
             this.domainService.CreateMiniOrder(order);
             this.transactionManager.Commit();
 
-            if (order.DocumentTypeName is "CO" or "RO")
+            if (makeCreditNote)
             {
                 this.creditDebitNoteService.CreateDebitOrCreditNoteFromPurchaseOrder(order);
                 this.transactionManager.Commit();
             }
             
-            order.Supplier = this.supplierRepository.FindById(order.SupplierId);
-
             return new CreatedResult<PurchaseOrderResource>(
                 (PurchaseOrderResource)this.resourceBuilder.Build(order, privileges.ToList()));
         }
@@ -381,13 +352,13 @@
             PurchaseOrderResource resource,
             IEnumerable<string> privileges = null)
         {
+            // This method is never called, since the base .Add() is hidden by this class's own .Add()
             throw new NotImplementedException();
         }
 
         protected override void DeleteOrObsoleteResource(
             PurchaseOrder entity, IEnumerable<string> privileges = null)
         {
-            this.transactionManager.Commit();
             throw new NotImplementedException();
         }
 
@@ -424,7 +395,7 @@
             PurchaseOrderResource resource,
             PurchaseOrderResource updateResource)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> SearchExpression(string searchTerm)

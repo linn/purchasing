@@ -118,7 +118,6 @@
                 purchaseOrderResourceBuilder,
                 this.MockDomainService,
                 this.OverbookAllowedByLogRepository,
-                this.MockSupplierRepository,
                 this.MockPlCreditDebitNoteService,
                 this.Log);
 

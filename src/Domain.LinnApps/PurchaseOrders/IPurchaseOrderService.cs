@@ -33,7 +33,7 @@
 
         string GetPurchaseOrderAsHtml(int orderNumber);
 
-        PurchaseOrder CreateOrder(PurchaseOrder order, IEnumerable<string> privileges);
+        PurchaseOrder CreateOrder(PurchaseOrder order, IEnumerable<string> privileges, out bool createCreditNote);
 
         void CreateMiniOrder(PurchaseOrder order);
 

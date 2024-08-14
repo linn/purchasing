@@ -809,7 +809,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 Inv PopUp
                                             </Button>
                                         </Tooltip>
-                                        {order?.orderNumber && (
+                                        {!!order?.orderNumber && (
                                             <Tooltip title="Leave orders screen and open inv post">
                                                 <Link
                                                     variant="body1"

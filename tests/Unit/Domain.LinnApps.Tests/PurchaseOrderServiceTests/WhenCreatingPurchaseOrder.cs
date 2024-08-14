@@ -155,7 +155,7 @@
             this.PartQueryRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { DateLive = DateTime.Today });
 
-            this.result = this.Sut.CreateOrder(this.order, new List<string>());
+            this.result = this.Sut.CreateOrder(this.order, new List<string>(), out _);
         }
 
         [Test]

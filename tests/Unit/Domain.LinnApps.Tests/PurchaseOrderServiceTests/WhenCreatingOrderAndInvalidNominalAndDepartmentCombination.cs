@@ -86,8 +86,7 @@
                                 DepartmentCode = "0000911"
                             }
                     }.AsQueryable());
-
-            this.action = () => this.Sut.CreateOrder(this.updated, new List<string>());
+            this.action = () => this.Sut.CreateOrder(this.updated, new List<string>(), out _);
         }
 
         [Test]
