@@ -27,9 +27,7 @@
         private readonly ILog logger;
 
         private readonly IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository;
-
-        private readonly IRepository<Supplier, int> supplierRepository;
-
+        
         private readonly IBuilder<PurchaseOrder> resourceBuilder;
 
         private readonly ITransactionManager transactionManager;
@@ -44,7 +42,6 @@
             IBuilder<PurchaseOrder> resourceBuilder,
             IPurchaseOrderService domainService,
             IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository,
-            IRepository<Supplier, int> supplierRepository,
             IPlCreditDebitNoteService creditDebitNoteService,
             ILog logger)
             : base(repository, transactionManager, resourceBuilder)
@@ -54,7 +51,6 @@
             this.transactionManager = transactionManager;
             this.logger = logger;
             this.resourceBuilder = resourceBuilder;
-            this.supplierRepository = supplierRepository;
             this.repository = repository;
             this.creditDebitNoteService = creditDebitNoteService;
         }
@@ -326,10 +322,12 @@
         {
             return this.domainService.GetPurchaseOrderAsHtml(orderNumber);
         }
-
-        protected override PurchaseOrder CreateFromResource(
-            PurchaseOrderResource resource,
-            IEnumerable<string> privileges = null)
+        
+        // WE NEED THIS BESPOKE .Add() METHOD TO HIDE THE BASE .Add()
+        // since the default additional .Commit() at the end of the base .Add()
+        // causes EFCore to try and insert the order twice for some reason
+        public new IResult<PurchaseOrderResource> Add(
+            PurchaseOrderResource resource, IEnumerable<string> privileges = null, int? userNumber = null)
         {
             var candidate = this.BuildEntityFromResourceHelper(resource);
 
@@ -340,15 +338,22 @@
             this.domainService.CreateMiniOrder(order);
             this.transactionManager.Commit();
 
-            if (!makeCreditNote)
+            if (makeCreditNote)
             {
-                return order;
+                this.creditDebitNoteService.CreateDebitOrCreditNoteFromPurchaseOrder(order);
+                this.transactionManager.Commit();
             }
+            
+            return new CreatedResult<PurchaseOrderResource>(
+                (PurchaseOrderResource)this.resourceBuilder.Build(order, privileges.ToList()));
+        }
 
-            this.creditDebitNoteService.CreateDebitOrCreditNoteFromPurchaseOrder(order);
-            this.transactionManager.Commit();
-
-            return order;
+        protected override PurchaseOrder CreateFromResource(
+            PurchaseOrderResource resource,
+            IEnumerable<string> privileges = null)
+        {
+            // This method is never called, since the base .Add() is hidden by this class's own .Add()
+            throw new NotImplementedException();
         }
 
         protected override void DeleteOrObsoleteResource(
@@ -390,7 +395,7 @@
             PurchaseOrderResource resource,
             PurchaseOrderResource updateResource)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> SearchExpression(string searchTerm)
