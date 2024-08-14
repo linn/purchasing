@@ -93,7 +93,6 @@
                 this.Builder,
                 this.DomainService,
                 this.OverbookAllowedByLogRepository,
-                this.SupplierRepository,
                 this.PlCreditDebitNoteService,
                 this.Logger);
         }
