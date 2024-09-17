@@ -30,6 +30,7 @@ import {
     Search,
     InputField,
     SnackbarMessage,
+    getRequestErrors,
     itemSelectorHelpers,
     Loading,
     Dropdown,
@@ -150,6 +151,10 @@ function PurchaseOrderUtility({ creating }) {
 
     const deliveriesLoading = useSelector(state =>
         itemSelectorHelpers.getItemLoading(state[purchaseOrderDeliveries.item])
+    );
+
+    const requestErrors = useSelector(reduxState =>
+        getRequestErrors(reduxState)?.filter(error => error.type !== 'FETCH_ERROR')
     );
 
     const suggestedValuesError = useSelector(state =>
@@ -502,7 +507,13 @@ function PurchaseOrderUtility({ creating }) {
     return (
         <>
             <div className="hide-when-printing">
-                <Page history={history} homeUrl={config.appRoot} width={screenIsSmall ? 'xl' : 'm'}>
+                <Page
+                    history={history}
+                    requestErrors={requestErrors}
+                    showRequestErrors
+                    homeUrl={config.appRoot}
+                    width={screenIsSmall ? 'xl' : 'm'}
+                >
                     {loading || deliveriesLoading || suggestedValuesLoading ? (
                         <Loading />
                     ) : (
@@ -557,7 +568,7 @@ function PurchaseOrderUtility({ creating }) {
                                     <Grid item xs={12}>
                                         <ErrorCard
                                             errorMessage={
-                                                itemError?.details ?? itemError.statusText
+                                                itemError?.details?.error ?? itemError.statusText
                                             }
                                         />
                                     </Grid>
