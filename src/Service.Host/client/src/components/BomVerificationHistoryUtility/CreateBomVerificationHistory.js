@@ -79,14 +79,10 @@ function CreateBomVerificationHistory() {
         return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
     };
 
-    const requestErrors = useSelector(reduxState =>
-        getRequestErrors(reduxState)?.filter(error => error.type !== 'FETCH_ERROR')
-    );
-
     const itemError = useSelector(reduxState => getItemError(reduxState, 'bomVerificationHistory'));
 
     return (
-        <Page history={history} requestErrors={requestErrors} showRequestErrors>
+        <Page history={history}>
             <Grid container>
                 <Grid item xs={12}>
                     <Typography variant="h3">Create BOM Verification</Typography>
