@@ -329,23 +329,30 @@
         public new IResult<PurchaseOrderResource> Add(
             PurchaseOrderResource resource, IEnumerable<string> privileges = null, int? userNumber = null)
         {
-            var candidate = this.BuildEntityFromResourceHelper(resource);
-
-            var order = this.domainService.CreateOrder(candidate, privileges, out var makeCreditNote);
-
-            this.transactionManager.Commit();
-
-            this.domainService.CreateMiniOrder(order);
-            this.transactionManager.Commit();
-
-            if (makeCreditNote)
+            try
             {
-                this.creditDebitNoteService.CreateDebitOrCreditNoteFromPurchaseOrder(order);
+                var candidate = this.BuildEntityFromResourceHelper(resource);
+
+                var order = this.domainService.CreateOrder(candidate, privileges, out var makeCreditNote);
+
                 this.transactionManager.Commit();
+
+                this.domainService.CreateMiniOrder(order);
+                this.transactionManager.Commit();
+
+                if (makeCreditNote)
+                {
+                    this.creditDebitNoteService.CreateDebitOrCreditNoteFromPurchaseOrder(order);
+                    this.transactionManager.Commit();
+                }
+
+                return new CreatedResult<PurchaseOrderResource>(
+                    (PurchaseOrderResource)this.resourceBuilder.Build(order, privileges.ToList()));
             }
-            
-            return new CreatedResult<PurchaseOrderResource>(
-                (PurchaseOrderResource)this.resourceBuilder.Build(order, privileges.ToList()));
+            catch (DomainException exception)
+            {
+                return new BadRequestResult<PurchaseOrderResource>(exception.Message);
+            }
         }
 
         protected override PurchaseOrder CreateFromResource(
