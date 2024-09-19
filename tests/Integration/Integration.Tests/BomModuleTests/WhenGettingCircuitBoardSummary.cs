@@ -42,7 +42,8 @@
                                 BomPartNumber = "PCAS 123/L1R1",
                                 PcasPartNumber = null,
                                 PcsmPartNumber = null,
-                                PcbPartNumber = null
+                                PcbPartNumber = null,
+                                PartDescription = "A Part"
                             };
             
             this.BoardComponentSummaryRepository.FilterBy(Arg.Any<Expression<Func<BoardComponentSummary, bool>>>())
