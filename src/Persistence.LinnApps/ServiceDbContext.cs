@@ -2209,6 +2209,7 @@
             entity.Property(a => a.PcasPartNumber).HasColumnName("PCAS_PART_NUMBER").HasMaxLength(14);
             entity.Property(a => a.PcsmPartNumber).HasColumnName("PCSM_PART_NUMBER").HasMaxLength(14);
             entity.Property(a => a.PcbPartNumber).HasColumnName("PCB_PART_NUMBER").HasMaxLength(14);
+            entity.Property(a => a.PartDescription).HasColumnName("DESCRIPTION").HasMaxLength(200);
         }
 
         private void BuildBoardComponents(ModelBuilder builder)

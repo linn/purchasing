@@ -60,7 +60,8 @@ function BoardsSummary() {
         { field: 'quantity', headerName: 'Qty', minWidth: 100 },
         { field: 'assemblyTechnology', headerName: 'Tech', minWidth: 100 },
         { field: 'bomPartNumber', headerName: 'Assembly', minWidth: 150 },
-        { field: 'changeState', headerName: 'Change State', minWidth: 150 }
+        { field: 'changeState', headerName: 'Change State', minWidth: 150 },
+        { field: 'partDescription', headerName: 'Part Description', minWidth: 150 }
     ];
 
     const handleFieldChange = (propertyName, value) => {

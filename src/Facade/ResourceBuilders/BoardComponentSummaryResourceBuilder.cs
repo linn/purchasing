@@ -32,7 +32,8 @@
                            BomPartNumber = entity.BomPartNumber,
                            PcasPartNumber = entity.PcasPartNumber,
                            PcsmPartNumber = entity.PcsmPartNumber,
-                           PcbPartNumber = entity.PcbPartNumber
+                           PcbPartNumber = entity.PcbPartNumber,
+                           PartDescription = entity.PartDescription
                        };
         }
 

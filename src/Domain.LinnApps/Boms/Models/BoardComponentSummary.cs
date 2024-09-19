@@ -43,5 +43,7 @@
         public string PcsmPartNumber { get; set; }
 
         public string PcbPartNumber { get; set; }
+
+        public string PartDescription { get; set; }
     }
 }
