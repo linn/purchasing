@@ -5,6 +5,7 @@
     using FluentAssertions;
 
     using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -14,7 +15,7 @@
 
     public class WhenGettingLedgerPeriod : ContextBase
     {
-        private LedgerPeriodResource result;
+        private LedgerPeriod result;
 
         private int id;
 
@@ -22,10 +23,10 @@
         public void SetUp()
         {
             this.id = 123;
-            this.result = new LedgerPeriodResource { PeriodNumber = this.id };
+            this.result = new LedgerPeriod{ PeriodNumber = this.id };
 
-            this.LedgerPeriodFacadeService.GetById(this.id)
-                .Returns(new SuccessResult<LedgerPeriodResource>(this.result));
+            this.LedgerPeriodRepository.FindById(this.id)
+                .Returns(this.result);
 
             this.Response = this.Client.Get(
                 $"/purchasing/ledger-periods/{this.id}",

@@ -7,6 +7,7 @@
     using FluentAssertions;
 
     using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -27,8 +28,12 @@
                                       new LedgerPeriodResource { PeriodNumber = 2 }
                                   };
 
-            this.LedgerPeriodFacadeService.GetAll()
-                .Returns(new SuccessResult<IEnumerable<LedgerPeriodResource>>(this.results));
+            this.LedgerPeriodRepository.FindAll()
+                .Returns(new List<LedgerPeriod>
+                             {
+                                 new LedgerPeriod { PeriodNumber = 1 },
+                                 new LedgerPeriod { PeriodNumber = 2 }
+                             }.AsQueryable());
 
             this.Response = this.Client.Get(
                 $"/purchasing/ledger-periods",

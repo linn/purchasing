@@ -5,6 +5,8 @@
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Facade.ResourceBuilders;
+    using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Modules;
@@ -23,14 +25,20 @@
 
         protected ITransactionManager TransactionManager { get; set; }
 
+        protected IRepository<LedgerPeriod, int> LedgerPeriodRepository { get; private set; }
+
         protected IFacadeResourceService<LedgerPeriod, int, LedgerPeriodResource, LedgerPeriodResource> LedgerPeriodFacadeService { get; private set; }
 
         [SetUp]
         public void EstablishContext()
         {
             this.TransactionManager = Substitute.For<ITransactionManager>();
+            this.LedgerPeriodRepository = Substitute.For<IRepository<LedgerPeriod, int>>();
 
-            this.LedgerPeriodFacadeService = Substitute.For<IFacadeResourceService<LedgerPeriod, int, LedgerPeriodResource, LedgerPeriodResource>>();
+            this.LedgerPeriodFacadeService = new LedgerPeriodFacadeService(
+                this.LedgerPeriodRepository,
+                this.TransactionManager,
+                new LedgerPeriodResourceBuilder());
 
             this.Client = TestClient.With<LedgerPeriodModule>(
                 services =>
