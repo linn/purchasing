@@ -43,7 +43,7 @@
 
         protected override Expression<Func<LedgerPeriod, bool>> SearchExpression(string searchTerm)
         {
-            return lp => lp.MonthName.Trim().Contains(searchTerm) || lp.PeriodNumber.ToString().Contains(searchTerm);
+            return lp => lp.MonthName.Trim().Contains(searchTerm.ToUpper()) || lp.PeriodNumber.ToString().Contains(searchTerm.ToUpper());
         }
 
         protected override void UpdateFromResource(

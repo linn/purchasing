@@ -22,14 +22,9 @@
 
     public class WhenSearchingLedgerPeriod : ContextBase
     {
-
-        private IRepository<LedgerPeriod, int> LedgerPeriodRepository;
-
         [SetUp]
         public void SetUp()
         {
-            this.LedgerPeriodRepository = Substitute.For<IRepository<LedgerPeriod, int>>();
-
             this.LedgerPeriodRepository.FilterBy(Arg.Any<Expression<Func<LedgerPeriod, bool>>>()).Returns(
                 new List<LedgerPeriod>
                     {   
@@ -40,14 +35,14 @@
                             },
                          new LedgerPeriod
                             {
-                                MonthName = "OCT2024",
+                                MonthName = "JAN2024",
                                 PeriodNumber = 30
 
                             }
                     }.AsQueryable());
 
             this.Response = this.Client.Get(
-                "/purchasing/ledger-periods?searchTerm=JAN2005",
+                "/purchasing/ledger-periods?searchTerm=",
                 with =>
                 {
                     with.Accept("application/json");
@@ -70,7 +65,7 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resources = this.Response.DeserializeBody<IEnumerable<LedgerPeriodResource>>()?.ToArray();
+            var resources = this.Response.DeserializeBody<IEnumerable<LedgerPeriod>>()?.ToArray();
             resources.Should().NotBeNull();
             resources.Should().HaveCount(2);
             resources.Should().Contain(a => a.PeriodNumber == 20);
