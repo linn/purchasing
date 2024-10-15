@@ -11,6 +11,7 @@
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -22,27 +23,25 @@
 
     public class WhenSearchingLedgerPeriod : ContextBase
     {
+        private string monthNameSearch;
+
+        private List<LedgerPeriod> dataResult;
         [SetUp]
         public void SetUp()
         {
-            this.LedgerPeriodRepository.FilterBy(Arg.Any<Expression<Func<LedgerPeriod, bool>>>()).Returns(
-                new List<LedgerPeriod>
-                    {   
-                        new LedgerPeriod 
-                            {
-                                MonthName = "JAN2005",
-                                PeriodNumber = 20
-                            },
-                         new LedgerPeriod
-                            {
-                                MonthName = "JAN2024",
-                                PeriodNumber = 30
+            this.monthNameSearch = "2005";
 
-                            }
-                    }.AsQueryable());
+            this.dataResult = new List<LedgerPeriod>
+                                  {
+                                      new LedgerPeriod { MonthName = "JAN2005", PeriodNumber = 20 },
+                                      new LedgerPeriod { MonthName = "JAN2024", PeriodNumber = 30 }
+                                  };
+
+            this.LedgerPeriodRepository.FilterBy(Arg.Any<Expression<Func<LedgerPeriod, bool>>>())
+                .Returns(this.dataResult.AsQueryable());
 
             this.Response = this.Client.Get(
-                "/purchasing/ledger-periods?searchTerm=",
+                $"/purchasing/ledger-periods?searchTerm={this.monthNameSearch}",
                 with =>
                 {
                     with.Accept("application/json");
@@ -67,9 +66,8 @@
         {
             var resources = this.Response.DeserializeBody<IEnumerable<LedgerPeriod>>()?.ToArray();
             resources.Should().NotBeNull();
-            resources.Should().HaveCount(2);
+            resources.Should().HaveCount(1);
             resources.Should().Contain(a => a.PeriodNumber == 20);
-            resources.Should().Contain(a => a.PeriodNumber == 30);
         }
     }
 }
