@@ -29,19 +29,18 @@
         [SetUp]
         public void SetUp()
         {
-            this.monthNameSearch = "2005";
+            this.monthNameSearch = "FEB";
 
             this.dataResult = new List<LedgerPeriod>
                                   {
-                                      new LedgerPeriod { MonthName = "JAN2005", PeriodNumber = 20 },
-                                      new LedgerPeriod { MonthName = "JAN2024", PeriodNumber = 30 }
+                                      new LedgerPeriod { MonthName = "FEB1995", PeriodNumber = 20 }
                                   };
 
             this.LedgerPeriodRepository.FilterBy(Arg.Any<Expression<Func<LedgerPeriod, bool>>>())
                 .Returns(this.dataResult.AsQueryable());
 
             this.Response = this.Client.Get(
-                $"/purchasing/ledger-periods?searchTerm={this.monthNameSearch}",
+                $"/purchasing/ledger-periods/search?searchTerm={this.monthNameSearch}",
                 with =>
                 {
                     with.Accept("application/json");

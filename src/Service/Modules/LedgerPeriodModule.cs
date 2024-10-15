@@ -7,6 +7,7 @@
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Resources;
 
     using Microsoft.AspNetCore.Builder;
@@ -19,6 +20,7 @@
         {
             app.MapGet("/purchasing/ledger-periods/{id:int}", this.GetLedgerPeriod);
             app.MapGet("/purchasing/ledger-periods", this.GetLedgerPeriods);
+            app.MapGet("/purchasing/ledger-periods/search", this.SearchLedgerPeriods);
         }
 
         private async Task GetLedgerPeriod(
@@ -38,6 +40,17 @@
             IFacadeResourceService<LedgerPeriod, int, LedgerPeriodResource, LedgerPeriodResource> facadeService)
         {
             var result = facadeService.GetAll();
+
+            await res.Negotiate(result);
+        }
+
+        private async Task SearchLedgerPeriods(
+            HttpRequest req,
+            HttpResponse res,
+            string searchTerm,
+            IFacadeResourceService<LedgerPeriod, int, LedgerPeriodResource, LedgerPeriodResource> ledgerPeriod)
+        {
+            var result = ledgerPeriod.Search(searchTerm);
 
             await res.Negotiate(result);
         }
