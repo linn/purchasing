@@ -8,18 +8,12 @@
 
     using FluentAssertions;
 
-    using Linn.Common.Facade;
-    using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
-    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
-    using Linn.Purchasing.Resources;
 
     using NSubstitute;
 
     using NUnit.Framework;
-
-    using Org.BouncyCastle.Crypto.Parameters;
 
     public class WhenSearchingLedgerPeriod : ContextBase
     {
