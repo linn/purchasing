@@ -11,7 +11,6 @@ const oidcConfig = {
     scope: 'openid profile email associations offline_access',
     redirect_uri: `${host}/purchasing/signin-oidc-client`,
     post_logout_redirect_uri: `${host}`,
-    // silent_redirect_uri: `${host}/purchasing/signin-oidc-silent`,
     automaticSilentRenew: true,
     filterProtocolClaims: true,
     loadUserInfo: true,
