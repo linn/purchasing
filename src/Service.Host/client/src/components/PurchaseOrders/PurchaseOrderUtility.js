@@ -1378,6 +1378,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 <Grid item xs={6}>
                                                     <InputField
                                                         fullWidth
+                                                        decimalPlaces={5}
                                                         value={detail.ourUnitPriceCurrency}
                                                         label="Our price (unit, currency)"
                                                         propertyName="ourUnitPriceCurrency"
@@ -1410,6 +1411,7 @@ function PurchaseOrderUtility({ creating }) {
                                                         >
                                                             <Grid item xs={12}>
                                                                 <InputField
+                                                                    decimalPlaces={5}
                                                                     fullWidth
                                                                     value={
                                                                         detail.orderUnitPriceCurrency
@@ -1446,6 +1448,7 @@ function PurchaseOrderUtility({ creating }) {
                                                                             detail.orderUnitPriceCurrency
                                                                         }
                                                                         label="Order price (currency)"
+                                                                        decimalPlaces={5}
                                                                         propertyName="orderUnitPriceCurrency"
                                                                         disabled
                                                                         type="number"
@@ -1497,6 +1500,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     value={detail.netTotalCurrency}
                                                     label="Net total (currency)"
                                                     propertyName="netTotalCurrency"
+                                                    decimalPlaces={5}
                                                     onChange={handleDetailFieldChange}
                                                     disabled
                                                     type="number"
