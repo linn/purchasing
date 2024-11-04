@@ -53,6 +53,8 @@ function App() {
         checkAuthStatus();
     }, []);
 
+    document.body.style.margin = '0';
+
     return (
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={linnTheme}>
