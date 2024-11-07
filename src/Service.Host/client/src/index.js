@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { SnackbarProvider } from 'notistack';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { linnTheme } from '@linn-it/linn-form-components-library';
-import { LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { loadUser } from 'redux-oidc';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import PropTypes from 'prop-types';
