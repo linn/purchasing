@@ -59,7 +59,7 @@ function App() {
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={linnTheme}>
                 <SnackbarProvider dense maxSnack={5}>
-                    <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="en-GB">
+                    <LocalizationProvider dateAdapter={AdapterMoment} locale="en-GB">
                         <AppContent isLoading={isLoading} />
                     </LocalizationProvider>
                 </SnackbarProvider>
