@@ -318,8 +318,9 @@
         {
             var order = this.GetOrder(orderNumber);
 
-            var emailBody = $"Purchasing have raised order {orderNumber} for {order.Supplier.Name}.\n"
-                            + $"The following parts will need supplier kits\n";
+            var emailBody = $"Purchasing have raised order {orderNumber} for {order.Supplier.Name}.\n" 
+                                + "This email is sent from an unmonitored account. please send all correspondence direct to the buyer.\n"
+                                + $"The following parts will need supplier kits\n";
 
             var kits = this.supplierKitService.GetSupplierKits(order, true);
 
@@ -1293,7 +1294,8 @@
 
             var emailBody = $"Please accept the attached order no. {order.OrderNumber}.\n"
                             + "Linn's standard Terms & Conditions apply at all times\n"
-                            + "and can be found at www.linn.co.uk/purchasing_conditions";
+                            + "and can be found at www.linn.co.uk/purchasing_conditions.\n"
+                            + "This email is sent from an unmonitored account. Please send all correspondence direct to the buyer.";
 
             var bccList = new List<Dictionary<string, string>>
                               {
