@@ -319,7 +319,7 @@
             var order = this.GetOrder(orderNumber);
 
             var emailBody = $"Purchasing have raised order {orderNumber} for {order.Supplier.Name}.\n" 
-                                + "This email is sent from an unmonitored account. please send all correspondence direct to the buyer.\n"
+                                + "This email is sent from an unmonitored account. Please send all correspondence direct to the buyer.\n"
                                 + $"The following parts will need supplier kits\n";
 
             var kits = this.supplierKitService.GetSupplierKits(order, true);
