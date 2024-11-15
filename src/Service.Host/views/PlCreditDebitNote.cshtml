@@ -190,7 +190,7 @@
             </div>
 
             @{
-                if ((@Model.NoteType.Type == "D") && (@Model.PurchaseOrder?.DocumentType.Name != "RO"))
+                if (@Model.NoteType.Type == "D" && @Model.PurchaseOrder.DocumentTypeName != "RO")
                 {
                     <div class="debitNoteAddendum">
                         <h4> THESE ITEMS ARE RETURNED FOR CREDIT</h4>
