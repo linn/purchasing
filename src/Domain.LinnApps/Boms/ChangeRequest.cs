@@ -86,7 +86,7 @@
                 return true;
             }
 
-            if (this.ChangeState == "ACCEPT" || this.ChangeState == "LIVE")
+            if (this.ChangeState == "ACCEPT" || this.ChangeState == "LIVE" || this.ChangeState == "CANCEL")
             {
                 return adminPrivs;
             }
