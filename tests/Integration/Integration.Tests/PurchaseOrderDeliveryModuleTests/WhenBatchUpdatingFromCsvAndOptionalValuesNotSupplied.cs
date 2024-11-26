@@ -50,7 +50,7 @@
             this.MockDomainService.Received().UploadDeliveries(
                 Arg.Is<IEnumerable<PurchaseOrderDeliveryUpdate>>(
                     l => l.First().Key.OrderNumber.Equals(1)
-                    && l.First().NewDateAdvised.Equals(1.January(2025)) // date defaults to this future date
+                    && l.First().NewDateAdvised.Equals(1.January(2030)) // date defaults to this future date
                     && l.First().Qty.Equals(100)
                     && l.First().UnitPrice.Equals(0.01m)
                     && l.First().NewReason.Equals("ADVISED")), // reason defaults to 'ADVISED'

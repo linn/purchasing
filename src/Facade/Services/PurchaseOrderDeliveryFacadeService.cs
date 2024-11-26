@@ -88,7 +88,6 @@
                         DateTime.TryParseExact(row[1].ToUpper()
                             .Trim(), "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate5);
 
-                    // only supports two date formats for now, i.e.  31/01/2000 and 31-jan-2000
                     DateTime? parsedDate;
 
                     if (firstFormatSatisfied)
@@ -113,7 +112,7 @@
                     }
                     else
                     {
-                        parsedDate = new DateTime(2025, 1, 1);
+                        parsedDate = new DateTime(2030, 1, 1);
                     }
 
                     var reason = row.Length < 5 ? null : row[4].Trim();
