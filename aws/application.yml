@@ -140,7 +140,7 @@ Resources:
         Image: !Sub docker.io/linn/purchasing:${dockerTag}
         PortMappings:
         - ContainerPort: 5050
-        Memory: '750'
+        Memory: !If [isTesting, '300', '750']
         LogConfiguration:
           LogDriver: gelf
           Options:
