@@ -21,7 +21,7 @@
             app.MapGet("/purchasing/vendor-managers/{id}", this.GetVendorManager);
             app.MapGet("/purchasing/vendor-managers", this.GetAllVendorManagers);
             app.MapPut("/purchasing/vendor-managers/{id}", this.UpdateVendorManager);
-            app.MapPost(" ", this.CreateVendorManager);
+            app.MapPost("/purchasing/vendor-managers", this.CreateVendorManager);
         }
 
         private async Task GetVendorManager(
