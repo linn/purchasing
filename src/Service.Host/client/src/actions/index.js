@@ -19,6 +19,8 @@ export const partSupplierActionTypes = makeActionTypes(itemTypes.partSupplier.ac
 
 export const employeesActionTypes = makeActionTypes(itemTypes.employees.actionType);
 
+export const currentEmployeesActionTypes = makeActionTypes(itemTypes.currentEmployees.actionType);
+
 export const supplierActionTypes = makeActionTypes(itemTypes.supplier.actionType);
 
 export const suppliersActionTypes = makeActionTypes(itemTypes.suppliers.actionType);
@@ -90,6 +92,8 @@ export const vendorManagersActionTypes = makeActionTypes(
     itemTypes.vendorManagers.actionType,
     false
 );
+
+export const vendorManagerActionTypes = makeActionTypes(itemTypes.vendorManager.actionType, false);
 
 export const spendBySupplierReportActionTypes = makeActionTypes(
     reportTypes.spendBySupplierReport.actionType,

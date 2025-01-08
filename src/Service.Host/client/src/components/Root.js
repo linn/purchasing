@@ -103,6 +103,8 @@ import CurrentPhaseInWeeksReport from './reports/CurrentPhaseInWeeksReport';
 import BoardComponentSummaryReportOptions from './reports/BoardComponentSummaryReportOptions';
 import BoardComponentSummaryReport from './reports/BoardComponentSummaryReport';
 import BomPrintReport from './reports/BomPrintReport';
+import VendorManager from './VendorManager';
+import VendorManagers from './VendorManagers';
 
 function Root({ store }) {
     return (
@@ -302,6 +304,21 @@ function Root({ store }) {
                                         exact
                                         path="/purchasing/open-debit-notes"
                                         element={<OpenDebitNotes />}
+                                    />
+                                    <Route
+                                        exact
+                                        path="/purchasing/vendor-managers"
+                                        element={<VendorManagers />}
+                                    />
+                                    <Route
+                                        exact
+                                        path="/purchasing/vendor-managers/create"
+                                        element={<VendorManager creating />}
+                                    />
+                                    <Route
+                                        exact
+                                        path="/purchasing/vendor-managers/:id"
+                                        element={<VendorManager />}
                                     />
                                     <Route
                                         exact

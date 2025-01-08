@@ -6,6 +6,7 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
 
@@ -23,7 +24,18 @@
             VendorManagerResource resource,
             IEnumerable<string> privileges = null)
         {
-            throw new NotImplementedException();
+            var newVendorManager = new VendorManager
+                                       {
+                                           Id = resource.VmId,
+                                           PmMeasured = resource.PmMeasured,
+                                           UserNumber = resource.UserNumber,
+                                           Employee = new Employee
+                                                          {
+                                                              FullName = resource.Name, Id = resource.UserNumber
+                                                          }
+                                       };
+
+            return newVendorManager;
         }
 
         protected override void DeleteOrObsoleteResource(VendorManager entity, IEnumerable<string> privileges = null)
@@ -51,7 +63,9 @@
             VendorManagerResource updateResource,
             IEnumerable<string> privileges = null)
         {
-            throw new NotImplementedException();
+            entity.PmMeasured = updateResource.PmMeasured;
+            entity.UserNumber = updateResource.UserNumber;
+            entity.Employee = new Employee { FullName = updateResource.Name, Id = updateResource.UserNumber };
         }
     }
 }
