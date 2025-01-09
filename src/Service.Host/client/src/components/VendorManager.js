@@ -8,6 +8,7 @@ import {
     InputField,
     collectionSelectorHelpers,
     Dropdown,
+    ErrorCard,
     Loading,
     getItemError,
     itemSelectorHelpers
@@ -15,7 +16,6 @@ import {
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
-import currentEmployeesActions from '../actions/currentEmployeesActions';
 import history from '../history';
 import config from '../config';
 import {
@@ -23,6 +23,7 @@ import {
     currentEmployees as currentEmployeesItemTypes
 } from '../itemTypes';
 import vendorManagerActions from '../actions/vendorManagerActions';
+import currentEmployeesActions from '../actions/currentEmployeesActions';
 
 function VendorManager({ creating }) {
     const { id } = useParams();
@@ -35,13 +36,9 @@ function VendorManager({ creating }) {
     const vendorManagerLoading = itemSelectorHelpers.getItemLoading(storeItems);
     const vendorManagerInfo = itemSelectorHelpers.getItem(storeItems);
 
-    const currentEmployeesStoreItem = useSelector(
-        reduxState => reduxState[currentEmployeesItemTypes.item]
-    );
+    const currentEmployeesStoreItem = useSelector(state => state[currentEmployeesItemTypes.item]);
+    const currentEmployeesLoading = collectionSelectorHelpers.getLoading(currentEmployeesStoreItem);
     const currentEmployees = collectionSelectorHelpers.getItems(currentEmployeesStoreItem);
-    const currentEmployeesLoading = useSelector(reduxState =>
-        collectionSelectorHelpers.getLoading(reduxState[currentEmployeesItemTypes.item])
-    );
 
     console.log(currentEmployees);
 
@@ -139,6 +136,11 @@ function VendorManager({ creating }) {
                         Save
                     </Button>
                 </Grid>
+                {error && (
+                    <Grid item xs={12}>
+                        <ErrorCard errorMessage={error.details?.error ?? error.details} />
+                    </Grid>
+                )}
             </Grid>
         </Page>
     );

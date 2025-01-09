@@ -8,7 +8,7 @@ export default new UpdateApiActions(
     itemTypes.vendorManager.actionType,
     itemTypes.vendorManager.uri,
     actionTypes,
-    config.appRoot,
-    null,
-    false
+    config.proxyRoot
+    // null,
+    // false
 );

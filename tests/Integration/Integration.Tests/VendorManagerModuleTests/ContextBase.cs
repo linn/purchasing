@@ -7,6 +7,8 @@
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
+    using Linn.Purchasing.Facade.ResourceBuilders;
+    using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Modules;
@@ -41,8 +43,10 @@
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.VendorManagerRepository = Substitute.For<IRepository<VendorManager, string>>();
             this.Log = Substitute.For<ILog>();
-            this.VendorManagerFacadeService =
-                Substitute.For<IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource>>();
+            this.VendorManagerFacadeService = new VendorManagerFacadeService(
+                this.VendorManagerRepository,
+                this.TransactionManager,
+                new VendorManagerResourceBuilder());
 
             this.Client = TestClient.With<VendorManagerModule>(
                 services =>

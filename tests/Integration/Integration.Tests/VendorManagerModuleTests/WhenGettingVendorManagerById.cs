@@ -6,6 +6,8 @@
     using FluentAssertions;
 
     using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -17,16 +19,23 @@
     {
         private string id;
 
-        private VendorManagerResource vendorManager;
+        private VendorManager vendorManager;
 
         [SetUp]
         public void SetUp()
         {
             this.id = "M";
-            this.vendorManager = new VendorManagerResource { VmId = this.id, Name = "vm1" };
+            this.vendorManager = new VendorManager { 
+                                                       Id = this.id,
+                                                       UserNumber = 10,
+                                                       Employee = new Employee
+                                                                      {
+                                                                          FullName = "vm1",
+                                                                          Id = 10
+                                                                      }
+                                                        };
 
-            this.VendorManagerFacadeService.GetById(this.id, Arg.Any<IEnumerable<string>>())
-                .Returns(new SuccessResult<VendorManagerResource>(this.vendorManager));
+            this.VendorManagerRepository.FindById(this.id).Returns(this.vendorManager);
 
             this.Response = this.Client.Get(
                 $"/purchasing/vendor-managers/{this.id}",
@@ -40,12 +49,6 @@
         public void ShouldReturnOk()
         {
             this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-        }
-
-        [Test]
-        public void ShouldCallFacadeService()
-        {
-            this.VendorManagerFacadeService.Received().GetById(this.id, Arg.Any<IEnumerable<string>>());
         }
 
         [Test]

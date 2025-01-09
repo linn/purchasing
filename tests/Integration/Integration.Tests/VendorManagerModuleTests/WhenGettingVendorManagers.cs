@@ -7,6 +7,8 @@
     using FluentAssertions;
 
     using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -16,23 +18,22 @@
 
     public class WhenGettingVendorManagers : ContextBase
     {
-        private List<VendorManagerResource> dataResult;
+        private List<VendorManager> dataResult;
 
         [SetUp]
         public void SetUp()
         {
-            this.dataResult = new List<VendorManagerResource>
+            this.dataResult = new List<VendorManager>
                                   {
-                                      new VendorManagerResource
+                                      new VendorManager
                                           {
                                               UserNumber = 33333,
-                                              VmId = "P",
-                                              Name = "Mario"
+                                              Id = "P",
+                                              Employee = new Employee{ FullName = "Mario" }
                                           }
                                   };
 
-            this.VendorManagerFacadeService.GetAll()
-                .Returns(new SuccessResult<IEnumerable<VendorManagerResource>>(this.dataResult));
+            this.VendorManagerRepository.FindAll().Returns(this.dataResult.AsQueryable());
 
             this.Response = this.Client.Get(
                 $"/purchasing/vendor-managers",

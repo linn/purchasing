@@ -32,7 +32,7 @@
         [Test]
         public void ShouldReturnOk()
         {
-            this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
+            this.Response.StatusCode.Should().Be(HttpStatusCode.Created);
         }
 
         [Test]

@@ -39,7 +39,7 @@
 
                                                    };
 
-            this.VendorManagerRepository.FindBy(Arg.Any<Expression<Func<VendorManager, bool>>>())
+            this.VendorManagerRepository.FindById(this.id)
                 .Returns(this.vendorManager);
 
             this.updatedVendorManager = new VendorManagerResource
