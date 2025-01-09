@@ -36,15 +36,18 @@ function VendorManager({ creating }) {
     const vendorManagerLoading = itemSelectorHelpers.getItemLoading(storeItems);
     const vendorManagerInfo = itemSelectorHelpers.getItem(storeItems);
 
-    const currentEmployeesStoreItem = useSelector(state => state[currentEmployeesItemTypes.item]);
-    const currentEmployeesLoading = collectionSelectorHelpers.getLoading(currentEmployeesStoreItem);
-    const currentEmployees = collectionSelectorHelpers.getItems(currentEmployeesStoreItem);
-
-    console.log(currentEmployees);
+    const employeesStoreItem = useSelector(state => state[currentEmployeesItemTypes.item]);
+    const employeesLoading = collectionSelectorHelpers.getLoading(employeesStoreItem);
+    const employees = collectionSelectorHelpers.getItems(employeesStoreItem).map(employee => ({
+        ...employee,
+        fullName: employee?.fullName?.toUpperCase()
+    }));
 
     useEffect(() => {
-        reduxDispatch(vendorManagerActions.fetch(id));
-    }, [id, reduxDispatch]);
+        if (!creating) {
+            reduxDispatch(vendorManagerActions.fetch(id));
+        }
+    }, [creating, id, reduxDispatch]);
 
     useEffect(() => {
         reduxDispatch(currentEmployeesActions.fetch());
@@ -58,17 +61,6 @@ function VendorManager({ creating }) {
         setVendorManager(vm => ({ ...vm, [propertyName]: newValue }));
     };
 
-    const handleEmployeeChange = (propertyName, newValue) => {
-        console.log(newValue);
-        const newEmployee = currentEmployees.find(e => e.id === newValue);
-
-        setVendorManager(vm => ({
-            ...vm,
-            name: newEmployee?.fullName,
-            userNumber: newEmployee?.id
-        }));
-    };
-
     return (
         <Page homeUrl={config.appRoot} history={history}>
             <Grid container spacing={2}>
@@ -78,7 +70,7 @@ function VendorManager({ creating }) {
                     </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                    {(vendorManagerLoading || currentEmployeesLoading) && <Loading />}
+                    {(vendorManagerLoading || employeesLoading) && <Loading />}
                 </Grid>
                 <Grid item xs={3}>
                     <InputField
@@ -107,23 +99,35 @@ function VendorManager({ creating }) {
                         value={vendorManager?.userNumber}
                     />
                 </Grid>
-                {/* <Grid item xs={2}>
+                <Grid item xs={2}>
                     <Dropdown
                         propertyName="name"
-                        items={employeesInfo?.map(employee => ({
+                        items={employees?.map(employee => ({
                             id: employee.id,
                             displayText: employee?.fullName
                         }))}
                         required
                         label="Employee"
-                        onChange={handleEmployeeChange}
-                        value={vendorManager?.name}
+                        onChange={(_, newValue) => {
+                            const newEmployee = employees?.find(
+                                employee => employee.id === Number(newValue)
+                            );
+
+                            setVendorManager(vm => ({
+                                ...vm,
+                                userNumber: Number(newValue),
+                                name: newEmployee?.fullName
+                            }));
+                        }}
+                        value={vendorManager?.userNumber}
                     />
-                </Grid> */}
+                </Grid>
                 <Grid item xs={10}>
                     <Button
                         variant="contained"
                         onClick={() => {
+                            console.log(vendorManager);
+
                             if (creating) {
                                 reduxDispatch(vendorManagerActions.clearErrorsForItem());
                                 reduxDispatch(vendorManagerActions.add(vendorManager));
