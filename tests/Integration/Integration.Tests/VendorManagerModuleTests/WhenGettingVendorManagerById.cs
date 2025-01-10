@@ -25,15 +25,16 @@
         public void SetUp()
         {
             this.id = "M";
-            this.vendorManager = new VendorManager { 
-                                                       Id = this.id,
-                                                       UserNumber = 10,
-                                                       Employee = new Employee
-                                                                      {
-                                                                          FullName = "vm1",
-                                                                          Id = 10
-                                                                      }
-                                                        };
+            this.vendorManager = new VendorManager 
+                                     { 
+                                         Id = this.id,
+                                         UserNumber = 10, 
+                                         Employee = new Employee 
+                                                        { 
+                                                            FullName = "vm1", 
+                                                            Id = 10
+                                                        }
+                                     };
 
             this.VendorManagerRepository.FindById(this.id).Returns(this.vendorManager);
 

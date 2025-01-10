@@ -93,7 +93,7 @@ export const vendorManagersActionTypes = makeActionTypes(
     false
 );
 
-export const vendorManagerActionTypes = makeActionTypes(itemTypes.vendorManager.actionType, false);
+export const vendorManagerActionTypes = makeActionTypes(itemTypes.vendorManager.actionType);
 
 export const spendBySupplierReportActionTypes = makeActionTypes(
     reportTypes.spendBySupplierReport.actionType,

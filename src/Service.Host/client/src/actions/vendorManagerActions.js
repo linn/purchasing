@@ -8,5 +8,6 @@ export default new UpdateApiActions(
     itemTypes.vendorManager.actionType,
     itemTypes.vendorManager.uri,
     actionTypes,
-    config.appRoot
+    config.appRoot,
+    null
 );

@@ -9,6 +9,7 @@ import {
     collectionSelectorHelpers,
     Dropdown,
     ErrorCard,
+    SnackbarMessage,
     Loading,
     getItemError,
     itemSelectorHelpers
@@ -49,6 +50,13 @@ function VendorManager({ creating }) {
         }
     }, [creating, id, reduxDispatch]);
 
+    useEffect(
+        () => () => {
+            reduxDispatch(vendorManagerActions.clearItem());
+        },
+        [reduxDispatch]
+    );
+
     useEffect(() => {
         reduxDispatch(currentEmployeesActions.fetch());
     }, [reduxDispatch]);
@@ -62,6 +70,8 @@ function VendorManager({ creating }) {
     const handleFieldChange = (propertyName, newValue) => {
         setVendorManager(vm => ({ ...vm, [propertyName]: newValue }));
     };
+
+    const snackbarVisible = itemSelectorHelpers.getSnackbarVisible(storeItems);
 
     return (
         <Page homeUrl={config.appRoot} history={history}>
@@ -141,6 +151,15 @@ function VendorManager({ creating }) {
                     >
                         Save
                     </Button>
+                </Grid>
+                <Grid item xs={10}>
+                    <SnackbarMessage
+                        visible={snackbarVisible}
+                        onClose={() =>
+                            reduxDispatch(vendorManagerActions.setSnackbarVisible(false))
+                        }
+                        message="Save Successful"
+                    />
                 </Grid>
                 {error && (
                     <Grid item xs={12}>
