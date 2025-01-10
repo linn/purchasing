@@ -36,11 +36,7 @@
                                            {
                                                Id = resource.VmId,
                                                PmMeasured = resource.PmMeasured,
-                                               UserNumber = resource.UserNumber,
-                                               Employee = new Employee
-                                                              {
-                                                                  FullName = resource.Name, Id = resource.UserNumber
-                                                              }
+                                               UserNumber = resource.UserNumber
                                            };
 
                 return newVendorManager;
@@ -82,7 +78,6 @@
             {
                 entity.PmMeasured = updateResource.PmMeasured;
                 entity.UserNumber = updateResource.UserNumber;
-                entity.Employee = new Employee { FullName = updateResource.Name, Id = updateResource.UserNumber };
             }
             else
             {

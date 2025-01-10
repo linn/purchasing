@@ -67,7 +67,6 @@
         public void ShouldReturnProcessResultWithSuccess()
         {
             var result = this.Response.DeserializeBody<VendorManagerResource>();
-            result.Name.Should().Contain("vm1");
             result.PmMeasured.Should().Contain("Y");
             result.UserNumber.Should().Be(10);
         }
