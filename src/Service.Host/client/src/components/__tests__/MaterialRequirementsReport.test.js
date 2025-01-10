@@ -40,6 +40,7 @@ const stateWithReport = {
                     partNumber: 'CAP 401',
                     partDescription: '2200UF,+20%,-20%,25V,ELTR,TH, PCO300,,,,,,,,,,,',
                     quantityInStock: 218,
+                    allQuantityInStock: 220,
                     quantityForSpares: 0,
                     quantityInInspection: 6,
                     quantityFaulty: 6,
@@ -2570,8 +2571,10 @@ describe('When report is returned...', () => {
     });
 
     test('Should show stock info', () => {
-        expect(screen.getByText('Stock:')).toBeInTheDocument();
+        expect(screen.getByText('MR Stock:')).toBeInTheDocument();
         expect(screen.getByText('218')).toBeInTheDocument();
+        expect(screen.getByText('All Stock:')).toBeInTheDocument();
+        expect(screen.getByText('220')).toBeInTheDocument();
         expect(screen.getByText('For Spares: 0')).toBeInTheDocument();
         expect(screen.getByText('Inspection: 6')).toBeInTheDocument();
         expect(screen.getByText('Faulty: 6')).toBeInTheDocument();
