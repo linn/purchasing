@@ -138,8 +138,6 @@ function VendorManager({ creating }) {
                     <Button
                         variant="contained"
                         onClick={() => {
-                            console.log(vendorManager);
-
                             if (creating) {
                                 reduxDispatch(vendorManagerActions.clearErrorsForItem());
                                 reduxDispatch(vendorManagerActions.add(vendorManager));
