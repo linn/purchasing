@@ -1507,6 +1507,7 @@
             entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
             entity.Property(e => e.PartDescription).HasColumnName("DESCRIPTION").HasColumnType("VARCHAR2");
             entity.Property(e => e.QuantityInStock).HasColumnName("QTY_IN_STOCK");
+            entity.Property(e => e.AllQuantityInStock).HasColumnName("ALL_QTY_IN_STOCK");
             entity.Property(e => e.QuantityForSpares).HasColumnName("QTY_STOCK_FOR_SPARES");
             entity.Property(e => e.QuantityInInspection).HasColumnName("QTY_IN_INSPECTION");
             entity.Property(e => e.QuantityFaulty).HasColumnName("QTY_FAULTY");
