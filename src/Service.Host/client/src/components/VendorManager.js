@@ -28,7 +28,7 @@ import currentEmployeesActions from '../actions/currentEmployeesActions';
 function VendorManager({ creating }) {
     const { id } = useParams();
     const reduxDispatch = useDispatch();
-    const [vendorManager, setVendorManager] = useState();
+    const [vendorManager, setVendorManager] = useState({});
 
     const error = useSelector(state => getItemError(state, vendorManagerItemTypes.item));
 
@@ -54,8 +54,10 @@ function VendorManager({ creating }) {
     }, [reduxDispatch]);
 
     useEffect(() => {
-        setVendorManager(vendorManagerInfo);
-    }, [vendorManagerInfo]);
+        if (!creating) {
+            setVendorManager(vendorManagerInfo);
+        }
+    }, [creating, vendorManagerInfo]);
 
     const handleFieldChange = (propertyName, newValue) => {
         setVendorManager(vm => ({ ...vm, [propertyName]: newValue }));
