@@ -12,8 +12,6 @@
     {
         public VendorManagerResource Build(VendorManager entity, IEnumerable<string> claims)
         {
-            var employee = entity.Employee;
-
             return new VendorManagerResource
             {
                 VmId = entity.Id,

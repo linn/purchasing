@@ -1,11 +1,8 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.VendorManagerModuleTests
-{
-    using System.Collections.Generic;
+{ 
     using System.Net;
-
     using FluentAssertions;
 
-    using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;

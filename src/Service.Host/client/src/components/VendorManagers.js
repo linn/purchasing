@@ -20,8 +20,6 @@ import { vendorManagers as vendorManagerItemTypes } from '../itemTypes';
 function VendorManagers() {
     const reduxDispatch = useDispatch();
 
-    //const error = useSelector(state => getItemError(state, vendorManagerItemTypes.item));
-
     const storeItems = useSelector(state => state[vendorManagerItemTypes.item]);
     const vendorManagersLoading = collectionSelectorHelpers.getLoading(storeItems);
     const vendorManagersInfo = collectionSelectorHelpers.getItems(storeItems);
