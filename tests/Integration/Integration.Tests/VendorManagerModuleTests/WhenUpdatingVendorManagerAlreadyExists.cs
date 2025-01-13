@@ -22,9 +22,7 @@
     {
         private string id;
 
-        private VendorManagerResource vendorManager;
-
-        private VendorManager currentVendorManagers;
+        private VendorManager vendorManager;
 
         private List<VendorManager> vendorManagers;
 
@@ -34,30 +32,46 @@
         public void SetUp()
         {
             this.id = "M";
-            this.vendorManager = new VendorManagerResource { VmId = this.id, Name = "vm1", PmMeasured = "Y", UserNumber = 10 };
-            this.updatedVendorManager = new VendorManagerResource { VmId = this.id, Name = "vm2", PmMeasured = "Y", UserNumber = 20 };
+
+            this.vendorManager = new VendorManager
+                                     {
+                                         Id = "M",
+                                         PmMeasured = "Y",
+                                         UserNumber = 10,
+                                         Employee = new Employee
+                                                        {
+                                                            FullName = "vm1",
+                                                            Id = 10
+                                                        }
+                                     };
 
             this.vendorManagers = new List<VendorManager>
                                       {
-                                          new VendorManager
-                                              {
-                                                  Id = "A",
-                                                  PmMeasured = "Y",
-                                                  UserNumber = 20,
-                                                  Employee = new Employee { FullName = "vm2", Id = 20 }
-                                              },
+                                          this.vendorManager,
                                           new VendorManager
                                               {
                                                   Id = "B",
                                                   PmMeasured = "Y",
-                                                  UserNumber = 30,
-                                                  Employee = new Employee { FullName = "vm3", Id = 30 }
+                                                  UserNumber = 20,
+                                                  Employee = new Employee { FullName = "vm2", Id = 20 }
                                               }
                                       };
 
-            this.VendorManagerRepository.FindBy(Arg.Any<Expression<Func<VendorManager, bool>>>()).Returns(this.currentVendorManagers);
+            this.VendorManagerRepository.FindById(this.id)
+                .Returns(this.vendorManager);
 
-            this.Response = this.Client.PutAsJsonAsync($"/purchasing/vendor-managers/{this.id}", this.updatedVendorManager).Result;
+            this.VendorManagerRepository.FindBy(Arg.Any<Expression<Func<VendorManager, bool>>>())
+                .Returns(this.vendorManager);
+
+            this.updatedVendorManager = new VendorManagerResource
+            {
+                VmId = "M",
+                PmMeasured = "N",
+                UserNumber = 20,
+                Name = "vm2"
+            };
+
+            this.Response = this.Client.PutAsJsonAsync($"/purchasing/vendor-managers/M", this.updatedVendorManager).Result;
         }
 
         [Test]
@@ -65,5 +79,6 @@
         {
             this.Response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
+        
     }
 }

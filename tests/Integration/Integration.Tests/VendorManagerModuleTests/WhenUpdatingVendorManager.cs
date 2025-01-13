@@ -32,24 +32,18 @@
             this.id = "M";
             this.vendorManager = new VendorManager 
                                      { 
-                                                           Id = this.id, 
-                                                           PmMeasured = "Y", UserNumber = 10,
-                                                           Employee = new Employee 
-                                                                           {
-                                                                                FullName = "vm1",
-                                                                                Id = 10
-                                                                            }
+                                         Id = this.id, 
+                                         PmMeasured = "Y", UserNumber = 10, 
+                                         Employee = new Employee 
+                                                        { 
+                                                            FullName = "vm1", 
+                                                            Id = 10
+                                                        }
                                      };
 
             this.vendorManagers = new List<VendorManager>
                                       {
-                                          new VendorManager
-                                              {
-                                                  Id = "A",
-                                                  PmMeasured = "Y",
-                                                  UserNumber = 20,
-                                                  Employee = new Employee { FullName = "vm2", Id = 20 }
-                                              },
+                                          this.vendorManager,
                                           new VendorManager
                                               {
                                                   Id = "B",
@@ -69,8 +63,8 @@
                                             {
                                                 VmId = this.id,
                                                 PmMeasured = "N",
-                                                UserNumber = 20,
-                                                Name = "vm2"
+                                                UserNumber = 40,
+                                                Name = "vm4"
             };
 
             this.Response = this.Client.PutAsJsonAsync($"/purchasing/vendor-managers/{this.id}", this.updatedVendorManager).Result;
@@ -87,8 +81,7 @@
         {
             var result = this.Response.DeserializeBody<VendorManagerResource>();
             result.PmMeasured.Should().Be("N");
-            result.UserNumber.Should().Be(20);
-
+            result.UserNumber.Should().Be(40);
         }
     }
 }
