@@ -35,7 +35,7 @@
 
             this.vendorManager = new VendorManager
                                      {
-                                         Id = "M",
+                                         Id = this.id,
                                          PmMeasured = "Y",
                                          UserNumber = 10,
                                          Employee = new Employee
@@ -65,13 +65,13 @@
 
             this.updatedVendorManager = new VendorManagerResource
             {
-                VmId = "M",
+                VmId = this.id,
                 PmMeasured = "N",
                 UserNumber = 20,
                 Name = "vm2"
             };
 
-            this.Response = this.Client.PutAsJsonAsync($"/purchasing/vendor-managers/M", this.updatedVendorManager).Result;
+            this.Response = this.Client.PutAsJsonAsync($"/purchasing/vendor-managers/{this.id}", this.updatedVendorManager).Result;
         }
 
         [Test]
