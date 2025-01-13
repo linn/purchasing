@@ -282,7 +282,7 @@
                                  MinimumLeadTimeWeeks = minimumLeadTimeWeeks,
                                  MinimumAnnualUsage = minimumAnnualUsage,
                                  RunDateOption = runLog.RunDate
-            };
+                             };
             return report;
         }
 

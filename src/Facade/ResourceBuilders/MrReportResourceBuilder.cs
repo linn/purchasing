@@ -56,6 +56,7 @@
                 PartNumber = entity.PartNumber,
                 PartDescription = entity.PartDescription,
                 QuantityInStock = entity.QuantityInStock,
+                AllQuantityInStock = entity.AllQuantityInStock,
                 QuantityForSpares = entity.QuantityForSpares,
                 QuantityInInspection = entity.QuantityInInspection,
                 QuantityFaulty = entity.QuantityFaulty,

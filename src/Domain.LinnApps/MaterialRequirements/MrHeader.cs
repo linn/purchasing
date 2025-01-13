@@ -13,6 +13,8 @@
 
         public decimal QuantityInStock { get; set; }
 
+        public decimal AllQuantityInStock { get; set; }
+
         public decimal QuantityForSpares { get; set; }
 
         public decimal QuantityInInspection { get; set; }
