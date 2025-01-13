@@ -29,6 +29,12 @@ export const suppliers = new ItemType('suppliers', 'SUPPLIERS', '/purchasing/sup
 
 export const employees = new ItemType('employees', 'EMPLOYEES', '/inventory/employees');
 
+export const currentEmployees = new ItemType(
+    'currentEmployees',
+    'CURRENT_EMPLOYEES',
+    '/employees?currentEmployees=true&sortBy=name'
+);
+
 export const parts = new ItemType('parts', 'PARTS', '/parts');
 
 export const part = new ItemType('part', 'PART', '/parts/manufacturer-data');
@@ -128,6 +134,12 @@ export const countries = new ItemType('countries', 'COUNTRIES', '/purchasing/cou
 export const vendorManagers = new ItemType(
     'vendorManagers',
     'VENDOR_MANAGERS',
+    '/purchasing/vendor-managers'
+);
+
+export const vendorManager = new ItemType(
+    'vendorManager',
+    'VENDOR_MANAGER',
     '/purchasing/vendor-managers'
 );
 

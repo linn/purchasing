@@ -9,5 +9,7 @@
         public int UserNumber { get; set; }
 
         public string Name { get; set; }
+
+        public string PmMeasured { get; set; }
     }
 }

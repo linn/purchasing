@@ -15,8 +15,9 @@
             return new VendorManagerResource
             {
                 VmId = entity.Id,
-                Name = entity.Employee.FullName,
+                Name = entity.Employee?.FullName,
                 UserNumber = entity.UserNumber,
+                PmMeasured = entity.PmMeasured,
                 Links = this.BuildLinks(entity, claims).ToArray()
             };
         }

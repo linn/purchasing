@@ -20,6 +20,8 @@
         {
             app.MapGet("/purchasing/vendor-managers/{id}", this.GetVendorManager);
             app.MapGet("/purchasing/vendor-managers", this.GetAllVendorManagers);
+            app.MapPut("/purchasing/vendor-managers/{id}", this.UpdateVendorManager);
+            app.MapPost("/purchasing/vendor-managers", this.CreateVendorManager);
         }
 
         private async Task GetVendorManager(
@@ -41,6 +43,24 @@
             var result = facadeService.GetAll();
 
             await res.Negotiate(result);
+        }
+
+        private async Task UpdateVendorManager(
+            HttpResponse res,
+            string id,
+            VendorManagerResource resource,
+            IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource> service)
+        {
+            await res.Negotiate(service.Update(id, resource));
+        }
+
+        private async Task CreateVendorManager(
+            HttpRequest req,
+            HttpResponse res,
+            VendorManagerResource resource,
+            IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource> service)
+        {
+            await res.Negotiate(service.Add(resource));
         }
     }
 }

@@ -28,6 +28,7 @@ import priceChangeReasons from './priceChangeReasons';
 import partPriceConversions from './partPriceConversions';
 import ordersByPart from './ordersByPartReport';
 import vendorManagers from './vendorManagers';
+import vendorManager from './vendorManager';
 import spendBySupplierReport from './spendBySupplierReport';
 import spendBySupplierByDateRangeReport from './spendBySupplierByDateRangeReport';
 import supplier from './supplier';
@@ -128,6 +129,7 @@ import currentPhaseInWeeksReport from './currentPhaseInWeeksReport';
 import boardComponentSummaryReport from './boardComponentSummaryReport';
 import nominalAccounts from './nominalAccounts';
 import bomPrintReport from './bomPrintReport';
+import currentEmployees from './currentEmployees';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -168,6 +170,7 @@ const rootReducer = () =>
         changeStatusReport,
         countries,
         currencies,
+        currentEmployees,
         currentPhaseInWeeksReport,
         deliveryAddresses,
         deliveryPerformanceDetailReport,
@@ -253,6 +256,7 @@ const rootReducer = () =>
         unitsOfMeasure,
         uploadBoardFile,
         uploadSmtBoardFile,
+        vendorManager,
         vendorManagers,
         whatsDueInReport,
         whatsInInspectionReport,
