@@ -102,7 +102,8 @@ function OpenDebitNotes() {
             headerName: 'Created',
             field: 'dateCreated',
             width: 150,
-            valueFormatter: ({ value }) => value && moment(value).format('DD-MMM-YYYY')
+            valueFormatter: ({ value }) => value && moment(value).format('DD-MMM-YYYY'),
+            valueGetter: ({ value }) => value && moment(value)
         },
         {
             headerName: 'Supplier',
