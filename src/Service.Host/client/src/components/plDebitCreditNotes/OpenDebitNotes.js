@@ -21,6 +21,7 @@ import Button from '@mui/material/Button';
 import CloseIcon from '@mui/icons-material/Close';
 import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
+import moment from 'moment';
 import plCreditDebitNoteActions from '../../actions/plCreditDebitNoteActions';
 import openDebitNotesActions from '../../actions/openDebitNotesActions';
 import history from '../../history';
@@ -100,7 +101,9 @@ function OpenDebitNotes() {
         {
             headerName: 'Created',
             field: 'dateCreated',
-            width: 150
+            width: 150,
+            valueFormatter: ({ value }) => value && moment(value).format('DD-MMM-YYYY'),
+            valueGetter: ({ value }) => value && moment(value)
         },
         {
             headerName: 'Supplier',
