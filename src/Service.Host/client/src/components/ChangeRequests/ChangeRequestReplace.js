@@ -145,7 +145,7 @@ function ChangeRequestReplace() {
                             propertyName="oldPartNumber"
                             disabled
                         />
-                        <Typography>{item?.newPartDescription}</Typography>
+                        <Typography>{item?.oldPartDescription}</Typography>
                     </Grid>
                     <Grid item xs={6}>
                         <InputField
