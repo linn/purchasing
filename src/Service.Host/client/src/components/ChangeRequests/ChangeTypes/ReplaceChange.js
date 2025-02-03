@@ -92,7 +92,7 @@ function ReplaceChange({ item, creating, handleFieldChange }) {
                             propertyName="oldPartNumber"
                             disabled
                         />
-                        <Typography>{item?.newPartDescription}</Typography>
+                        <Typography>{item?.oldPartDescription}</Typography>
                     </Grid>
                     <Grid item xs={6}>
                         <InputField
