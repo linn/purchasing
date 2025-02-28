@@ -6,6 +6,7 @@ import {
     Dropdown,
     InputField,
     Typeahead,
+    utilities,
     Loading,
     reportSelectorHelpers
 } from '@linn-it/linn-form-components-library';
@@ -126,7 +127,7 @@ function DeliveryPerformanceSummary() {
                     <>
                         <Grid item xs={6}>
                             <Dropdown
-                                items={ledgerPeriods.map(e => ({
+                                items={utilities.sortEntityList(ledgerPeriods, 'periodNumber').map(e => ({
                                     displayText: `${e.monthName}`,
                                     id: e.periodNumber
                                 }))}
@@ -139,7 +140,7 @@ function DeliveryPerformanceSummary() {
                         </Grid>
                         <Grid item xs={6}>
                             <Dropdown
-                                items={ledgerPeriods.map(e => ({
+                                items={utilities.sortEntityList(ledgerPeriods, 'periodNumber').map(e => ({
                                     displayText: `${e.monthName}`,
                                     id: e.periodNumber
                                 }))}
