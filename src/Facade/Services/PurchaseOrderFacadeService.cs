@@ -106,56 +106,66 @@
             IEnumerable<string> privileges,
             int currentUserId)
         {
-            var updated = new PurchaseOrder
-                              {
-                                  DocumentTypeName = resource.DocumentType?.Name,
-                                  SupplierId = resource.Supplier.Id,
-                                  Supplier = new Supplier
-                                                 {
-                                                     SupplierId = resource.Supplier.Id, Name = resource.Supplier.Name
-                                                 },
-                                  Details = resource.Details?.Select(
-                                      x => new PurchaseOrderDetail
-                                               {
-                                                   Line = x.Line,
-                                                   BaseNetTotal = x.BaseNetTotal,
-                                                   NetTotalCurrency = x.NetTotalCurrency,
-                                                   OurQty = x.OurQty,
-                                                   OrderQty = x.OrderQty,
-                                                   PurchaseDeliveries = x.PurchaseDeliveries?.Select(d =>
-                                                       new PurchaseOrderDelivery
-                                                           {
-                                                               DateRequested = !string.IsNullOrEmpty(d.DateRequested) 
-                                                                                   ? DateTime.Parse(d.DateRequested) : null,
-                                                           }).ToList(),
-                                                   Part =
-                                                       new Part
-                                                           {
-                                                               PartNumber = x.PartNumber?.ToUpper(),
-                                                               Description = x.PartDescription
-                                                           },
-                                                   PartNumber = x.PartNumber,
-                                                   OurUnitOfMeasure = x.OurUnitOfMeasure,
-                                                   OrderUnitOfMeasure = x.OrderUnitOfMeasure,
-                                                   OurUnitPriceCurrency = x.OurUnitPriceCurrency,
-                                                   OrderUnitPriceCurrency = x.OrderUnitPriceCurrency,
-                                                   BaseOurUnitPrice = x.BaseOurUnitPrice,
-                                                   BaseOrderUnitPrice = x.BaseOrderUnitPrice,
-                                                   VatTotalCurrency = x.VatTotalCurrency,
-                                                   BaseVatTotal = x.BaseVatTotal,
-                                                   DetailTotalCurrency = x.DetailTotalCurrency,
-                                                   BaseDetailTotal = x.BaseDetailTotal,
-                                                   OriginalOrderNumber = x.OriginalOrderNumber,
-                                                   OriginalOrderLine = x.OriginalOrderLine
-                                               }).ToList()
-                              };
+            try
+            {
+                var updated = new PurchaseOrder
+                                  {
+                                      DocumentTypeName = resource.DocumentType?.Name,
+                                      SupplierId = resource.Supplier.Id,
+                                      Supplier =
+                                          new Supplier
+                                              {
+                                                  SupplierId = resource.Supplier.Id, Name = resource.Supplier.Name
+                                              },
+                                      Details = resource.Details?.Select(
+                                          x => new PurchaseOrderDetail
+                                                   {
+                                                       Line = x.Line,
+                                                       BaseNetTotal = x.BaseNetTotal,
+                                                       NetTotalCurrency = x.NetTotalCurrency,
+                                                       OurQty = x.OurQty,
+                                                       OrderQty = x.OrderQty,
+                                                       PurchaseDeliveries =
+                                                           x.PurchaseDeliveries?.Select(
+                                                               d => new PurchaseOrderDelivery
+                                                                        {
+                                                                            DateRequested =
+                                                                                !string.IsNullOrEmpty(d.DateRequested)
+                                                                                    ? DateTime.Parse(d.DateRequested)
+                                                                                    : null,
+                                                                        }).ToList(),
+                                                       Part =
+                                                           new Part
+                                                               {
+                                                                   PartNumber = x.PartNumber?.ToUpper(),
+                                                                   Description = x.PartDescription
+                                                               },
+                                                       PartNumber = x.PartNumber,
+                                                       OurUnitOfMeasure = x.OurUnitOfMeasure,
+                                                       OrderUnitOfMeasure = x.OrderUnitOfMeasure,
+                                                       OurUnitPriceCurrency = x.OurUnitPriceCurrency,
+                                                       OrderUnitPriceCurrency = x.OrderUnitPriceCurrency,
+                                                       BaseOurUnitPrice = x.BaseOurUnitPrice,
+                                                       BaseOrderUnitPrice = x.BaseOrderUnitPrice,
+                                                       VatTotalCurrency = x.VatTotalCurrency,
+                                                       BaseVatTotal = x.BaseVatTotal,
+                                                       DetailTotalCurrency = x.DetailTotalCurrency,
+                                                       BaseDetailTotal = x.BaseDetailTotal,
+                                                       OriginalOrderNumber = x.OriginalOrderNumber,
+                                                       OriginalOrderLine = x.OriginalOrderLine
+                                                   }).ToList()
+                                  };
 
-            var generatedOrder = this.domainService.FillOutUnsavedOrder(updated, currentUserId);
+                var generatedOrder = this.domainService.FillOutUnsavedOrder(updated, currentUserId);
 
-            var returnResource = (PurchaseOrderResource)this.resourceBuilder.Build(generatedOrder, privileges);
-            returnResource.NotesForBuyer = this.domainService.GetOrderNotesForBuyer(generatedOrder);
-
-            return new SuccessResult<PurchaseOrderResource>(returnResource);
+                var returnResource = (PurchaseOrderResource)this.resourceBuilder.Build(generatedOrder, privileges);
+                returnResource.NotesForBuyer = this.domainService.GetOrderNotesForBuyer(generatedOrder);
+                return new SuccessResult<PurchaseOrderResource>(returnResource);
+            }
+            catch (DomainException ex)
+            {
+                return new BadRequestResult<PurchaseOrderResource>(ex.Message);
+            }
         }
 
         public IResult<ProcessResultResource> AuthorisePurchaseOrders(
