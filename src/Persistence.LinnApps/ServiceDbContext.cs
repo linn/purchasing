@@ -1580,6 +1580,7 @@
             entity.Property(s => s.AdvisedDeliveryDate).HasColumnName("ADVISED_DEL_DATE");
             entity.Property(s => s.LinnDeliveryDate).HasColumnName("LINN_DEL_DATE");
             entity.Property(s => s.BestDeliveryDate).HasColumnName("BEST_DELIVERY_DATE");
+            entity.Property(s => s.OurUnitPrice).HasColumnName("OUR_UNIT_PRICE");
             entity.HasOne(s => s.PartSupplierRecord).WithMany().HasForeignKey(s => new { s.PartNumber, s.SupplierId });
         }
 

@@ -215,7 +215,7 @@
                             {
                                 RowId = rowId,
                                 ColumnId = "UnitPrice",
-                                Value = datum.PartSupplierRecord.CurrencyUnitPrice ?? 0m
+                                Value = datum.OurUnitPrice.GetValueOrDefault()
                             });
                     values.Add(
                         new CalculationValueModel
