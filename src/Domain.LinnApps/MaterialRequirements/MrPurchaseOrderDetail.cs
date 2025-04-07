@@ -50,5 +50,7 @@
         public DateTime? BestDeliveryDate { get; set; }
 
         public PartSupplier PartSupplierRecord { get; set; }
+
+        public decimal? OurUnitPrice { get; set; }
     }
 }
