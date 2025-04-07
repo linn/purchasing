@@ -71,6 +71,15 @@
             return new SuccessResult<IEnumerable<BomCostReportResource>>(result);
         }
 
+        public IResult<ReportReturnResource> GetBomCostReportBreakdowns(
+            string bomName, bool splitBySubAssembly, int levels, decimal labourHourlyRate)
+        {
+            var result = this.domainService
+                .GetBomCostReport(bomName.Trim().ToUpper(), splitBySubAssembly, levels, labourHourlyRate);
+
+            return new SuccessResult<ReportReturnResource>(this.reportReturnResourceBuilder.Build(result.Select(r => r.Breakdown)));
+        }
+
         public IResult<ReportReturnResource> GetBoardDifferenceReport(
             BomDifferenceReportRequestResource resource)
         {

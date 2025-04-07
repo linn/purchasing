@@ -21,6 +21,12 @@
             int levels,
             decimal labourHourlyRate);
 
+        IResult<ReportReturnResource> GetBomCostReportBreakdowns(
+            string bomName,
+            bool splitBySubAssembly,
+            int levels,
+            decimal labourHourlyRate);
+
         IResult<ReportReturnResource> GetBoardDifferenceReport(BomDifferenceReportRequestResource resource);
 
         IResult<ReportReturnResource> GetBoardComponentSummaryReport(BoardComponentSummaryReportRequestResource resource);
