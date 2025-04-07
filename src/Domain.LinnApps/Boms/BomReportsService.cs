@@ -9,7 +9,6 @@
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
-    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
     public class BomReportsService : IBomReportsService
@@ -184,7 +183,7 @@
                                        };
                 var reportLayout = new SimpleGridLayout(
                     this.reportingHelper, CalculationValueModelType.Value, null, null);
-
+                
                 reportLayout.AddColumnComponent(
                     null,
                     new List<AxisDetailsModel>
@@ -200,6 +199,7 @@
                         });
 
                 var values = new List<CalculationValueModel>();
+                reportLayout.ReportTitle = group.Key;
 
                 foreach (var member in group)
                 {

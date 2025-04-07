@@ -61,6 +61,21 @@ function BomCostReport() {
                         accept="application/pdf"
                         fileName="bom-cost.pdf"
                     />
+                    <ExportButton
+                        disabled={!reportData}
+                        buttonText="CSV"
+                        href={`${
+                            config.appRoot
+                        }/purchasing/boms/reports/cost?${queryString.stringify({
+                            bomName,
+                            splitBySubAssembly: true,
+                            levels: 999,
+                            labourHourlyRate: 15
+                        })}`}
+                        tooltipText="Download a csv version of this report"
+                        accept="text/csv"
+                        fileName="bom-cost.csv"
+                    />
                 </Grid>
                 <Grid item xs={3}>
                     <Button

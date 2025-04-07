@@ -243,14 +243,29 @@
             decimal labourHourlyRate,
             IBomReportsFacadeService facadeService)
         {
-            IResult<IEnumerable<BomCostReportResource>> result = null;
-            if (!string.IsNullOrEmpty(bomName))
+            var accept = req.Headers.Accept;
+            if (accept == "text/csv")
             {
-                result = facadeService.GetBomCostReport(
-                    bomName, splitBySubAssembly, levels, labourHourlyRate);
-            }
+                IResult<ReportReturnResource> result = null;
+                if (!string.IsNullOrEmpty(bomName))
+                {
+                    result = facadeService.GetBomCostReportBreakdowns(
+                        bomName, splitBySubAssembly, levels, labourHourlyRate);
+                }
 
-            await res.Negotiate(result);
+                await res.Negotiate(result);
+            }
+            else
+            {
+                IResult<IEnumerable<BomCostReportResource>> result = null;
+                if (!string.IsNullOrEmpty(bomName))
+                {
+                    result = facadeService.GetBomCostReport(
+                        bomName, splitBySubAssembly, levels, labourHourlyRate);
+                }
+
+                await res.Negotiate(result);
+            }
         }
 
         private async Task GetBomCostReportPdf(
