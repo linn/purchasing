@@ -1,14 +1,13 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PartSupplierServiceTests
 {
+    using System;
     using System.Collections.Generic;
-
+    using System.Linq.Expressions;
     using FluentAssertions;
-
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-
     using NSubstitute;
-
     using NUnit.Framework;
 
     public class WhenUpdating : ContextBase
@@ -74,6 +73,9 @@
             this.OrderMethodRepository.FindById(this.newOrderMethod.Name).Returns(this.newOrderMethod);
             this.EmployeeRepository.FindById(this.madeInvalidBy.Id).Returns(this.madeInvalidBy);
             this.ManufacturerRepository.FindById(this.manufacturer.Code).Returns(this.manufacturer);
+            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
+                .Returns(
+                    new Part { DecrementRule = "YES", BomType = "B" });
             this.Sut.UpdatePartSupplier(this.current, this.updated, new List<string>());
         }
 
