@@ -1,17 +1,13 @@
-﻿using System.Linq.Expressions;
-using Linn.Purchasing.Domain.LinnApps.Parts;
-
-namespace Linn.Purchasing.Domain.LinnApps.Tests.PartSupplierServiceTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PartSupplierServiceTests
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq.Expressions;
     using FluentAssertions;
-
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-
     using NSubstitute;
-
     using NUnit.Framework;
 
     public class WhenUpdatingAndObjectFieldsNotChanged : ContextBase
