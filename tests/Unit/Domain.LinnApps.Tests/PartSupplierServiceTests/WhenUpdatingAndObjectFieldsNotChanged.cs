@@ -2,14 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
-
+    using System.Linq.Expressions;
     using FluentAssertions;
-
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-
     using NSubstitute;
-
     using NUnit.Framework;
 
     public class WhenUpdatingAndObjectFieldsNotChanged : ContextBase
@@ -23,6 +21,8 @@
         private PartSupplier current;
 
         private PartSupplier updated;
+
+        private Part part;
 
         [SetUp]
         public void SetUp()
@@ -63,6 +63,10 @@
             };
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
+            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
+                .Returns(
+                    new Part { DecrementRule = "YES", BomType = "B" });
+
 
             this.Sut.UpdatePartSupplier(this.current, this.updated, new List<string>());
         }

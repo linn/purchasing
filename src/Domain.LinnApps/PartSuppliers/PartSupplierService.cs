@@ -40,6 +40,8 @@
         private readonly IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>
             preferredSupplierChangeRepository;
 
+        private readonly IQueryRepository<StockLocator> stockLocatorRepository;
+
         public PartSupplierService(
             IAuthorisationService authService,
             IRepository<Currency, string> currencyRepository,
@@ -52,7 +54,8 @@
             IRepository<PartSupplier, PartSupplierKey> partSupplierRepository,
             IPartHistoryService partHistoryService,
             IRepository<PriceChangeReason, string> changeReasonsRepository,
-            IRepository<PreferredSupplierChange, PreferredSupplierChangeKey> preferredSupplierChangeRepository)
+            IRepository<PreferredSupplierChange, PreferredSupplierChangeKey> preferredSupplierChangeRepository,
+            IQueryRepository<StockLocator> stockLocatorRepository)
         {
             this.authService = authService;
             this.currencyRepository = currencyRepository;
@@ -66,6 +69,7 @@
             this.partHistoryService = partHistoryService;
             this.changeReasonsRepository = changeReasonsRepository;
             this.preferredSupplierChangeRepository = preferredSupplierChangeRepository;
+            this.stockLocatorRepository = stockLocatorRepository;
         }
 
         public void UpdatePartSupplier(
@@ -129,6 +133,33 @@
             current.ManufacturerPartNumber = updated.ManufacturerPartNumber;
             current.VendorPartNumber = updated.VendorPartNumber;
             current.UnitOfMeasure = updated.UnitOfMeasure;
+
+            // ticket 20413 in limited circumstances the part price can change
+            var part = this.partRepository.FindBy(x => x.PartNumber == current.PartNumber.ToUpper());
+            if (part == null)
+            {
+                throw new PartSupplierException("Part Not Found");
+            }
+
+            if (part.PreferredSupplier?.SupplierId == updated.SupplierId && part.BomType == "C")
+            {
+                // if part is preferred supplier and stock locator is null
+                var prevPart = part.ClonePricingFields();
+                var stockLocators = this.stockLocatorRepository.FilterBy(s => s.PartNumber == prevPart.PartNumber && s.Qty > 0).ToList();
+                var stockQty = stockLocators.Any() ? stockLocators.Sum(l => l.Qty) : 0;
+
+                // if this is the first time a preferred supplier is chosen for this part
+                if (prevPart.ShouldChangeStandardPrice(stockQty))
+                {
+                    part.MaterialPrice = updated.BaseOurUnitPrice;
+                    var currency = this.currencyRepository.FindById(updated.Currency.Code);
+                    part.Currency = currency; // if go straight to updated.currency EF complains
+                    part.CurrencyUnitPrice = updated.CurrencyUnitPrice;
+                    part.BaseUnitPrice = updated.BaseOurUnitPrice;
+                    part.LabourPrice = 0m;
+                    this.partHistoryService.AddPartHistory(prevPart, part, "PARTSUP PRICE", 100, "zero stock price chg", null);
+                }
+            }
         }
 
         public PartSupplier CreatePartSupplier(PartSupplier candidate, IEnumerable<string> privileges)
@@ -279,9 +310,13 @@
             }
 
             part.PreferredSupplier = newPartSupplier.Supplier;
-            
+
+            var stockLocators = this.stockLocatorRepository.FilterBy(s => s.PartNumber == prevPart.PartNumber && s.Qty > 0).ToList();
+
+            var stockQty = stockLocators.Any() ? stockLocators.Sum(l => l.Qty) : 0;
+
             // if this is the first time a preferred supplier is chosen for this part
-            if (prevPart.BaseUnitPrice.GetValueOrDefault() == 0)
+            if (prevPart.ShouldChangeStandardPrice(stockQty))
             {
                 var newCurrency = this.currencyRepository.FindById(candidate.NewCurrency.Code);
 

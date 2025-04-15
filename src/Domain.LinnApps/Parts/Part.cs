@@ -112,6 +112,25 @@
                            BaseUnitPrice = this.BaseUnitPrice
                        };
         }
+
+        public bool LinnProducedPart() => this.LinnProduced == "Y";
+
+        public bool ShouldChangeStandardPrice(decimal stockQty)
+        {
+            // if this is the first time a preferred supplier is chosen for this part
+            if (this.BaseUnitPrice.GetValueOrDefault() == 0)
+            {
+                return true;
+            }
+
+            // as per Steph 24-March-25  if the preferred supplier changes while zero stock it changes the standard price for the part
+            if (!this.LinnProducedPart() && stockQty == 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }
 

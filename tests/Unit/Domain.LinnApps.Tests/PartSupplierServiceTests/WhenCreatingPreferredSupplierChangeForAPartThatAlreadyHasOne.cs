@@ -37,6 +37,7 @@
                                 PartNumber = "PART",
                                 BomType = "A",
                                 PreferredSupplier = new Supplier {SupplierId = 1},
+                                LinnProduced = "N",
                                 CurrencyUnitPrice = 100m,
                                 BaseUnitPrice = 50m,
                                 Currency = new Currency {Code = "USD"},
@@ -77,6 +78,9 @@
                 .Returns(true);
 
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>()).Returns(this.part);
+
+            var stock = new List<StockLocator>() { new StockLocator { Id = 1, Qty = 1 } };
+            this.StockLocatorRepository.FilterBy(Arg.Any<Expression<Func<StockLocator, bool>>>()).Returns(stock.AsQueryable());
 
             this.PartSupplierRepository.FindById(Arg.Any<PartSupplierKey>()).Returns(
                 this.oldPartSupplierRecord,

@@ -43,6 +43,8 @@
             get; private set;
         }
 
+        protected IQueryRepository<StockLocator> StockLocatorRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -59,6 +61,7 @@
             this.ChangeReasonsRepository = Substitute.For<IRepository<PriceChangeReason, string>>();
             this.PreferredSupplierChangeRepository =
                 Substitute.For<IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>>();
+            this.StockLocatorRepository = Substitute.For<IQueryRepository<StockLocator>>();
             this.Sut = new PartSupplierService(
                 this.MockAuthService,
                 this.CurrencyRepository,
@@ -71,7 +74,8 @@
                 this.PartSupplierRepository,
                 this.PartHistory,
                 this.ChangeReasonsRepository,
-                this.PreferredSupplierChangeRepository);
+                this.PreferredSupplierChangeRepository,
+                this.StockLocatorRepository);
         }
     }
 }
