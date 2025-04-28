@@ -218,7 +218,7 @@
                                      };
                 }
 
-                if (model.DocumentType?.Name == "RO" && model.ReturnsCreditDebitNotes.Any())
+                if (model.DocumentType?.Name == "RO" && model.ReturnsCreditDebitNotes != null && model.ReturnsCreditDebitNotes.Any())
                 {
                     yield return new LinkResource
                     {
