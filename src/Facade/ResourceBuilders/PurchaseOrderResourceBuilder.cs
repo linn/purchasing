@@ -217,6 +217,15 @@
                                          Href = $"{this.GetLocation(model)}"
                                      };
                 }
+
+                if (model.DocumentType?.Name == "RO" && model.ReturnsCreditDebitNotes.Any())
+                {
+                    yield return new LinkResource
+                    {
+                        Rel = "ret-credit-debit-note",
+                        Href = $"/purchasing/pl-credit-debit-notes/{model.ReturnsCreditDebitNotes.First().NoteNumber}"
+                    };
+                }
             }
         }
     }
