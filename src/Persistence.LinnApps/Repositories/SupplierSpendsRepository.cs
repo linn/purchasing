@@ -8,6 +8,7 @@
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
 
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
     public class SupplierSpendRepository : IQueryRepository<SupplierSpend>
     {
@@ -25,7 +26,7 @@
 
         IQueryable<SupplierSpend> IQueryRepository<SupplierSpend>.FindAll()
         {
-            throw new NotImplementedException();
+            return this.serviceDbContext.SupplierSpends.AsNoTracking();
         }
 
         SupplierSpend IQueryRepository<SupplierSpend>.FindBy(Expression<Func<SupplierSpend, bool>> expression)
