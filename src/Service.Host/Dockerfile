@@ -1,4 +1,4 @@
-﻿﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0
+﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0
 
 ARG gitBranch=unspecified
 ENV TZ=Europe/London
