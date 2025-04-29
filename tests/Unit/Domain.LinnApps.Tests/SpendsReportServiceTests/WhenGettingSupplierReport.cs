@@ -27,6 +27,8 @@
             var ledgerPeriodInLastYear = 1489;
             var ledgerPeriodInYearBeforeLast = 1479;
             var currentLedgerPeriod = 1500;
+            var aLongTimeAgo = 1400;
+
             var spends = new List<SupplierSpend>
                              {
                                  new SupplierSpend
@@ -68,6 +70,14 @@
                                          LedgerPeriod = currentLedgerPeriod,
                                          SupplierName = "seller1",
                                          VendorManager = "X"
+                                     },
+                                 new SupplierSpend
+                                     {
+                                         SupplierId = this.supplierId,
+                                         BaseTotal = 500000m,
+                                         LedgerPeriod = aLongTimeAgo, // should be ignored
+                                         SupplierName = "seller1",
+                                         VendorManager = "X"
                                      }
                              };
 
@@ -101,7 +111,7 @@
             var row = this.results.Rows.First();
             row.RowId.Should().Be(this.supplierId.ToString());
             this.results.GetGridTextValue(0, 0).Should().Be("seller1");
-            this.results.GetGridValue(0, 1).Should().Be(250.87m); // in 12 months before last FY, i.e. the fianacial year before last
+            this.results.GetGridValue(0, 1).Should().Be(250.87m); // in 12 months before last FY, i.e. the financial year before last
             this.results.GetGridValue(0, 2).Should().Be(240m);    // in last FY
             this.results.GetGridValue(0, 3).Should().Be(500m);     // in current period, i.e. this month
         }
