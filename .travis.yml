@@ -2,7 +2,7 @@ language: csharp
 dist: focal
 sudo: required
 mono: none
-dotnet: 7.0
+dotnet: 9.0
 services: docker
 before_install: 
  - chmod +x ./scripts/*.sh

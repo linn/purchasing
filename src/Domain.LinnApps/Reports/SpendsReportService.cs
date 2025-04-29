@@ -51,11 +51,13 @@
             var currentLedgerPeriod = this.purchaseLedgerPack.GetLedgerPeriod();
             var yearStartLedgerPeriod = this.purchaseLedgerPack.GetYearStartLedgerPeriod();
             var previousYearStartLedgerPeriod = yearStartLedgerPeriod - 12;
+            var yearBeforePreviousStartLedgerPeriod = yearStartLedgerPeriod - 24;
 
-            var supplierSpends = this.spendsRepository.FilterBy(
+            var supplierSpends = this.spendsRepository.FindAll()
+                .Where(
                     x =>
                         x.VendorManager != null &&
-                        x.LedgerPeriod >= previousYearStartLedgerPeriod && x.LedgerPeriod <= currentLedgerPeriod
+                        x.LedgerPeriod >= yearBeforePreviousStartLedgerPeriod && x.LedgerPeriod <= currentLedgerPeriod
                         && (string.IsNullOrWhiteSpace(vendorManagerId) || x.VendorManager == vendorManagerId))
                 .ToList();
 
@@ -63,16 +65,25 @@
             if (!string.IsNullOrWhiteSpace(vendorManagerId))
             {
                 var vendorManager = this.vendorManagerRepository.FindById(vendorManagerId);
-                vendorManagerName = $"{vendorManagerId} - {vendorManager.Employee.FullName} ({vendorManager.UserNumber})";
+                vendorManagerName = $"{vendorManagerId} - {vendorManager.Employee.FullName}";
             }
 
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
                 CalculationValueModelType.Value,
                 null,
-                $"Spend by supplier report for Vendor Manager: {vendorManagerName}. In GBP, for this financial year and last, excludes factors & VAT.");
+                $"Spend by supplier report for Vendor Manager: {vendorManagerName} - GBP (excluding factors & VAT.)");
 
-            AddSupplierReportColumns(reportLayout);
+            reportLayout.AddColumnComponent(
+                null,
+                new List<AxisDetailsModel>
+                    {
+                        new AxisDetailsModel("Name", "Name", GridDisplayType.TextValue),
+                        new AxisDetailsModel("YearBeforeLast", "Year Before Last", GridDisplayType.Value) { DecimalPlaces = 2 },
+                        new AxisDetailsModel("LastYear", "Last Year", GridDisplayType.Value) { DecimalPlaces = 2 },
+                        new AxisDetailsModel("ThisYear", "This Year", GridDisplayType.Value) { DecimalPlaces = 2 },
+                        new AxisDetailsModel("ThisMonth", "This Month", GridDisplayType.Value) { DecimalPlaces = 2 }
+                    });
 
             var values = new List<CalculationValueModel>();
 
@@ -96,15 +107,61 @@
                                      s => s.SupplierId == x.SupplierId
                                           && s.LedgerPeriod >= previousYearStartLedgerPeriod
                                           && s.LedgerPeriod < yearStartLedgerPeriod)
-                                 .Sum(z => z.BaseTotal ?? 0)
-                         })
+                                 .Sum(z => z.BaseTotal ?? 0),
+                             YearBeforePrevYearTotal = supplierSpends
+                                                           .Where(
+                                                               s => s.SupplierId == x.SupplierId
+                                                                    && s.LedgerPeriod >= yearBeforePreviousStartLedgerPeriod
+                                                                    && s.LedgerPeriod < previousYearStartLedgerPeriod)
+                                                           .Sum(z => z.BaseTotal ?? 0)
+                })
                 .OrderByDescending(x => x.PrevYearTotal)
                 .ThenByDescending(s => s.YearTotal)
                 .ThenByDescending(s => s.MonthTotal);
 
-            foreach (var supplier in distinctSupplierSpends)
+            foreach (var spend in distinctSupplierSpends)
             {
-                ExtractDetailsForSupplierReport(values, supplier);
+                var currentRowId = $"{spend.SupplierId}";
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "Name",
+                            TextDisplay = spend.SupplierName
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "YearBeforeLast",
+                            Value = spend.YearBeforePrevYearTotal
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "LastYear",
+                            Value = spend.PrevYearTotal
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "ThisYear",
+                            Value = spend.YearTotal
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "ThisMonth",
+                            Value = spend.MonthTotal
+                        });
             }
 
             reportLayout.SetGridData(values);
@@ -155,7 +212,19 @@
                 null,
                 $"Spend by supplier report for Vendor Manager: {vendorManagerName} between {fromPeriod.MonthName} and {toPeriod.MonthName}.");
 
-            AddSupplierByDateRangeReportColumns(reportLayout);
+            reportLayout.AddColumnComponent(
+               null,
+               new List<AxisDetailsModel>
+                   {
+                        new AxisDetailsModel("Name", "Name", GridDisplayType.TextValue),
+                        new AxisDetailsModel(
+                            "DateRangeTotal",
+                            "Date Range Total",
+                            GridDisplayType.Value)
+                            {
+                                DecimalPlaces = 2
+                            },
+                   });
 
             var values = new List<CalculationValueModel>();
 
@@ -314,30 +383,6 @@
             return model;
         }
 
-        private static void AddSupplierReportColumns(SimpleGridLayout reportLayout)
-        {
-            reportLayout.AddColumnComponent(
-                null,
-                new List<AxisDetailsModel>
-                    {
-                        new AxisDetailsModel("Name", "Name", GridDisplayType.TextValue),
-                        new AxisDetailsModel("LastYear", "Last Year", GridDisplayType.Value) { DecimalPlaces = 2 },
-                        new AxisDetailsModel("ThisYear", "This Year", GridDisplayType.Value) { DecimalPlaces = 2 },
-                        new AxisDetailsModel("ThisMonth", "This Month", GridDisplayType.Value) { DecimalPlaces = 2 }
-                    });
-        }
-
-        private static void AddSupplierByDateRangeReportColumns(SimpleGridLayout reportLayout)
-        {
-            reportLayout.AddColumnComponent(
-                null,
-                new List<AxisDetailsModel>
-                    {
-                        new AxisDetailsModel("Name", "Name", GridDisplayType.TextValue),
-                        new AxisDetailsModel("DateRangeTotal", "Date Range Total", GridDisplayType.Value) { DecimalPlaces = 2 },
-                    });
-        }
-
         private static void AddPartReportColumns(SimpleGridLayout reportLayout)
         {
             reportLayout.AddColumnComponent(
@@ -355,41 +400,6 @@
                     });
         }
 
-        private static void ExtractDetailsForSupplierReport(
-            ICollection<CalculationValueModel> values,
-            SupplierSpendWithTotals spend)
-        {
-            var currentRowId = $"{spend.SupplierId}";
-
-            values.Add(
-                new CalculationValueModel
-                    {
-                        RowId = currentRowId, ColumnId = "Name", TextDisplay = spend.SupplierName
-                    });
-
-            values.Add(
-                new CalculationValueModel
-                    {
-                        RowId = currentRowId,
-                        ColumnId = "LastYear",
-                        Value = spend.PrevYearTotal
-                    });
-
-            values.Add(
-                new CalculationValueModel
-                    {
-                        RowId = currentRowId, ColumnId = "ThisYear",
-                        Value = spend.YearTotal
-                    });
-
-            values.Add(
-                new CalculationValueModel
-                    {
-                        RowId = currentRowId,
-                        ColumnId = "ThisMonth",
-                        Value = spend.MonthTotal
-                    });
-        }
 
         private static void ExtractDetailsForSupplierByDateRangeReport(
             ICollection<CalculationValueModel> values,
