@@ -98,5 +98,7 @@
         public decimal BaseOrderTotal { get; set; }
 
         public IEnumerable<PurchaseLedger> LedgerEntries { get; set; }
+
+        public IEnumerable<PlCreditDebitNote> ReturnsCreditDebitNotes { get; set; }
     }
 }

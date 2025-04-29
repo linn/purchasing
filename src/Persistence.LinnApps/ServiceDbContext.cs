@@ -778,6 +778,7 @@
             entity.Property(o => o.BaseOrderTotal).HasColumnName("BASE_ORDER_TOTAL").HasMaxLength(18);
             entity.Property(o => o.BaseOrderVatTotal).HasColumnName("BASE_ORDER_VAT_TOTAL").HasMaxLength(18);
             entity.HasMany(o => o.LedgerEntries).WithOne().HasForeignKey(l => l.OrderNumber);
+            entity.HasMany(o => o.ReturnsCreditDebitNotes).WithOne().HasForeignKey(l => l.ReturnsOrderNumber);
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
