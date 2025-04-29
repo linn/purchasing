@@ -41,9 +41,9 @@ function SpendBySupplierReportOptions() {
         });
 
     return (
-        <Page history={history} homeUrl={config.appRoot} width="s">
+        <Page history={history} homeUrl={config.appRoot}>
             <Title text="Spend By Supplier" />
-            <Grid container spacing={3} justifyContent="center">
+            <Grid container spacing={3}>
                 {vendorManagersLoading ? (
                     <Grid item xs={12}>
                         <Loading />
@@ -77,9 +77,7 @@ function SpendBySupplierReportOptions() {
                                 onChange={(propertyName, newValue) => setVm(newValue)}
                             />
                         </Grid>
-
-                        <Grid item xs={12} />
-
+                        <Grid item xs={8} />
                         <Grid item xs={12}>
                             <Button color="primary" variant="contained" onClick={handleClick}>
                                 Run Report

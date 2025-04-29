@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
 	  <RootNamespace>Linn.Purchasing.Scheduling.Host</RootNamespace>
     <AssemblyName>Linn.Purchasing.Scheduling.Host</AssemblyName>
 	  <Nullable>enable</Nullable>

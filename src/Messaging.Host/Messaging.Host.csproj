@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<AssemblyName>Linn.Purchasing.Messaging.Host</AssemblyName>
 		<RootNamespace>Linn.Purchasing.Messaging.Host</RootNamespace>
 		<Nullable>enable</Nullable>

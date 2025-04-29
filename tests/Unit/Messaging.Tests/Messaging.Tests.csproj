@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFramework>net7.0</TargetFramework>
+	<TargetFramework>net9.0</TargetFramework>
     <AssemblyName>Linn.Purchasing.Messaging.Tests</AssemblyName>
     <RootNamespace>Linn.Purchasing.Messaging.Tests</RootNamespace>
   </PropertyGroup>

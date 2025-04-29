@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.SpendsReportServiceTests
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
@@ -24,13 +23,33 @@
         [SetUp]
         public void SetUp()
         {
+            var yearStartLedgerPeriod = 1492;
+            var ledgerPeriodInLastYear = 1489;
+            var ledgerPeriodInYearBeforeLast = 1479;
+            var currentLedgerPeriod = 1500;
             var spends = new List<SupplierSpend>
                              {
                                  new SupplierSpend
                                      {
                                          SupplierId = this.supplierId,
                                          BaseTotal = 120m,
-                                         LedgerPeriod = 1290,
+                                         LedgerPeriod = ledgerPeriodInLastYear,
+                                         SupplierName = "seller1",
+                                         VendorManager = "X"
+                                     },
+                                 new SupplierSpend
+                                     {
+                                         SupplierId = this.supplierId,
+                                         BaseTotal = 120m,
+                                         LedgerPeriod = ledgerPeriodInLastYear,
+                                         SupplierName = "seller1",
+                                         VendorManager = "X"
+                                     },
+                                 new SupplierSpend
+                                     {
+                                         SupplierId = this.supplierId,
+                                         BaseTotal = 120m,
+                                         LedgerPeriod = ledgerPeriodInYearBeforeLast,
                                          SupplierName = "seller1",
                                          VendorManager = "X"
                                      },
@@ -38,7 +57,7 @@
                                      {
                                          SupplierId = this.supplierId,
                                          BaseTotal = 130.87m,
-                                         LedgerPeriod = 1288,
+                                         LedgerPeriod = ledgerPeriodInYearBeforeLast,
                                          SupplierName = "seller1",
                                          VendorManager = "X"
                                      },
@@ -46,20 +65,20 @@
                                      {
                                          SupplierId = this.supplierId,
                                          BaseTotal = 500m,
-                                         LedgerPeriod = 1273,
+                                         LedgerPeriod = currentLedgerPeriod,
                                          SupplierName = "seller1",
                                          VendorManager = "X"
                                      }
                              };
 
-            this.SpendsRepository.FilterBy(Arg.Any<Expression<Func<SupplierSpend, bool>>>())
+            this.SpendsRepository.FindAll()
                 .Returns(spends.AsQueryable());
             var vendorManager = new VendorManager { Id = "X", UserNumber = 999, Employee = new Employee { FullName = "Doctor X" } };
 
             this.VendorManagerRepository.FindById(Arg.Any<string>()).Returns(vendorManager);
 
-            this.PurchaseLedgerPack.GetLedgerPeriod().Returns(1290);
-            this.PurchaseLedgerPack.GetYearStartLedgerPeriod().Returns(1285);
+            this.PurchaseLedgerPack.GetLedgerPeriod().Returns(currentLedgerPeriod);
+            this.PurchaseLedgerPack.GetYearStartLedgerPeriod().Returns(yearStartLedgerPeriod);
 
             this.results = this.Sut.GetSpendBySupplierReport("X");
         }
@@ -69,7 +88,7 @@
         {
             this.PurchaseLedgerPack.Received().GetLedgerPeriod();
             this.PurchaseLedgerPack.Received().GetYearStartLedgerPeriod();
-            this.SpendsRepository.Received().FilterBy(Arg.Any<Expression<Func<SupplierSpend, bool>>>());
+            this.SpendsRepository.Received().FindAll();
             this.VendorManagerRepository.Received().FindById(Arg.Any<string>());
         }
 
@@ -77,14 +96,14 @@
         public void ShouldReturnData()
         {
             this.results.ReportTitle.DisplayValue.Should().Be(
-                "Spend by supplier report for Vendor Manager: X - Doctor X (999). In GBP, for this financial year and last, excludes factors & VAT.");
+                $"Spend by supplier report for Vendor Manager: X - Doctor X - GBP (excluding factors & VAT.)");
             this.results.Rows.Count().Should().Be(1);
             var row = this.results.Rows.First();
             row.RowId.Should().Be(this.supplierId.ToString());
             this.results.GetGridTextValue(0, 0).Should().Be("seller1");
-            this.results.GetGridValue(0, 1).Should().Be(500);
-            this.results.GetGridValue(0, 2).Should().Be(250.87m);
-            this.results.GetGridValue(0, 3).Should().Be(120);
+            this.results.GetGridValue(0, 1).Should().Be(250.87m); // in 12 months before last FY, i.e. the fianacial year before last
+            this.results.GetGridValue(0, 2).Should().Be(240m);    // in last FY
+            this.results.GetGridValue(0, 3).Should().Be(500m);     // in current period, i.e. this month
         }
     }
 }
