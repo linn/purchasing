@@ -5,5 +5,7 @@
         public string DepartmentCode { get; set; }
 
         public string DepartmentDescription { get; set; }
+
+        public string ProjectDepartment { get; set; }
     }
 }

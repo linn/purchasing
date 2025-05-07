@@ -34,8 +34,8 @@
                                        Department = new DepartmentResource
                                                         {
                                                             DepartmentDescription = nomacc.Department?.Description,
-                                                            DepartmentCode = nomacc.Department
-                                                                ?.DepartmentCode
+                                                            DepartmentCode = nomacc.Department?.DepartmentCode,
+                                                            ProjectDepartment = nomacc.Department?.ProjectDepartment
                                                         },
                                        Nominal = new NominalResource
                                                      {
