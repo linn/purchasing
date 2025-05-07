@@ -8,6 +8,8 @@
 
         public string Description { get; set; }
 
+        public string ProjectDepartment { get; set; }
+
         public IEnumerable<NominalAccount> NominalAccounts { get; set; }
     }
 }
