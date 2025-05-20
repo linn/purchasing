@@ -63,6 +63,17 @@
                                          SupplierName = "seller1",
                                          PartNumber = "RAW 33",
                                          PartDescription  = "A part of some sort"
+                                     },
+                                 new SupplierSpend
+                                     {
+                                         SupplierId = this.supplierId,
+                                         BaseTotal = 40.40m,
+                                         LedgerPeriod = 1263,
+                                         OrderNumber = this.orderNumber3,
+                                         OrderLine = 1,
+                                         SupplierName = "seller1",
+                                         PartNumber = "RAW 33",
+                                         PartDescription  = "A part of some sort"
                                      }
                              };
 
@@ -96,9 +107,10 @@
             this.results.Rows.First(x => x.RowId == "MCAS WAN").Should().NotBeNull();
             this.results.GetGridTextValue(0, 0).Should().Be("RAW 33");
             this.results.GetGridTextValue(0, 1).Should().Be("A part of some sort");
-            this.results.GetGridValue(0, 2).Should().Be(500);
-            this.results.GetGridValue(0, 3).Should().Be(0m);
+            this.results.GetGridValue(0, 2).Should().Be(40.40m);
+            this.results.GetGridValue(0, 3).Should().Be(500);
             this.results.GetGridValue(0, 4).Should().Be(0m);
+            this.results.GetGridValue(0, 5).Should().Be(0m);
             this.results.GetGridTextValue(1, 0).Should().Be("MCAS 222");
         }
     }

@@ -8,7 +8,6 @@
     using Linn.Common.Reporting.Layouts;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
-    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -263,9 +262,10 @@
             var currentLedgerPeriod = this.purchaseLedgerPack.GetLedgerPeriod();
             var yearStartLedgerPeriod = this.purchaseLedgerPack.GetYearStartLedgerPeriod();
             var previousYearStartLedgerPeriod = yearStartLedgerPeriod - 12;
+            var yearBeforePreviousStartLedgerPeriod = yearStartLedgerPeriod - 24;
 
             var supplierSpends = this.spendsRepository
-                .FilterBy(x => x.LedgerPeriod >= previousYearStartLedgerPeriod 
+                .FilterBy(x => x.LedgerPeriod >= yearBeforePreviousStartLedgerPeriod
                                && x.LedgerPeriod <= currentLedgerPeriod
                                && x.SupplierId == supplierId
                                && x.OrderNumber.HasValue
@@ -301,6 +301,11 @@
                                          .Where(s => s.PartNumber == x.PartNumber
                                                      && s.LedgerPeriod >= previousYearStartLedgerPeriod
                                                      && s.LedgerPeriod < yearStartLedgerPeriod)
+                                         .Sum(z => z.BaseTotal ?? 0),
+                                     YearBeforeLastTotal = supplierSpends
+                                         .Where(s => s.PartNumber == x.PartNumber
+                                                     && s.LedgerPeriod >= yearBeforePreviousStartLedgerPeriod
+                                                     && s.LedgerPeriod < previousYearStartLedgerPeriod)
                                          .Sum(z => z.BaseTotal ?? 0)
                                  })
                 .OrderByDescending(x => x.PrevYearTotal)
@@ -394,6 +399,7 @@
                                 AllowWrap = false
                             },
                         new AxisDetailsModel("Description", "Description", GridDisplayType.TextValue),
+                        new AxisDetailsModel("YearBeforeLast", "Year Before Last", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("LastYear", "Last Year", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("ThisYear", "This Year", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("ThisMonth", "This Month", GridDisplayType.Value) { DecimalPlaces = 2 }
@@ -444,7 +450,13 @@
                         ColumnId = "Description",
                         TextDisplay = part.PartDescription
                     });
-
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = currentRowId,
+                        ColumnId = "YearBeforeLast",
+                        Value = part.YearBeforeLastTotal
+                    });
             values.Add(
                 new CalculationValueModel
                     {
