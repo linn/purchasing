@@ -22,8 +22,6 @@
 
         private PartSupplier updated;
 
-        private Part part;
-
         [SetUp]
         public void SetUp()
         {
@@ -64,9 +62,7 @@
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(
-                    new Part { DecrementRule = "YES", BomType = "B" });
-
+                .Returns(new Part { DecrementRule = "YES", BomType = "B" });
 
             this.Sut.UpdatePartSupplier(this.current, this.updated, new List<string>());
         }
