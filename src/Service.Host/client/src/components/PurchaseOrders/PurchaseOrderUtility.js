@@ -102,13 +102,13 @@ function PurchaseOrderUtility({ creating }) {
             field: 'dateRequested',
             headerName: 'Request Date',
             width: 200,
-            type: 'date'
+            valueFormatter: ({ value }) => (value ? moment(value).format('DD/MM/YYYY') : '')
         },
         {
             field: 'dateAdvised',
             headerName: 'Advised Date',
-            type: 'date',
-            width: 200
+            width: 200,
+            valueFormatter: ({ value }) => (value ? moment(value).format('DD/MM/YYYY') : '')
         },
         {
             field: 'availableAtSupplier',
