@@ -4,6 +4,7 @@
     using System.Linq;
 
     using Linn.Common.Facade;
+    using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;

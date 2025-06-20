@@ -83,7 +83,7 @@
             for (var i = 1; i < this.results.Rows.Count(); i++)
             {
                 var previousPart = this.results.GetGridTextValue(i - 1, 0);
-                Assert.IsTrue(string.CompareOrdinal(this.results.GetGridTextValue(i, 0), previousPart) > 0);
+                Assert.That(string.CompareOrdinal(this.results.GetGridTextValue(i, 0), previousPart) > 0);
             }
         }
     }

@@ -42,7 +42,7 @@
                 results.Select(x => (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(x, null)));
         }
 
-        public IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveries(
+        public IResult<BatchUpdateProcessResultResourceWithLinks> BatchUpdateDeliveries(
             string csvString, IEnumerable<string> privileges)
         {
             var reader = new StringReader(csvString);
@@ -147,8 +147,8 @@
 
                 this.transactionManager.Commit();
                 
-                return new SuccessResult<BatchUpdateProcessResultResource>(
-                    new BatchUpdateProcessResultResource
+                return new SuccessResult<BatchUpdateProcessResultResourceWithLinks>(
+                    new BatchUpdateProcessResultResourceWithLinks
                         {
                             Success = result.Success,
                             Message = result.Message,
@@ -162,11 +162,11 @@
             }
             catch (Exception e)
             {
-                return new BadRequestResult<BatchUpdateProcessResultResource>(e.Message);
+                return new BadRequestResult<BatchUpdateProcessResultResourceWithLinks>(e.Message);
             }
         }
 
-        public IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveries(
+        public IResult<BatchUpdateProcessResultResourceWithLinks> BatchUpdateDeliveries(
             IEnumerable<PurchaseOrderDeliveryUpdateResource> resource, IEnumerable<string> privileges)
         {
             var updates = resource.Select(
@@ -198,7 +198,7 @@
            
              this.transactionManager.Commit();
 
-            return new SuccessResult<BatchUpdateProcessResultResource>(new BatchUpdateProcessResultResource
+            return new SuccessResult<BatchUpdateProcessResultResourceWithLinks>(new BatchUpdateProcessResultResourceWithLinks
                                                                            {
                                                                                Message = result.Message,
                                                                                Success = result.Success

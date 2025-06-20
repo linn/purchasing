@@ -70,7 +70,7 @@
             for (var i = 1; i < this.result.Rows.Count(); i++)
             {
                 var previousOrderNumber = this.result.GetGridTextValue(i - 1, 0);
-                Assert.IsTrue(string.CompareOrdinal(this.result.GetGridTextValue(i, 0), previousOrderNumber) > 0);
+                Assert.That(string.CompareOrdinal(this.result.GetGridTextValue(i, 0), previousOrderNumber) > 0);
             }
         }
     }

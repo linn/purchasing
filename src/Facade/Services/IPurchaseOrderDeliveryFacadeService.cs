@@ -12,10 +12,10 @@
             string orderNumberSearchTerm, 
             bool includeAcknowledged);
 
-        IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveries(
+        IResult<BatchUpdateProcessResultResourceWithLinks> BatchUpdateDeliveries(
             string csvString, IEnumerable<string> privileges);
 
-        IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveries(
+        IResult<BatchUpdateProcessResultResourceWithLinks> BatchUpdateDeliveries(
             IEnumerable<PurchaseOrderDeliveryUpdateResource> resource, 
             IEnumerable<string> privileges);
 

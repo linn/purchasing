@@ -9,6 +9,7 @@
     using Linn.Common.Facade;
     using Linn.Common.Pdf;
     using Linn.Common.Persistence;
+    using Linn.Common.Rendering;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;

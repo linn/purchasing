@@ -20,7 +20,7 @@
         [Test]
         public void ShouldOnlyReturnExactSupplierMatches()
         {
-            Assert.IsTrue(
+            Assert.That(
                 this.result.All(x => !x.DateAdvised.HasValue));
         }
     }
