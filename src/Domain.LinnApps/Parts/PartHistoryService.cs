@@ -1,7 +1,6 @@
-﻿using System;
-
-namespace Linn.Purchasing.Domain.LinnApps.Parts
+﻿namespace Linn.Purchasing.Domain.LinnApps.Parts
 {
+    using System;
     using System.Linq;
 
     using Linn.Common.Persistence;
