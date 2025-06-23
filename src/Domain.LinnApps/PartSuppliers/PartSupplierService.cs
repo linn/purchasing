@@ -151,6 +151,10 @@
                 // if this is the first time a preferred supplier is chosen for this part
                 if (prevPart.ShouldChangeStandardPrice(stockQty))
                 {
+                    if (updated.CurrencyUnitPrice != null && updated.BaseOurUnitPrice == null)
+                    {
+                        throw new PartSupplierException("No Base Our Unit Price Supplied - please tell IT Support");
+                    }
                     part.MaterialPrice = updated.BaseOurUnitPrice;
                     var currency = this.currencyRepository.FindById(updated.Currency.Code);
                     part.Currency = currency; // if go straight to updated.currency EF complains

@@ -1,4 +1,6 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Parts
+﻿using System;
+
+namespace Linn.Purchasing.Domain.LinnApps.Parts
 {
     using System.Linq;
 
@@ -40,7 +42,8 @@
                                 OldCurrencyUnitPrice = prevPart.CurrencyUnitPrice,
                                 NewCurrencyUnitPrice = part.CurrencyUnitPrice,
                                 OldBaseUnitPrice = prevPart.BaseUnitPrice,
-                                NewBaseUnitPrice = part.BaseUnitPrice
+                                NewBaseUnitPrice = part.BaseUnitPrice,
+                                DateChanged = DateTime.UtcNow
                             };
             this.partHistory.Add(entry);
         }
