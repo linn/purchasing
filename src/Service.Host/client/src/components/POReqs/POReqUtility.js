@@ -470,7 +470,12 @@ function POReqUtility({ creating }) {
 
     return (
         <>
-            <Page history={history} homeUrl={config.appRoot} width={screenIsSmall ? 'xl' : 'm'}>
+            <Page
+                history={history}
+                homeUrl={config.appRoot}
+                title="PO Reqs"
+                width={screenIsSmall ? 'xl' : 'm'}
+            >
                 {loading ? (
                     <Loading />
                 ) : (

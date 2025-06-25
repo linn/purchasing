@@ -58,6 +58,8 @@
 
         public string PartNumber { get; set; }
 
+        public PartResource Part { get; set; }
+
         public IEnumerable<PurchaseOrderDeliveryResource> PurchaseDeliveries { get; set; }
 
         public string RohsCompliant { get; set; }

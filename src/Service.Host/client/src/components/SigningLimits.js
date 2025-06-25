@@ -319,7 +319,7 @@ function SigningLimits() {
     ];
 
     return (
-        <Page history={history}>
+        <Page history={history} title="Signing Limits">
             <Grid container>
                 <Grid item xs={8} />
                 <Grid item xs={3}>

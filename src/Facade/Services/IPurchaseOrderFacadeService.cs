@@ -39,5 +39,10 @@
             PatchRequestResource<PurchaseOrderResource> resource,
             int who,
             IEnumerable<string> privileges);
+
+        IResult<ProcessResultResource> SwitchOurQtyPrice(
+            int orderNumber,
+            int userNumber,
+            IEnumerable<string> privileges);
     }
 }

@@ -51,6 +51,7 @@ import purchaseOrderActions from '../../actions/purchaseOrderActions';
 import reducer from './purchaseOrderReducer';
 import unitsOfMeasureActions from '../../actions/unitsOfMeasureActions';
 import sendPurchaseOrderPdfEmailActionTypes from '../../actions/sendPurchaseOrderPdfEmailActions';
+import switchOurQtyPriceActionTypes from '../../actions/switchOurQtyPriceActions';
 import sendPurchaseOrderSupplierAssActionTypes from '../../actions/sendPurchaseOrderSupplierAssEmailActions';
 import {
     purchaseOrder,
@@ -61,7 +62,8 @@ import {
     suggestedPurchaseOrderValues,
     nominals,
     departments,
-    nominalAccounts
+    nominalAccounts,
+    switchOurQtyPrice as switchOurQtyPriceItemType
 } from '../../itemTypes';
 import currencyConvert from '../../helpers/currencyConvert';
 import PurchaseOrderDeliveriesUtility from '../PurchaseOrderDeliveriesUtility';
@@ -447,6 +449,13 @@ function PurchaseOrderUtility({ creating }) {
         );
     };
 
+    const switchOurQtyPrice = () => {
+        if (order?.orderNumber) {
+            const url = switchOurQtyPriceItemType.uri.replace('orderNumber', order.orderNumber);
+            reduxDispatch(switchOurQtyPriceActionTypes.postByHref(url));
+        }
+    };
+
     const useStyles = makeStyles(theme => ({
         buttonMarginTop: {
             marginTop: '28px',
@@ -473,8 +482,6 @@ function PurchaseOrderUtility({ creating }) {
     const classes = useStyles();
     const screenIsSmall = useMediaQuery({ query: `(max-width: 1200px)` });
     const [overridingOrderPrice, setOverridingOrderPrice] = useState(false);
-    const [overridingOrderQty, setOverridingOrderQty] = useState(false);
-
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [currentLine, setCurrentLine] = useState(1);
     const [filCancelDialogOpen, setFilCancelDialogOpen] = useState(false);
@@ -502,7 +509,12 @@ function PurchaseOrderUtility({ creating }) {
     return (
         <>
             <div className="hide-when-printing">
-                <Page history={history} homeUrl={config.appRoot} width={screenIsSmall ? 'xl' : 'm'}>
+                <Page
+                    title="Purchase Orders"
+                    history={history}
+                    homeUrl={config.appRoot}
+                    width={screenIsSmall ? 'xl' : 'm'}
+                >
                     {loading || deliveriesLoading || suggestedValuesLoading ? (
                         <Loading />
                     ) : (
@@ -761,7 +773,7 @@ function PurchaseOrderUtility({ creating }) {
                                         </Typography>
                                     </div>
                                 </Dialog>
-                                <Grid item xs={10}>
+                                <Grid item xs={8}>
                                     <Typography variant="h6" display="inline">
                                         Purchase Order {!creating && item?.orderNumber}
                                     </Typography>
@@ -775,6 +787,18 @@ function PurchaseOrderUtility({ creating }) {
                                                 (CANCELLED)
                                             </Typography>
                                         </>
+                                    )}
+                                </Grid>
+                                <Grid item xs={2}>
+                                    {!!order?.orderNumber && (
+                                        <Tooltip title="Leave orders screen and open inv post">
+                                            <Link
+                                                variant="body1"
+                                                href={`${config.proxyRoot}/ledgers/purchase/inv-post?orderNumber=${order?.orderNumber}`}
+                                            >
+                                                Invoices
+                                            </Link>
+                                        </Tooltip>
                                     )}
                                 </Grid>
                                 <Grid item xs={2}>
@@ -797,29 +821,6 @@ function PurchaseOrderUtility({ creating }) {
                                             </Tooltip>
                                         )}
                                     </div>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Stack direction="row" spacing={2}>
-                                        <Tooltip title="View invoices in pop-up">
-                                            <Button
-                                                aria-label="Pl Inv/Rec"
-                                                onClick={() => setInvRecDialogOpen(true)}
-                                                disabled={creating}
-                                            >
-                                                Inv PopUp
-                                            </Button>
-                                        </Tooltip>
-                                        {!!order?.orderNumber && (
-                                            <Tooltip title="Leave orders screen and open inv post">
-                                                <Link
-                                                    variant="body1"
-                                                    href={`${config.proxyRoot}/ledgers/purchase/inv-post?orderNumber=${order?.orderNumber}`}
-                                                >
-                                                    Invoices
-                                                </Link>
-                                            </Tooltip>
-                                        )}
-                                    </Stack>
                                 </Grid>
                                 <Grid item xs={2}>
                                     <InputField
@@ -1281,7 +1282,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     <InputField
                                                         fullWidth
                                                         value={detail.ourQty}
-                                                        label="Our quantity"
+                                                        label="Our Quantity"
                                                         propertyName="ourQty"
                                                         onChange={(propertyName, newValue) =>
                                                             handleDetailQtyFieldChange(
@@ -1296,7 +1297,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     />
                                                 </Grid>
                                                 <Grid item xs={6}>
-                                                    {overridingOrderQty ? (
+                                                    {overridingOrderPrice ? (
                                                         <Tooltip
                                                             title="Order qty is set automatically based on Our qty.
                                                             Only change this if you have a good reason to override it."
@@ -1307,7 +1308,7 @@ function PurchaseOrderUtility({ creating }) {
                                                                 <InputField
                                                                     fullWidth
                                                                     value={detail.orderQty}
-                                                                    label="Order quantity"
+                                                                    label="Order Qty"
                                                                     propertyName="orderQty"
                                                                     onChange={(
                                                                         propertyName,
@@ -1326,8 +1327,7 @@ function PurchaseOrderUtility({ creating }) {
                                                         </Tooltip>
                                                     ) : (
                                                         <Tooltip
-                                                            title="Order qty is set automatically based on Our qty.
-                                                Only change this if you have a good reason to override it."
+                                                            title="Swap our qty/price is a finance only function. Order qty/price is unchanged"
                                                             placement="top"
                                                             className={classes.cursorPointer}
                                                         >
@@ -1336,7 +1336,7 @@ function PurchaseOrderUtility({ creating }) {
                                                                     <InputField
                                                                         fullWidth
                                                                         value={detail.orderQty}
-                                                                        label="Order quantity"
+                                                                        label="Order Qty"
                                                                         propertyName="orderQty"
                                                                         onChange={(
                                                                             propertyName,
@@ -1359,15 +1359,16 @@ function PurchaseOrderUtility({ creating }) {
                                                                             classes.buttonMarginTop
                                                                         }
                                                                         color="primary"
-                                                                        variant="contained"
-                                                                        disabled
-                                                                        onClick={() =>
-                                                                            setOverridingOrderQty(
-                                                                                true
+                                                                        disabled={
+                                                                            !utilities.getHref(
+                                                                                detail,
+                                                                                'switch-our-qty-price'
                                                                             )
                                                                         }
+                                                                        variant="contained"
+                                                                        onClick={switchOurQtyPrice}
                                                                     >
-                                                                        Override
+                                                                        Swap Qty/Price
                                                                     </Button>
                                                                 </Grid>
                                                             </Grid>
@@ -1380,7 +1381,7 @@ function PurchaseOrderUtility({ creating }) {
                                                         fullWidth
                                                         decimalPlaces={5}
                                                         value={detail.ourUnitPriceCurrency}
-                                                        label="Our price (unit, currency)"
+                                                        label="Our Price (unit, currency)"
                                                         propertyName="ourUnitPriceCurrency"
                                                         onChange={(propertyName, newValue) => {
                                                             handleDetailValueFieldChange(
@@ -1416,7 +1417,7 @@ function PurchaseOrderUtility({ creating }) {
                                                                     value={
                                                                         detail.orderUnitPriceCurrency
                                                                     }
-                                                                    label="Order price (currency)"
+                                                                    label="Order Price"
                                                                     propertyName="orderUnitPriceCurrency"
                                                                     onChange={(
                                                                         propertyName,

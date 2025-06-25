@@ -38,6 +38,14 @@
                            Line = entity.Line,
                            PartNumber = entity.PartNumber,
                            PartDescription = entity.Part?.Description,
+                           Part = entity.Part != null
+                                      ? new PartResource
+                                            {
+                                                PartNumber = entity.Part.PartNumber,
+                                                Description = entity.Part.Description,
+                                                StockControlled = entity.Part.StockControlled
+                                            }
+                                      : null,
                            Cancelled = entity.Cancelled,
                            BaseNetTotal = entity.BaseNetTotal,
                            NetTotalCurrency = entity.NetTotalCurrency,
@@ -114,6 +122,15 @@
                 if (item.CanBeAutoBooked())
                 {
                     yield return new LinkResource { Rel = "auto-book-in", Href = "/ledgers/purchase/auto-book-stock" };
+                }
+
+                if (item.CanSwitchOurQtyAndOurPrice())
+                {
+                    yield return new LinkResource
+                                     {
+                                         Rel = "switch-our-qty-price",
+                                         Href = $"/purchasing/purchase-orders/{item.OrderNumber}/switch-our-qty-price"
+                                     };
                 }
             }
         }

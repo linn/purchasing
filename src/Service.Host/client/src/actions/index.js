@@ -393,6 +393,8 @@ export const changeRequestReplaceActionTypes = makeActionTypes(
     itemTypes.changeRequestReplace.actionType
 );
 
+export const switchOurQtyPriceActionTypes = makeActionTypes(itemTypes.switchOurQtyPrice.actionType);
+
 export const bomDifferenceReportActionTypes = makeReportActionTypes(
     reportTypes.bomDifferenceReport.actionType
 );

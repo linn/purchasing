@@ -329,6 +329,14 @@
             }
         }
 
+        public IResult<ProcessResultResource> SwitchOurQtyPrice(
+            int orderNumber,
+            int userNumber,
+            IEnumerable<string> privileges)
+        {
+            throw new NotImplementedException();
+        }
+
         public string GetOrderAsHtml(int orderNumber)
         {
             return this.domainService.GetPurchaseOrderAsHtml(orderNumber);

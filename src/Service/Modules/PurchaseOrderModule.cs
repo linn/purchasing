@@ -7,7 +7,6 @@
     using Carter.Response;
 
     using Linn.Common.Facade;
-    using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Common.Rendering;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -56,6 +55,7 @@
             app.MapPost("/purchasing/purchase-orders/email-for-authorisation", this.EmailFinanceForAuthorisation);
             app.MapPost("/purchasing/purchase-orders/{id:int}/authorise", this.AuthoriseOrder);
             app.MapPost("/purchasing/purchase-orders/{orderNumber:int}/email-dept", this.EmailDept);
+            app.MapPost("/purchasing/purchase-orders/{orderNumber:int}/switch-our-qty-price", this.SwitchOurQtyPrice);
             app.MapPatch("/purchasing/purchase-orders/{orderNumber:int}", this.PatchOrder);
         }
 
@@ -143,6 +143,20 @@
             var result = purchaseOrderFacadeService.EmailDept(
                 orderNumber,
                 req.HttpContext.User.GetEmployeeNumber());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task SwitchOurQtyPrice(
+            HttpRequest req,
+            HttpResponse res,
+            IPurchaseOrderFacadeService purchaseOrderFacadeService,
+            int orderNumber)
+        {
+            var result = purchaseOrderFacadeService.SwitchOurQtyPrice(
+                orderNumber,
+                req.HttpContext.User.GetEmployeeNumber(),
+                req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }
@@ -300,7 +314,13 @@
             IPurchaseOrderFacadeService purchaseOrderFacadeService,
             int numberToTake = 50)
         {
-            var resource = new PurchaseOrderSearchResource { OrderNumber = searchTerm, StartDate = startDate, EndDate = endDate, SearchTerm = searchTerm};
+            var resource = new PurchaseOrderSearchResource
+                               {
+                                   OrderNumber = searchTerm,
+                                   StartDate = startDate,
+                                   EndDate = endDate,
+                                   SearchTerm = searchTerm
+                               };
             var result = purchaseOrderFacadeService.FilterBy(resource, numberToTake, req.HttpContext.GetPrivileges());
             await res.Negotiate(result);
         }
