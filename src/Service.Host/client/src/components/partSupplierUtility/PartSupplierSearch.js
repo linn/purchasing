@@ -66,7 +66,7 @@ function PartSupplierSearch() {
             )
         );
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} title="Part Suppliers" homeUrl={config.appRoot}>
             <Grid container spacing={3}>
                 <Grid item xs={10}>
                     <Typography variant="h3">Part Suppliers Search</Typography>
