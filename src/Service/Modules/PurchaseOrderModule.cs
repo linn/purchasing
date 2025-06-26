@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
 
@@ -156,7 +157,7 @@
             var result = purchaseOrderFacadeService.SwitchOurQtyPrice(
                 orderNumber,
                 req.HttpContext.User.GetEmployeeNumber(),
-                req.HttpContext.GetPrivileges());
+                req.HttpContext.GetPrivileges()?.ToList());
 
             await res.Negotiate(result);
         }

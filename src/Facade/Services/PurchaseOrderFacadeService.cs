@@ -329,12 +329,21 @@
             }
         }
 
-        public IResult<ProcessResultResource> SwitchOurQtyPrice(
+        public IResult<PurchaseOrderResource> SwitchOurQtyPrice(
             int orderNumber,
             int userNumber,
-            IEnumerable<string> privileges)
+            IList<string> privileges)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = this.domainService.SwitchOurQtyAndPrice(orderNumber, userNumber, privileges);
+
+                return new SuccessResult<PurchaseOrderResource>((PurchaseOrderResource)this.resourceBuilder.Build(result, privileges));
+            }
+            catch (DomainException exception)
+            {
+                return new BadRequestResult<PurchaseOrderResource>(exception.Message);
+            }
         }
 
         public string GetOrderAsHtml(int orderNumber)

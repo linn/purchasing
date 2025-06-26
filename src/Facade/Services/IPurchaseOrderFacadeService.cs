@@ -40,9 +40,9 @@
             int who,
             IEnumerable<string> privileges);
 
-        IResult<ProcessResultResource> SwitchOurQtyPrice(
+        IResult<PurchaseOrderResource> SwitchOurQtyPrice(
             int orderNumber,
             int userNumber,
-            IEnumerable<string> privileges);
+            IList<string> privileges);
     }
 }

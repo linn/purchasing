@@ -37,7 +37,7 @@ function MrOrderBookReport() {
 
     const reportData = useSelector(state => state[mrOrderBookReport.item]?.data);
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="Order Book">
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Title text="MR Order Book" />

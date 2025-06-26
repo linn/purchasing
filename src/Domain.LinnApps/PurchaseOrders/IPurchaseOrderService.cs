@@ -52,5 +52,7 @@
             IEnumerable<string> privileges);
 
         PurchaseOrder UnFilCancelLine(int orderNumber, int line, IEnumerable<string> privileges);
+
+        PurchaseOrder SwitchOurQtyAndPrice(int orderNumber, int employeeId, IEnumerable<string> privileges);
     }
 }

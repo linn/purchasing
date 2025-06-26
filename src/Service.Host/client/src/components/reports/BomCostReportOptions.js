@@ -49,7 +49,7 @@ function BomCostReportOptions() {
         collectionSelectorHelpers.getSearchLoading(reduxState[parts.item])
     );
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="BOM Cost">
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Title text="Bom Cost Report" />

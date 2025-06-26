@@ -146,6 +146,7 @@ function BoardComponentsSmtCheck() {
             homeUrl={config.appRoot}
             requestErrors={requestErrors}
             showRequestErrors
+            title="Board File Check"
         >
             <Typography variant="h5" gutterBottom>
                 Search or select PCAS board

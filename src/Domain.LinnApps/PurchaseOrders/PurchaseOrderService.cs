@@ -967,6 +967,11 @@
             return order;
         }
 
+        public PurchaseOrder SwitchOurQtyAndPrice(int orderNumber, int employeeId, IEnumerable<string> privileges)
+        {
+            throw new NotImplementedException();
+        }
+
         private PurchaseOrder GetOrder(int orderNumber)
         {
             var order = this.purchaseOrderRepository.FindById(orderNumber);
