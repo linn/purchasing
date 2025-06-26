@@ -152,10 +152,12 @@
             HttpRequest req,
             HttpResponse res,
             IPurchaseOrderFacadeService purchaseOrderFacadeService,
-            int orderNumber)
+            int orderNumber,
+            int orderLine)
         {
             var result = purchaseOrderFacadeService.SwitchOurQtyPrice(
                 orderNumber,
+                orderLine,
                 req.HttpContext.User.GetEmployeeNumber(),
                 req.HttpContext.GetPrivileges()?.ToList());
 

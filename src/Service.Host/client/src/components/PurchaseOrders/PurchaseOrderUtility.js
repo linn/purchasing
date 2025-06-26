@@ -50,7 +50,7 @@ import purchaseOrderActions from '../../actions/purchaseOrderActions';
 import reducer from './purchaseOrderReducer';
 import unitsOfMeasureActions from '../../actions/unitsOfMeasureActions';
 import sendPurchaseOrderPdfEmailActionTypes from '../../actions/sendPurchaseOrderPdfEmailActions';
-import switchOurQtyPriceActionTypes from '../../actions/switchOurQtyPriceActions';
+import switchOurQtyPriceActions from '../../actions/switchOurQtyPriceActions';
 import sendPurchaseOrderSupplierAssActionTypes from '../../actions/sendPurchaseOrderSupplierAssEmailActions';
 import {
     purchaseOrder,
@@ -137,6 +137,10 @@ function PurchaseOrderUtility({ creating }) {
         itemSelectorHelpers.getApplicationState(state[purchaseOrder.item])
     );
 
+    const switchResult = useSelector(state =>
+        itemSelectorHelpers.getItem(state[switchOurQtyPriceItemType.item])
+    );
+
     const suggestedValues = useSelector(state =>
         itemSelectorHelpers.getItem(state[suggestedPurchaseOrderValues.item])
     );
@@ -207,6 +211,13 @@ function PurchaseOrderUtility({ creating }) {
                 });
         }
     }, [item?.orderNumber, item]);
+
+    useEffect(() => {
+        if (switchResult) {
+            reduxDispatch(purchaseOrderActions.fetch(orderNumber));
+            reduxDispatch(switchOurQtyPriceActions.clearItem());
+        }
+    }, [orderNumber, reduxDispatch, switchResult]);
 
     const currencies = useSelector(state => collectionSelectorHelpers.getItems(state.currencies));
     const unitsOfMeasure = useSelector(reduxState =>
@@ -451,7 +462,7 @@ function PurchaseOrderUtility({ creating }) {
     const switchOurQtyPrice = () => {
         if (order?.orderNumber) {
             const url = switchOurQtyPriceItemType.uri.replace('orderNumber', order.orderNumber);
-            reduxDispatch(switchOurQtyPriceActionTypes.postByHref(url));
+            reduxDispatch(switchOurQtyPriceActions.postByHref(`${url}?orderLine=1`));
         }
     };
 

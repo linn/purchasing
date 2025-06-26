@@ -23,7 +23,7 @@
         public void SetUp()
         {
             this.orderNumber = 537634;
-            this.MockDomainService.SwitchOurQtyAndPrice(this.orderNumber, Arg.Any<int>(), Arg.Any<List<string>>())
+            this.MockDomainService.SwitchOurQtyAndPrice(this.orderNumber, 3, Arg.Any<int>(), Arg.Any<List<string>>())
                 .Returns(
                     new PurchaseOrder
                         {
@@ -31,7 +31,7 @@
                         });
 
             this.Response = this.Client.Post(
-                $"/purchasing/purchase-orders/{this.orderNumber}/switch-our-qty-price",
+                $"/purchasing/purchase-orders/{this.orderNumber}/switch-our-qty-price?orderLine=3",
                 with => { with.Accept("application/json"); }).Result;
         }
 
@@ -40,6 +40,12 @@
         {
             var resource = this.Response.DeserializeBody<PurchaseOrderResource>();
             resource.OrderNumber.Should().Be(this.orderNumber);
+        }
+
+        [Test]
+        public void ShouldCommitUpdates()
+        {
+            this.TransactionManager.Received().Commit();
         }
 
         [Test]
@@ -60,6 +66,7 @@
         {
             this.MockDomainService.Received().SwitchOurQtyAndPrice(
                 this.orderNumber,
+                3,
                 Arg.Any<int>(),
                 Arg.Any<List<string>>());
         }

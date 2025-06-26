@@ -42,6 +42,7 @@
 
         IResult<PurchaseOrderResource> SwitchOurQtyPrice(
             int orderNumber,
+            int orderLine,
             int userNumber,
             IList<string> privileges);
     }

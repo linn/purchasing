@@ -331,14 +331,17 @@
 
         public IResult<PurchaseOrderResource> SwitchOurQtyPrice(
             int orderNumber,
+            int orderLine,
             int userNumber,
             IList<string> privileges)
         {
             try
             {
-                var result = this.domainService.SwitchOurQtyAndPrice(orderNumber, userNumber, privileges);
+                var result = this.domainService.SwitchOurQtyAndPrice(orderNumber, orderLine, userNumber, privileges);
+                this.transactionManager.Commit();
 
-                return new SuccessResult<PurchaseOrderResource>((PurchaseOrderResource)this.resourceBuilder.Build(result, privileges));
+                return new SuccessResult<PurchaseOrderResource>(
+                    (PurchaseOrderResource)this.resourceBuilder.Build(result, privileges));
             }
             catch (DomainException exception)
             {
