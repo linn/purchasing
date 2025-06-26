@@ -47,7 +47,7 @@ function SupplierLeadTimesReportOptions() {
         });
 
     return (
-        <Page history={history} homeUrl={config.appRoot} width="s">
+        <Page history={history} homeUrl={config.appRoot} width="s" title="Supplier Lead Times">
             <Title text="Lead Times By Supplier" />
             <Grid container spacing={3} justifyContent="center">
                 <Grid item xs={12} data-testid="supplierSearch">

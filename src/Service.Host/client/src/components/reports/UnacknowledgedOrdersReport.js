@@ -38,7 +38,7 @@ function UnacknowledgedOrdersReport() {
     };
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="Unacknowledged Orders">
             <Grid container>
                 <Grid item xs={12}>
                     <BackButton backClick={() => handleBackClick(history, options)} />

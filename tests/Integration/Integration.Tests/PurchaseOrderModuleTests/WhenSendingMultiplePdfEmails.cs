@@ -5,9 +5,9 @@
 
     using FluentAssertions;
 
+    using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Integration.Tests.Extensions;
-    using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;
 
     using NSubstitute;

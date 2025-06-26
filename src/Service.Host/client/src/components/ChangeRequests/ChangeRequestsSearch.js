@@ -157,7 +157,7 @@ function ChangeRequestSearch() {
         );
 
     return (
-        <Page history={history}>
+        <Page history={history} title="Change Requests">
             <Grid container>
                 <Grid item xs={10}>
                     <Typography variant="h3">Search Change Request</Typography>

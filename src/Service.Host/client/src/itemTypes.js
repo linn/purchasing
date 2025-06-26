@@ -441,3 +441,9 @@ export const changeRequestReplace = new ItemType(
     'CHANGE_REQUEST_REPLACE',
     '/purchasing/change-requests/replace'
 );
+
+export const switchOurQtyPrice = new ItemType(
+    'switchOurQtyPrice',
+    'SWITCH_OUT_QTY_PRICE',
+    '/purchasing/purchase-orders/orderNumber/switch-our-qty-price'
+);

@@ -46,7 +46,7 @@ function ShortagesReportOptions() {
         });
 
     return (
-        <Page history={history} homeUrl={config.appRoot} width="s">
+        <Page history={history} homeUrl={config.appRoot} width="s" title="Shortages">
             <Title text="Shortages Report" />
             <Grid container spacing={3} justifyContent="center">
                 {vendorManagersLoading ? (

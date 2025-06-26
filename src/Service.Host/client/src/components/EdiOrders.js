@@ -172,7 +172,7 @@ function EdiOrder() {
     };
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="EDI Orders">
             <SnackbarMessage visible={emailSentResult} message={snackbarMessage()} />
             <Grid container spacing={3}>
                 <Grid item xs={11}>

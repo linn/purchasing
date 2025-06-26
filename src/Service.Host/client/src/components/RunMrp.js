@@ -94,7 +94,7 @@ function RunMrp() {
     };
 
     return (
-        <Page history={history}>
+        <Page history={history} title="Run MRP">
             <Grid container>
                 <Grid item xs={12}>
                     <Typography variant="h6">Last MRP Run</Typography>

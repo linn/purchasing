@@ -284,7 +284,7 @@ function MaterialRequirementsOptions() {
     };
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="MR Options">
             <Grid container>
                 <Grid item xs={10}>
                     <Typography variant="h6">MR Options</Typography>

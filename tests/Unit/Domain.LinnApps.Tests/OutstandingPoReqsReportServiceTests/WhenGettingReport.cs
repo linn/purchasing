@@ -112,7 +112,7 @@
             for (var i = 1; i < this.results.Rows.Count(); i++)
             {
                 var prevNo = this.results.Rows.ElementAt(i - 1).RowId;
-                Assert.IsTrue(string.CompareOrdinal(this.results.Rows.ElementAt(i).RowId, prevNo) > 0);
+                Assert.That(string.CompareOrdinal(this.results.Rows.ElementAt(i).RowId, prevNo) > 0);
             }
         }
     }

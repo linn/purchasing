@@ -35,7 +35,7 @@
         [Test]
         public void ShouldOnlyReturnResult()
         {
-            Assert.IsTrue(
+            Assert.That(
                 this.result.First().OrderNumber.Equals(123456));
         }
     }

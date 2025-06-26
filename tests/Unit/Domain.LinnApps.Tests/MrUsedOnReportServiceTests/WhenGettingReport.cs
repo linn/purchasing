@@ -97,7 +97,7 @@
             for (var i = 1; i < this.result.Rows.Count(); i++)
             {
                 var prevAnnualUsage = this.result.GetGridValue(i - 1, 4);
-                Assert.IsTrue(this.result.GetGridValue(i, 4) < prevAnnualUsage);
+                Assert.That(this.result.GetGridValue(i, 4) < prevAnnualUsage);
             }
         }
     }

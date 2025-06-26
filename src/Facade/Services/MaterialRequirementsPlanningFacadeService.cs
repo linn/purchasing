@@ -16,20 +16,20 @@
             this.materialRequirementsPlanningService = materialRequirementsPlanningService;
         } 
 
-        public IResult<ProcessResultResource> RunMrp(IEnumerable<string> privileges)
+        public IResult<ProcessResultResourceWithLinks> RunMrp(IEnumerable<string> privileges)
         {
             var result = this.materialRequirementsPlanningService.RunMrp();
 
             if (result.Success)
             {
-                return new SuccessResult<ProcessResultResource>(
-                    new ProcessResultResource(result.Success, result.Message)
+                return new SuccessResult<ProcessResultResourceWithLinks>(
+                    new ProcessResultResourceWithLinks(result.Success, result.Message)
                         {
                             Links = new LinkResource[] { new LinkResource("status", result.ProcessHref) }
                         });
             }
 
-            return new BadRequestResult<ProcessResultResource>(result.Message);
+            return new BadRequestResult<ProcessResultResourceWithLinks>(result.Message);
         }
     }
 }

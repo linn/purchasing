@@ -31,7 +31,7 @@ function BomUtilitySearch() {
     );
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="BOMs">
             <Grid container spacing={3}>
                 <Grid item xs={10}>
                     <Typography variant="h3">Bom Utility</Typography>

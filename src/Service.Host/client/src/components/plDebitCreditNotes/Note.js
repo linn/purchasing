@@ -312,7 +312,7 @@ function Note() {
                 </Grid>
             )}
             <div style={{ width: '80%', minWidth: '1200px', margin: '0 auto' }}>
-                <Page history={history} homeUrl={config.appRoot}>
+                <Page history={history} homeUrl={config.appRoot} title="Debit Note">
                     <div style={{ width: '874px', margin: '0 auto', padding: '60px' }} ref={pdfRef}>
                         {loading || processLoading || pdfLoading || !item ? (
                             <Loading />

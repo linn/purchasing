@@ -11,6 +11,7 @@
     using NSubstitute;
 
     using NUnit.Framework;
+    using NUnit.Framework.Legacy;
 
     public class WhenNotDefaultParameters : ContextBase
     {
@@ -32,14 +33,14 @@
         public void ShouldIncludePartsWithNoOrderNumber()
         {
             // PART D has no OrdersData entry
-            this.result.PartsInInspection.Any(x => x.PartNumber.Equals("PART D")); 
+            Assert.That(this.result.PartsInInspection.Any(x => x.PartNumber.Equals("PART D")));
         }
 
         [Test]
         public void ShouldNotIncludeFinishedGoods()
         {
             this.result.PartsInInspection.Count().Should().Be(2);
-            Assert.IsFalse(this.result.PartsInInspection.Any(x => x.PartNumber.Equals("F")));
+            ClassicAssert.IsFalse(this.result.PartsInInspection.Any(x => x.PartNumber.Equals("F")));
         }
 
         [Test]

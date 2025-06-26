@@ -19,7 +19,7 @@
         public void SetUp()
         {
             this.MaterialRequirementsPlanningFacadeService.RunMrp(Arg.Any<List<string>>())
-                .Returns(new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "Running")));
+                .Returns(new SuccessResult<ProcessResultResourceWithLinks>(new ProcessResultResourceWithLinks(true, "Running")));
 
             this.Response = this.Client.Post(
                 $"/purchasing/material-requirements/run-mrp",
@@ -52,7 +52,7 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resultResource = this.Response.DeserializeBody<ProcessResultResource>();
+            var resultResource = this.Response.DeserializeBody<ProcessResultResourceWithLinks>();
             resultResource.Success.Should().BeTrue();
             resultResource.Message.Should().Be("Running");
         }

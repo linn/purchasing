@@ -139,7 +139,7 @@ function OpenDebitNotes() {
     ];
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="Open Debit Notes">
             <SnackbarMessage
                 visible={snackbarVisible}
                 onClose={() => dispatch(plCreditDebitNoteActions.setSnackbarVisible(false))}

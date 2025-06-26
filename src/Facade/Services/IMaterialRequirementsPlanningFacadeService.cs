@@ -7,6 +7,6 @@
 
     public interface IMaterialRequirementsPlanningFacadeService
     {
-        IResult<ProcessResultResource> RunMrp(IEnumerable<string> privileges);
+        IResult<ProcessResultResourceWithLinks> RunMrp(IEnumerable<string> privileges);
     }
 }

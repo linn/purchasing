@@ -17,7 +17,7 @@
     {
         private IEnumerable<string> privileges;
 
-        private IResult<ProcessResultResource> result;
+        private IResult<ProcessResultResourceWithLinks> result;
 
         [SetUp]
         public void SetUp()
@@ -39,8 +39,8 @@
         [Test]
         public void ShouldReturnSuccess()
         {
-            this.result.Should().BeOfType<SuccessResult<ProcessResultResource>>();
-            var dataResult = ((SuccessResult<ProcessResultResource>)this.result).Data;
+            this.result.Should().BeOfType<SuccessResult<ProcessResultResourceWithLinks>>();
+            var dataResult = ((SuccessResult<ProcessResultResourceWithLinks>)this.result).Data;
             dataResult.Success.Should().BeTrue();
             dataResult.Message.Should().Be("ok");
             dataResult.Links.First().Href.Should().Be("/mrp/123");

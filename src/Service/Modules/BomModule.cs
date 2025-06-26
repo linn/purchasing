@@ -9,6 +9,7 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Resources.ReportResultResources;
+    using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;

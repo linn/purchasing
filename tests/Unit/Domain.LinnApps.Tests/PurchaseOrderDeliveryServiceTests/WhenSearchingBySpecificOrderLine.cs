@@ -20,7 +20,7 @@
         [Test]
         public void ShouldOnlyReturnDeliveriesForThatOrderLine()
         {
-            Assert.IsTrue(
+            Assert.That(
                 this.result.All(
                     x => x.OrderNumber.ToString().Equals("223453")
                     && x.OrderLine == 3));

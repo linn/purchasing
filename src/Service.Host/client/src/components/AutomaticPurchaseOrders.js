@@ -46,7 +46,7 @@ function AutomaticPurchaseOrders() {
     ];
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="Automatic Orders">
             <Title text="Orders Raised Automatically" />
             <Grid container>
                 <Grid item xs={12}>

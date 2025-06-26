@@ -20,7 +20,7 @@
         [Test]
         public void ShouldReturnAllRecordsWithSupplierNameContainingSearchTerm()
         {
-            Assert.IsTrue(
+            Assert.That(
                 this.result.All(x => x.PurchaseOrderDetail.PurchaseOrder.Supplier.Name.Contains("SUPPLIER 4")));
         }
     }

@@ -56,7 +56,7 @@ function Search() {
     };
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="Debit Notes">
             <Grid container spacing={3}>
                 <Grid item xs={10}>
                     <Typography variant="h3">PL Credit/Debit Notes Utility</Typography>

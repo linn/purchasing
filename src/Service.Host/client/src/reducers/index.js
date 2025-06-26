@@ -130,6 +130,7 @@ import boardComponentSummaryReport from './boardComponentSummaryReport';
 import nominalAccounts from './nominalAccounts';
 import bomPrintReport from './bomPrintReport';
 import currentEmployees from './currentEmployees';
+import switchOurQtyPrice from './switchOurQtyPrice';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -250,6 +251,7 @@ const rootReducer = () =>
         suppliers,
         supplierLeadTimesReport,
         suppliersWithUnacknowledgedOrders,
+        switchOurQtyPrice,
         tariffs,
         tqmsJobrefs,
         unacknowledgedOrdersReport,

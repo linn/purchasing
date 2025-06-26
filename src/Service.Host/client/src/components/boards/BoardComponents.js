@@ -451,6 +451,7 @@ function BoardComponents() {
             homeUrl={config.appRoot}
             requestErrors={requestErrors}
             showRequestErrors
+            title="Board Components"
         >
             <Typography variant="h5" gutterBottom>
                 Search or select PCAS board

@@ -176,6 +176,7 @@ function Board({ creating }) {
             homeUrl={config.appRoot}
             requestErrors={requestErrors}
             showRequestErrors
+            title="Boards"
         >
             {loading && <Loading />}
             {state.board && (

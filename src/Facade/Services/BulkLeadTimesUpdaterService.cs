@@ -24,7 +24,7 @@
             this.transactionManager = transactionManager;
         }
 
-        public IResult<BatchUpdateProcessResultResource> BulkUpdateFromCsv(
+        public IResult<BatchUpdateProcessResultResourceWithLinks> BulkUpdateFromCsv(
             int supplierId,
             string csvString,
             IEnumerable<string> privileges,
@@ -44,8 +44,8 @@
                 var result = this.domainService.BulkUpdateLeadTimes(supplierId, changes, privileges, groupId);
                 this.transactionManager.Commit();
 
-                return new SuccessResult<BatchUpdateProcessResultResource>(
-                    new BatchUpdateProcessResultResource
+                return new SuccessResult<BatchUpdateProcessResultResourceWithLinks>(
+                    new BatchUpdateProcessResultResourceWithLinks
                         {
                             Message = result.Message,
                             Success = result.Success,
@@ -58,7 +58,7 @@
             }
             catch (Exception e)
             {
-                return new BadRequestResult<BatchUpdateProcessResultResource>(e.Message);
+                return new BadRequestResult<BatchUpdateProcessResultResourceWithLinks>(e.Message);
             }
         }
     }

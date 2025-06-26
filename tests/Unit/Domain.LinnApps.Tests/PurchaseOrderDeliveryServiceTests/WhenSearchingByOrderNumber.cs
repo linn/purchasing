@@ -22,7 +22,7 @@
         [Test]
         public void ShouldOnlyReturnDeliveriesForOrdersThatStartWithTheSearchTerm()
         {
-            Assert.IsTrue(
+            Assert.That(
                 this.result.All(x => x.OrderNumber.ToString().Equals("123455")));
         }
 
@@ -30,7 +30,7 @@
         public void ShouldExcludeCancelledOrders()
         {
             this.result.Count().Should().Be(1);
-            Assert.IsTrue(
+            Assert.That(
                 this.result.All(x => x.Cancelled != "N"));
         }
     }

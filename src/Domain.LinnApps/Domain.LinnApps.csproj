@@ -9,14 +9,15 @@
   <ItemGroup>
     <PackageReference Include="Linn.Common.Authorisation" Version="1.0.0" />
     <PackageReference Include="Linn.Common.Configuration" Version="2.0.0" />
-    <PackageReference Include="Linn.Common.Domain" Version="1.1.0" />
+    <PackageReference Include="Linn.Common.Domain" Version="1.2.0" />
     <PackageReference Include="Linn.Common.Domain.LinnApps" Version="1.0.0" />
-    <PackageReference Include="Linn.Common.Email" Version="5.0.0" />
+    <PackageReference Include="Linn.Common.Email" Version="5.1.0" />
     <PackageReference Include="linn.common.logging" Version="2.0.0" />
-    <PackageReference Include="Linn.Common.Pdf" Version="4.0.0-alpha" />
+    <PackageReference Include="Linn.Common.Pdf" Version="5.0.0" />
     <PackageReference Include="Linn.Common.Persistence" Version="3.0.0" />
     <PackageReference Include="Linn.Common.Proxy.LinnApps" Version="3.2.0" />
-    <PackageReference Include="Linn.Common.Reporting" Version="1.7.0" />
+    <PackageReference Include="linn.common.rendering" Version="1.0.0" />
+    <PackageReference Include="Linn.Common.Reporting" Version="1.9.0" />
   </ItemGroup>
 
   <ItemGroup>

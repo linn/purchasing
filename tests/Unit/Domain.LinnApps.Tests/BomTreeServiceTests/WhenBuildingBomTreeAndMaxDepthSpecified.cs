@@ -28,7 +28,7 @@
             
         */
             this.result.Children.Count().Should().Be(3);
-            Assert.IsTrue(this.result.Children.All(c => c.Children == null));
+            Assert.That(this.result.Children.All(c => c.Children == null));
         }
     }
 }

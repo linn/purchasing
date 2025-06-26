@@ -9,6 +9,7 @@
     using Linn.Common.Facade;
     using Linn.Common.Logging;
     using Linn.Common.Persistence;
+    using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -325,6 +326,26 @@
             catch (DomainException ex)
             {
                 return new BadRequestResult<PurchaseOrderResource>(ex.Message);
+            }
+        }
+
+        public IResult<PurchaseOrderResource> SwitchOurQtyPrice(
+            int orderNumber,
+            int orderLine,
+            int userNumber,
+            IList<string> privileges)
+        {
+            try
+            {
+                var result = this.domainService.SwitchOurQtyAndPrice(orderNumber, orderLine, userNumber, privileges);
+                this.transactionManager.Commit();
+
+                return new SuccessResult<PurchaseOrderResource>(
+                    (PurchaseOrderResource)this.resourceBuilder.Build(result, privileges));
+            }
+            catch (DomainException exception)
+            {
+                return new BadRequestResult<PurchaseOrderResource>(exception.Message);
             }
         }
 

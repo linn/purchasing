@@ -55,7 +55,12 @@ function BoardSearch() {
     };
 
     return (
-        <Page history={history} style={{ paddingBottom: '20px' }} homeUrl={config.appRoot}>
+        <Page
+            history={history}
+            style={{ paddingBottom: '20px' }}
+            homeUrl={config.appRoot}
+            title="Boards Search"
+        >
             <Typography variant="h5" gutterBottom>
                 Search or select PCAS board
             </Typography>

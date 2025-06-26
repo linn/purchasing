@@ -23,7 +23,7 @@
             for (var i = 1; i < this.result.Rows.Count(); i++)
             {
                 var previousSupplier = this.result.GetGridTextValue(i - 1, 4);
-                Assert.IsTrue(string.CompareOrdinal(this.result.GetGridTextValue(i, 4), previousSupplier) > 0);
+                Assert.That(string.CompareOrdinal(this.result.GetGridTextValue(i, 4), previousSupplier) > 0);
             }
         }
     }

@@ -154,7 +154,7 @@
             {
                 var currentPart = this.results.ElementAt(i).ReportTitle.DisplayValue.Split(" _ ").First();
                 var previousPart = this.results.ElementAt(i - 1).ReportTitle.DisplayValue.Split(" _ ").First();
-                Assert.IsTrue(string.CompareOrdinal(currentPart, previousPart) > 0);
+                Assert.That(string.CompareOrdinal(currentPart, previousPart) > 0);
             }
         }
     }

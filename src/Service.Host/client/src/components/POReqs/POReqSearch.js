@@ -78,7 +78,7 @@ function POReqSearch({ print }) {
     }, [dispatch, options.reqNumber, options.part, options.supplier, options.purchaseOrderNumber]);
 
     return (
-        <Page history={history} homeUrl={config.appRoot} width="m">
+        <Page history={history} homeUrl={config.appRoot} width="m" title="PO Reqs">
             <Grid container spacing={3}>
                 <Grid item xs={10}>
                     <Typography variant="h4">

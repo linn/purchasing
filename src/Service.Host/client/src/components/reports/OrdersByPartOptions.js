@@ -67,7 +67,7 @@ function OrdersByPartReportOptions() {
         });
 
     return (
-        <Page history={history} homeUrl={config.appRoot} width="s">
+        <Page history={history} homeUrl={config.appRoot} width="s" title="Orders By Part">
             <Title text="Orders By Part" />
             <Grid container spacing={3} justifyContent="center">
                 <Grid item xs={12}>
