@@ -141,6 +141,11 @@
                     "Cannot create new PO req into state other than Draft or Authorise Wait");
             }
 
+            if (entity.SupplierId == 0)
+            {
+                throw new PurchaseOrderReqException("Must specify a supplier");
+            }
+
             this.CheckIfCanOrderFromSupplier(entity.SupplierId);
 
             var requestedBy = this.employeeRepository.FindById(entity.RequestedById);

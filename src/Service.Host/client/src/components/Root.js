@@ -3,7 +3,6 @@ import { Provider } from 'react-redux';
 import { Route, Routes } from 'react-router';
 import { OidcProvider } from 'redux-oidc';
 import { Navigate, unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
-import { Navigation } from '@linn-it/linn-form-components-library';
 import PropTypes from 'prop-types';
 import history from '../history';
 import App from './App';
@@ -105,6 +104,7 @@ import BoardComponentSummaryReport from './reports/BoardComponentSummaryReport';
 import BomPrintReport from './reports/BomPrintReport';
 import VendorManager from './VendorManager';
 import VendorManagers from './VendorManagers';
+import NavigationContainer from './containers/NavigationContainer';
 
 function Root({ store }) {
     return (
@@ -113,7 +113,10 @@ function Root({ store }) {
                 <Provider store={store}>
                     <OidcProvider store={store} userManager={userManager}>
                         <>
-                            <Navigation />
+                            <NavigationContainer
+                                handleSignOut={() => userManager.signoutRedirect()}
+                            />
+
                             <HistoryRouter history={history}>
                                 <Routes>
                                     <Route exact path="/purchasing" element={<App />} />
