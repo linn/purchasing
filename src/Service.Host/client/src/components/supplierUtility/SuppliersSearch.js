@@ -41,7 +41,7 @@ function SuppliersSearch() {
         dateClosed ? `closed: ${new Date(dateClosed).toLocaleDateString('en-GB')}` : '';
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="Suppliers">
             <Grid container spacing={3}>
                 <Grid item xs={10}>
                     <Typography variant="h3">Suppliers Utility</Typography>

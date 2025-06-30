@@ -83,7 +83,7 @@ function OrdersBySupplierReportOptions() {
     const getClosedString = dateClosed =>
         dateClosed ? `closed: ${new Date(dateClosed).toLocaleDateString('en-GB')}` : '';
     return (
-        <Page history={history} homeUrl={config.appRoot} width="s">
+        <Page history={history} homeUrl={config.appRoot} width="s" title="Orders By Supplier">
             <Title text="Orders By Supplier" />
             <Grid container spacing={3} justifyContent="center">
                 <Grid item xs={12} data-testid="supplierSearch">

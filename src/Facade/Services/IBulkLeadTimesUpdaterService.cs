@@ -7,7 +7,7 @@
 
     public interface IBulkLeadTimesUpdaterService
     {
-        IResult<BatchUpdateProcessResultResource> BulkUpdateFromCsv(
+        IResult<BatchUpdateProcessResultResourceWithLinks> BulkUpdateFromCsv(
             int supplierId,
             string csvString,
             IEnumerable<string> privileges,

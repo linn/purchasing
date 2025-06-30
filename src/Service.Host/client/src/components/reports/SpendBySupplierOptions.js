@@ -41,7 +41,7 @@ function SpendBySupplierReportOptions() {
         });
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="Spend By Supplier">
             <Title text="Spend By Supplier" />
             <Grid container spacing={3}>
                 {vendorManagersLoading ? (

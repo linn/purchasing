@@ -292,7 +292,7 @@ function PartSupplier({ creating }) {
         !state.partSupplier?.leadTimeWeeks;
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="Part Suppliers">
             <Grid container spacing={3}>
                 {!creating && (
                     <Dialog open={preferredSupplierDialogOpen} fullWidth maxWidth="md">

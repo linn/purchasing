@@ -3,7 +3,7 @@
     using System.Collections.Generic;
 
     using Linn.Common.Facade;
-    using Linn.Purchasing.Resources;
+    using Linn.Common.Resources;
     using Linn.Purchasing.Resources.RequestResources;
 
     public interface IForecastingFacadeService

@@ -12,6 +12,7 @@
     using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
+    using Linn.Common.Rendering;
     using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps;

@@ -130,8 +130,8 @@ describe('When order...', () => {
     });
 
     test('Should enable price change as no deliveries yet', () => {
-        expect(screen.getByLabelText('Our price (unit, currency) *')).toBeInTheDocument();
-        expect(screen.getByLabelText('Our price (unit, currency) *')).toBeEnabled();
+        expect(screen.getByLabelText('Our Price (unit, currency) *')).toBeInTheDocument();
+        expect(screen.getByLabelText('Our Price (unit, currency) *')).toBeEnabled();
     });
 });
 
@@ -144,8 +144,8 @@ describe('When order line has items received...', () => {
     });
 
     test('Should disable price change', () => {
-        expect(screen.getByLabelText('Our price (unit, currency) *')).toBeInTheDocument();
-        expect(screen.getByLabelText('Our price (unit, currency) *')).toBeDisabled();
+        expect(screen.getByLabelText('Our Price (unit, currency) *')).toBeInTheDocument();
+        expect(screen.getByLabelText('Our Price (unit, currency) *')).toBeDisabled();
     });
 });
 
@@ -158,7 +158,7 @@ describe('When updating our unit price to 0...', () => {
     });
 
     test('Should set field to zero', () => {
-        const input = screen.getByRole('spinbutton', { name: 'Our price (unit, currency)' });
+        const input = screen.getByRole('spinbutton', { name: 'Our Price (unit, currency)' });
         fireEvent.change(input, { target: { value: 0 } });
         expect(input.value).toBe('0');
     });
@@ -415,7 +415,7 @@ describe('When order is a Returns Order...', () => {
     });
 
     test('Should disable price change', () => {
-        expect(screen.getByLabelText('Our price (unit, currency) *')).toBeInTheDocument();
-        expect(screen.getByLabelText('Our price (unit, currency) *')).toBeDisabled();
+        expect(screen.getByLabelText('Our Price (unit, currency) *')).toBeInTheDocument();
+        expect(screen.getByLabelText('Our Price (unit, currency) *')).toBeDisabled();
     });
 });

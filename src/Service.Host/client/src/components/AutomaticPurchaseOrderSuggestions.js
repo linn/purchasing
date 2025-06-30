@@ -203,6 +203,7 @@ function AutomaticPurchaseOrderSuggestions() {
             homeUrl={config.appRoot}
             requestErrors={requestErrors}
             showRequestErrors
+            title="Automatic Orders"
         >
             <Title text="Raise Automatic Orders" />
             <Grid container>

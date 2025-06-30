@@ -16,7 +16,7 @@
     {
         private IEnumerable<string> privileges;
 
-        private IResult<ProcessResultResource> result;
+        private IResult<ProcessResultResourceWithLinks> result;
 
         [SetUp]
         public void SetUp()
@@ -37,8 +37,8 @@
         [Test]
         public void ShouldReturnSuccess()
         {
-            this.result.Should().BeOfType<BadRequestResult<ProcessResultResource>>();
-            var dataResult = (BadRequestResult<ProcessResultResource>)this.result;
+            this.result.Should().BeOfType<BadRequestResult<ProcessResultResourceWithLinks>>();
+            var dataResult = (BadRequestResult<ProcessResultResourceWithLinks>)this.result;
             dataResult.Message.Should().Be("some bad news");
         }
     }

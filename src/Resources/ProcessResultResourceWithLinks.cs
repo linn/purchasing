@@ -2,13 +2,13 @@
 {
     using Linn.Common.Resources;
 
-    public class ProcessResultResource : HypermediaResource
+    public class ProcessResultResourceWithLinks : HypermediaResource
     {
-        public ProcessResultResource()
+        public ProcessResultResourceWithLinks()
         {
         }
 
-        public ProcessResultResource(bool success, string message)
+        public ProcessResultResourceWithLinks(bool success, string message)
         {
             this.Success = success;
             this.Message = message;

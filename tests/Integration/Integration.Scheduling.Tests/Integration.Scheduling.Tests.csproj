@@ -7,15 +7,15 @@
 		<RootNamespace>Linn.Purchasing.Integration.Scheduling.Tests</RootNamespace>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="FluentAssertions" Version="6.7.0" />
-		<PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.8" />
+		<PackageReference Include="FluentAssertions" Version="6.12.2" />
+		<PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.36" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-		<PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
-		<PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
-		<PackageReference Include="NSubstitute" Version="5.0.0" />
-		<PackageReference Include="nunit" Version="3.13.3" />
-		<PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.9.3" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.9.3" />
+		<PackageReference Include="NSubstitute" Version="5.3.0" />
+		<PackageReference Include="nunit" Version="4.3.2" />
+		<PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\src\Scheduling.Host\Scheduling.Host.csproj" />

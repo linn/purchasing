@@ -3,8 +3,8 @@
     using System.Collections.Generic;
 
     using Linn.Common.Facade;
+    using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps.Boms;
-    using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.Boms;
 
     public interface ICircuitBoardFacadeService 

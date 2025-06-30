@@ -11,6 +11,7 @@
     using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
+    using Linn.Common.Rendering;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Finance.Models;
@@ -962,6 +963,86 @@
                     miniOrder.DateFilCancelled = null;
                 }
             }
+
+            return order;
+        }
+
+        public PurchaseOrder SwitchOurQtyAndPrice(
+            int orderNumber,
+            int orderLine,
+            int employeeId,
+            IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseLedgerAdmin, privileges))
+            {
+                throw new UnauthorisedActionException("No permission to switch qty and price.");
+            }
+
+            var order = this.purchaseOrderRepository.FindById(orderNumber);
+
+            var orderLineToUpdate = order.Details.First(a => a.Line == orderLine);
+
+            if (orderLineToUpdate.Part.StockControlled != "N")
+            {
+                throw new InvalidActionException(
+                    $"Cannot switch qty and price on order {orderNumber}/{orderLine} because {orderLineToUpdate.PartNumber} is stock controlled.");
+            }
+
+
+            if (orderLineToUpdate.OurQty != 1m && orderLineToUpdate.OurUnitPriceCurrency != 1m)
+            {
+                throw new InvalidActionException(
+                    $"Cannot switch qty and price on order {orderNumber}/{orderLine} because qty must be 1.");
+            }
+
+            if (orderLineToUpdate.PurchaseDeliveries.Any(a => a.QtyNetReceived > 0))
+            {
+                throw new InvalidActionException(
+                    $"Cannot switch qty and price on order {orderNumber}/{orderLine} because deliveries have been received.");
+            }
+
+            if (orderLineToUpdate.Cancelled == "Y" || order.Cancelled == "Y")
+            {
+                throw new InvalidActionException(
+                    $"Cannot switch qty and price on order {orderNumber}/{orderLine} because line is cancelled.");
+            }
+
+            var originalOurQuantity = orderLineToUpdate.OurQty;
+            var originalOurUnitPrice = orderLineToUpdate.OurUnitPriceCurrency;
+            var originalBaseOurUnitPrice = orderLineToUpdate.BaseOurUnitPrice;
+
+            if (!originalOurQuantity.HasValue || !originalBaseOurUnitPrice.HasValue || !originalOurUnitPrice.HasValue)
+            {
+                throw new PurchaseOrderException(
+                    $"Cannot switch qty and price on order {orderNumber}/{orderLine}. Price info missing.");
+            }
+
+            this.log.Info($"Order {orderNumber}/{orderLine} had qty/price switched on {DateTime.Now:dd-MMM-yyyy} by user {employeeId}.");
+            var internalComments = $"Qty/price switched on {DateTime.Now:dd-MMM-yyyy} by user {employeeId}. {orderLineToUpdate.InternalComments}";
+            orderLineToUpdate.InternalComments =
+                internalComments.Length > 300 ? internalComments.Substring(0, 300) : internalComments;
+
+            orderLineToUpdate.OurQty = originalOurUnitPrice;
+            orderLineToUpdate.OurUnitPriceCurrency = originalOurQuantity;
+            orderLineToUpdate.BaseOurUnitPrice = decimal.Round(
+                originalBaseOurUnitPrice.Value / originalOurUnitPrice.Value,
+                5);
+            orderLineToUpdate.OrderConversionFactor = originalOurUnitPrice;
+
+            foreach (var purchaseOrderDelivery in orderLineToUpdate.PurchaseDeliveries)
+            {
+                var originalDeliveryOurQuantity = purchaseOrderDelivery.OurDeliveryQty;
+                var originalDeliveryOurUnitPrice = purchaseOrderDelivery.OurUnitPriceCurrency;
+                var originalDeliveryBaseOurUnitPrice = purchaseOrderDelivery.BaseOurUnitPrice;
+
+                purchaseOrderDelivery.OurDeliveryQty = originalDeliveryOurUnitPrice;
+                purchaseOrderDelivery.OurUnitPriceCurrency = originalDeliveryOurQuantity;
+                purchaseOrderDelivery.BaseOurUnitPrice = decimal.Round(
+                    originalDeliveryBaseOurUnitPrice.GetValueOrDefault() / originalDeliveryOurUnitPrice.GetValueOrDefault(),
+                    5);
+            }
+
+            orderLineToUpdate.OrderPosting.Qty = originalOurUnitPrice.Value;
 
             return order;
         }

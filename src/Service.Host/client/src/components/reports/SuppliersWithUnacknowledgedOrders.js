@@ -62,7 +62,7 @@ function SuppliersWithUnacknowledgedOrders() {
     };
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="Unacknowledged Orders">
             <Title text="Suppliers with unacknowledged orders" />
             <Grid container justifyContent="center">
                 {vendorManagersLoading ? (

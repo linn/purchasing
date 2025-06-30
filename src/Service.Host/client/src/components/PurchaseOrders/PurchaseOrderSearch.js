@@ -69,7 +69,7 @@ function PurchaseOrderSearch() {
     const applicationState = itemSelectorHelpers.getApplicationState(purchaseOrdersStoreItem);
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="PO Search">
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Typography variant="h3">Search Purchase Orders</Typography>

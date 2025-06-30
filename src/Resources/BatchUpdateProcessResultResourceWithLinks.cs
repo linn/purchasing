@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public class BatchUpdateProcessResultResource : ProcessResultResource
+    public class BatchUpdateProcessResultResourceWithLinks : ProcessResultResourceWithLinks
     {
         public IEnumerable<ErrorResource> Errors { get; set; }
 

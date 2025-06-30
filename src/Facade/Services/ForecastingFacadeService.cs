@@ -3,8 +3,8 @@
     using System.Collections.Generic;
 
     using Linn.Common.Facade;
+    using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
-    using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;
 
     public class ForecastingFacadeService : IForecastingFacadeService
