@@ -21,7 +21,7 @@ function BoardDifferenceReportOptions() {
         });
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="Board Difference">
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Title text="Board Difference Report" />

@@ -103,5 +103,13 @@
                    && this.PurchaseDeliveries != null 
                    && this.PurchaseDeliveries.All(a => a.QtyNetReceived == 0);
         }
+        
+        public bool CanSwitchOurQtyAndOurPrice()
+        {
+            return this.Part?.StockControlled == "N"
+                   && this.PurchaseOrder != null
+                   && this.PurchaseDeliveries != null
+                   && this.PurchaseDeliveries.All(a => a.QtyNetReceived == 0);
+        }
     }
 }

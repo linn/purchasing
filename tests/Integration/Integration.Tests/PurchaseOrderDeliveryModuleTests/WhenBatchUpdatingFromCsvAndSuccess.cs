@@ -75,7 +75,7 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resultResource = this.Response.DeserializeBody<BatchUpdateProcessResultResource>();
+            var resultResource = this.Response.DeserializeBody<BatchUpdateProcessResultResourceWithLinks>();
             resultResource.Success.Should().Be(true);
             resultResource.Message.Should().Be("Success!");
         }

@@ -6,6 +6,8 @@
 
         public string PartNumber { get; set; }
 
+        public string PartDescription { get; set; }
+
         public int BoardLine { get; set; }
 
         public string AssemblyTechnology { get; set; }

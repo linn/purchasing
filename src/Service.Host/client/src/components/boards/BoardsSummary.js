@@ -83,7 +83,7 @@ function BoardsSummary() {
     };
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="Boards Summary">
             <Title text="Board Quick View" />
             <Grid container>
                 <Grid item xs={12}>

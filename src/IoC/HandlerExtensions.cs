@@ -5,6 +5,7 @@
     using Linn.Common.Facade.Carter;
     using Linn.Common.Facade.Carter.Handlers;
     using Linn.Common.Reporting.Resources.ReportResultResources;
+    using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.Boms;
@@ -24,6 +25,7 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<SupplierResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<ReportReturnResource>>()
                 .AddTransient<IHandler, JsonResultHandler<ProcessResultResource>>()
+                .AddTransient<IHandler, JsonResultHandler<ProcessResultResourceWithLinks>>()
                 .AddTransient<IHandler, JsonResultHandler<SigningLimitResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<SigningLimitResource>>>()
                 .AddTransient<IHandler, SigningLimitApplicationStateResultHandler>()
@@ -76,7 +78,7 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<EdiOrderResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<PurchaseOrderDeliveryResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderDeliveryResource>>>()
-                .AddTransient<IHandler, JsonResultHandler<BatchUpdateProcessResultResource>>()
+                .AddTransient<IHandler, JsonResultHandler<BatchUpdateProcessResultResourceWithLinks>>()
                 .AddTransient<IHandler, JsonResultHandler<MrReportResource>>()
                 .AddTransient<IHandler, JsonResultHandler<MrPurchaseOrdersResource>>()
                 .AddTransient<IHandler, JsonResultHandler<MrReportOptionsResource>>()

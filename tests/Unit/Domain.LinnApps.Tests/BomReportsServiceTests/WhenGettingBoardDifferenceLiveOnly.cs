@@ -7,6 +7,7 @@
 
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NSubstitute;
 
@@ -90,6 +91,11 @@
                                              BoardLine = 1,
                                              CRef = "C002",
                                              PartNumber = "CAP 123",
+                                             Part = new Part
+                                                        {
+                                                            PartNumber = "CAP 123",
+                                                            Description = "Capacitor 123"
+                                                        },
                                              AssemblyTechnology = "SM",
                                              ChangeState = "LIVE",
                                              FromLayoutVersion = 1,
@@ -106,6 +112,11 @@
                                              BoardLine = 2,
                                              CRef = "C002",
                                              PartNumber = "CAP 124",
+                                             Part = new Part
+                                                        {
+                                                            PartNumber = "CAP 124",
+                                                            Description = "Capacitor 124"
+                                                        },
                                              AssemblyTechnology = "SM",
                                              ChangeState = "LIVE",
                                              FromLayoutVersion = 1,
@@ -122,6 +133,11 @@
                                              BoardLine = 3,
                                              CRef = "C003",
                                              PartNumber = "CAP 125",
+                                             Part = new Part
+                                                        {
+                                                            PartNumber = "CAP 125",
+                                                            Description = "Capacitor 125"
+                                                        },
                                              AssemblyTechnology = "SM",
                                              ChangeState = "LIVE",
                                              FromLayoutVersion = 1,
@@ -138,6 +154,11 @@
                                              BoardLine = 4,
                                              CRef = "C004",
                                              PartNumber = "CAP 126",
+                                             Part = new Part
+                                                        {
+                                                            PartNumber = "CAP 126",
+                                                            Description = "Capacitor 126"
+                                                        },
                                              AssemblyTechnology = "SM",
                                              ChangeState = "PROPOS",
                                              FromLayoutVersion = 1,
@@ -172,17 +193,20 @@
         {
             this.results.Rows.Count().Should().Be(2);
             this.results.GetGridTextValue(0, 0).Should().Be("CAP 123");
-            this.results.GetGridTextValue(0, 1).Should().Be("SM");
-            this.results.GetGridTextValue(0, 2).Should().Be("1.0");
-            this.results.GetGridTextValue(0, 3).Should().Be("CAP 124");
-            this.results.GetGridTextValue(0, 4).Should().Be("SM");
-            this.results.GetGridTextValue(0, 5).Should().Be("1.0");
+            this.results.GetGridTextValue(0, 1).Should().Be("Capacitor 123");
+            this.results.GetGridTextValue(0, 2).Should().Be("SM");
+            this.results.GetGridTextValue(0, 3).Should().Be("1.0");
+            this.results.GetGridTextValue(0, 4).Should().Be("CAP 124");
+            this.results.GetGridTextValue(0, 5).Should().Be("Capacitor 124");
+            this.results.GetGridTextValue(0, 6).Should().Be("SM");
+            this.results.GetGridTextValue(0, 7).Should().Be("1.0");
             this.results.GetGridTextValue(1, 0).Should().Be("CAP 125");
-            this.results.GetGridTextValue(1, 1).Should().Be("SM");
-            this.results.GetGridTextValue(1, 2).Should().Be("1.0");
-            this.results.GetGridTextValue(1, 3).Should().BeNull();
+            this.results.GetGridTextValue(1, 1).Should().Be("Capacitor 125");
+            this.results.GetGridTextValue(1, 2).Should().Be("SM");
+            this.results.GetGridTextValue(1, 3).Should().Be("1.0");
             this.results.GetGridTextValue(1, 4).Should().BeNull();
             this.results.GetGridTextValue(1, 5).Should().BeNull();
+            this.results.GetGridTextValue(1, 6).Should().BeNull();
         }
     }
 }

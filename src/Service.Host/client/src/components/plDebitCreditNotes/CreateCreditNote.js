@@ -62,7 +62,7 @@ function CreateCreditNote() {
     const [type, setType] = useState('F');
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="Credit Note">
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Title text="Create Purchase Ledger Credit Note" />{' '}

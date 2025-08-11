@@ -9,6 +9,7 @@
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
+    using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
@@ -254,8 +255,8 @@
                            Carriage = resource.Carriage,
                            TotalReqPrice = resource.TotalReqPrice,
                            CurrencyCode = resource.Currency.Code,
-                           SupplierId = resource.Supplier.Id,
-                           SupplierName = resource.Supplier.Name,
+                           SupplierId = resource.Supplier?.Id ?? 0,
+                           SupplierName = resource.Supplier?.Name,
                            SupplierContact = resource.SupplierContact,
                            AddressLine1 = resource.AddressLine1,
                            AddressLine2 = resource.AddressLine2,

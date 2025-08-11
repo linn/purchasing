@@ -310,9 +310,11 @@
             results.AddSortedColumns(new List<AxisDetailsModel>
                                          {
                                              new AxisDetailsModel("partNumber1", "Part Number", GridDisplayType.TextValue),
+                                             new AxisDetailsModel("partDescription1", "Part Description", GridDisplayType.TextValue),
                                              new AxisDetailsModel("assemblyTech1", "As Tech", GridDisplayType.TextValue),
                                              new AxisDetailsModel("qty1", "Qty", GridDisplayType.TextValue),
                                              new AxisDetailsModel("partNumber2", "Part Number", GridDisplayType.TextValue),
+                                             new AxisDetailsModel("partDescription2", "Part Description", GridDisplayType.TextValue),
                                              new AxisDetailsModel("assemblyTech2", "As Tech", GridDisplayType.TextValue),
                                              new AxisDetailsModel("qty2", "Qty", GridDisplayType.TextValue)
                                          });
@@ -328,6 +330,12 @@
                                    ColumnId = "partNumber1",
                                    TextDisplay = boardComponent.PartNumber
                                });
+                valueModels.Add(new CalculationValueModel
+                                    {
+                                        RowId = boardComponent.CRef,
+                                        ColumnId = "partDescription1",
+                                        TextDisplay = boardComponent?.Part?.Description
+                                    });
                 valueModels.Add(new CalculationValueModel
                                {
                                    RowId = boardComponent.CRef,
@@ -354,6 +362,12 @@
                 valueModels.Add(new CalculationValueModel
                                     {
                                         RowId = boardComponent.CRef,
+                                        ColumnId = "partDescription2",
+                                        TextDisplay = boardComponent?.Part?.Description
+                                    });
+                valueModels.Add(new CalculationValueModel
+                                    {
+                                        RowId = boardComponent.CRef,
                                         ColumnId = "assemblyTech2",
                                         TextDisplay = boardComponent.AssemblyTechnology
                                     });
@@ -370,6 +384,7 @@
                          {
                              CRef = a.CRef,
                              PartNumber = a.PartNumber,
+                             PartDescription = a.Part?.Description,
                              BoardLine = a.BoardLine,
                              Sequence = 1,
                              AssemblyTechnology = a.AssemblyTechnology,
@@ -380,6 +395,7 @@
                          {
                              CRef = a.CRef,
                              PartNumber = a.PartNumber,
+                             PartDescription = a.Part?.Description,
                              BoardLine = a.BoardLine,
                              Sequence = 2,
                              AssemblyTechnology = a.AssemblyTechnology,
@@ -401,6 +417,12 @@
                                        TextDisplay = crefGroupOrdered.First().PartNumber
                     });
                     valueModels.Add(new CalculationValueModel
+                                        {
+                                            RowId = crefGroup.Key,
+                                            ColumnId = "partDescription1",
+                                            TextDisplay = crefGroupOrdered.First().PartDescription
+                                        });
+                    valueModels.Add(new CalculationValueModel
                                    {
                                        RowId = crefGroup.Key,
                                        ColumnId = "assemblyTech1",
@@ -418,6 +440,12 @@
                                        ColumnId = "partNumber2",
                                        TextDisplay = crefGroupOrdered.Last().PartNumber
                                    });
+                    valueModels.Add(new CalculationValueModel
+                                        {
+                                            RowId = crefGroup.Key,
+                                            ColumnId = "partDescription2",
+                                            TextDisplay = crefGroupOrdered.Last().PartDescription
+                                        });
                     valueModels.Add(new CalculationValueModel
                                    {
                                        RowId = crefGroup.Key,

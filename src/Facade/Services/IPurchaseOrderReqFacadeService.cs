@@ -4,6 +4,7 @@
     using System.IO;
 
     using Linn.Common.Facade;
+    using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;

@@ -63,7 +63,7 @@ function WhatsDueInReport() {
     const reportData = useSelector(state => state[whatsDueInReport.item]?.data);
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="What's Due In">
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Title text="Whats Due In Report" />

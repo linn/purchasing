@@ -59,7 +59,7 @@
             HttpResponse res,
             IPurchaseOrderDeliveryFacadeService service)
         {
-            IResult<BatchUpdateProcessResultResource> result;
+            IResult<BatchUpdateProcessResultResourceWithLinks> result;
 
             if (req.Headers.ContentType == "text/csv")
             {
@@ -79,7 +79,7 @@
             }
             else
             {
-                result = new BadRequestResult<BatchUpdateProcessResultResource>("Unsupported content type.");
+                result = new BadRequestResult<BatchUpdateProcessResultResourceWithLinks>("Unsupported content type.");
             }
             
             await res.Negotiate(result);

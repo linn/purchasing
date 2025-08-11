@@ -274,7 +274,7 @@ function PurchaseOrdersAuthSend() {
     };
 
     return (
-        <Page history={history} homeUrl={config.appRoot} width="l">
+        <Page history={history} homeUrl={config.appRoot} width="l" title="Auth Send POs">
             <Grid container spacing={3}>
                 <Grid item xs={11}>
                     <Typography variant="h6">Authorise Or Send Purchase Orders</Typography>

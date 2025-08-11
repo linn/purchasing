@@ -119,7 +119,7 @@ function DeliveryPerformanceSummary() {
         history.push('/purchasing/reports/delivery-performance-summary/report', body);
     };
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="Delivery Performance">
             <Title text="Delivery Performance" />
             <Grid container>
                 {ledgerPeriodsLoading && <Loading />}
@@ -127,10 +127,12 @@ function DeliveryPerformanceSummary() {
                     <>
                         <Grid item xs={6}>
                             <Dropdown
-                                items={utilities.sortEntityList(ledgerPeriods, 'periodNumber').map(e => ({
-                                    displayText: `${e.monthName}`,
-                                    id: e.periodNumber
-                                }))}
+                                items={utilities
+                                    .sortEntityList(ledgerPeriods, 'periodNumber')
+                                    .map(e => ({
+                                        displayText: `${e.monthName}`,
+                                        id: e.periodNumber
+                                    }))}
                                 propertyName="startPeriod"
                                 label="Start Month"
                                 value={startPeriod}
@@ -140,10 +142,12 @@ function DeliveryPerformanceSummary() {
                         </Grid>
                         <Grid item xs={6}>
                             <Dropdown
-                                items={utilities.sortEntityList(ledgerPeriods, 'periodNumber').map(e => ({
-                                    displayText: `${e.monthName}`,
-                                    id: e.periodNumber
-                                }))}
+                                items={utilities
+                                    .sortEntityList(ledgerPeriods, 'periodNumber')
+                                    .map(e => ({
+                                        displayText: `${e.monthName}`,
+                                        id: e.periodNumber
+                                    }))}
                                 propertyName="endPeriod"
                                 label="End Month"
                                 value={endPeriod}

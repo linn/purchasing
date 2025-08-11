@@ -201,7 +201,7 @@ function Supplier({ creating }) {
         dispatch({ type: 'updateContact', payload: newRow });
     };
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} title="Suppliers">
             <Grid container spacing={3}>
                 <SnackbarMessage
                     visible={snackbarVisible}

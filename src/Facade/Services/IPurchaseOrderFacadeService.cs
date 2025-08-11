@@ -3,6 +3,7 @@
     using System.Collections.Generic;
 
     using Linn.Common.Facade;
+    using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;
@@ -38,5 +39,11 @@
             PatchRequestResource<PurchaseOrderResource> resource,
             int who,
             IEnumerable<string> privileges);
+
+        IResult<PurchaseOrderResource> SwitchOurQtyPrice(
+            int orderNumber,
+            int orderLine,
+            int userNumber,
+            IList<string> privileges);
     }
 }
