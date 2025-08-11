@@ -118,7 +118,8 @@
         public bool ShouldChangeStandardPrice(decimal stockQty)
         {
             // if this is the first time a preferred supplier is chosen for this part
-            if (this.BaseUnitPrice.GetValueOrDefault() == 0)
+            // update for ticket 20875 and some price gets set to zero and still has stock
+            if (this.BaseUnitPrice.GetValueOrDefault() == 0 && stockQty == 0)
             {
                 return true;
             }
