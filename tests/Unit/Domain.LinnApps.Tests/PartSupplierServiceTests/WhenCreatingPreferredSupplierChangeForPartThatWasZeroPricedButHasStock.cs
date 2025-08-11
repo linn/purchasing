@@ -1,18 +1,18 @@
-﻿using Linn.Purchasing.Domain.LinnApps.Keys;
-using Linn.Purchasing.Domain.LinnApps.Parts;
-using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
-using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-using Linn.Purchasing.Domain.LinnApps.Suppliers;
-using NSubstitute;
-using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System;
-using System.Linq;
-using FluentAssertions;
-
-namespace Linn.Purchasing.Domain.LinnApps.Tests.PartSupplierServiceTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PartSupplierServiceTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using FluentAssertions;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
+    using NSubstitute;
+    using NUnit.Framework;
+
     public class WhenCreatingPreferredSupplierChangeForPartThatWasZeroPricedButHasStock : ContextBase
     {
         private PreferredSupplierChange candidate;
