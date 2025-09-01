@@ -93,7 +93,7 @@
                         new AxisDetailsModel("PartNumber", "Part", GridDisplayType.TextValue),
                         new AxisDetailsModel("SupplierName", "Supplier", GridDisplayType.TextValue),
                         new AxisDetailsModel("ExpectedDate", "Expected", GridDisplayType.TextValue),
-                        new AxisDetailsModel("QtyOutstanding", "Qty", GridDisplayType.Value) { DecimalPlaces = 0 },
+                        new AxisDetailsModel("QtyOutstanding", "Qty", GridDisplayType.Value) { DecimalPlaces = 1 },
                         new AxisDetailsModel("TotalPrice", "Total Price", GridDisplayType.Value) { DecimalPlaces = 2 }
                     });
 
