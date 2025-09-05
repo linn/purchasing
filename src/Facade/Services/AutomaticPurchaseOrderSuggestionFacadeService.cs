@@ -56,17 +56,17 @@
         {
             if (searchResource.Planner.HasValue && searchResource.SupplierId.HasValue)
             {
-                return a => a.PreferredSupplierId == searchResource.SupplierId && a.Planner == searchResource.Planner && a.RecommendedQuantity > 1;
+                return a => a.PreferredSupplierId == searchResource.SupplierId && a.Planner == searchResource.Planner && a.RecommendedQuantity > searchResource.MinimumRecommendedQuantity;
             }
 
             if (searchResource.Planner.HasValue)
             {
-                return a => a.Planner == searchResource.Planner && a.RecommendedQuantity > 1;
+                return a => a.Planner == searchResource.Planner && a.RecommendedQuantity > searchResource.MinimumRecommendedQuantity;
             }
 
             if (searchResource.SupplierId.HasValue)
             {
-                return a => a.PreferredSupplierId == searchResource.SupplierId && a.RecommendedQuantity > 1;
+                return a => a.PreferredSupplierId == searchResource.SupplierId && a.RecommendedQuantity > searchResource.MinimumRecommendedQuantity;
             }
 
             return a => true;
