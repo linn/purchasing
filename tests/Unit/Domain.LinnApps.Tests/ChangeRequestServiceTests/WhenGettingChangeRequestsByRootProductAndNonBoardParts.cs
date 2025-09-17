@@ -18,7 +18,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeRequestServiceTests
                 new PartUsedOn { RootProduct = "ROOTX", PartNumber = "PCAS 100/1" }, // board
                 new PartUsedOn { RootProduct = "ROOTX", PartNumber = "RES 10K/2" },  // non-board
                 new PartUsedOn { RootProduct = "ROOTX", PartNumber = "PCB 200/2" },  // board
-                new PartUsedOn { RootProduct = "ROOTX", PartNumber = "CAP 1UF/1" },  // non-board
+                new PartUsedOn { RootProduct = "ROOTX", PartNumber = "PART/1" },  // non-board
                 new PartUsedOn { RootProduct = "ROOTY", PartNumber = "PCSM 300/3" }  // board, other root
             };
 
@@ -35,8 +35,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeRequestServiceTests
                     DocumentNumber = 13,
                     BomChanges = new List<BomChange>
                     {
-                        new BomChange { DocumentType = "CRF", BomName = "PCAS 100/1" },
-                        new BomChange { DocumentType = "CRF", BomName = "RES 10K/2" }  
+                        new BomChange { DocumentType = "CRF", BomName = "PCAS 100/1"  }
                     }
                 },
                 new ChangeRequest
@@ -45,7 +44,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeRequestServiceTests
                     DocumentNumber = 14,
                     BomChanges = new List<BomChange>
                     {
-                        new BomChange { DocumentType = "CRF", BomName = "CAP 1UF/1" }
+                        new BomChange { DocumentType = "CRF", BomName = "PART/1" }
                     }
                 }
             };
@@ -58,15 +57,11 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeRequestServiceTests
         {
             var result = this.Sut.GetForRootProducts("ROOTX").ToList();
             
-            result.Should().HaveCount(3);
-            result.Should().ContainSingle(r => r.BoardCode == "100");
-            result.Should().ContainSingle(r => r.BoardCode == "200");
-            result.Should().ContainSingle(r => r.DocumentNumber == 13);
-            
-            result.Should().OnlyContain(r =>
-                r.BoardCode == "100" ||
-                r.BoardCode == "200" ||
-                r.DocumentNumber == 13);
+            result.Should().HaveCount(4);
+            result.Should().ContainSingle(r => r.DocumentNumber == 10); // since this crfs board code, 100 has root product ROOTX
+            result.Should().ContainSingle(r => r.DocumentNumber == 11); // since this crfs board code, 200 also has root product ROOTX
+            result.Should().ContainSingle(r => r.DocumentNumber == 14); // since BomName PART/1 is on a BomChange on this crf
+            result.Should().ContainSingle(r => r.DocumentNumber == 13);  // since BomName PCAS 100/1 iis on a BomChange on this crf
         }
     }
 }
