@@ -15,11 +15,11 @@ namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeRequestServiceTests
         {
             var partUsedOns = new List<PartUsedOn>
             {
-                new PartUsedOn { RootProduct = "ROOTX", PartNumber = "PCAS 100/1" }, // board
-                new PartUsedOn { RootProduct = "ROOTX", PartNumber = "RES 10K/2" },  // non-board
-                new PartUsedOn { RootProduct = "ROOTX", PartNumber = "PCB 200/2" },  // board
-                new PartUsedOn { RootProduct = "ROOTX", PartNumber = "PART/1" },  // non-board
-                new PartUsedOn { RootProduct = "ROOTY", PartNumber = "PCSM 300/3" }  // board, other root
+                new PartUsedOn { RootProduct = "ROOTX", PartNumber = "PCAS 100/1" }, // board, matching root prod
+                new PartUsedOn { RootProduct = "ROOTX", PartNumber = "PART/2" },  // non-board, not on any bom change
+                new PartUsedOn { RootProduct = "ROOTX", PartNumber = "PCB 200/2" },  // board, matching root prod
+                new PartUsedOn { RootProduct = "ROOTX", PartNumber = "PART/1" },  // non-board, but on a bom change
+                new PartUsedOn { RootProduct = "ROOTY", PartNumber = "PCSM 300/3" }  // board, other root product
             };
 
             this.PartUsedOnRepository.FindAll().Returns(partUsedOns.AsQueryable());

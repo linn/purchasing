@@ -1,10 +1,10 @@
-﻿using Linn.Purchasing.Domain.LinnApps.Boms.Models;
-
-namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeRequestServiceTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeRequestServiceTests
 {
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 

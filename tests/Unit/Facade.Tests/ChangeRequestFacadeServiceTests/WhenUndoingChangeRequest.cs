@@ -1,6 +1,4 @@
-﻿using Linn.Purchasing.Resources.RequestResources;
-
-namespace Linn.Purchasing.Facade.Tests.ChangeRequestFacadeServiceTests
+﻿namespace Linn.Purchasing.Facade.Tests.ChangeRequestFacadeServiceTests
 {
     using System;
     using System.Collections.Generic;
@@ -11,7 +9,9 @@ namespace Linn.Purchasing.Facade.Tests.ChangeRequestFacadeServiceTests
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
 
     using NSubstitute;
 

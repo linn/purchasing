@@ -1,6 +1,4 @@
-﻿using Linn.Purchasing.Domain.LinnApps.Boms.Models;
-
-namespace Linn.Purchasing.Facade.Tests.ChangeRequestFacadeServiceTests
+﻿namespace Linn.Purchasing.Facade.Tests.ChangeRequestFacadeServiceTests
 {
     using Linn.Common.Authorisation;
     using Linn.Common.Logging;
@@ -8,6 +6,7 @@ namespace Linn.Purchasing.Facade.Tests.ChangeRequestFacadeServiceTests
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Facade.ResourceBuilders;
