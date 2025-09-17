@@ -421,7 +421,7 @@
         }
 
         public Expression<Func<ChangeRequest, bool>> SearchExpression(
-            string searchTerm, bool? outstanding, int? lastMonths, bool? cancelled)
+            string searchTerm, bool? outstanding, int? lastMonths, bool? cancelled, string boardCode)
         {
             DateTime fromDate;
 
@@ -446,64 +446,69 @@
             // supports IC*, *3, *LEWIS*, PCAS*L1R1 but not multiple * e.g. PCAS */L1*
             if (string.IsNullOrEmpty(searchPartNumber))
             {
-                return r 
+                if (!string.IsNullOrEmpty(boardCode))
+                {
+                    var boardCodeUpper = boardCode.Trim().ToUpper();
+                    return r => (r.BoardCode != null && r.BoardCode.ToUpper() == boardCodeUpper)
+                        && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive || r.ChangeState == inclCancelled)
+                        && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+                }
+                return r
                     => (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive || r.ChangeState == inclCancelled)
                        && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
             }
-            
+
             if (!searchPartNumber.Contains("*"))
             {
-                return r 
+                return r
                     => (r.NewPartNumber.Equals(searchPartNumber) 
                         || r.OldPartNumber.Equals(searchPartNumber)) 
                        && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive || r.ChangeState == inclCancelled) 
                        && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
             }
-            
+
             if (searchPartNumber.EndsWith("*"))
             {
                 // supporting *LEWIS*
                 if (searchPartNumber.StartsWith("*"))
                 {
-                    return r => (r.NewPartNumber.Contains(partSearch[1]) 
-                                 || r.OldPartNumber.Contains(partSearch[1])) 
-                                && (r.ChangeState == "PROPOS" 
-                                    || r.ChangeState == "ACCEPT" 
+                    return r => (r.NewPartNumber.Contains(partSearch[1])
+                                 || r.OldPartNumber.Contains(partSearch[1]))
+                                && (r.ChangeState == "PROPOS"
+                                    || r.ChangeState == "ACCEPT"
                                     || r.ChangeState == inclLive
-                                    || r.ChangeState == inclCancelled) 
+                                    || r.ChangeState == inclCancelled)
                                 && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
                 }
-                else
-                {
-                    return r => (r.NewPartNumber.StartsWith(partSearch.First()) 
-                                 || r.OldPartNumber.StartsWith(partSearch.First())) 
-                                && (r.ChangeState == "PROPOS" 
-                                    || r.ChangeState == "ACCEPT" 
-                                    || r.ChangeState == inclLive
-                                    || r.ChangeState == inclCancelled) 
-                                && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
-                }
-            }
-            
-            if (searchPartNumber.StartsWith("*"))
-            {
-                return r => (r.NewPartNumber.EndsWith(partSearch.Last()) 
-                             || r.OldPartNumber.EndsWith(partSearch.Last())) 
-                            && (r.ChangeState == "PROPOS" 
-                                || r.ChangeState == "ACCEPT" 
+
+                return r => (r.NewPartNumber.StartsWith(partSearch.First())
+                             || r.OldPartNumber.StartsWith(partSearch.First()))
+                            && (r.ChangeState == "PROPOS"
+                                || r.ChangeState == "ACCEPT"
                                 || r.ChangeState == inclLive
-                                || r.ChangeState == inclCancelled) 
+                                || r.ChangeState == inclCancelled)
                             && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
             }
 
-            return r => ((r.NewPartNumber.StartsWith(partSearch.First()) 
-                          && r.NewPartNumber.EndsWith(partSearch.Last())) 
-                         || (r.OldPartNumber.StartsWith(partSearch.First()) 
-                             && r.OldPartNumber.EndsWith(partSearch.Last()))) 
+            if (searchPartNumber.StartsWith("*"))
+            {
+                return r => (r.NewPartNumber.EndsWith(partSearch.Last())
+                             || r.OldPartNumber.EndsWith(partSearch.Last()))
+                            && (r.ChangeState == "PROPOS"
+                                || r.ChangeState == "ACCEPT"
+                                || r.ChangeState == inclLive
+                                || r.ChangeState == inclCancelled)
+                            && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
+            }
+
+            return r => ((r.NewPartNumber.StartsWith(partSearch.First())
+                          && r.NewPartNumber.EndsWith(partSearch.Last()))
+                         || (r.OldPartNumber.StartsWith(partSearch.First())
+                             && r.OldPartNumber.EndsWith(partSearch.Last())))
                         && (r.ChangeState == "PROPOS"
-                            || r.ChangeState == "ACCEPT" 
+                            || r.ChangeState == "ACCEPT"
                             || r.ChangeState == inclLive
-                            || r.ChangeState == inclCancelled) 
+                            || r.ChangeState == inclCancelled)
                         && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
         }
     }

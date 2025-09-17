@@ -10,30 +10,6 @@
     public interface IChangeRequestFacadeService 
         : IFacadeResourceService<ChangeRequest, int, ChangeRequestResource, ChangeRequestResource>
     {
-        IResult<ChangeRequestResource> ApproveChangeRequest(
-            int documentNumber, IEnumerable<string> privileges = null);
-
-        IResult<ChangeRequestResource> CancelChangeRequest(
-            int documentNumber, 
-            int cancelledById,
-            IEnumerable<int> selectedBomChangeIds, 
-            IEnumerable<int> selectedPcasChangeIds, 
-            IEnumerable<string> privileges = null);
-
-        IResult<ChangeRequestResource> MakeLiveChangeRequest(
-            int documentNumber, 
-            int appliedById, 
-            IEnumerable<int> selectedBomChangeIds, 
-            IEnumerable<int> selectedPcasChangeIds, 
-            IEnumerable<string> privileges = null);
-
-        IResult<ChangeRequestResource> UndoChangeRequest(
-            int documentNumber,
-            int undoneById,
-            IEnumerable<int> selectedBomChangeIds,
-            IEnumerable<int> selectedPcasChangeIds,
-            IEnumerable<string> privileges = null);
-
         IResult<ChangeRequestResource> ChangeStatus(
             ChangeRequestStatusChangeResource request, int changedById, IEnumerable<string> privileges = null);
 
@@ -53,7 +29,12 @@
             string bomName, IEnumerable<string> privileges = null);
 
         IResult<IEnumerable<ChangeRequestResource>> SearchChangeRequests(
-            string searchTerm, bool? outstanding, int? lastMonths, bool? cancelled, IEnumerable<string> privileges = null);
+            string searchTerm,
+            bool? outstanding, 
+            int? lastMonths, 
+            bool? cancelled, 
+            string boardCode = null,
+            IEnumerable<string> privileges = null);
 
         IResult<ChangeRequestResource> AddAndReplace(
             ChangeRequestResource resource, int createdBy, IEnumerable<string> privileges = null);

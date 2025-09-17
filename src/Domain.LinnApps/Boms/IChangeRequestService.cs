@@ -38,6 +38,6 @@
             IEnumerable<(string bomName, decimal qty)> addToBoms,
             IEnumerable<string> privileges = null);
 
-        Expression<Func<ChangeRequest, bool>> SearchExpression(string searchTerm, bool? outstanding, int? lastMonths, bool? cancelled);
+        Expression<Func<ChangeRequest, bool>> SearchExpression(string searchTerm, bool? outstanding, int? lastMonths, bool? cancelled, string boardCode);
     }
 }

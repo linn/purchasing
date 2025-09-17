@@ -1,4 +1,6 @@
-﻿namespace Linn.Purchasing.Facade.Tests.ChangeRequestFacadeServiceTests
+﻿using Linn.Purchasing.Resources.RequestResources;
+
+namespace Linn.Purchasing.Facade.Tests.ChangeRequestFacadeServiceTests
 {
     using System;
     using System.Collections.Generic;
@@ -93,7 +95,15 @@
             var employee = new Employee { Id = 1, FullName = "Moana" };
             this.EmployeeRepository.FindById(1).Returns(employee);
 
-            this.result = this.Sut.UndoChangeRequest(1, 1, new List<int> { 1 }, null, null);
+            this.result = this.Sut.ChangeStatus(
+                new ChangeRequestStatusChangeResource
+                {
+                    Id = 1,
+                    Status = "UNDO",
+                    SelectedBomChangeIds = new List<int> { 1 }
+                }, 
+                1, 
+                new List<string> { "some privilege" });
         }
 
         [Test]

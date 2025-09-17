@@ -9,6 +9,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
 
     using NSubstitute;
 
@@ -37,7 +38,14 @@
             var employee = new Employee { Id = 1, FullName = "Douglas Ross" };
             this.EmployeeRepository.FindById(1).Returns(employee);
 
-            this.result = this.Sut.MakeLiveChangeRequest(1, 1, null, null, null);
+            this.result = this.Sut.ChangeStatus(
+                new ChangeRequestStatusChangeResource
+                {
+                    Id = 1,
+                    Status = "LIVE"
+                }, 
+                1, 
+                new List<string> { "some privilege" });
         }
 
         [Test]
