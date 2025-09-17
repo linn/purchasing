@@ -541,14 +541,14 @@
             return changeRequests;
         }
         
-        private static string GetBoardCode(string boardType)
+        private static string GetBoardCode(string partNumber)
         {
-            if (string.IsNullOrEmpty(boardType))
+            if (string.IsNullOrEmpty(partNumber))
             {
-                return boardType;
+                return partNumber;
             }
 
-            var code = boardType;
+            var code = partNumber;
             code = code.Replace("PCSM", string.Empty);
             code = code.Replace("PCB", string.Empty);
             code = code.Replace("PCAS", string.Empty);
