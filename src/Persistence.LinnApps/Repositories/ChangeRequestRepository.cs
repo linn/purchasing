@@ -47,5 +47,10 @@
 
                 .Where(expression);
         }
+
+        public override IQueryable<ChangeRequest> FindAll()
+        {
+            return base.FindAll().Include(x => x.ChangeSernos);
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Linn.Purchasing.Facade.Tests.ChangeRequestFacadeServiceTests
+﻿using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+
+namespace Linn.Purchasing.Facade.Tests.ChangeRequestFacadeServiceTests
 {
     using Linn.Common.Authorisation;
     using Linn.Common.Logging;
@@ -46,6 +48,8 @@
         protected ChangeRequestFacadeService Sut { get; private set; }
 
         protected IRepository<BomDetail, int> BomDetailRepository { get; private set; }
+        
+        protected IQueryRepository<PartUsedOn> PartUsedOnRepository { get; private set; }
 
         [SetUp]
         public void SetUpContext()
@@ -63,6 +67,7 @@
             this.PcasPack = Substitute.For<IPcasPack>();
             this.BomChangeService = Substitute.For<IBomChangeService>();
             this.BomDetailRepository = Substitute.For<IRepository<BomDetail, int>>();
+            this.PartUsedOnRepository = Substitute.For<IQueryRepository<PartUsedOn>>();
             this.Logger = Substitute.For<ILog>();
 
             this.Sut = new ChangeRequestFacadeService(
@@ -82,7 +87,8 @@
                 this.PcasPack,
                 this.BomChangeService,
                 this.BoardRepository,
-                this.BomDetailRepository),
+                this.BomDetailRepository,
+                this.PartUsedOnRepository),
                 this.DatabaseService, 
                 this.BomTreeService,
                 this.Logger);

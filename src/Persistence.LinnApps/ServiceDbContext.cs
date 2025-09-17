@@ -222,6 +222,8 @@
         public DbSet<ChangeRequestPhaseInWeeksView> ChangeRequestPhaseInWeeksView { get; set; }
 
         public DbSet<BomDetailComponent> BomDetailComponents { get; set; }
+        
+        public DbSet<PartUsedOn> PartUsedOns { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -343,6 +345,8 @@
             this.BuildPartDataSheetValues(builder);
             this.BuildPcasChangeComponentsView(builder);
             this.BuildChangeRequestPhaseInWeeksView(builder);
+            this.BuildPartUsedOn(builder);
+            this.BuildChangeSernos(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1975,6 +1979,18 @@
             entity.Property(c => c.DescriptionOfChange).HasColumnName("DESCRIPTION_OF_CHANGE").HasMaxLength(2000);
             entity.HasMany(c => c.BomChanges).WithOne(d => d.ChangeRequest).HasForeignKey(d => d.DocumentNumber);
             entity.HasMany(c => c.PcasChanges).WithOne(d => d.ChangeRequest).HasForeignKey(d => d.DocumentNumber);
+            entity.HasOne(c => c.OldPartUsedOn)
+                .WithMany()
+                .HasForeignKey(c => c.OldPartNumber)
+                .HasPrincipalKey(p => p.PartNumber);
+
+            entity.HasOne(c => c.NewPartUsedOn)
+                .WithMany()
+                .HasForeignKey(c => c.NewPartNumber)
+                .HasPrincipalKey(p => p.PartNumber);
+            entity.HasMany(c => c.ChangeSernos)
+                .WithOne()
+                .HasForeignKey(s => s.DocumentNumber);
         }
 
         private void BuildBomChanges(ModelBuilder builder)
@@ -2309,5 +2325,25 @@
             entity.Property(a => a.NewPartStock).HasColumnName("NEW_PART_STOCK").HasColumnType("NUMBER");
             entity.Property(a => a.OldPartStock).HasColumnName("OLD_PART_STOCK").HasColumnType("NUMBER");
         }
+        
+        private void BuildPartUsedOn(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PartUsedOn>().ToTable("PART_USED_ON");
+            entity.HasKey(e => new { e.PartNumber, e.Seq });
+            entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER");
+            entity.Property(e => e.Seq).HasColumnName("SEQ");
+            entity.Property(e => e.RootProduct).HasColumnName("ROOT_PRODUCT");
+        }
+        
+         private void BuildChangeSernos(ModelBuilder builder)
+         {
+                    var entity = builder.Entity<ChangeSerno>().ToTable("CHANGE_SERNOS");
+                    entity.HasKey(e => new { e.DocumentNumber, e.DocumentType, e.Product });
+                    entity.Property(e => e.DocumentNumber).HasColumnName("DOCUMENT_NUMBER");
+                    entity.Property(e => e.DocumentType).HasColumnName("DOCUMENT_TYPE");
+                    entity.Property(e => e.Product).HasColumnName("PRODUCT");
+                    entity.Property(e => e.SernosSequence).HasColumnName("SERNOS_SEQUENCE");    
+                    entity.Property(e => e.StartingSerialNumber).HasColumnName("STARTING_SERIAL_NUMBER");    
+         }
     }
 }

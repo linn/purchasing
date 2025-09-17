@@ -8,7 +8,10 @@
     using Linn.Common.Authorisation;
     using Linn.Common.Domain.Exceptions;
     using Linn.Common.Persistence;
+    
     using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -34,6 +37,8 @@
         private readonly IRepository<CircuitBoard, string> boardRepository;
 
         private readonly IRepository<BomDetail, int> bomDetailRepository;
+        
+        private readonly IQueryRepository<PartUsedOn> partUsedOnRepository;
 
         public ChangeRequestService(
             IAuthorisationService authService,
@@ -45,7 +50,8 @@
             IPcasPack pcasPack,
             IBomChangeService bomChangeService,
             IRepository<CircuitBoard, string> boardRepository,
-            IRepository<BomDetail, int> bomDetailRepository)
+            IRepository<BomDetail, int> bomDetailRepository,
+            IQueryRepository<PartUsedOn> partUsedOnRepository)
         {
             this.authService = authService;
             this.repository = repository;
@@ -57,6 +63,7 @@
             this.bomChangeService = bomChangeService;
             this.boardRepository = boardRepository;
             this.bomDetailRepository = bomDetailRepository;
+            this.partUsedOnRepository = partUsedOnRepository;
         }
 
         public Part ValidPartNumber(string partNumber)
@@ -448,11 +455,9 @@
             {
                 if (!string.IsNullOrEmpty(boardCode))
                 {
-                    var boardCodeUpper = boardCode.Trim().ToUpper();
-                    return r => (r.BoardCode != null && r.BoardCode.ToUpper() == boardCodeUpper)
-                        && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive || r.ChangeState == inclCancelled)
-                        && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
+                    return r => r.BoardCode.Equals(boardCode.Trim(), StringComparison.CurrentCultureIgnoreCase);
                 }
+                
                 return r
                     => (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive || r.ChangeState == inclCancelled)
                        && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
@@ -510,6 +515,52 @@
                             || r.ChangeState == inclLive
                             || r.ChangeState == inclCancelled)
                         && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
+        }
+        
+        public IEnumerable<ChangeRequest> GetForRootProducts(string rootProduct)
+        {
+            var partNumbers = this.partUsedOnRepository.FindAll()
+                .Where(p => p.RootProduct == rootProduct)
+                .Select(p => p.PartNumber)
+                .ToList();
+
+            var boardCodes = partNumbers
+                .Select(GetBoardCode)
+                .Where(bc => !string.IsNullOrEmpty(bc))
+                .Distinct()
+                .ToList();
+
+            var changeRequests = this.repository.FindAll().Where(cr =>
+                    boardCodes.Contains(cr.BoardCode) ||
+                    (cr.BomChanges != null && cr.BomChanges.Any(bc => bc.DocumentType == "CRF" && partNumbers.Contains(bc.BomName)))
+                )
+                .OrderBy(cr => cr.BoardCode)
+                .ThenBy(cr => cr.DocumentNumber)
+                .ToList();
+
+            return changeRequests;
+        }
+        
+        private static string GetBoardCode(string boardType)
+        {
+            if (string.IsNullOrEmpty(boardType))
+            {
+                return boardType;
+            }
+
+            var code = boardType;
+            code = code.Replace("PCSM", string.Empty);
+            code = code.Replace("PCB", string.Empty);
+            code = code.Replace("PCAS", string.Empty);
+            code = code.TrimStart();
+
+            var slashIndex = code.IndexOf('/');
+            if (slashIndex > 0)
+            {
+                code = code.Substring(0, slashIndex);
+            }
+
+            return code;
         }
     }
 }

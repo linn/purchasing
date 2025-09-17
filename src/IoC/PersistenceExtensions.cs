@@ -249,7 +249,10 @@
                 .AddTransient<IQueryRepository<ChangeRequestPhaseInWeeksView>, EntityFrameworkQueryRepository<ChangeRequestPhaseInWeeksView>>(
                     r => new EntityFrameworkQueryRepository<ChangeRequestPhaseInWeeksView>(r.GetService<ServiceDbContext>()
                         ?.ChangeRequestPhaseInWeeksView))
-                .AddTransient<IQueryRepository<BomDetailComponent>, BomDetailComponentRepository>();
+                .AddTransient<IQueryRepository<BomDetailComponent>, BomDetailComponentRepository>()
+                .AddTransient<IQueryRepository<PartUsedOn>, EntityFrameworkQueryRepository<PartUsedOn>>(
+                    r => new EntityFrameworkQueryRepository<PartUsedOn>(r.GetService<ServiceDbContext>()
+                        ?.PartUsedOns));
         }
     }
 }

@@ -45,24 +45,29 @@
             bool? includeForBoard,
             bool? outstanding,
             int? lastMonths,
-            bool? cancelled)
+            bool? cancelled,
+            string boardCode = null,
+            string rootProduct = null)
         {
             if (string.IsNullOrEmpty(searchTerm) && outstanding == null)
             {
                 await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
+                return;
             }
-            else if (includeAllForBom.GetValueOrDefault())
+
+            if (includeAllForBom.GetValueOrDefault())
             {
                 await res.Negotiate(facadeService.GetChangeRequestsRelevantToBom(searchTerm));
+                return;
             }
-            else if (includeForBoard.GetValueOrDefault())
+
+            if (includeForBoard.GetValueOrDefault())
             {
                 await res.Negotiate(facadeService.GetChangeRequestsRelevantToBoard(searchTerm));
+                return;
             }
-            else
-            {
-                await res.Negotiate(facadeService.SearchChangeRequests(searchTerm, outstanding, lastMonths, cancelled));
-            }
+
+            await res.Negotiate(facadeService.SearchChangeRequests(searchTerm, outstanding, lastMonths, cancelled, boardCode, rootProduct));
         }
 
         private async Task GetChangeRequest(

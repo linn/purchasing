@@ -34,9 +34,10 @@
             int? lastMonths, 
             bool? cancelled, 
             string boardCode = null,
+            string rootProduct = null,
             IEnumerable<string> privileges = null);
 
         IResult<ChangeRequestResource> AddAndReplace(
             ChangeRequestResource resource, int createdBy, IEnumerable<string> privileges = null);
-    }
+    } 
 }
