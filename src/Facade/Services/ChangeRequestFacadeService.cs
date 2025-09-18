@@ -53,96 +53,6 @@
             this.repository = repository;
         }
 
-        private IResult<ChangeRequestResource> ApproveChangeRequest(int documentNumber, IEnumerable<string> privileges = null)
-        {
-            try
-            {
-                var request = this.changeRequestService.Approve(documentNumber, privileges);
-                this.transactionManager.Commit();
-                var resource = (ChangeRequestResource)this.resourceBuilder.Build(request, new List<string>());
-                return new SuccessResult<ChangeRequestResource>(resource);
-            }
-            catch (ItemNotFoundException)
-            {
-                return new NotFoundResult<ChangeRequestResource>("Change Request not found");
-            }
-            catch (InvalidStateChangeException)
-            {
-                return new BadRequestResult<ChangeRequestResource>("Cannot approve this change request");
-            }
-        }
-
-        private IResult<ChangeRequestResource> CancelChangeRequest(
-            int documentNumber,
-            int cancelledById,
-            IEnumerable<int> selectedBomChangeIds,
-            IEnumerable<int> selectedPcasChangeIds,
-            IEnumerable<string> privileges = null)
-        {
-            try
-            {
-                var request = this.changeRequestService.Cancel(documentNumber, cancelledById, selectedBomChangeIds, selectedPcasChangeIds, privileges);
-                this.transactionManager.Commit();
-                var resource = (ChangeRequestResource)this.resourceBuilder.Build(request, privileges);
-                return new SuccessResult<ChangeRequestResource>(resource);
-            }
-            catch (ItemNotFoundException)
-            {
-                return new NotFoundResult<ChangeRequestResource>("Change Request not found");
-            }
-            catch (InvalidStateChangeException)
-            {
-                return new BadRequestResult<ChangeRequestResource>("Cannot cancel this change request");
-            }
-        }
-
-        private IResult<ChangeRequestResource> MakeLiveChangeRequest(
-            int documentNumber,
-            int appliedById,
-            IEnumerable<int> selectedBomChangeIds,
-            IEnumerable<int> selectedPcasChangeIds,
-            IEnumerable<string> privileges = null)
-        {
-            try
-            {
-                var request = this.changeRequestService.MakeLive(documentNumber, appliedById, selectedBomChangeIds, selectedPcasChangeIds, privileges);
-                this.transactionManager.Commit();
-                var resource = (ChangeRequestResource)this.resourceBuilder.Build(request, privileges);
-                return new SuccessResult<ChangeRequestResource>(resource);
-            }
-            catch (ItemNotFoundException)
-            {
-                return new NotFoundResult<ChangeRequestResource>("Change Request not found");
-            }
-            catch (InvalidStateChangeException e)
-            {
-                return new BadRequestResult<ChangeRequestResource>(e.Message ?? "Cannot make this change request live");
-            }
-        }
-
-        private IResult<ChangeRequestResource> UndoChangeRequest(
-            int documentNumber,
-            int undoneById,
-            IEnumerable<int> selectedBomChangeIds,
-            IEnumerable<int> selectedPcasChangeIds,
-            IEnumerable<string> privileges = null)
-        {
-            try
-            {
-                var request = this.changeRequestService.UndoChanges(documentNumber, undoneById, selectedBomChangeIds, selectedPcasChangeIds, privileges);
-                var resource = (ChangeRequestResource)this.resourceBuilder.Build(request, privileges);
-                return new SuccessResult<ChangeRequestResource>(resource);
-            }
-            catch (ItemNotFoundException)
-            {
-                return new NotFoundResult<ChangeRequestResource>("Change Request not found");
-            }
-            catch (InvalidStateChangeException)
-            {
-                return new BadRequestResult<ChangeRequestResource>("Cannot undo this Change Request");
-            }
-        }
-
         public IResult<ChangeRequestResource> ChangeStatus(ChangeRequestStatusChangeResource request, int changedById, IEnumerable<string> privileges = null)
         {
             if (request?.Status == "ACCEPT")
@@ -260,9 +170,9 @@
             var changeRequests = new List<ChangeRequest>();
             
             if (string.IsNullOrEmpty(rootProduct))
-            {
+            { 
                 var expression = this.changeRequestService.SearchExpression(searchTerm, outstanding, lastMonths, cancelled, boardCode);
-                 changeRequests = this.repository.FindAll().Where(expression).OrderByDescending(r => r.DocumentNumber).ToList();
+                changeRequests = this.repository.FindAll().Where(expression).OrderByDescending(r => r.DocumentNumber).ToList();
             }
             else if (!string.IsNullOrEmpty(rootProduct))
             {
@@ -364,6 +274,96 @@
         protected override void DeleteOrObsoleteResource(ChangeRequest entity, IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
+        }
+
+        private IResult<ChangeRequestResource> ApproveChangeRequest(int documentNumber, IEnumerable<string> privileges = null)
+        {
+            try
+            {
+                var request = this.changeRequestService.Approve(documentNumber, privileges);
+                this.transactionManager.Commit();
+                var resource = (ChangeRequestResource)this.resourceBuilder.Build(request, new List<string>());
+                return new SuccessResult<ChangeRequestResource>(resource);
+            }
+            catch (ItemNotFoundException)
+            {
+                return new NotFoundResult<ChangeRequestResource>("Change Request not found");
+            }
+            catch (InvalidStateChangeException)
+            {
+                return new BadRequestResult<ChangeRequestResource>("Cannot approve this change request");
+            }
+        }
+
+        private IResult<ChangeRequestResource> CancelChangeRequest(
+            int documentNumber,
+            int cancelledById,
+            IEnumerable<int> selectedBomChangeIds,
+            IEnumerable<int> selectedPcasChangeIds,
+            IEnumerable<string> privileges = null)
+        {
+            try
+            {
+                var request = this.changeRequestService.Cancel(documentNumber, cancelledById, selectedBomChangeIds, selectedPcasChangeIds, privileges);
+                this.transactionManager.Commit();
+                var resource = (ChangeRequestResource)this.resourceBuilder.Build(request, privileges);
+                return new SuccessResult<ChangeRequestResource>(resource);
+            }
+            catch (ItemNotFoundException)
+            {
+                return new NotFoundResult<ChangeRequestResource>("Change Request not found");
+            }
+            catch (InvalidStateChangeException)
+            {
+                return new BadRequestResult<ChangeRequestResource>("Cannot cancel this change request");
+            }
+        }
+
+        private IResult<ChangeRequestResource> MakeLiveChangeRequest(
+            int documentNumber,
+            int appliedById,
+            IEnumerable<int> selectedBomChangeIds,
+            IEnumerable<int> selectedPcasChangeIds,
+            IEnumerable<string> privileges = null)
+        {
+            try
+            {
+                var request = this.changeRequestService.MakeLive(documentNumber, appliedById, selectedBomChangeIds, selectedPcasChangeIds, privileges);
+                this.transactionManager.Commit();
+                var resource = (ChangeRequestResource)this.resourceBuilder.Build(request, privileges);
+                return new SuccessResult<ChangeRequestResource>(resource);
+            }
+            catch (ItemNotFoundException)
+            {
+                return new NotFoundResult<ChangeRequestResource>("Change Request not found");
+            }
+            catch (InvalidStateChangeException e)
+            {
+                return new BadRequestResult<ChangeRequestResource>(e.Message ?? "Cannot make this change request live");
+            }
+        }
+
+        private IResult<ChangeRequestResource> UndoChangeRequest(
+            int documentNumber,
+            int undoneById,
+            IEnumerable<int> selectedBomChangeIds,
+            IEnumerable<int> selectedPcasChangeIds,
+            IEnumerable<string> privileges = null)
+        {
+            try
+            {
+                var request = this.changeRequestService.UndoChanges(documentNumber, undoneById, selectedBomChangeIds, selectedPcasChangeIds, privileges);
+                var resource = (ChangeRequestResource)this.resourceBuilder.Build(request, privileges);
+                return new SuccessResult<ChangeRequestResource>(resource);
+            }
+            catch (ItemNotFoundException)
+            {
+                return new NotFoundResult<ChangeRequestResource>("Change Request not found");
+            }
+            catch (InvalidStateChangeException)
+            {
+                return new BadRequestResult<ChangeRequestResource>("Cannot undo this Change Request");
+            }
         }
     }
 }
