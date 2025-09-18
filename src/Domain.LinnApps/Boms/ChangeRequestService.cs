@@ -446,8 +446,8 @@
             var inclLive = (outstanding == false) ? "LIVE" : "JUSTOUTSTANDING";
             var inclCancelled = (cancelled == true) ? "CANCEL" : "NOTCANCELLED";
             var exclCancelled = (cancelled == false) ? "CANCEL" : "NOTCANCELLED";
-            var searchPartNumber = searchTerm.Trim().ToUpper();
-            var partSearch = searchPartNumber.Split('*');
+            var searchPartNumber = searchTerm?.Trim().ToUpper();
+            var partSearch = searchPartNumber?.Split('*');
 
             // this big if is just because Linq/EF/Oracle doesn't do a LIKE
             // supports IC*, *3, *LEWIS*, PCAS*L1R1 but not multiple * e.g. PCAS */L1*
