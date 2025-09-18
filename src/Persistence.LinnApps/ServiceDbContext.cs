@@ -1979,15 +1979,6 @@
             entity.Property(c => c.DescriptionOfChange).HasColumnName("DESCRIPTION_OF_CHANGE").HasMaxLength(2000);
             entity.HasMany(c => c.BomChanges).WithOne(d => d.ChangeRequest).HasForeignKey(d => d.DocumentNumber);
             entity.HasMany(c => c.PcasChanges).WithOne(d => d.ChangeRequest).HasForeignKey(d => d.DocumentNumber);
-            entity.HasOne(c => c.OldPartUsedOn)
-                .WithMany()
-                .HasForeignKey(c => c.OldPartNumber)
-                .HasPrincipalKey(p => p.PartNumber);
-
-            entity.HasOne(c => c.NewPartUsedOn)
-                .WithMany()
-                .HasForeignKey(c => c.NewPartNumber)
-                .HasPrincipalKey(p => p.PartNumber);
             entity.HasMany(c => c.ChangeSernos)
                 .WithOne()
                 .HasForeignKey(s => s.DocumentNumber);

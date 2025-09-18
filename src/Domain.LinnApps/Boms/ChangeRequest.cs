@@ -59,10 +59,6 @@
 
         public ICollection<PcasChange> PcasChanges { get; set; }
         
-        public PartUsedOn OldPartUsedOn { get; set; }
-        
-        public PartUsedOn NewPartUsedOn { get; set; }
-        
         public ICollection<ChangeSerno> ChangeSernos { get; set; }
 
         public bool CanApprove()
