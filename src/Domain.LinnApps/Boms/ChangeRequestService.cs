@@ -455,7 +455,7 @@
             {
                 if (!string.IsNullOrEmpty(boardCode))
                 {
-                    return r => r.BoardCode.Equals(boardCode.Trim(), StringComparison.CurrentCultureIgnoreCase);
+                    return r => r.BoardCode == boardCode;
                 }
                 
                 return r
