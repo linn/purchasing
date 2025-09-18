@@ -64,6 +64,8 @@
         protected IPcasChangeComponentsService PcasChangeComponentsService { get; set; }
 
         protected IQueryRepository<PcasChangeComponent> PcasChangeCompView { get; set; }
+        
+        protected IQueryRepository<PartUsedOn> PartUsedOnRepository { get; set; }
 
         [SetUp]
         public void SetUpContext()
@@ -76,6 +78,7 @@
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
             this.WeekRepository = Substitute.For<IRepository<LinnWeek, int>>();
             this.BoardRepository = Substitute.For<IRepository<CircuitBoard, string>>();
+            this.PartUsedOnRepository = Substitute.For<IQueryRepository<PartUsedOn>>();
             this.Logger = Substitute.For<ILog>();
             this.BomTreeService = Substitute.For<IBomTreeService>();
             this.BomPack = Substitute.For<IBomPack>();
@@ -99,7 +102,8 @@
                     this.PcasPack,
                     this.BomChangeService,
                     this.BoardRepository,
-                    this.BomDetailRepository),
+                    this.BomDetailRepository,
+                    this.PartUsedOnRepository),
                     this.DatabaseService,
                     this.BomTreeService,
                     this.Logger);

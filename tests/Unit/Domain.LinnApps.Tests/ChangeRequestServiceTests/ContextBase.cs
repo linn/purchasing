@@ -3,6 +3,8 @@
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
@@ -32,6 +34,8 @@
         protected IBomChangeService BomChangeService { get; private set; }
 
         protected IRepository<BomDetail, int> BomDetailRepository { get; private set; }
+        
+        protected IQueryRepository<PartUsedOn> PartUsedOnRepository { get; private set; }
 
         [SetUp]
         public void SetUpContext()
@@ -43,6 +47,7 @@
             this.WeekRepository = Substitute.For<IRepository<LinnWeek, int>>();
             this.BoardRepository = Substitute.For<IRepository<CircuitBoard, string>>();
             this.BomDetailRepository = Substitute.For<IRepository<BomDetail, int>>();
+            this.PartUsedOnRepository = Substitute.For<IQueryRepository<PartUsedOn>>();
             this.BomPack = Substitute.For<IBomPack>();
             this.PcasPack = Substitute.For<IPcasPack>();
             this.BomChangeService = Substitute.For<IBomChangeService>();
@@ -56,7 +61,8 @@
                 this.PcasPack,
                 this.BomChangeService,
                 this.BoardRepository,
-                this.BomDetailRepository);
+                this.BomDetailRepository,
+                this.PartUsedOnRepository);
         }
     }
 }

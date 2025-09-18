@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
@@ -58,6 +58,8 @@
         public ICollection<BomChange> BomChanges { get; set; }
 
         public ICollection<PcasChange> PcasChanges { get; set; }
+        
+        public ICollection<ChangeSerno> ChangeSernos { get; set; }
 
         public bool CanApprove()
         {

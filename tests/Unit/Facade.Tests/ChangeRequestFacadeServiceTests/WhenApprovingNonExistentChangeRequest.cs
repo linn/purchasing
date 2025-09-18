@@ -7,7 +7,9 @@
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Resources;
-
+    
+    using Linn.Purchasing.Resources.RequestResources;
+    
     using NSubstitute;
 
     using NUnit.Framework;
@@ -23,7 +25,14 @@
                 .HasPermissionFor(AuthorisedAction.ApproveChangeRequest, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
-            this.result = this.Sut.ApproveChangeRequest(1);
+            this.result = this.Sut.ChangeStatus(
+                new ChangeRequestStatusChangeResource
+                {
+                    Id = 1,
+                    Status = "ACCEPT"
+                }, 
+                1234, 
+                new List<string> { "some privilege" });
         }
 
         [Test]

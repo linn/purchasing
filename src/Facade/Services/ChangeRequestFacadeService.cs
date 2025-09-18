@@ -53,7 +53,7 @@
             this.repository = repository;
         }
 
-        public IResult<ChangeRequestResource> ApproveChangeRequest(int documentNumber, IEnumerable<string> privileges = null)
+        private IResult<ChangeRequestResource> ApproveChangeRequest(int documentNumber, IEnumerable<string> privileges = null)
         {
             try
             {
@@ -72,7 +72,7 @@
             }
         }
 
-        public IResult<ChangeRequestResource> CancelChangeRequest(
+        private IResult<ChangeRequestResource> CancelChangeRequest(
             int documentNumber,
             int cancelledById,
             IEnumerable<int> selectedBomChangeIds,
@@ -96,7 +96,7 @@
             }
         }
 
-        public IResult<ChangeRequestResource> MakeLiveChangeRequest(
+        private IResult<ChangeRequestResource> MakeLiveChangeRequest(
             int documentNumber,
             int appliedById,
             IEnumerable<int> selectedBomChangeIds,
@@ -120,7 +120,7 @@
             }
         }
 
-        public IResult<ChangeRequestResource> UndoChangeRequest(
+        private IResult<ChangeRequestResource> UndoChangeRequest(
             int documentNumber,
             int undoneById,
             IEnumerable<int> selectedBomChangeIds,
@@ -253,11 +253,22 @@
             bool? outstanding, 
             int? lastMonths,
             bool? cancelled,
+            string boardCode = null,
+            string rootProduct = null,
             IEnumerable<string> privileges = null)
         {
-            var expression = this.changeRequestService.SearchExpression(searchTerm, outstanding, lastMonths, cancelled);
-            var changeRequests = this.repository.FindAll().Where(expression).OrderByDescending(r => r.DocumentNumber).ToList();
-
+            var changeRequests = new List<ChangeRequest>();
+            
+            if (string.IsNullOrEmpty(rootProduct))
+            {
+                var expression = this.changeRequestService.SearchExpression(searchTerm, outstanding, lastMonths, cancelled, boardCode);
+                 changeRequests = this.repository.FindAll().Where(expression).OrderByDescending(r => r.DocumentNumber).ToList();
+            }
+            else if (!string.IsNullOrEmpty(rootProduct))
+            {
+                changeRequests = this.changeRequestService.GetForRootProducts(rootProduct).ToList();
+            }
+            
             return new SuccessResult<IEnumerable<ChangeRequestResource>>(changeRequests.Select(x => (ChangeRequestResource)this.resourceBuilder.Build(x, privileges)));
         }
 

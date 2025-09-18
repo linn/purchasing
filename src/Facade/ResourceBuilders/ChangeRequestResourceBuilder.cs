@@ -49,6 +49,8 @@
                            NewPartDescription = model.NewPart?.Description,
                            BoardDescription = model.CircuitBoard?.Description,  
                            GlobalReplace = model.GlobalReplace == "Y",
+                           StartingSernos = model.ChangeSernos == null || !model.ChangeSernos.Any() ? null 
+                                                : model.ChangeSernos.Min(x => x.StartingSerialNumber).ToString(),
                            ProposedBy = 
                                new EmployeeResource
                                    {
@@ -64,7 +66,7 @@
                                model.PcasChanges?.Select(
                                    d => (PcasChangeResource)this.pcasChangeBuilder.Build(d, claims)),
                            Links = this.BuildLinks(model, claims).ToArray()
-            };
+                       };
         }
 
         public string GetLocation(ChangeRequest model)

@@ -8,7 +8,10 @@
     using Linn.Common.Authorisation;
     using Linn.Common.Domain.Exceptions;
     using Linn.Common.Persistence;
+    
     using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -34,6 +37,8 @@
         private readonly IRepository<CircuitBoard, string> boardRepository;
 
         private readonly IRepository<BomDetail, int> bomDetailRepository;
+        
+        private readonly IQueryRepository<PartUsedOn> partUsedOnRepository;
 
         public ChangeRequestService(
             IAuthorisationService authService,
@@ -45,7 +50,8 @@
             IPcasPack pcasPack,
             IBomChangeService bomChangeService,
             IRepository<CircuitBoard, string> boardRepository,
-            IRepository<BomDetail, int> bomDetailRepository)
+            IRepository<BomDetail, int> bomDetailRepository,
+            IQueryRepository<PartUsedOn> partUsedOnRepository)
         {
             this.authService = authService;
             this.repository = repository;
@@ -57,6 +63,7 @@
             this.bomChangeService = bomChangeService;
             this.boardRepository = boardRepository;
             this.bomDetailRepository = bomDetailRepository;
+            this.partUsedOnRepository = partUsedOnRepository;
         }
 
         public Part ValidPartNumber(string partNumber)
@@ -421,7 +428,7 @@
         }
 
         public Expression<Func<ChangeRequest, bool>> SearchExpression(
-            string searchTerm, bool? outstanding, int? lastMonths, bool? cancelled)
+            string searchTerm, bool? outstanding, int? lastMonths, bool? cancelled, string boardCode)
         {
             DateTime fromDate;
 
@@ -446,65 +453,114 @@
             // supports IC*, *3, *LEWIS*, PCAS*L1R1 but not multiple * e.g. PCAS */L1*
             if (string.IsNullOrEmpty(searchPartNumber))
             {
-                return r 
+                if (!string.IsNullOrEmpty(boardCode))
+                {
+                    return r => r.BoardCode.Equals(boardCode.Trim(), StringComparison.CurrentCultureIgnoreCase);
+                }
+                
+                return r
                     => (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive || r.ChangeState == inclCancelled)
                        && r.ChangeState != "CANCEL" && r.DateEntered >= fromDate;
             }
-            
+
             if (!searchPartNumber.Contains("*"))
             {
-                return r 
+                return r
                     => (r.NewPartNumber.Equals(searchPartNumber) 
                         || r.OldPartNumber.Equals(searchPartNumber)) 
                        && (r.ChangeState == "PROPOS" || r.ChangeState == "ACCEPT" || r.ChangeState == inclLive || r.ChangeState == inclCancelled) 
                        && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
             }
-            
+
             if (searchPartNumber.EndsWith("*"))
             {
                 // supporting *LEWIS*
                 if (searchPartNumber.StartsWith("*"))
                 {
-                    return r => (r.NewPartNumber.Contains(partSearch[1]) 
-                                 || r.OldPartNumber.Contains(partSearch[1])) 
-                                && (r.ChangeState == "PROPOS" 
-                                    || r.ChangeState == "ACCEPT" 
+                    return r => (r.NewPartNumber.Contains(partSearch[1])
+                                 || r.OldPartNumber.Contains(partSearch[1]))
+                                && (r.ChangeState == "PROPOS"
+                                    || r.ChangeState == "ACCEPT"
                                     || r.ChangeState == inclLive
-                                    || r.ChangeState == inclCancelled) 
+                                    || r.ChangeState == inclCancelled)
                                 && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
                 }
-                else
-                {
-                    return r => (r.NewPartNumber.StartsWith(partSearch.First()) 
-                                 || r.OldPartNumber.StartsWith(partSearch.First())) 
-                                && (r.ChangeState == "PROPOS" 
-                                    || r.ChangeState == "ACCEPT" 
-                                    || r.ChangeState == inclLive
-                                    || r.ChangeState == inclCancelled) 
-                                && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
-                }
-            }
-            
-            if (searchPartNumber.StartsWith("*"))
-            {
-                return r => (r.NewPartNumber.EndsWith(partSearch.Last()) 
-                             || r.OldPartNumber.EndsWith(partSearch.Last())) 
-                            && (r.ChangeState == "PROPOS" 
-                                || r.ChangeState == "ACCEPT" 
+
+                return r => (r.NewPartNumber.StartsWith(partSearch.First())
+                             || r.OldPartNumber.StartsWith(partSearch.First()))
+                            && (r.ChangeState == "PROPOS"
+                                || r.ChangeState == "ACCEPT"
                                 || r.ChangeState == inclLive
-                                || r.ChangeState == inclCancelled) 
+                                || r.ChangeState == inclCancelled)
                             && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
             }
 
-            return r => ((r.NewPartNumber.StartsWith(partSearch.First()) 
-                          && r.NewPartNumber.EndsWith(partSearch.Last())) 
-                         || (r.OldPartNumber.StartsWith(partSearch.First()) 
-                             && r.OldPartNumber.EndsWith(partSearch.Last()))) 
+            if (searchPartNumber.StartsWith("*"))
+            {
+                return r => (r.NewPartNumber.EndsWith(partSearch.Last())
+                             || r.OldPartNumber.EndsWith(partSearch.Last()))
+                            && (r.ChangeState == "PROPOS"
+                                || r.ChangeState == "ACCEPT"
+                                || r.ChangeState == inclLive
+                                || r.ChangeState == inclCancelled)
+                            && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
+            }
+
+            return r => ((r.NewPartNumber.StartsWith(partSearch.First())
+                          && r.NewPartNumber.EndsWith(partSearch.Last()))
+                         || (r.OldPartNumber.StartsWith(partSearch.First())
+                             && r.OldPartNumber.EndsWith(partSearch.Last())))
                         && (r.ChangeState == "PROPOS"
-                            || r.ChangeState == "ACCEPT" 
+                            || r.ChangeState == "ACCEPT"
                             || r.ChangeState == inclLive
-                            || r.ChangeState == inclCancelled) 
+                            || r.ChangeState == inclCancelled)
                         && r.ChangeState != exclCancelled && r.DateEntered >= fromDate;
+        }
+        
+        public IEnumerable<ChangeRequest> GetForRootProducts(string rootProduct)
+        {
+            var partNumbers = this.partUsedOnRepository.FindAll()
+                .Where(p => p.RootProduct == rootProduct)
+                .Select(p => p.PartNumber)
+                .ToList();
+
+            var boardCodes = partNumbers
+                .Select(GetBoardCode)
+                .Where(bc => !string.IsNullOrEmpty(bc))
+                .Distinct()
+                .ToList();
+
+            var changeRequests = this.repository.FindAll().Where(cr =>
+                    boardCodes.Contains(cr.BoardCode) ||
+                    (cr.BomChanges != null && cr.BomChanges.Any(bc => bc.DocumentType == "CRF" && partNumbers.Contains(bc.BomName)))
+                )
+                .OrderBy(cr => cr.BoardCode)
+                .ThenBy(cr => cr.DocumentNumber)
+                .ToList();
+
+            return changeRequests;
+        }
+        
+        private static string GetBoardCode(string partNumber)
+        {
+            if (string.IsNullOrEmpty(partNumber))
+            {
+                return partNumber;
+            }
+
+            var code = partNumber;
+            code = code.Replace("PCSM", string.Empty);
+            code = code.Replace("PCB", string.Empty);
+            code = code.Replace("PCAS", string.Empty);
+            code = code.TrimStart();
+
+            var slashIndex = code.IndexOf('/');
+            if (slashIndex > 0)
+            {
+                code = code.Substring(0, slashIndex);
+            }
+
+            return code;
         }
     }
 }
