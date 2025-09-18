@@ -50,7 +50,10 @@
 
         public override IQueryable<ChangeRequest> FindAll()
         {
-            return base.FindAll().Include(x => x.ChangeSernos);
+            return base.FindAll()
+                .Include(x => x.ChangeSernos)
+                .Include(x => x.ProposedBy)
+                .Include(x => x.EnteredBy);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Linn.Purchasing.Domain.LinnApps.Boms.Models
         
         public string SernosSequence { get; set; }
         
-        public int StartingSerialNumber { get; set; }
+        public int? StartingSerialNumber { get; set; }
         
         public string Product { get; set;  }
     }

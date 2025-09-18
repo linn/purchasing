@@ -42,6 +42,8 @@
 
         public bool GlobalReplace { get; set; }
 
+        public string StartingSernos { get; set; }
+
         public IEnumerable<BomChangeResource> BomChanges { get; set; }
 
         public IEnumerable<PcasChangeResource> PcasChanges { get; set; }

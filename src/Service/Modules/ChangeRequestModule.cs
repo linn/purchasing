@@ -124,7 +124,6 @@
         {
             var employeeId = req.HttpContext.User.GetEmployeeNumber();
             var result = facadeService.AddAndReplace(request, employeeId, req.HttpContext.GetPrivileges());
-
             await res.Negotiate(result);
         }
 
