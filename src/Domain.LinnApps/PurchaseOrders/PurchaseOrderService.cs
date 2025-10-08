@@ -988,7 +988,6 @@
                     $"Cannot switch qty and price on order {orderNumber}/{orderLine} because {orderLineToUpdate.PartNumber} is stock controlled.");
             }
 
-
             if (orderLineToUpdate.OurQty != 1m && orderLineToUpdate.OurUnitPriceCurrency != 1m)
             {
                 throw new InvalidActionException(
@@ -1043,6 +1042,8 @@
             }
 
             orderLineToUpdate.OrderPosting.Qty = originalOurUnitPrice.Value;
+
+            this.UpdateMiniOrder(order);
 
             return order;
         }
@@ -1283,63 +1284,26 @@
             miniOrder.SuppliersDesignation = updatedDetail.SuppliersDesignation;
             miniOrder.DrawingReference = updatedDetail.DrawingReference;
 
-            var netTotal = updatedDetail.OurUnitPriceCurrency.GetValueOrDefault()
-                           * updatedDetail.OurQty.GetValueOrDefault();
-            miniOrder.NetTotal = Math.Round(netTotal, 2, MidpointRounding.AwayFromZero);
+            miniOrder.NetTotal = updatedDetail.NetTotalCurrency;
+            miniOrder.VatTotal = updatedDetail.VatTotalCurrency.GetValueOrDefault();
+            miniOrder.OrderTotal = Math.Round(miniOrder.NetTotal + miniOrder.VatTotal, 2);
 
-            miniOrder.VatTotal =
-                this.purchaseOrdersPack.GetVatAmountSupplier(miniOrder.NetTotal, updatedOrder.SupplierId);
-
-            miniOrder.OrderTotal = Math.Round(netTotal + miniOrder.VatTotal, 2);
-
-            if (updatedDetail.OrderUnitPriceCurrency == miniOrder.OrderPrice
-                && updatedDetail.OurUnitPriceCurrency != miniOrder.OurPrice)
-            {
-                // if order price hasn't been overridden but our price has changed, use conv factor
-                miniOrder.OrderPrice = updatedDetail.OurUnitPriceCurrency * miniOrder.OrderConvFactor;
-            }
-            else if (updatedDetail.OrderUnitPriceCurrency != miniOrder.OrderPrice)
-            {
-                // if order price has been manually overridden
-                miniOrder.OrderPrice = updatedDetail.OrderUnitPriceCurrency;
-            }
-
-            if (updatedDetail.OrderQty == miniOrder.OrderQty && updatedDetail.OurQty != miniOrder.OurQty)
-            {
-                // if order qty hasn't been overridden but our qty has changed, use conv factor
-                miniOrder.OrderQty = updatedDetail.OurQty * miniOrder.OrderConvFactor;
-            }
-            else if (updatedDetail.OrderQty != miniOrder.OrderQty)
-            {
-                // if our qty has been manually overridden
-                miniOrder.OrderQty = updatedDetail.OrderQty;
-            }
-
+            miniOrder.OrderQty = updatedDetail.OrderQty;
+            miniOrder.OrderPrice = updatedDetail.OrderUnitPriceCurrency;
             miniOrder.OurQty = updatedDetail.OurQty;
-
-            if (miniOrder.DocumentType != "CO" && miniOrder.DocumentType != "RO")
-            {
-                miniOrder.OurPrice = updatedDetail.OurUnitPriceCurrency;
-            }
+            miniOrder.OurPrice = updatedDetail.OurUnitPriceCurrency;
+            miniOrder.OurUnitOfMeasure = updatedDetail.OurUnitOfMeasure;
+            miniOrder.OrderConvFactor = updatedDetail.OrderConversionFactor;
 
             var exchangeRate = updatedOrder.ExchangeRate.GetValueOrDefault();
 
-            miniOrder.BaseNetTotal = Math.Round(netTotal / exchangeRate, 2, MidpointRounding.AwayFromZero);
-            miniOrder.BaseOrderPrice = Math.Round(
-                miniOrder.OrderPrice.GetValueOrDefault() / exchangeRate,
-                2,
-                MidpointRounding.AwayFromZero);
-            miniOrder.BaseOurPrice = Math.Round(
-                miniOrder.OurPrice.GetValueOrDefault() / exchangeRate,
-                2,
-                MidpointRounding.AwayFromZero);
+            miniOrder.BaseNetTotal = updatedDetail.BaseNetTotal;
+            miniOrder.BaseOrderPrice = updatedDetail.BaseOrderUnitPrice;
+            miniOrder.BaseOurPrice = updatedDetail.BaseOurUnitPrice;
 
-            miniOrder.BaseVatTotal = Math.Round(miniOrder.VatTotal / exchangeRate, 2, MidpointRounding.AwayFromZero);
+            miniOrder.BaseVatTotal = updatedDetail.BaseVatTotal;
 
-            miniOrder.BaseOrderTotal = Math.Round(
-                miniOrder.OrderTotal / exchangeRate,
-                2,
-                MidpointRounding.AwayFromZero);
+            miniOrder.BaseOrderTotal = updatedDetail.BaseNetTotal;
         }
 
         private void AuthoriseMiniOrder(PurchaseOrder updatedOrder)
