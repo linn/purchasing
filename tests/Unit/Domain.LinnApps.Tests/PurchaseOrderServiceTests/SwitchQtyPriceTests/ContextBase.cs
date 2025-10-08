@@ -2,9 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
 
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
 
     using NSubstitute;
 
@@ -25,6 +28,9 @@
         {
             this.OrderNumber = 249235;
             this.EmployeeId = 94849;
+            this.MiniOrderRepository.FindById(this.OrderNumber).Returns(new MiniOrder());
+            this.NominalAccountRepository.FindById(Arg.Any<int>()).Returns(
+                new NominalAccount { AccountId = 911, NominalCode = "00009222", DepartmentCode = "0000911" });
             this.PurchaseOrder = new PurchaseOrder
                                      {
                                          OrderNumber = this.OrderNumber,
@@ -61,7 +67,8 @@
                                                                        },
                                                                    OrderPosting = new PurchaseOrderPosting
                                                                        {
-                                                                           Qty = 1
+                                                                           Qty = 1,
+                                                                           NominalAccountId = 123
                                                                        }
                                                                }
                                                        }
