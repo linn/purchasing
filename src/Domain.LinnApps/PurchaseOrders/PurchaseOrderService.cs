@@ -1288,22 +1288,20 @@
             miniOrder.VatTotal = updatedDetail.VatTotalCurrency.GetValueOrDefault();
             miniOrder.OrderTotal = Math.Round(miniOrder.NetTotal + miniOrder.VatTotal, 2);
 
-            miniOrder.OrderQty = updatedDetail.OrderQty;
-            miniOrder.OrderPrice = updatedDetail.OrderUnitPriceCurrency;
             miniOrder.OurQty = updatedDetail.OurQty;
+            miniOrder.OrderQty = updatedDetail.OrderQty;
             miniOrder.OurPrice = updatedDetail.OurUnitPriceCurrency;
+            miniOrder.OrderPrice = updatedDetail.OrderUnitPriceCurrency;
+
             miniOrder.OurUnitOfMeasure = updatedDetail.OurUnitOfMeasure;
             miniOrder.OrderConvFactor = updatedDetail.OrderConversionFactor;
 
-            var exchangeRate = updatedOrder.ExchangeRate.GetValueOrDefault();
-
-            miniOrder.BaseNetTotal = updatedDetail.BaseNetTotal;
             miniOrder.BaseOrderPrice = updatedDetail.BaseOrderUnitPrice;
             miniOrder.BaseOurPrice = updatedDetail.BaseOurUnitPrice;
 
+            miniOrder.BaseNetTotal = updatedDetail.BaseNetTotal;
             miniOrder.BaseVatTotal = updatedDetail.BaseVatTotal;
-
-            miniOrder.BaseOrderTotal = updatedDetail.BaseNetTotal;
+            miniOrder.BaseOrderTotal = updatedDetail.BaseDetailTotal;
         }
 
         private void AuthoriseMiniOrder(PurchaseOrder updatedOrder)
