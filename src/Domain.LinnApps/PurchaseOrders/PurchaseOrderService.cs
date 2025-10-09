@@ -414,7 +414,7 @@
             this.CheckOkToRaiseOrders();
             this.UpdateOrderProperties(current, updated);
             this.UpdateDetails(current.Details, updated.Details, updated.SupplierId, updated.ExchangeRate.Value, current.DocumentType.Name);
-            this.UpdateMiniOrder(updated);
+            this.UpdateMiniOrder(current);
             return current;
         }
 
