@@ -2,7 +2,7 @@
 
 # Purchasing
 
-Forms and reports application for purchasing
+Forms and reports application for purchasing.
 
 ## Solution summary
 This services provides forms and reporting for existing data and code in the LinnApps Oracle database. 
