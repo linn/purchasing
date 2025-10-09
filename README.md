@@ -2,7 +2,7 @@
 
 # Purchasing
 
-Forms and reports application for purchasing
+Forms and reports application for purchasing.
 
 ## Solution summary
 This services provides forms and reporting for existing data and code in the LinnApps Oracle database. 
@@ -22,3 +22,4 @@ This services provides forms and reporting for existing data and code in the Lin
 * `npm install` to install npm packages.
 * `npm start` to run client locally on port 3000.
 * `npm test` to run javascript tests.
+
