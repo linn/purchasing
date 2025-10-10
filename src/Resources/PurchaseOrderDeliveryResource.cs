@@ -34,6 +34,8 @@
 
         public string SupplierConfirmationComment { get; set; }
 
+        public string CurrencyCode { get; set; }
+
         public decimal? OurUnitPriceCurrency { get; set; }
 
         public decimal? OrderUnitPriceCurrency { get; set; }
