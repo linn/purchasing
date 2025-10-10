@@ -159,6 +159,7 @@ function AcknowledgeOrdersUtility() {
             )
         },
         { field: 'deliverySeq', headerName: 'Delivery', width: 100 },
+        { field: 'currencyCode', headerName: 'Currency', width: 100 },
         { field: 'ourUnitPriceCurrency', headerName: 'Unit Price', width: 100 },
         { field: 'partNumber', headerName: 'Part', width: 100 },
         { field: 'ourDeliveryQty', headerName: 'Qty', width: 100 },

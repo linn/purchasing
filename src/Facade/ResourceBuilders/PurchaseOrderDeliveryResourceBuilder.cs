@@ -32,6 +32,7 @@
                            QuantityOutstanding = entity.QuantityOutstanding,
                            CallOffDate = entity.CallOffDate?.ToString("o"),
                            BaseOurUnitPrice = entity.BaseOurUnitPrice,
+                           CurrencyCode = entity.PurchaseOrderDetail?.PurchaseOrder?.CurrencyCode,
                            OurUnitPriceCurrency = entity.OurUnitPriceCurrency,
                            OrderUnitPriceCurrency = entity.OrderUnitPriceCurrency,
                            BaseOrderUnitPrice = entity.BaseOrderUnitPrice,
