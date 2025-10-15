@@ -94,6 +94,46 @@
 
         public string DrawingReference { get; set; }
 
+        public bool ValidPrices()
+        {
+            if (this.OrderUnitPriceCurrency < 0)
+            {
+                return false;
+            }
+
+            if (this.OurUnitPriceCurrency < 0)
+            {
+                return false;
+            }
+
+            if (this.BaseOurUnitPrice < 0)
+            {
+                return false;
+            }
+
+            if (this.BaseDetailTotal < 0)
+            {
+                return false;
+            }
+
+            if (this.BaseNetTotal < 0)
+            {
+                return false;
+            }
+
+            if (this.BaseVatTotal < 0)
+            {
+                return false;
+            }
+
+            if (this.DetailTotalCurrency < 0)
+            {
+                return false;
+            }
+            
+            return true;
+        }
+
         public bool CanBeAutoBooked()
         {
             return this.Part?.StockControlled == "N" 

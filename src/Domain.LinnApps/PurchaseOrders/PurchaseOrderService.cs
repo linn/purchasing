@@ -198,6 +198,11 @@
 
             this.CheckOkToRaiseOrders();
 
+            if (order.Details.Any(d => !d.ValidPrices()))
+            {
+                throw new PurchaseOrderException("Prices must be positive numbers");
+            }
+
             var newOrderNumber = this.databaseService.GetNextVal("PL_ORDER_SEQ");
             order.Supplier = this.supplierRepository.FindById(order.SupplierId);
             order.OrderNumber = newOrderNumber;
@@ -411,6 +416,11 @@
                 throw new UnauthorisedActionException("You are not authorised to update purchase orders");
             }
 
+            if (updated.Details.Any(d => !d.ValidPrices()))
+            {
+                throw new PurchaseOrderException("Prices must be positive numbers");
+            }
+
             this.CheckOkToRaiseOrders();
             this.UpdateOrderProperties(current, updated);
             this.UpdateDetails(current.Details, updated.Details, updated.SupplierId, updated.ExchangeRate.Value, current.DocumentType.Name);
@@ -478,6 +488,7 @@
 
             var detail = order.Details.First();
             detail.OrderUnitPriceCurrency = detail.OurUnitPriceCurrency;
+
             detail.OrderQty = detail.OurQty;
 
             var part = this.partQueryRepository.FindBy(p => p.PartNumber == detail.PartNumber);
