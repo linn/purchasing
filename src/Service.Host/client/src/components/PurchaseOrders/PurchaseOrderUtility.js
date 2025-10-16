@@ -727,60 +727,72 @@ function PurchaseOrderUtility({ creating }) {
                                         >
                                             <Close />
                                         </IconButton>
-                                        <Typography variant="h6">
-                                            Email purchase order pdf to supplier
-                                        </Typography>
-                                        <Typography variant="body1" gutterBottom>
-                                            <Grid container spacing={1}>
-                                                <Grid item xs={6}>
-                                                    <InputField
-                                                        fullWidth
-                                                        value={purchaseOrderEmailState?.email}
-                                                        label="Send PO Email To"
-                                                        helperText={
-                                                            emailCC
-                                                                ? `NOTE: supplier's main order contact has the following cc list set up in the supplier ut: ${emailCC}. This email will also be copied to the address(es) on that list!**`
-                                                                : ''
-                                                        }
-                                                        number
-                                                        propertyName="emailTo"
-                                                        onChange={(name, newEmail) => {
-                                                            setPurchaseOrderEmailState({
-                                                                ...purchaseOrderEmailState,
-                                                                email: newEmail.trim()
-                                                            });
-                                                        }}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <OnOffSwitch
-                                                        label="Also send to self? (bcc)"
-                                                        value={purchaseOrderEmailState.bcc}
-                                                        onChange={() => {
-                                                            setPurchaseOrderEmailState({
-                                                                ...purchaseOrderEmailState,
-                                                                bcc: !purchaseOrderEmailState.bcc
-                                                            });
-                                                        }}
-                                                        propertyName="bcc"
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <Tooltip
-                                                        title="Send"
-                                                        placement="top"
-                                                        className={classes.cursorPointer}
-                                                    >
-                                                        <Send
-                                                            className={classes.buttonMarginTop}
-                                                            onClick={() =>
-                                                                handleOrderPdfEmailClick()
-                                                            }
-                                                        />
-                                                    </Tooltip>
-                                                </Grid>
-                                            </Grid>
-                                        </Typography>
+                                        {order.authorisedBy ? (
+                                            <>
+                                                <Typography variant="h6">
+                                                    Email purchase order pdf to supplier
+                                                </Typography>
+                                                <Typography variant="body1" gutterBottom>
+                                                    <Grid container spacing={1}>
+                                                        <Grid item xs={6}>
+                                                            <InputField
+                                                                fullWidth
+                                                                value={
+                                                                    purchaseOrderEmailState?.email
+                                                                }
+                                                                label="Send PO Email To"
+                                                                helperText={
+                                                                    emailCC
+                                                                        ? `NOTE: supplier's main order contact has the following cc list set up in the supplier ut: ${emailCC}. This email will also be copied to the address(es) on that list!**`
+                                                                        : ''
+                                                                }
+                                                                number
+                                                                propertyName="emailTo"
+                                                                onChange={(name, newEmail) => {
+                                                                    setPurchaseOrderEmailState({
+                                                                        ...purchaseOrderEmailState,
+                                                                        email: newEmail.trim()
+                                                                    });
+                                                                }}
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={3}>
+                                                            <OnOffSwitch
+                                                                label="Also send to self? (bcc)"
+                                                                value={purchaseOrderEmailState.bcc}
+                                                                onChange={() => {
+                                                                    setPurchaseOrderEmailState({
+                                                                        ...purchaseOrderEmailState,
+                                                                        bcc: !purchaseOrderEmailState.bcc
+                                                                    });
+                                                                }}
+                                                                propertyName="bcc"
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={3}>
+                                                            <Tooltip
+                                                                title="Send"
+                                                                placement="top"
+                                                                className={classes.cursorPointer}
+                                                            >
+                                                                <Send
+                                                                    className={
+                                                                        classes.buttonMarginTop
+                                                                    }
+                                                                    onClick={() =>
+                                                                        handleOrderPdfEmailClick()
+                                                                    }
+                                                                />
+                                                            </Tooltip>
+                                                        </Grid>
+                                                    </Grid>
+                                                </Typography>
+                                            </>
+                                        ) : (
+                                            <Typography color="red" variant="body1" gutterBottom>
+                                                Order is not authorised!
+                                            </Typography>
+                                        )}
                                     </div>
                                 </Dialog>
                                 <Grid item xs={8}>
