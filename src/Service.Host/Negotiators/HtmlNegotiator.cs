@@ -41,17 +41,23 @@ namespace Linn.Purchasing.Service.Host.Negotiators
 
             var template = Handlebars.Compile(view);
 
-            var viewModel = new
+            var jsonAppSettings = JsonConvert.SerializeObject(
+                new
+                {
+                    AuthorityUri = ConfigurationManager.Configuration["AUTHORITY_URI"],
+                    AppRoot = ConfigurationManager.Configuration["APP_ROOT"],
+                    ProxyRoot = ConfigurationManager.Configuration["PROXY_ROOT"]
+                },
+                Formatting.Indented,
+                new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                });
+
+            var viewModel = new ViewModel
             {
-                Settings = JsonConvert.SerializeObject(
-                    new
-                    {
-                        AuthorityUri = ConfigurationManager.Configuration["AUTHORITY_URI"],
-                        AppRoot = ConfigurationManager.Configuration["APP_ROOT"],
-                        ProxyRoot = ConfigurationManager.Configuration["PROXY_ROOT"],
-                    },
-                    Formatting.Indented,
-                    new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() })
+                AppSettings = jsonAppSettings,
+                BuildNumber = ConfigurationManager.Configuration["BUILD_NUMBER"]
             };
 
             res.ContentType = "text/html";

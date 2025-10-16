@@ -189,6 +189,8 @@ Resources:
           Value: !Ref logisticsToAddress             
         - Name: awsRegion
           Value: !Ref AWS::Region
+        - Name: BUILD_NUMBER
+          Value: !Ref dockerTag
         - Name: KEYS_BUCKET_NAME
           Value:
             Fn::ImportValue:
