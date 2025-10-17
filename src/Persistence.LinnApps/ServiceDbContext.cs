@@ -226,7 +226,9 @@
         public DbSet<PartUsedOn> PartUsedOns { get; set; }
         
         public DbSet<PurchaseOrderLogEntry> PurchaseOrderLog { get; set; }
-
+        
+        public DbSet<PurchaseOrderDetailLogEntry> PurchaseOrderDetailLog { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -350,6 +352,7 @@
             this.BuildPartUsedOn(builder);
             this.BuildChangeSernos(builder);
             this.BuildPurchaseOrderLogs(builder);
+            this.BuildPurchaseOrderDetailLogs((builder));
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -879,7 +882,60 @@
             entity.Property(o => o.OverbookQtyAllowed).HasColumnName("OVERBOOK_QTY_ALLOWED").HasMaxLength(19);
             entity.Property(o => o.DrawingReference).HasColumnName("DRAWING_REF").HasMaxLength(100);
         }
-
+        
+        private void BuildPurchaseOrderDetailLogs(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PurchaseOrderDetailLogEntry>().ToTable("PL_ORDER_DETAILS_LOG");
+            entity.HasKey(e => e.LogId);
+            entity.Property(e => e.LogId).HasColumnName("LOG_ID");
+            entity.Property(e => e.LogUserNumber).HasColumnName("LOG_USER_NUMBER").HasMaxLength(10);
+            entity.Property(e => e.LogAction).HasColumnName("LOG_ACTION").HasMaxLength(50);
+            entity.Property(e => e.LogTime).HasColumnName("LOG_TIME");
+        
+            entity.Property(e => e.OrderNumber).HasColumnName("ORDER_NUMBER").HasMaxLength(10);
+            entity.Property(e => e.Line).HasColumnName("ORDER_LINE").HasMaxLength(6);
+            entity.Property(e => e.DrawingReference).HasColumnName("DRAWING_REF").HasMaxLength(100);
+            entity.Property(e => e.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION").HasMaxLength(2000);
+            entity.Property(e => e.OurQty).HasColumnName("OUR_QTY").HasMaxLength(19);
+            entity.Property(e => e.OrderQty).HasColumnName("ORDER_QTY").HasMaxLength(19);
+            entity.Property(e => e.VatTotalCurrency).HasColumnName("VAT_TOTAL").HasMaxLength(18);
+            entity.Property(e => e.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE").HasMaxLength(14);
+            entity.Property(e => e.OrderUnitOfMeasure).HasColumnName("ORDER_UNIT_OF_MEASURE").HasMaxLength(14);
+            entity.Property(e => e.OrderConversionFactor).HasColumnName("ORDER_CONV_FACTOR").HasMaxLength(19);
+            entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(e => e.PriceType).HasColumnName("PRICE_TYPE").HasMaxLength(10);
+            entity.Property(e => e.QuotationRef).HasColumnName("QUOTATION_REF").HasMaxLength(50);
+            entity.Property(e => e.Cancelled).HasColumnName("CANCELLED").HasMaxLength(1);
+            entity.Property(e => e.FilCancelled).HasColumnName("FIL_CANCELLED").HasMaxLength(1);
+            entity.Property(e => e.UpdatePartsupPrice).HasColumnName("UPDATE_PARTSUP_PRICE").HasMaxLength(1);
+            entity.Property(e => e.IssuePartsToSupplier).HasColumnName("ISSUE_PARTS_TO_SUPPLIER").HasMaxLength(1);
+            entity.Property(e => e.WasPreferredSupplier).HasColumnName("WAS_PREFERRED_SUPPLIER").HasMaxLength(1);
+            entity.Property(e => e.DeliveryInstructions).HasColumnName("DELIVERY_INSTRUCTIONS").HasMaxLength(200);
+            entity.Property(e => e.NetTotalCurrency).HasColumnName("NET_TOTAL").HasMaxLength(18);
+            entity.Property(e => e.DetailTotalCurrency).HasColumnName("DETAIL_TOTAL").HasMaxLength(18);
+            entity.Property(e => e.StockPoolCode).HasColumnName("STOCK_POOL_CODE").HasMaxLength(10);
+            entity.Property(e => e.OriginalOrderNumber).HasColumnName("ORIGINAL_ORDER_NUMBER").HasMaxLength(8);
+            entity.Property(e => e.OriginalOrderLine).HasColumnName("ORIGINAL_ORDER_LINE").HasMaxLength(6);
+            entity.Property(e => e.BaseOurUnitPrice).HasColumnName("BASE_OUR_UNIT_PRICE").HasMaxLength(19);
+            entity.Property(e => e.BaseOrderUnitPrice).HasColumnName("BASE_ORDER_UNIT_PRICE").HasMaxLength(19);
+            entity.Property(e => e.BaseNetTotal).HasColumnName("BASE_NET_TOTAL").HasMaxLength(18);
+            entity.Property(e => e.BaseDetailTotal).HasColumnName("BASE_DETAIL_TOTAL").HasMaxLength(18);
+            entity.Property(e => e.BaseVatTotal).HasColumnName("BASE_VAT_TOTAL").HasMaxLength(18);
+            entity.Property(e => e.DateFilCancelled).HasColumnName("DATE_FIL_CANCELLED");
+            entity.Property(e => e.PeriodFilCancelled).HasColumnName("PERIOD_FIL_CANCELLED");
+            entity.Property(e => e.OverbookQtyAllowed).HasColumnName("OVERBOOK_QTY_ALLOWED").HasMaxLength(19);
+            entity.Property(e => e.RohsCompliant).HasColumnName("ROHS_COMPLIANT").HasMaxLength(1);
+            entity.Property(e => e.ShouldHaveBeenBlueReq).HasColumnName("SHOULD_HAVE_BEEN_BLUE_REQ").HasMaxLength(1);
+            entity.Property(e => e.MpvAuthorisedBy).HasColumnName("MPV_AUTHORISED_BY").HasMaxLength(6);
+            entity.Property(e => e.MpvReason).HasColumnName("MPV_REASON").HasMaxLength(20);
+            entity.Property(e => e.PpvAuthorisedBy).HasColumnName("PPV_AUTHORISED_BY").HasMaxLength(6);
+            entity.Property(e => e.PpvReason).HasColumnName("PPV_REASON").HasMaxLength(20);
+            entity.Property(e => e.MpvPpvComments).HasColumnName("MPV_PPV_COMMENTS").HasMaxLength(250);
+            entity.Property(e => e.DeliveryConfirmedById).HasColumnName("DELIVERY_CONFIRMED_BY").HasMaxLength(6);
+            entity.Property(e => e.TotalQtyDelivered).HasColumnName("TOTAL_QTY_DELIVERED").HasMaxLength(19);
+            entity.Property(e => e.InternalComments).HasColumnName("INTERNAL_COMMENTS").HasMaxLength(300);
+        }
+        
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
         {
             var entity = builder.Entity<PurchaseOrderDelivery>().ToTable("PL_DELIVERIES");

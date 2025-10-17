@@ -38,6 +38,8 @@
         private readonly IPlCreditDebitNoteService creditDebitNoteService;
 
         private IRepository<PurchaseOrderLogEntry, int> purchaseOrderLog;
+        
+        IRepository<PurchaseOrderDetailLogEntry, int> purchaseOrderDetailLog;
 
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
@@ -47,7 +49,8 @@
             IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository,
             IPlCreditDebitNoteService creditDebitNoteService,
             ILog logger,
-            IRepository<PurchaseOrderLogEntry, int> purchaseOrderLog)
+            IRepository<PurchaseOrderLogEntry, int> purchaseOrderLog,
+            IRepository<PurchaseOrderDetailLogEntry, int> purchaseOrderDetailLog)
             : base(repository, transactionManager, resourceBuilder)
         {
             this.domainService = domainService;
@@ -58,6 +61,7 @@
             this.repository = repository;
             this.creditDebitNoteService = creditDebitNoteService;
             this.purchaseOrderLog = purchaseOrderLog;
+            this.purchaseOrderDetailLog = purchaseOrderDetailLog;
         }
 
         public IResult<ProcessResultResource> EmailOrderPdf(
@@ -355,6 +359,41 @@
                                        InvoiceAddressId = order.InvoiceAddressId
                                    };
                 this.purchaseOrderLog.Add(logEntry);
+                
+                foreach (var purchaseOrderDetail in order.Details)
+                {
+                    var detailLogEntry = new PurchaseOrderDetailLogEntry 
+                                       {
+                                           LogAction = "UPDATE",
+                                           LogTime = DateTime.Now,
+                                           LogUserNumber = who,
+                                           OrderNumber = purchaseOrderDetail.OrderNumber,
+                                           Line = purchaseOrderDetail.Line,
+                                           DrawingReference = purchaseOrderDetail.DrawingReference,
+                                           SuppliersDesignation = purchaseOrderDetail.SuppliersDesignation,
+                                           OurQty = purchaseOrderDetail.OurQty,
+                                           OrderQty = purchaseOrderDetail.OrderQty,
+                                           VatTotalCurrency = purchaseOrderDetail.VatTotalCurrency,
+                                           OurUnitOfMeasure = purchaseOrderDetail.OurUnitOfMeasure,
+                                           OrderUnitOfMeasure = purchaseOrderDetail.OrderUnitOfMeasure,
+                                           OrderConversionFactor = purchaseOrderDetail.OrderConversionFactor,
+                                           PartNumber = purchaseOrderDetail.PartNumber,
+                                           PriceType = purchaseOrderDetail.PriceType,
+                                           QuotationRef = order.QuotationRef,
+                                           Cancelled = purchaseOrderDetail.Cancelled,
+                                           FilCancelled = purchaseOrderDetail.FilCancelled,
+                                           UpdatePartsupPrice = purchaseOrderDetail.UpdatePartsupPrice,
+                                           IssuePartsToSupplier = order.IssuePartsToSupplier,
+                                           WasPreferredSupplier = purchaseOrderDetail.WasPreferredSupplier,
+                                           DeliveryInstructions = purchaseOrderDetail.DeliveryInstructions,
+                                           NetTotalCurrency = purchaseOrderDetail.NetTotalCurrency,
+                                           DetailTotalCurrency = purchaseOrderDetail.DetailTotalCurrency,
+                                           StockPoolCode = purchaseOrderDetail.StockPoolCode,
+                                           OriginalOrderNumber = purchaseOrderDetail.OriginalOrderNumber,
+                                           OriginalOrderLine = purchaseOrderDetail.OriginalOrderLine
+                                       };
+                    this.purchaseOrderDetailLog.Add(detailLogEntry);
+                }
                     
                 this.transactionManager.Commit();
                 return new SuccessResult<PurchaseOrderResource>(
@@ -501,7 +540,43 @@
                 OrderAddressId = entity.OrderAddressId,
                 InvoiceAddressId = entity.InvoiceAddressId
             };
+            
             this.purchaseOrderLog.Add(logEntry);
+            
+            foreach (var purchaseOrderDetail in entity.Details)
+            {
+                var detailLogEntry = new PurchaseOrderDetailLogEntry 
+                {
+                    LogAction = actionType,
+                    LogTime = DateTime.Now,
+                    LogUserNumber = userNumber,
+                    OrderNumber = purchaseOrderDetail.OrderNumber,
+                    Line = purchaseOrderDetail.Line,
+                    DrawingReference = purchaseOrderDetail.DrawingReference,
+                    SuppliersDesignation = purchaseOrderDetail.SuppliersDesignation,
+                    OurQty = purchaseOrderDetail.OurQty,
+                    OrderQty = purchaseOrderDetail.OrderQty,
+                    VatTotalCurrency = purchaseOrderDetail.VatTotalCurrency,
+                    OurUnitOfMeasure = purchaseOrderDetail.OurUnitOfMeasure,
+                    OrderUnitOfMeasure = purchaseOrderDetail.OrderUnitOfMeasure,
+                    OrderConversionFactor = purchaseOrderDetail.OrderConversionFactor,
+                    PartNumber = purchaseOrderDetail.PartNumber,
+                    PriceType = purchaseOrderDetail.PriceType,
+                    QuotationRef = entity.QuotationRef,
+                    Cancelled = purchaseOrderDetail.Cancelled,
+                    FilCancelled = purchaseOrderDetail.FilCancelled,
+                    UpdatePartsupPrice = purchaseOrderDetail.UpdatePartsupPrice,
+                    IssuePartsToSupplier = entity.IssuePartsToSupplier,
+                    WasPreferredSupplier = purchaseOrderDetail.WasPreferredSupplier,
+                    DeliveryInstructions = purchaseOrderDetail.DeliveryInstructions,
+                    NetTotalCurrency = purchaseOrderDetail.NetTotalCurrency,
+                    DetailTotalCurrency = purchaseOrderDetail.DetailTotalCurrency,
+                    StockPoolCode = purchaseOrderDetail.StockPoolCode,
+                    OriginalOrderNumber = purchaseOrderDetail.OriginalOrderNumber,
+                    OriginalOrderLine = purchaseOrderDetail.OriginalOrderLine
+                };
+                this.purchaseOrderDetailLog.Add(detailLogEntry);
+            }
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> SearchExpression(string searchTerm)

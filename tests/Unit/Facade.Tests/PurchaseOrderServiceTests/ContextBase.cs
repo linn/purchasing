@@ -53,7 +53,9 @@
         protected IPlCreditDebitNoteService PlCreditDebitNoteService { get; private set; }
         
         protected IRepository<PurchaseOrderLogEntry, int> PurchaseOrderLog { get; private set; }
-
+        
+        protected IRepository<PurchaseOrderDetailLogEntry, int> PurchaseOrderDetailLog { get; private set; }
+        
         [SetUp]
         public void SetUpContext()
         {
@@ -89,6 +91,8 @@
             this.PurchaseOrderLog = Substitute.For<IRepository<PurchaseOrderLogEntry, int>>();
             this.PlCreditDebitNoteService = Substitute.For<IPlCreditDebitNoteService>();
 
+            this.PurchaseOrderDetailLog = Substitute.For<IRepository<PurchaseOrderDetailLogEntry, int>>();
+            
             this.Sut = new PurchaseOrderFacadeService(
                 this.PurchaseOrderRepository,
                 this.TransactionManager,
@@ -97,7 +101,8 @@
                 this.OverbookAllowedByLogRepository,
                 this.PlCreditDebitNoteService,
                 this.Logger,
-                this.PurchaseOrderLog);
+                this.PurchaseOrderLog,
+                this.PurchaseOrderDetailLog);
         }
     }
 }

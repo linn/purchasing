@@ -72,7 +72,9 @@
         protected IPlCreditDebitNoteService MockPlCreditDebitNoteService { get; private set; }
         
         protected IRepository<PurchaseOrderLogEntry, int> PurchaseOrderLog { get; private set; }
-
+        
+        protected IRepository<PurchaseOrderDetailLogEntry, int> PurchaseOrderLDetailLog { get; private set; }
+        
         [SetUp]
         public void EstablishContext()
         {
@@ -113,6 +115,8 @@
                 new SupplierResourceBuilder(this.MockAuthService, new SupplierContactResourceBuilder(), new AddressResourceBuilder(this.MockFullAddressRepository)));
 
             this.Log = Substitute.For<ILog>();
+            
+            this.PurchaseOrderLDetailLog = Substitute.For<IRepository<PurchaseOrderLogEntry, int>>();
 
             this.PurchaseOrderFacadeService = new PurchaseOrderFacadeService(
                 this.MockPurchaseOrderRepository,
@@ -122,7 +126,8 @@
                 this.OverbookAllowedByLogRepository,
                 this.MockPlCreditDebitNoteService,
                 this.Log,
-                this.PurchaseOrderLog);
+                this.PurchaseOrderLog,
+                this.PurchaseOrderLDetailLog);
 
             this.Client = TestClient.With<PurchaseOrderModule>(
                 services =>
