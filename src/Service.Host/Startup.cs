@@ -28,7 +28,6 @@ namespace Linn.Purchasing.Service.Host
             services.AddCors();
             services.AddSingleton<IViewLoader, ViewLoader>();
             services.AddCredentialsExtensions();
-            services.AddSqsExtensions();
             services.AddLog();
 
             services.AddBuilders();

@@ -8,7 +8,6 @@ var host = Host.CreateDefaultBuilder(args)
             services.AddCredentialsExtensions();
             services.AddServices();
             services.AddPersistence();
-            services.AddSqsExtensions();
             services.AddRabbitConfiguration();
             services.AddMessageHandlers();
             services.AddHostedService<Listener>();

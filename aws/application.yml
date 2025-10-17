@@ -37,12 +37,6 @@ Parameters:
   rabbitPassword:
     Type: String
     Description: Rabbit password
-  loggingEnvironment:
-    Type: String
-    Description: Logging Environment
-  loggingMaxInnerExceptionDepth:
-    Type: Number
-    Description: Logging Max Inner Exception Depth
   smtpHostname:
     Type: String
     Description: SMTP Hostname
@@ -86,6 +80,12 @@ Conditions:
   isTesting: !Equals [!Ref environmentSuffix, "-sys"]
 
 Resources:
+  PurchasingStackLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Delete
+    Properties:
+      LogGroupName: !Sub ${AWS::StackName}-LogGroup
+      RetentionInDays: 14
   purchasingRole:
     Type: AWS::IAM::Role
     Properties:
@@ -102,11 +102,6 @@ Resources:
         PolicyDocument:
           Version: '2012-10-17'
           Statement:
-          - Effect: Allow
-            Action:
-            - sqs:SendMessage
-            Resource:
-              Fn::ImportValue: logging-queue-arn
           - Effect: Allow
             Action:
             - ses:SendEmail
@@ -142,10 +137,11 @@ Resources:
         - ContainerPort: 5050
         Memory: !If [isTesting, '300', '750']
         LogConfiguration:
-          LogDriver: gelf
+          LogDriver: awslogs
           Options:
-            'gelf-address': 'udp://syslog.linn.co.uk:12201'
-            'tag': !Sub purchasing-${dockerTag}-ecs-task
+            awslogs-region: !Ref AWS::Region
+            awslogs-group: !Ref PurchasingStackLogGroup
+            awslogs-stream-prefix: purchasing
         Environment:
         - Name: DATABASE_HOST
           Value: !Ref databaseHost
@@ -169,12 +165,6 @@ Resources:
           Value: !Ref proxyRoot
         - Name: AUTHORITY_URI
           Value: !Ref authorityUri
-        - Name: LOG_AMAZON_SQSQUEUEURI
-          Value: !ImportValue logging-queue-url
-        - Name: LOG_ENVIRONMENT
-          Value: !Ref loggingEnvironment
-        - Name: LOG_MAX_INNER_EXCEPTION_DEPTH
-          Value: !Ref loggingMaxInnerExceptionDepth
         - Name: SMTP_HOSTNAME
           Value: !Ref smtpHostname
         - Name: PDF_SERVICE_ROOT
@@ -211,10 +201,11 @@ Resources:
         - ContainerPort: 5050
         Memory: '150'
         LogConfiguration:
-          LogDriver: gelf
+          LogDriver: awslogs
           Options:
-            'gelf-address': 'udp://syslog.linn.co.uk:12201'
-            'tag': !Sub purchasing-messaging-${dockerTag}-ecs-task
+            awslogs-region: !Ref AWS::Region
+            awslogs-group: !Ref PurchasingStackLogGroup
+            awslogs-stream-prefix: purchasing-messaging
         Environment:
         - Name: DATABASE_HOST
           Value: !Ref databaseHost
@@ -242,12 +233,6 @@ Resources:
           Value: !Ref acknowledgementsBcc
         - Name: ORDER_BOOK_TEST_ADDRESS
           Value: !Ref orderBookTestAddress
-        - Name: LOG_AMAZON_SQSQUEUEURI
-          Value: !ImportValue logging-queue-url
-        - Name: LOG_ENVIRONMENT
-          Value: !Ref loggingEnvironment
-        - Name: LOG_MAX_INNER_EXCEPTION_DEPTH
-          Value: !Ref loggingMaxInnerExceptionDepth
         - Name: awsRegion
           Value: !Ref AWS::Region
   purchasingSchedulingTaskDefinition:
@@ -262,10 +247,11 @@ Resources:
         - ContainerPort: 5050
         Memory: '150'
         LogConfiguration:
-          LogDriver: gelf
+          LogDriver: awslogs
           Options:
-            'gelf-address': 'udp://syslog.linn.co.uk:12201'
-            'tag': !Sub purchasing-scheduling-${dockerTag}-ecs-task
+            awslogs-region: !Ref AWS::Region
+            awslogs-group: !Ref PurchasingStackLogGroup
+            awslogs-stream-prefix: purchasing-scheduling
         Environment:
         - Name: DATABASE_HOST
           Value: !Ref databaseHost
@@ -287,12 +273,6 @@ Resources:
           Value: !Ref appRoot
         - Name: PROXY_ROOT
           Value: !Ref proxyRoot
-        - Name: LOG_AMAZON_SQSQUEUEURI
-          Value: !ImportValue logging-queue-url
-        - Name: LOG_ENVIRONMENT
-          Value: !Ref loggingEnvironment
-        - Name: LOG_MAX_INNER_EXCEPTION_DEPTH
-          Value: !Ref loggingMaxInnerExceptionDepth
         - Name: awsRegion
           Value: !Ref AWS::Region
   purchasingService:
