@@ -116,7 +116,7 @@
 
             this.Log = Substitute.For<ILog>();
             
-            this.PurchaseOrderLDetailLog = Substitute.For<IRepository<PurchaseOrderLogEntry, int>>();
+            this.PurchaseOrderLDetailLog = Substitute.For<IRepository<PurchaseOrderDetailLogEntry, int>>();
 
             this.PurchaseOrderFacadeService = new PurchaseOrderFacadeService(
                 this.MockPurchaseOrderRepository,
