@@ -359,42 +359,45 @@
                                        InvoiceAddressId = order.InvoiceAddressId
                                    };
                 this.purchaseOrderLog.Add(logEntry);
-                
-                foreach (var purchaseOrderDetail in order.Details)
+
+                if (order.Details != null)
                 {
-                    var detailLogEntry = new PurchaseOrderDetailLogEntry 
-                                       {
-                                           LogAction = "UPDATE",
-                                           LogTime = DateTime.Now,
-                                           LogUserNumber = who,
-                                           OrderNumber = purchaseOrderDetail.OrderNumber,
-                                           Line = purchaseOrderDetail.Line,
-                                           DrawingReference = purchaseOrderDetail.DrawingReference,
-                                           SuppliersDesignation = purchaseOrderDetail.SuppliersDesignation,
-                                           OurQty = purchaseOrderDetail.OurQty,
-                                           OrderQty = purchaseOrderDetail.OrderQty,
-                                           VatTotalCurrency = purchaseOrderDetail.VatTotalCurrency,
-                                           OurUnitOfMeasure = purchaseOrderDetail.OurUnitOfMeasure,
-                                           OrderUnitOfMeasure = purchaseOrderDetail.OrderUnitOfMeasure,
-                                           OrderConversionFactor = purchaseOrderDetail.OrderConversionFactor,
-                                           PartNumber = purchaseOrderDetail.PartNumber,
-                                           PriceType = purchaseOrderDetail.PriceType,
-                                           QuotationRef = order.QuotationRef,
-                                           Cancelled = purchaseOrderDetail.Cancelled,
-                                           FilCancelled = purchaseOrderDetail.FilCancelled,
-                                           UpdatePartsupPrice = purchaseOrderDetail.UpdatePartsupPrice,
-                                           IssuePartsToSupplier = order.IssuePartsToSupplier,
-                                           WasPreferredSupplier = purchaseOrderDetail.WasPreferredSupplier,
-                                           DeliveryInstructions = purchaseOrderDetail.DeliveryInstructions,
-                                           NetTotalCurrency = purchaseOrderDetail.NetTotalCurrency,
-                                           DetailTotalCurrency = purchaseOrderDetail.DetailTotalCurrency,
-                                           StockPoolCode = purchaseOrderDetail.StockPoolCode,
-                                           OriginalOrderNumber = purchaseOrderDetail.OriginalOrderNumber,
-                                           OriginalOrderLine = purchaseOrderDetail.OriginalOrderLine
-                                       };
-                    this.purchaseOrderDetailLog.Add(detailLogEntry);
+                    foreach (var purchaseOrderDetail in order.Details)
+                    {
+                        var detailLogEntry = new PurchaseOrderDetailLogEntry
+                        {
+                            LogAction = "UPDATE",
+                            LogTime = DateTime.Now,
+                            LogUserNumber = who,
+                            OrderNumber = purchaseOrderDetail.OrderNumber,
+                            Line = purchaseOrderDetail.Line,
+                            DrawingReference = purchaseOrderDetail.DrawingReference,
+                            SuppliersDesignation = purchaseOrderDetail.SuppliersDesignation,
+                            OurQty = purchaseOrderDetail.OurQty,
+                            OrderQty = purchaseOrderDetail.OrderQty,
+                            VatTotalCurrency = purchaseOrderDetail.VatTotalCurrency,
+                            OurUnitOfMeasure = purchaseOrderDetail.OurUnitOfMeasure,
+                            OrderUnitOfMeasure = purchaseOrderDetail.OrderUnitOfMeasure,
+                            OrderConversionFactor = purchaseOrderDetail.OrderConversionFactor,
+                            PartNumber = purchaseOrderDetail.PartNumber,
+                            PriceType = purchaseOrderDetail.PriceType,
+                            QuotationRef = order.QuotationRef,
+                            Cancelled = purchaseOrderDetail.Cancelled,
+                            FilCancelled = purchaseOrderDetail.FilCancelled,
+                            UpdatePartsupPrice = purchaseOrderDetail.UpdatePartsupPrice,
+                            IssuePartsToSupplier = order.IssuePartsToSupplier,
+                            WasPreferredSupplier = purchaseOrderDetail.WasPreferredSupplier,
+                            DeliveryInstructions = purchaseOrderDetail.DeliveryInstructions,
+                            NetTotalCurrency = purchaseOrderDetail.NetTotalCurrency,
+                            DetailTotalCurrency = purchaseOrderDetail.DetailTotalCurrency,
+                            StockPoolCode = purchaseOrderDetail.StockPoolCode,
+                            OriginalOrderNumber = purchaseOrderDetail.OriginalOrderNumber,
+                            OriginalOrderLine = purchaseOrderDetail.OriginalOrderLine
+                        };
+                        this.purchaseOrderDetailLog.Add(detailLogEntry);
+                    }
                 }
-                    
+                
                 this.transactionManager.Commit();
                 return new SuccessResult<PurchaseOrderResource>(
                     (PurchaseOrderResource)this.resourceBuilder.Build(order, privilegesList));
@@ -542,40 +545,43 @@
             };
             
             this.purchaseOrderLog.Add(logEntry);
-            
-            foreach (var purchaseOrderDetail in entity.Details)
+
+            if (entity.Details != null)
             {
-                var detailLogEntry = new PurchaseOrderDetailLogEntry 
+                foreach (var purchaseOrderDetail in entity.Details)
                 {
-                    LogAction = actionType,
-                    LogTime = DateTime.Now,
-                    LogUserNumber = userNumber,
-                    OrderNumber = purchaseOrderDetail.OrderNumber,
-                    Line = purchaseOrderDetail.Line,
-                    DrawingReference = purchaseOrderDetail.DrawingReference,
-                    SuppliersDesignation = purchaseOrderDetail.SuppliersDesignation,
-                    OurQty = purchaseOrderDetail.OurQty,
-                    OrderQty = purchaseOrderDetail.OrderQty,
-                    VatTotalCurrency = purchaseOrderDetail.VatTotalCurrency,
-                    OurUnitOfMeasure = purchaseOrderDetail.OurUnitOfMeasure,
-                    OrderUnitOfMeasure = purchaseOrderDetail.OrderUnitOfMeasure,
-                    OrderConversionFactor = purchaseOrderDetail.OrderConversionFactor,
-                    PartNumber = purchaseOrderDetail.PartNumber,
-                    PriceType = purchaseOrderDetail.PriceType,
-                    QuotationRef = entity.QuotationRef,
-                    Cancelled = purchaseOrderDetail.Cancelled,
-                    FilCancelled = purchaseOrderDetail.FilCancelled,
-                    UpdatePartsupPrice = purchaseOrderDetail.UpdatePartsupPrice,
-                    IssuePartsToSupplier = entity.IssuePartsToSupplier,
-                    WasPreferredSupplier = purchaseOrderDetail.WasPreferredSupplier,
-                    DeliveryInstructions = purchaseOrderDetail.DeliveryInstructions,
-                    NetTotalCurrency = purchaseOrderDetail.NetTotalCurrency,
-                    DetailTotalCurrency = purchaseOrderDetail.DetailTotalCurrency,
-                    StockPoolCode = purchaseOrderDetail.StockPoolCode,
-                    OriginalOrderNumber = purchaseOrderDetail.OriginalOrderNumber,
-                    OriginalOrderLine = purchaseOrderDetail.OriginalOrderLine
-                };
-                this.purchaseOrderDetailLog.Add(detailLogEntry);
+                    var detailLogEntry = new PurchaseOrderDetailLogEntry
+                                             {
+                                                 LogAction = actionType,
+                                                 LogTime = DateTime.Now,
+                                                 LogUserNumber = userNumber,
+                                                 OrderNumber = purchaseOrderDetail.OrderNumber,
+                                                 Line = purchaseOrderDetail.Line,
+                                                 DrawingReference = purchaseOrderDetail.DrawingReference,
+                                                 SuppliersDesignation = purchaseOrderDetail.SuppliersDesignation,
+                                                 OurQty = purchaseOrderDetail.OurQty,
+                                                 OrderQty = purchaseOrderDetail.OrderQty,
+                                                 VatTotalCurrency = purchaseOrderDetail.VatTotalCurrency,
+                                                 OurUnitOfMeasure = purchaseOrderDetail.OurUnitOfMeasure,
+                                                 OrderUnitOfMeasure = purchaseOrderDetail.OrderUnitOfMeasure,
+                                                 OrderConversionFactor = purchaseOrderDetail.OrderConversionFactor,
+                                                 PartNumber = purchaseOrderDetail.PartNumber,
+                                                 PriceType = purchaseOrderDetail.PriceType,
+                                                 QuotationRef = entity.QuotationRef,
+                                                 Cancelled = purchaseOrderDetail.Cancelled,
+                                                 FilCancelled = purchaseOrderDetail.FilCancelled,
+                                                 UpdatePartsupPrice = purchaseOrderDetail.UpdatePartsupPrice,
+                                                 IssuePartsToSupplier = entity.IssuePartsToSupplier,
+                                                 WasPreferredSupplier = purchaseOrderDetail.WasPreferredSupplier,
+                                                 DeliveryInstructions = purchaseOrderDetail.DeliveryInstructions,
+                                                 NetTotalCurrency = purchaseOrderDetail.NetTotalCurrency,
+                                                 DetailTotalCurrency = purchaseOrderDetail.DetailTotalCurrency,
+                                                 StockPoolCode = purchaseOrderDetail.StockPoolCode,
+                                                 OriginalOrderNumber = purchaseOrderDetail.OriginalOrderNumber,
+                                                 OriginalOrderLine = purchaseOrderDetail.OriginalOrderLine
+                                             };
+                    this.purchaseOrderDetailLog.Add(detailLogEntry);
+                }
             }
         }
 
