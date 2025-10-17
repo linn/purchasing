@@ -70,6 +70,8 @@
         protected IRepository<Supplier, int> MockSupplierRepository { get; private set; }
 
         protected IPlCreditDebitNoteService MockPlCreditDebitNoteService { get; private set; }
+        
+        protected IRepository<PurchaseOrderLogEntry, int> PurchaseOrderLog { get; private set; }
 
         [SetUp]
         public void EstablishContext()
@@ -88,7 +90,7 @@
             this.TariffService = Substitute.For<IFacadeResourceService<Tariff, int, TariffResource, TariffResource>>();
             this.MockReqDomainService = Substitute.For<IPurchaseOrderReqService>();
             this.MockDomainService = Substitute.For<IPurchaseOrderService>();
-
+            this.PurchaseOrderLog = Substitute.For<IRepository<PurchaseOrderLogEntry, int>>();
             this.MockPurchaseOrderReqRepository = Substitute.For<IRepository<PurchaseOrderReq, int>>();
             this.MockPurchaseOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
             this.MockFullAddressRepository = Substitute.For<IRepository<FullAddress, int>>();
@@ -119,7 +121,8 @@
                 this.MockDomainService,
                 this.OverbookAllowedByLogRepository,
                 this.MockPlCreditDebitNoteService,
-                this.Log);
+                this.Log,
+                this.PurchaseOrderLog);
 
             this.Client = TestClient.With<PurchaseOrderModule>(
                 services =>

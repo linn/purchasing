@@ -37,6 +37,8 @@
 
         private readonly IPlCreditDebitNoteService creditDebitNoteService;
 
+        private IRepository<PurchaseOrderLogEntry, int> purchaseOrderLog;
+
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
             ITransactionManager transactionManager,
@@ -44,7 +46,8 @@
             IPurchaseOrderService domainService,
             IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository,
             IPlCreditDebitNoteService creditDebitNoteService,
-            ILog logger)
+            ILog logger,
+            IRepository<PurchaseOrderLogEntry, int> purchaseOrderLog)
             : base(repository, transactionManager, resourceBuilder)
         {
             this.domainService = domainService;
@@ -54,6 +57,7 @@
             this.resourceBuilder = resourceBuilder;
             this.repository = repository;
             this.creditDebitNoteService = creditDebitNoteService;
+            this.purchaseOrderLog = purchaseOrderLog;
         }
 
         public IResult<ProcessResultResource> EmailOrderPdf(
@@ -318,7 +322,40 @@
                         }
                     }
                 }
-
+                
+                var logEntry = new PurchaseOrderLogEntry
+                                   {
+                                       LogAction = "UPDATE",
+                                       LogTime = DateTime.Now,
+                                       LogUserNumber = who,
+                                       OrderNumber = order.OrderNumber,
+                                       Cancelled = order.Cancelled,
+                                       FilCancelled = order.FilCancelled,
+                                       DocumentTypeName = order.DocumentTypeName,
+                                       OrderDate = order.OrderDate,
+                                       SupplierId = order.SupplierId,
+                                       Overbook = order.Overbook,
+                                       OverbookQty = order.OverbookQty,
+                                       CurrencyCode = order.CurrencyCode,
+                                       BaseCurrencyCode = order.BaseCurrencyCode,
+                                       OrderContactName = order.OrderContactName,
+                                       OrderMethodName = order.OrderMethodName,
+                                       ExchangeRate = order.ExchangeRate,
+                                       IssuePartsToSupplier = order.IssuePartsToSupplier,
+                                       DeliveryAddressId = order.DeliveryAddressId,
+                                       RequestedById = order.RequestedById,
+                                       EnteredById = order.EnteredById,
+                                       QuotationRef = order.QuotationRef,
+                                       AuthorisedById = order.AuthorisedById,
+                                       SentByMethod = order.SentByMethod,
+                                       Remarks = order.Remarks,
+                                       DateFilCancelled = order.DateFilCancelled,
+                                       PeriodFilCancelled = order.PeriodFilCancelled,
+                                       OrderAddressId = order.OrderAddressId,
+                                       InvoiceAddressId = order.InvoiceAddressId
+                                   };
+                this.purchaseOrderLog.Add(logEntry);
+                    
                 this.transactionManager.Commit();
                 return new SuccessResult<PurchaseOrderResource>(
                     (PurchaseOrderResource)this.resourceBuilder.Build(order, privilegesList));
@@ -433,7 +470,38 @@
             PurchaseOrderResource resource,
             PurchaseOrderResource updateResource)
         {
-            return;
+            var logEntry = new PurchaseOrderLogEntry
+            {
+                LogAction = actionType,
+                LogTime = DateTime.Now,
+                LogUserNumber = userNumber,
+                OrderNumber = entity.OrderNumber,
+                Cancelled = entity.Cancelled,
+                FilCancelled = entity.FilCancelled,
+                DocumentTypeName = entity.DocumentTypeName,
+                OrderDate = entity.OrderDate,
+                SupplierId = entity.SupplierId,
+                Overbook = entity.Overbook,
+                OverbookQty = entity.OverbookQty,
+                CurrencyCode = entity.CurrencyCode,
+                BaseCurrencyCode = entity.BaseCurrencyCode,
+                OrderContactName = entity.OrderContactName,
+                OrderMethodName = entity.OrderMethodName,
+                ExchangeRate = entity.ExchangeRate,
+                IssuePartsToSupplier = entity.IssuePartsToSupplier,
+                DeliveryAddressId = entity.DeliveryAddressId,
+                RequestedById = entity.RequestedById,
+                EnteredById = entity.EnteredById,
+                QuotationRef = entity.QuotationRef,
+                AuthorisedById = entity.AuthorisedById,
+                SentByMethod = entity.SentByMethod,
+                Remarks = entity.Remarks,
+                DateFilCancelled = entity.DateFilCancelled,
+                PeriodFilCancelled = entity.PeriodFilCancelled,
+                OrderAddressId = entity.OrderAddressId,
+                InvoiceAddressId = entity.InvoiceAddressId
+            };
+            this.purchaseOrderLog.Add(logEntry);
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> SearchExpression(string searchTerm)
