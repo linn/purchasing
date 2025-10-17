@@ -37,9 +37,9 @@
 
         private readonly IPlCreditDebitNoteService creditDebitNoteService;
 
-        private IRepository<PurchaseOrderLogEntry, int> purchaseOrderLog;
+        private readonly IRepository<PurchaseOrderLogEntry, int> purchaseOrderLog;
         
-        IRepository<PurchaseOrderDetailLogEntry, int> purchaseOrderDetailLog;
+        private readonly IRepository<PurchaseOrderDetailLogEntry, int> purchaseOrderDetailLog;
 
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
