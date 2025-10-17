@@ -37,6 +37,10 @@
 
         private readonly IPlCreditDebitNoteService creditDebitNoteService;
 
+        private readonly IRepository<PurchaseOrderLogEntry, int> purchaseOrderLog;
+        
+        private readonly IRepository<PurchaseOrderDetailLogEntry, int> purchaseOrderDetailLog;
+
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
             ITransactionManager transactionManager,
@@ -44,7 +48,9 @@
             IPurchaseOrderService domainService,
             IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository,
             IPlCreditDebitNoteService creditDebitNoteService,
-            ILog logger)
+            ILog logger,
+            IRepository<PurchaseOrderLogEntry, int> purchaseOrderLog,
+            IRepository<PurchaseOrderDetailLogEntry, int> purchaseOrderDetailLog)
             : base(repository, transactionManager, resourceBuilder)
         {
             this.domainService = domainService;
@@ -54,6 +60,8 @@
             this.resourceBuilder = resourceBuilder;
             this.repository = repository;
             this.creditDebitNoteService = creditDebitNoteService;
+            this.purchaseOrderLog = purchaseOrderLog;
+            this.purchaseOrderDetailLog = purchaseOrderDetailLog;
         }
 
         public IResult<ProcessResultResource> EmailOrderPdf(
@@ -204,6 +212,8 @@
                     return new BadRequestResult<PurchaseOrderResource>(result.Message);
                 }
 
+                this.SaveToLogTable("Authorise", userId, order, null, null);
+
                 this.transactionManager.Commit();
 
                 return new SuccessResult<PurchaseOrderResource>((PurchaseOrderResource)this.resourceBuilder.Build(order, privileges));
@@ -255,6 +265,7 @@
         {
             try
             {
+                string logAction = null;
                 var order = this.repository.FindById(resource.From.OrderNumber);
 
                 var privilegesList = privileges.ToList();
@@ -262,6 +273,7 @@
                 {
                     if (resource.To.Cancelled == "Y")
                     {
+                        logAction = "Cancel";
                         order = this.domainService.CancelOrder(
                             resource.From.OrderNumber,
                             who,
@@ -277,6 +289,7 @@
 
                 if (resource.From.OverbookQty != resource.To.OverbookQty || resource.From.Overbook != resource.To.Overbook)
                 {
+                    logAction = "Overbook Change";
                     order = this.domainService.AllowOverbook(
                         order,
                         resource.To.Overbook,
@@ -310,6 +323,8 @@
                             }
                             else
                             {
+                                logAction = "Un-Cancel";
+
                                 order = this.domainService.UnFilCancelLine(
                                     resource.From.OrderNumber,
                                     purchaseOrderDetailResource.Line,
@@ -318,7 +333,9 @@
                         }
                     }
                 }
-
+                
+                this.SaveToLogTable(logAction, who, order, null, null);
+                
                 this.transactionManager.Commit();
                 return new SuccessResult<PurchaseOrderResource>(
                     (PurchaseOrderResource)this.resourceBuilder.Build(order, privilegesList));
@@ -369,6 +386,12 @@
                 this.transactionManager.Commit();
 
                 this.domainService.CreateMiniOrder(order);
+
+                if (userNumber.HasValue)
+                {
+                    this.SaveToLogTable("Create", userNumber.Value, order, resource, null);
+                }
+
                 this.transactionManager.Commit();
 
                 if (makeCreditNote)
@@ -376,6 +399,8 @@
                     this.creditDebitNoteService.CreateDebitOrCreditNoteFromPurchaseOrder(order);
                     this.transactionManager.Commit();
                 }
+
+
 
                 return new CreatedResult<PurchaseOrderResource>(
                     (PurchaseOrderResource)this.resourceBuilder.Build(order, privileges.ToList()));
@@ -433,7 +458,98 @@
             PurchaseOrderResource resource,
             PurchaseOrderResource updateResource)
         {
-            return;
+            var logEntry = new PurchaseOrderLogEntry
+                               {
+                                   LogId = 0,
+                                   LogAction = actionType,
+                                   LogTime = DateTime.Now,
+                                   LogUserNumber = userNumber,
+                                   OrderNumber = entity.OrderNumber,
+                                   Cancelled = entity.Cancelled,
+                                   FilCancelled = entity.FilCancelled,
+                                   DocumentTypeName = entity.DocumentTypeName,
+                                   OrderDate = entity.OrderDate,
+                                   SupplierId = entity.SupplierId,
+                                   Overbook = entity.Overbook,
+                                   OverbookQty = entity.OverbookQty,
+                                   CurrencyCode = entity.CurrencyCode,
+                                   BaseCurrencyCode = entity.BaseCurrencyCode,
+                                   OrderContactName = entity.OrderContactName,
+                                   OrderMethodName = entity.OrderMethodName,
+                                   ExchangeRate = entity.ExchangeRate,
+                                   IssuePartsToSupplier = entity.IssuePartsToSupplier,
+                                   DeliveryAddressId = entity.DeliveryAddressId,
+                                   RequestedById = entity.RequestedById,
+                                   EnteredById = entity.EnteredById,
+                                   QuotationRef = entity.QuotationRef,
+                                   AuthorisedById = entity.AuthorisedById,
+                                   SentByMethod = entity.SentByMethod,
+                                   Remarks = entity.Remarks,
+                                   DateFilCancelled = entity.DateFilCancelled,
+                                   PeriodFilCancelled = entity.PeriodFilCancelled,
+                                   OrderAddressId = entity.OrderAddressId,
+                                   InvoiceAddressId = entity.InvoiceAddressId,
+                                   DamagesPercent = null,
+                                   OrderNetTotal = null,
+                                   BaseOrderNetTotal = null,
+                                   OrderVatTotal = null,
+                                   OrderTotal = null,
+                                   BaseOrderVatTotal = null,
+                                   BaseOrderTotal = null,
+                                   ArchiveOrder = null
+                               };
+            
+            this.purchaseOrderLog.Add(logEntry);
+
+            if (entity.Details != null)
+            {
+                foreach (var purchaseOrderDetail in entity.Details)
+                {
+                    var detailLogEntry = new PurchaseOrderDetailLogEntry
+                                             {
+                                                 LogId = 0,
+                                                 LogAction = actionType,
+                                                 LogTime = DateTime.Now,
+                                                 LogUserNumber = userNumber,
+                                                 OrderNumber = purchaseOrderDetail.OrderNumber,
+                                                 Line = purchaseOrderDetail.Line,
+                                                 DrawingReference = purchaseOrderDetail.DrawingReference,
+                                                 SuppliersDesignation = purchaseOrderDetail.SuppliersDesignation,
+                                                 OurQty = purchaseOrderDetail.OurQty,
+                                                 OrderQty = purchaseOrderDetail.OrderQty,
+                                                 VatTotalCurrency = purchaseOrderDetail.VatTotalCurrency,
+                                                 OurUnitOfMeasure = purchaseOrderDetail.OurUnitOfMeasure,
+                                                 OrderUnitOfMeasure = purchaseOrderDetail.OrderUnitOfMeasure,
+                                                 OrderConversionFactor = purchaseOrderDetail.OrderConversionFactor,
+                                                 PartNumber = purchaseOrderDetail.PartNumber,
+                                                 PriceType = purchaseOrderDetail.PriceType,
+                                                 QuotationRef = entity.QuotationRef,
+                                                 Cancelled = purchaseOrderDetail.Cancelled,
+                                                 FilCancelled = purchaseOrderDetail.FilCancelled,
+                                                 UpdatePartsupPrice = purchaseOrderDetail.UpdatePartsupPrice,
+                                                 IssuePartsToSupplier = entity.IssuePartsToSupplier,
+                                                 WasPreferredSupplier = purchaseOrderDetail.WasPreferredSupplier,
+                                                 DeliveryInstructions = purchaseOrderDetail.DeliveryInstructions,
+                                                 NetTotalCurrency = purchaseOrderDetail.NetTotalCurrency,
+                                                 DetailTotalCurrency = purchaseOrderDetail.DetailTotalCurrency,
+                                                 StockPoolCode = purchaseOrderDetail.StockPoolCode,
+                                                 OriginalOrderNumber = purchaseOrderDetail.OriginalOrderNumber,
+                                                 OriginalOrderLine = purchaseOrderDetail.OriginalOrderLine,
+                                                 BaseOurUnitPrice = purchaseOrderDetail.BaseOurUnitPrice,
+                                                 BaseOrderUnitPrice = purchaseOrderDetail.BaseOrderUnitPrice,
+                                                 BaseNetTotal = purchaseOrderDetail.BaseNetTotal,
+                                                 BaseDetailTotal = purchaseOrderDetail.BaseDetailTotal,
+                                                 BaseVatTotal = purchaseOrderDetail.BaseVatTotal,
+                                                 DateFilCancelled = purchaseOrderDetail.DateFilCancelled,
+                                                 PeriodFilCancelled = purchaseOrderDetail.PeriodFilCancelled,
+                                                 OverbookQtyAllowed = purchaseOrderDetail.OverbookQtyAllowed,
+                                                 RohsCompliant = purchaseOrderDetail.RohsCompliant,
+                                                 DeliveryConfirmedById = purchaseOrderDetail.DeliveryConfirmedById,
+                                                 InternalComments = purchaseOrderDetail.InternalComments
+                                             };
+                    this.purchaseOrderDetailLog.Add(detailLogEntry);
+                }
+            }
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> SearchExpression(string searchTerm)

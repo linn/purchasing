@@ -12,7 +12,6 @@
     <PackageReference Include="Linn.Common.Authorisation" Version="1.0.0" />
     <PackageReference Include="Linn.Common.Facade.Carter" Version="8.1.2" />
     <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
-    <PackageReference Include="Linn.Common.Logging.AmazonSqs" Version="3.0.0" />
     <PackageReference Include="Linn.Common.Messaging.RabbitMQ" Version="3.2.4" />
     <PackageReference Include="Linn.Common.Pdf" Version="5.0.0" />
     <PackageReference Include="Linn.Common.Persistence.EntityFramework" Version="4.0.0" />

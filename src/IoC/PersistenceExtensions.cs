@@ -252,7 +252,13 @@
                 .AddTransient<IQueryRepository<BomDetailComponent>, BomDetailComponentRepository>()
                 .AddTransient<IQueryRepository<PartUsedOn>, EntityFrameworkQueryRepository<PartUsedOn>>(
                     r => new EntityFrameworkQueryRepository<PartUsedOn>(r.GetService<ServiceDbContext>()
-                        ?.PartUsedOns));
+                        ?.PartUsedOns))
+                .AddTransient<IRepository<PurchaseOrderLogEntry, int>, EntityFrameworkRepository<PurchaseOrderLogEntry, int>>(
+                    r => new EntityFrameworkRepository<PurchaseOrderLogEntry, int>(r.GetService<ServiceDbContext>()
+                        ?.PurchaseOrderLog))
+                .AddTransient<IRepository<PurchaseOrderDetailLogEntry, int>, EntityFrameworkRepository<PurchaseOrderDetailLogEntry, int>>(
+                r => new EntityFrameworkRepository<PurchaseOrderDetailLogEntry, int>(r.GetService<ServiceDbContext>()
+                    ?.PurchaseOrderDetailLog));
         }
     }
 }
