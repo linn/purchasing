@@ -925,14 +925,7 @@
             entity.Property(e => e.PeriodFilCancelled).HasColumnName("PERIOD_FIL_CANCELLED");
             entity.Property(e => e.OverbookQtyAllowed).HasColumnName("OVERBOOK_QTY_ALLOWED").HasMaxLength(19);
             entity.Property(e => e.RohsCompliant).HasColumnName("ROHS_COMPLIANT").HasMaxLength(1);
-            entity.Property(e => e.ShouldHaveBeenBlueReq).HasColumnName("SHOULD_HAVE_BEEN_BLUE_REQ").HasMaxLength(1);
-            entity.Property(e => e.MpvAuthorisedBy).HasColumnName("MPV_AUTHORISED_BY").HasMaxLength(6);
-            entity.Property(e => e.MpvReason).HasColumnName("MPV_REASON").HasMaxLength(20);
-            entity.Property(e => e.PpvAuthorisedBy).HasColumnName("PPV_AUTHORISED_BY").HasMaxLength(6);
-            entity.Property(e => e.PpvReason).HasColumnName("PPV_REASON").HasMaxLength(20);
-            entity.Property(e => e.MpvPpvComments).HasColumnName("MPV_PPV_COMMENTS").HasMaxLength(250);
             entity.Property(e => e.DeliveryConfirmedById).HasColumnName("DELIVERY_CONFIRMED_BY").HasMaxLength(6);
-            entity.Property(e => e.TotalQtyDelivered).HasColumnName("TOTAL_QTY_DELIVERED").HasMaxLength(19);
             entity.Property(e => e.InternalComments).HasColumnName("INTERNAL_COMMENTS").HasMaxLength(300);
         }
         

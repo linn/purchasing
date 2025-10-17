@@ -212,6 +212,8 @@
                     return new BadRequestResult<PurchaseOrderResource>(result.Message);
                 }
 
+                this.SaveToLogTable("Authorise", userId, order, null, null);
+
                 this.transactionManager.Commit();
 
                 return new SuccessResult<PurchaseOrderResource>((PurchaseOrderResource)this.resourceBuilder.Build(order, privileges));
@@ -263,6 +265,7 @@
         {
             try
             {
+                string logAction = null;
                 var order = this.repository.FindById(resource.From.OrderNumber);
 
                 var privilegesList = privileges.ToList();
@@ -270,6 +273,7 @@
                 {
                     if (resource.To.Cancelled == "Y")
                     {
+                        logAction = "Cancel";
                         order = this.domainService.CancelOrder(
                             resource.From.OrderNumber,
                             who,
@@ -285,6 +289,7 @@
 
                 if (resource.From.OverbookQty != resource.To.OverbookQty || resource.From.Overbook != resource.To.Overbook)
                 {
+                    logAction = "Overbook Change";
                     order = this.domainService.AllowOverbook(
                         order,
                         resource.To.Overbook,
@@ -318,6 +323,8 @@
                             }
                             else
                             {
+                                logAction = "Un-Cancel";
+
                                 order = this.domainService.UnFilCancelLine(
                                     resource.From.OrderNumber,
                                     purchaseOrderDetailResource.Line,
@@ -327,76 +334,7 @@
                     }
                 }
                 
-                var logEntry = new PurchaseOrderLogEntry
-                                   {
-                                       LogAction = "UPDATE",
-                                       LogTime = DateTime.Now,
-                                       LogUserNumber = who,
-                                       OrderNumber = order.OrderNumber,
-                                       Cancelled = order.Cancelled,
-                                       FilCancelled = order.FilCancelled,
-                                       DocumentTypeName = order.DocumentTypeName,
-                                       OrderDate = order.OrderDate,
-                                       SupplierId = order.SupplierId,
-                                       Overbook = order.Overbook,
-                                       OverbookQty = order.OverbookQty,
-                                       CurrencyCode = order.CurrencyCode,
-                                       BaseCurrencyCode = order.BaseCurrencyCode,
-                                       OrderContactName = order.OrderContactName,
-                                       OrderMethodName = order.OrderMethodName,
-                                       ExchangeRate = order.ExchangeRate,
-                                       IssuePartsToSupplier = order.IssuePartsToSupplier,
-                                       DeliveryAddressId = order.DeliveryAddressId,
-                                       RequestedById = order.RequestedById,
-                                       EnteredById = order.EnteredById,
-                                       QuotationRef = order.QuotationRef,
-                                       AuthorisedById = order.AuthorisedById,
-                                       SentByMethod = order.SentByMethod,
-                                       Remarks = order.Remarks,
-                                       DateFilCancelled = order.DateFilCancelled,
-                                       PeriodFilCancelled = order.PeriodFilCancelled,
-                                       OrderAddressId = order.OrderAddressId,
-                                       InvoiceAddressId = order.InvoiceAddressId
-                                   };
-                this.purchaseOrderLog.Add(logEntry);
-
-                if (order.Details != null)
-                {
-                    foreach (var purchaseOrderDetail in order.Details)
-                    {
-                        var detailLogEntry = new PurchaseOrderDetailLogEntry
-                        {
-                            LogAction = "UPDATE",
-                            LogTime = DateTime.Now,
-                            LogUserNumber = who,
-                            OrderNumber = purchaseOrderDetail.OrderNumber,
-                            Line = purchaseOrderDetail.Line,
-                            DrawingReference = purchaseOrderDetail.DrawingReference,
-                            SuppliersDesignation = purchaseOrderDetail.SuppliersDesignation,
-                            OurQty = purchaseOrderDetail.OurQty,
-                            OrderQty = purchaseOrderDetail.OrderQty,
-                            VatTotalCurrency = purchaseOrderDetail.VatTotalCurrency,
-                            OurUnitOfMeasure = purchaseOrderDetail.OurUnitOfMeasure,
-                            OrderUnitOfMeasure = purchaseOrderDetail.OrderUnitOfMeasure,
-                            OrderConversionFactor = purchaseOrderDetail.OrderConversionFactor,
-                            PartNumber = purchaseOrderDetail.PartNumber,
-                            PriceType = purchaseOrderDetail.PriceType,
-                            QuotationRef = order.QuotationRef,
-                            Cancelled = purchaseOrderDetail.Cancelled,
-                            FilCancelled = purchaseOrderDetail.FilCancelled,
-                            UpdatePartsupPrice = purchaseOrderDetail.UpdatePartsupPrice,
-                            IssuePartsToSupplier = order.IssuePartsToSupplier,
-                            WasPreferredSupplier = purchaseOrderDetail.WasPreferredSupplier,
-                            DeliveryInstructions = purchaseOrderDetail.DeliveryInstructions,
-                            NetTotalCurrency = purchaseOrderDetail.NetTotalCurrency,
-                            DetailTotalCurrency = purchaseOrderDetail.DetailTotalCurrency,
-                            StockPoolCode = purchaseOrderDetail.StockPoolCode,
-                            OriginalOrderNumber = purchaseOrderDetail.OriginalOrderNumber,
-                            OriginalOrderLine = purchaseOrderDetail.OriginalOrderLine
-                        };
-                        this.purchaseOrderDetailLog.Add(detailLogEntry);
-                    }
-                }
+                this.SaveToLogTable(logAction, who, order, null, null);
                 
                 this.transactionManager.Commit();
                 return new SuccessResult<PurchaseOrderResource>(
@@ -448,6 +386,12 @@
                 this.transactionManager.Commit();
 
                 this.domainService.CreateMiniOrder(order);
+
+                if (userNumber.HasValue)
+                {
+                    this.SaveToLogTable("Create", userNumber.Value, order, resource, null);
+                }
+
                 this.transactionManager.Commit();
 
                 if (makeCreditNote)
@@ -455,6 +399,8 @@
                     this.creditDebitNoteService.CreateDebitOrCreditNoteFromPurchaseOrder(order);
                     this.transactionManager.Commit();
                 }
+
+
 
                 return new CreatedResult<PurchaseOrderResource>(
                     (PurchaseOrderResource)this.resourceBuilder.Build(order, privileges.ToList()));
@@ -513,36 +459,45 @@
             PurchaseOrderResource updateResource)
         {
             var logEntry = new PurchaseOrderLogEntry
-            {
-                LogAction = actionType,
-                LogTime = DateTime.Now,
-                LogUserNumber = userNumber,
-                OrderNumber = entity.OrderNumber,
-                Cancelled = entity.Cancelled,
-                FilCancelled = entity.FilCancelled,
-                DocumentTypeName = entity.DocumentTypeName,
-                OrderDate = entity.OrderDate,
-                SupplierId = entity.SupplierId,
-                Overbook = entity.Overbook,
-                OverbookQty = entity.OverbookQty,
-                CurrencyCode = entity.CurrencyCode,
-                BaseCurrencyCode = entity.BaseCurrencyCode,
-                OrderContactName = entity.OrderContactName,
-                OrderMethodName = entity.OrderMethodName,
-                ExchangeRate = entity.ExchangeRate,
-                IssuePartsToSupplier = entity.IssuePartsToSupplier,
-                DeliveryAddressId = entity.DeliveryAddressId,
-                RequestedById = entity.RequestedById,
-                EnteredById = entity.EnteredById,
-                QuotationRef = entity.QuotationRef,
-                AuthorisedById = entity.AuthorisedById,
-                SentByMethod = entity.SentByMethod,
-                Remarks = entity.Remarks,
-                DateFilCancelled = entity.DateFilCancelled,
-                PeriodFilCancelled = entity.PeriodFilCancelled,
-                OrderAddressId = entity.OrderAddressId,
-                InvoiceAddressId = entity.InvoiceAddressId
-            };
+                               {
+                                   LogId = 0,
+                                   LogAction = actionType,
+                                   LogTime = DateTime.Now,
+                                   LogUserNumber = userNumber,
+                                   OrderNumber = entity.OrderNumber,
+                                   Cancelled = entity.Cancelled,
+                                   FilCancelled = entity.FilCancelled,
+                                   DocumentTypeName = entity.DocumentTypeName,
+                                   OrderDate = entity.OrderDate,
+                                   SupplierId = entity.SupplierId,
+                                   Overbook = entity.Overbook,
+                                   OverbookQty = entity.OverbookQty,
+                                   CurrencyCode = entity.CurrencyCode,
+                                   BaseCurrencyCode = entity.BaseCurrencyCode,
+                                   OrderContactName = entity.OrderContactName,
+                                   OrderMethodName = entity.OrderMethodName,
+                                   ExchangeRate = entity.ExchangeRate,
+                                   IssuePartsToSupplier = entity.IssuePartsToSupplier,
+                                   DeliveryAddressId = entity.DeliveryAddressId,
+                                   RequestedById = entity.RequestedById,
+                                   EnteredById = entity.EnteredById,
+                                   QuotationRef = entity.QuotationRef,
+                                   AuthorisedById = entity.AuthorisedById,
+                                   SentByMethod = entity.SentByMethod,
+                                   Remarks = entity.Remarks,
+                                   DateFilCancelled = entity.DateFilCancelled,
+                                   PeriodFilCancelled = entity.PeriodFilCancelled,
+                                   OrderAddressId = entity.OrderAddressId,
+                                   InvoiceAddressId = entity.InvoiceAddressId,
+                                   DamagesPercent = null,
+                                   OrderNetTotal = null,
+                                   BaseOrderNetTotal = null,
+                                   OrderVatTotal = null,
+                                   OrderTotal = null,
+                                   BaseOrderVatTotal = null,
+                                   BaseOrderTotal = null,
+                                   ArchiveOrder = null
+                               };
             
             this.purchaseOrderLog.Add(logEntry);
 
@@ -552,6 +507,7 @@
                 {
                     var detailLogEntry = new PurchaseOrderDetailLogEntry
                                              {
+                                                 LogId = 0,
                                                  LogAction = actionType,
                                                  LogTime = DateTime.Now,
                                                  LogUserNumber = userNumber,
@@ -578,7 +534,18 @@
                                                  DetailTotalCurrency = purchaseOrderDetail.DetailTotalCurrency,
                                                  StockPoolCode = purchaseOrderDetail.StockPoolCode,
                                                  OriginalOrderNumber = purchaseOrderDetail.OriginalOrderNumber,
-                                                 OriginalOrderLine = purchaseOrderDetail.OriginalOrderLine
+                                                 OriginalOrderLine = purchaseOrderDetail.OriginalOrderLine,
+                                                 BaseOurUnitPrice = purchaseOrderDetail.BaseOurUnitPrice,
+                                                 BaseOrderUnitPrice = purchaseOrderDetail.BaseOrderUnitPrice,
+                                                 BaseNetTotal = purchaseOrderDetail.BaseNetTotal,
+                                                 BaseDetailTotal = purchaseOrderDetail.BaseDetailTotal,
+                                                 BaseVatTotal = purchaseOrderDetail.BaseVatTotal,
+                                                 DateFilCancelled = purchaseOrderDetail.DateFilCancelled,
+                                                 PeriodFilCancelled = purchaseOrderDetail.PeriodFilCancelled,
+                                                 OverbookQtyAllowed = purchaseOrderDetail.OverbookQtyAllowed,
+                                                 RohsCompliant = purchaseOrderDetail.RohsCompliant,
+                                                 DeliveryConfirmedById = purchaseOrderDetail.DeliveryConfirmedById,
+                                                 InternalComments = purchaseOrderDetail.InternalComments
                                              };
                     this.purchaseOrderDetailLog.Add(detailLogEntry);
                 }

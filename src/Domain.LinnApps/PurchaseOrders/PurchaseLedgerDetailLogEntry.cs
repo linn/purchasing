@@ -70,12 +70,6 @@ namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 
         public decimal? BaseVatTotal { get; set; }
 
-        public decimal? NextOurUnitPrice { get; set; }
-
-        public decimal? NextOrderUnitPrice { get; set; }
-
-        public string ManufacturerPartNumber { get; set; }
-
         public DateTime? DateFilCancelled { get; set; }
 
         public int? PeriodFilCancelled { get; set; }
@@ -84,21 +78,7 @@ namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 
         public string RohsCompliant { get; set; }
 
-        public string ShouldHaveBeenBlueReq { get; set; }
-
-        public int? MpvAuthorisedBy { get; set; }
-
-        public string MpvReason { get; set; }
-
-        public int? PpvAuthorisedBy { get; set; }
-
-        public string PpvReason { get; set; }
-
-        public string MpvPpvComments { get; set; }
-
         public int? DeliveryConfirmedById { get; set; }
-
-        public decimal? TotalQtyDelivered { get; set; }
 
         public string InternalComments { get; set; }
     }

@@ -78,7 +78,7 @@
             PurchaseOrderResource resource,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = purchaseOrderFacadeService.Add(resource, req.HttpContext.GetPrivileges());
+            var result = purchaseOrderFacadeService.Add(resource, req.HttpContext.GetPrivileges(), req.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
         }
