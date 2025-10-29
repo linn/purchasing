@@ -22,6 +22,8 @@
 
         private int userNumber;
 
+        private Employee employee;
+
         private PurchaseOrder order123;
 
         [SetUp]
@@ -29,6 +31,16 @@
         {
             this.orders = new List<int> { 123 };
             this.userNumber = 808;
+
+            this.employee = new Employee
+                                {
+                                    Id = this.userNumber,
+                                    FullName = "mario",
+                                    PhoneListEntry = new PhoneListEntry { EmailAddress = "mario@karting.com" }
+                                };
+
+            this.EmployeeRepository.FindById(this.userNumber).Returns(
+                this.employee);
 
             this.order123 = new PurchaseOrder
                                 {
@@ -80,8 +92,8 @@
                     "email777",
                     Arg.Any<IEnumerable<Dictionary<string, string>>>(),
                     Arg.Is<IEnumerable<Dictionary<string, string>>>(a => a.All(b => !b.ContainsValue("fred@co"))),
-                    Arg.Any<string>(),
-                    Arg.Any<string>(),
+                    this.employee.PhoneListEntry.EmailAddress,
+                    this.employee.FullName,
                     Arg.Any<string>(),
                     Arg.Any<string>(),
                     Arg.Is<IEnumerable<Attachment>>(

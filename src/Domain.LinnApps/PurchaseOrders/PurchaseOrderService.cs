@@ -1,9 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     using Linn.Common.Authorisation;
     using Linn.Common.Configuration;
     using Linn.Common.Email;
@@ -16,11 +12,15 @@
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Finance.Models;
     using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class PurchaseOrderService : IPurchaseOrderService
     {
@@ -1352,6 +1352,11 @@
                             + "Please send all correspondence direct to the buyer.";
 
             var employee = this.employeeRepository.FindById(currentUserId);
+
+            if (string.IsNullOrEmpty(employee?.PhoneListEntry?.EmailAddress))
+            {
+                throw new PurchaseOrderException("Cannot find sender Email address. Check phone list entry.");
+            }
 
             var bccList = new List<Dictionary<string, string>>
                               {
