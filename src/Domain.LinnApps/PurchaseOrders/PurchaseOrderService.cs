@@ -1349,7 +1349,9 @@
             var emailBody = $"Please accept the attached order no. {order.OrderNumber}.\n"
                             + "Linn's standard Terms & Conditions apply at all times\n"
                             + "and can be found at www.linn.co.uk/purchasing_conditions.\n"
-                            + "This email is sent from an unmonitored account. Please send all correspondence direct to the buyer.";
+                            + "Please send all correspondence direct to the buyer.";
+
+            var employee = this.employeeRepository.FindById(currentUserId);
 
             var bccList = new List<Dictionary<string, string>>
                               {
@@ -1361,11 +1363,10 @@
                               };
             if (bcc)
             {
-                var employee = this.employeeRepository.FindById(currentUserId);
                 bccList.Add(
                     new Dictionary<string, string>
                         {
-                            { "name", employee.FullName }, { "address", employee.PhoneListEntry?.EmailAddress }
+                            { "name", employee?.FullName }, { "address", employee?.PhoneListEntry?.EmailAddress }
                         });
             }
 
@@ -1411,8 +1412,8 @@
                     emailAddress,
                     cc,
                     bccList,
-                    ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
-                    "Linn Purchasing",
+                    employee?.PhoneListEntry?.EmailAddress,
+                    employee?.FullName,
                     $"Linn Purchase Order {order.OrderNumber}",
                     emailBody,
                    attachments);

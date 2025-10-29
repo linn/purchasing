@@ -73,12 +73,6 @@
         }
 
         [Test]
-        public void ShouldNotGetEmployee()
-        {
-            this.EmployeeRepository.DidNotReceive().FindById(Arg.Any<int>());
-        }
-
-        [Test]
         public void ShouldSendEmail()
         {
             this.EmailService.Received().SendEmail(
