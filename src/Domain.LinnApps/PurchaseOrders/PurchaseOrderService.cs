@@ -5,6 +5,7 @@
     using System.Linq;
 
     using Linn.Common.Authorisation;
+    using Linn.Common.Configuration;
     using Linn.Common.Email;
     using Linn.Common.Logging;
     using Linn.Common.Pdf;
