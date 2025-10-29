@@ -23,6 +23,8 @@
 
         private MiniOrder miniOrder;
 
+        private Employee employee;
+
         private ProcessResult result;
 
         [SetUp]
@@ -30,13 +32,15 @@
         {
             this.miniOrder = new MiniOrder { OrderNumber = this.orderNumber };
 
+            this.employee = new Employee
+                                {
+                                    Id = this.employeeNumber,
+                                    FullName = "mario",
+                                    PhoneListEntry = new PhoneListEntry { EmailAddress = "mario@karting.com" }
+                                };
+
             this.EmployeeRepository.FindById(this.employeeNumber).Returns(
-                new Employee
-                    {
-                        Id = this.employeeNumber,
-                        FullName = "mario",
-                        PhoneListEntry = new PhoneListEntry { EmailAddress = "mario@karting.com" }
-                    });
+                this.employee);
 
             this.MiniOrderRepository.FindById(this.orderNumber).Returns(this.miniOrder);
             this.PurchaseOrderRepository.FindById(this.orderNumber)
@@ -57,8 +61,8 @@
                 this.supplierEmail,
                 Arg.Any<IEnumerable<Dictionary<string, string>>>(),
                 Arg.Any<IEnumerable<Dictionary<string, string>>>(),
-                Arg.Any<string>(),
-                "Linn Purchasing",
+                this.employee.PhoneListEntry.EmailAddress,
+                this.employee.FullName,
                 $"Linn Purchase Order {this.orderNumber}",
                 Arg.Any<string>(),
                 Arg.Is<IEnumerable<Attachment>>(a => a.Count() == 1 && a.First().FileName ==

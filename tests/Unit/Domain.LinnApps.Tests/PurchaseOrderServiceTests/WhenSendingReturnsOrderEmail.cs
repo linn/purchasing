@@ -74,8 +74,8 @@
                 Arg.Any<IEnumerable<Dictionary<string, string>>>(),
                 Arg.Is<IEnumerable<Dictionary<string, string>>>(
                     l => l.Any(x => x.ContainsValue(this.employee.PhoneListEntry.EmailAddress))),
-                Arg.Any<string>(),
-                "Linn Purchasing",
+                this.employee.PhoneListEntry.EmailAddress,
+                this.employee.FullName,
                 $"Linn Purchase Order {this.orderNumber}",
                 Arg.Any<string>(),
                 Arg.Is<IEnumerable<Attachment>>(a => a.Count() == 2 && 
