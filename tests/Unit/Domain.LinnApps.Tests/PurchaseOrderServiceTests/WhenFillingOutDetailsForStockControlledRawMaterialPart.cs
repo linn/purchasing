@@ -58,7 +58,8 @@
                                             new PurchaseOrderDetail
                                                 {
                                                     Line = 1,
-                                                    Part = this.part
+                                                    Part = this.part,
+                                                    OurQty = 1
                                                 }
                                         }
             };
@@ -88,6 +89,9 @@
             this.result.Details
                 .First().OrderPosting.NominalAccount.NominalCode
                 .Should().Be(this.nominal.NominalCode);
+            this.result.Details
+                .First().OrderPosting.Qty
+                .Should().Be(this.result.Details.First().OurQty);
         }
 
         [Test]

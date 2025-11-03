@@ -691,7 +691,7 @@
                                                                        OrderNumber = x.OrderNumber,
                                                                        Person = x.OrderPosting.Person,
                                                                        Product = x.OrderPosting.Product,
-                                                                       Qty = x.OrderPosting.Qty,
+                                                                       Qty = x.OurQty.GetValueOrDefault(),
                                                                        Vehicle = x.OrderPosting.Vehicle
                                                                    }
                                             }).ToList(),
