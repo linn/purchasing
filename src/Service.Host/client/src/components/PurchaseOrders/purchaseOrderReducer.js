@@ -128,6 +128,7 @@ export default function purchaseOrderReducer(state = initialState, action) {
                             ...detail,
                             orderPosting: {
                                 ...detail.orderPosting,
+                                qty: detail.ourQty,
                                 nominalAccount: {
                                     ...detail.orderPosting.nominalAccount,
                                     department: {

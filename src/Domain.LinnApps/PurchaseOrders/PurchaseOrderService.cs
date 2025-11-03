@@ -530,12 +530,13 @@
             }
             
             detail.OrderPosting = nomAcc == null ?
-                                      new PurchaseOrderPosting() 
+                                      new PurchaseOrderPosting { Qty = detail.OurQty.GetValueOrDefault() } 
                                       : new PurchaseOrderPosting
                                             {
                                                 NominalAccount = nomAcc, 
                                                 NominalAccountId = nomAcc.AccountId,
-                                            };
+                                                Qty = detail.OurQty.GetValueOrDefault()
+                                      };
 
             foreach (var d in order.Details)
             {
@@ -1189,6 +1190,7 @@
             }
 
             current.OrderPosting.NominalAccount = updatedNominalAccount;
+            current.OrderPosting.Qty = updated.OurQty.GetValueOrDefault();
 
             if ((documentType != "CO") && (documentType != "RO"))
             {
