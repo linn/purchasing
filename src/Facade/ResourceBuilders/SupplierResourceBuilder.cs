@@ -52,6 +52,7 @@
                            InvoiceGoesToId = entity.InvoiceGoesTo?.SupplierId,
                            InvoiceGoesToName = entity.InvoiceGoesTo?.Name,
                            PaymentDays = entity.PaymentDays,
+                           PaymentDaysTerms = entity.PaymentDaysTerms,
                            PaymentMethod = entity.PaymentMethod,
                            PaysInFc = entity.PaysInFc,
                            AccountingCompany = entity.AccountingCompany,

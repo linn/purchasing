@@ -23,7 +23,8 @@ function FinanceTab({
     paymentMethod,
     currencyCode,
     paysInFc,
-    approvedCarrier
+    approvedCarrier,
+    paymentDaysTerms
 }) {
     const reduxDispatch = useDispatch();
     useEffect(() => {
@@ -82,7 +83,7 @@ function FinanceTab({
                     allowNoValue
                 />
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={2}>
                 <InputField
                     fullWidth
                     value={paymentDays}
@@ -92,7 +93,16 @@ function FinanceTab({
                     onChange={handleFieldChange}
                 />
             </Grid>
-
+            <Grid item xs={2}>
+                <InputField
+                    fullWidth
+                    value={paymentDaysTerms}
+                    label="Payment Terms"
+                    propertyName="paymentDaysTerms"
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={4} />
             <Grid item xs={8}>
                 <InputField
                     fullWidth
@@ -108,7 +118,7 @@ function FinanceTab({
                     fullWidth
                     value={paymentMethod}
                     label="Payment Method"
-                    items={['BACS', 'CHEQUE', 'FORPAY', 'NONE', 'OTHER']}
+                    items={['BACS', 'CHEQUE', 'FORPAY', 'NONE', 'OTHER', 'FORPAY MANUAL']}
                     propertyName="paymentMethod"
                     onChange={handleFieldChange}
                     allowNoValue
@@ -167,7 +177,8 @@ FinanceTab.propTypes = {
     paymentMethod: PropTypes.string,
     currencyCode: PropTypes.string,
     paysInFc: PropTypes.string,
-    approvedCarrier: PropTypes.string
+    approvedCarrier: PropTypes.string,
+    paymentDaysTerms: PropTypes.string
 };
 
 FinanceTab.defaultProps = {
@@ -179,7 +190,8 @@ FinanceTab.defaultProps = {
     paymentMethod: null,
     currencyCode: null,
     paysInFc: null,
-    approvedCarrier: null
+    approvedCarrier: null,
+    paymentDaysTerms: null
 };
 
 export default FinanceTab;

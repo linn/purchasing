@@ -603,6 +603,7 @@
             entity.Property(a => a.ExpenseAccount).HasColumnName("EXPENSE_ACCOUNT").HasMaxLength(1);
             entity.Property(a => a.PrintTerms).HasColumnName("PRINT_TERMS").HasMaxLength(1);
             entity.Property(a => a.PaymentDays).HasColumnName("PAYMENT_DAYS");
+            entity.Property(a => a.PaymentDaysTerms).HasColumnName("PAYMENT_DAYS_TERMS").HasMaxLength(20);
             entity.Property(a => a.PaymentMethod).HasColumnName("PAYMENT_METHOD").HasMaxLength(20);
             entity.Property(a => a.PaysInFc).HasColumnName("PAYS_IN_FC").HasMaxLength(1);
             entity.HasOne(a => a.Currency).WithMany().HasForeignKey("CURRENCY");

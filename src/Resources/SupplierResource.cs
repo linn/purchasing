@@ -30,6 +30,8 @@
 
         public int PaymentDays { get; set; }
 
+        public string PaymentDaysTerms { get; set; }
+
         public string PaymentMethod { get; set; }
 
         public string PaysInFc { get; set; }
