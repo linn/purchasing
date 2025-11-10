@@ -339,6 +339,9 @@ function Supplier({ creating }) {
                                                     }
                                                     expenseAccount={state.supplier.expenseAccount}
                                                     paymentDays={state.supplier.paymentDays}
+                                                    paymentDaysTerms={
+                                                        state.supplier.paymentDaysTerms
+                                                    }
                                                     paymentMethod={state.supplier.paymentMethod}
                                                     currencyCode={state.supplier.currencyCode}
                                                     paysInFc={state.supplier.paysInFc}

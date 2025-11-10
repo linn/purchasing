@@ -114,6 +114,7 @@
             current.LiveOnOracle = "Y";
             current.ExpenseAccount = updated.ExpenseAccount;
             current.PaymentDays = updated.PaymentDays;
+            current.PaymentDaysTerms = updated.PaymentDaysTerms;
             current.PaymentMethod = updated.PaymentMethod;
             current.PaysInFc = updated.PaysInFc;
             current.Country = updated.Country;

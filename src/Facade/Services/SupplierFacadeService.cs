@@ -99,6 +99,7 @@
                            LiveOnOracle = "Y",
                            ExpenseAccount = resource.ExpenseAccount,
                            PaymentDays = resource.PaymentDays,
+                           PaymentDaysTerms = resource.PaymentDaysTerms,
                            PaymentMethod = resource.PaymentMethod,
                            Country = resource.Country,
                            PaysInFc = resource.PaysInFc,

@@ -23,6 +23,9 @@ function App() {
                 <ListItem component={Link} to="/purchasing/part-suppliers" button>
                     <Typography color="primary">Part Supplier Utility</Typography>
                 </ListItem>
+                <ListItem component={Link} to="/purchasing/suppliers" button>
+                    <Typography color="primary">Supplier Utility</Typography>
+                </ListItem>
                 <ListItem component={Link} to="/purchasing/purchase-orders" button>
                     <Typography color="primary">Purchase Order Utility</Typography>
                 </ListItem>
