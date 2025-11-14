@@ -1046,11 +1046,16 @@
                 var originalDeliveryOurUnitPrice = purchaseOrderDelivery.OurUnitPriceCurrency;
                 var originalDeliveryBaseOurUnitPrice = purchaseOrderDelivery.BaseOurUnitPrice;
 
+
                 purchaseOrderDelivery.OurDeliveryQty = originalDeliveryOurUnitPrice;
                 purchaseOrderDelivery.OurUnitPriceCurrency = originalDeliveryOurQuantity;
                 purchaseOrderDelivery.BaseOurUnitPrice = decimal.Round(
                     originalDeliveryBaseOurUnitPrice.GetValueOrDefault() / originalDeliveryOurUnitPrice.GetValueOrDefault(),
                     5);
+
+                // need to set this so it matches new qty
+                // so that the correct QtyOutstanding can be decremented when book ins occur
+                purchaseOrderDelivery.QuantityOutstanding = originalDeliveryOurUnitPrice;
             }
 
             orderLineToUpdate.OrderPosting.Qty = originalOurUnitPrice.Value;
