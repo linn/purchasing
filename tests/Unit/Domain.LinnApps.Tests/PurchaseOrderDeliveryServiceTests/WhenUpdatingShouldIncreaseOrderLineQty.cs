@@ -33,13 +33,13 @@
         {
             this.vatAmount = 543;
             this.baseVatAmount = 544;
-            //add new deliveries 
             this.updatedDeliveries = new List<PurchaseOrderDelivery>
                                          {
                                              new PurchaseOrderDelivery
                                                  {
                                                      DeliverySeq = 1,
                                                      OurDeliveryQty = 10,
+                                                     OrderDeliveryQty = 10,
                                                      BaseOurUnitPrice = 11,
                                                      DateRequested = 25.March(2022),
                                                      AvailableAtSupplier = "N"
@@ -48,6 +48,7 @@
                                                  {
                                                      DeliverySeq = 1,
                                                      OurDeliveryQty = 10,
+                                                     OrderDeliveryQty = 10,
                                                      BaseOurUnitPrice = 11,
                                                      DateRequested = 25.March(2022),
                                                      AvailableAtSupplier = "N"
@@ -56,6 +57,7 @@
                                                  {
                                                      DeliverySeq = 1,
                                                      OurDeliveryQty = 10,
+                                                     OrderDeliveryQty = 10,
                                                      BaseOurUnitPrice = 11,
                                                      DateRequested = 25.March(2022),
                                                      AvailableAtSupplier = "N"
@@ -64,6 +66,7 @@
                                                  {
                                                      DeliverySeq = 1,
                                                      OurDeliveryQty = 10,
+                                                     OrderDeliveryQty = 10,
                                                      BaseOurUnitPrice = 11,
                                                      DateRequested = 25.March(2022),
                                                      AvailableAtSupplier = "N"
@@ -74,8 +77,9 @@
             this.line = new PurchaseOrderDetail
             {
                 Line = 1,
+                OurUnitPriceCurrency = 666m,
                 OrderUnitPriceCurrency = 666,
-                OrderConversionFactor = 1.5m,
+                OrderConversionFactor = 1m,
                 BaseOurUnitPrice = 111,
                 PurchaseDeliveries = new List<PurchaseOrderDelivery>(),
                 OurQty = 10,
@@ -114,7 +118,7 @@
         [Test]
         public void ShouldReturnResult()
         {
-            //Delivery fields
+            // Delivery fields
             this.result.Count().Should().Be(4);
             var updateData = this.updatedDeliveries.First();
             var updated = this.result.First();
@@ -143,9 +147,9 @@
             updated.QuantityOutstanding.Should().Be(
               10);
 
-            //Sum total of the delivery quantities. Ensure both qtys are increased.
-            line.OrderQty.Should().Be(40);
-            line.OurQty.Should().Be(40);
+            // Sum total of the delivery quantities. Ensure both qtys are increased.
+            this.line.OrderQty.Should().Be(40);
+            this.line.OurQty.Should().Be(40);
         }
 
         [Test]

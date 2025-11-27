@@ -155,13 +155,13 @@
                                                }
                              });
 
-            this.Repository.FilterBy(
+            this.PurchaseOrderDeliveryRepository.FilterBy(
                     Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
                 .Returns(
                     deliveriesForFirstOrder,
                    deliveriesForSecondOrder);
 
-            this.Repository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>()).Returns(
+            this.PurchaseOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>()).Returns(
                 deliveriesForFirstOrder.ElementAt(0),
                 deliveriesForFirstOrder.ElementAt(1),
                 deliveriesForFirstOrder.ElementAt(2),

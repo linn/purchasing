@@ -39,6 +39,7 @@
                                              new PurchaseOrderDelivery
                                                  {
                                                      DeliverySeq = 1,
+                                                     OrderDeliveryQty = 10,
                                                      OurDeliveryQty = 10,
                                                      BaseOurUnitPrice = 11,
                                                      DateRequested = 25.March(2022),
@@ -51,12 +52,14 @@
                             {
                                 Line = 1,
                                 OrderUnitPriceCurrency = 666,
-                                OrderConversionFactor = 1.5m,
+                                OurUnitPriceCurrency = 666,
+                                OrderConversionFactor = 1m,
                                 BaseOurUnitPrice = 111,
                                 PurchaseDeliveries = new List<PurchaseOrderDelivery>
                                                          {
                                                              existingDelivery
                                                          },
+                                OrderQty = 10m,
                                 OurQty = 10
                             };
             var order = new PurchaseOrder

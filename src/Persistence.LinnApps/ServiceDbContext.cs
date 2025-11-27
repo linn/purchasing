@@ -800,7 +800,6 @@
             entity.Property(e => e.LogUserNumber).HasColumnName("LOG_USER_NUMBER").HasMaxLength(10);
             entity.Property(e => e.LogAction).HasColumnName("LOG_ACTION").HasMaxLength(50);
             entity.Property(e => e.LogTime).HasColumnName("LOG_TIME");
-        
             entity.Property(e => e.OrderNumber).HasColumnName("ORDER_NUMBER").HasMaxLength(10);
             entity.Property(e => e.Cancelled).HasColumnName("CANCELLED").HasMaxLength(1);
             entity.Property(e => e.FilCancelled).HasColumnName("FIL_CANCELLED").HasMaxLength(1);

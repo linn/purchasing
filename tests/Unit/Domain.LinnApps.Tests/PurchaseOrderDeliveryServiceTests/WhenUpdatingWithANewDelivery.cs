@@ -40,6 +40,7 @@
                                                  {
                                                      DeliverySeq = 1,
                                                      OurDeliveryQty = 10,
+                                                     OrderDeliveryQty = 10,
                                                      BaseOurUnitPrice = 11,
                                                      DateRequested = 25.March(2022),
                                                      AvailableAtSupplier = "N"
@@ -49,8 +50,9 @@
             this.line = new PurchaseOrderDetail
             {
                 Line = 1,
+                OurUnitPriceCurrency = 666m,
                 OrderUnitPriceCurrency = 666,
-                OrderConversionFactor = 1.5m,
+                OrderConversionFactor = 1m,
                 BaseOurUnitPrice = 111,
                 PurchaseDeliveries = new List<PurchaseOrderDelivery>(),
                 OurQty = 10

@@ -44,7 +44,7 @@
                                        }
                                };
 
-            this.Repository.FilterBy(
+            this.PurchaseOrderDeliveryRepository.FilterBy(
                     Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
                 .Returns(
                     new List<PurchaseOrderDelivery>

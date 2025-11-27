@@ -52,7 +52,7 @@
                                    AvailableAtSupplier = "Y"
                                };
 
-            this.Repository.FindById(
+            this.PurchaseOrderDeliveryRepository.FindById(
                 Arg.Is<PurchaseOrderDeliveryKey>(
                     x => x.OrderLine == 1 && x.OrderNumber == 123456 && x.DeliverySequence == 1))
                 .Returns(new PurchaseOrderDelivery
