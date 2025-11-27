@@ -114,7 +114,7 @@
                                                        }
                                                }.AsQueryable();
 
-            this.Repository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>()).Returns(
+            this.PurchaseOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>()).Returns(
                 deliveriesForFirstOrder.ElementAt(0),
                 deliveriesForFirstOrder.ElementAt(1),
                 deliveriesForFirstOrder.ElementAt(2),

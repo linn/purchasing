@@ -16,7 +16,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.Repository.SearchByOrderWithWildcard("12345%").Returns(new List<PurchaseOrderDelivery>
+            this.PurchaseOrderDeliveryRepository.SearchByOrderWithWildcard("12345%").Returns(new List<PurchaseOrderDelivery>
                                                                             {
                                                                                 new PurchaseOrderDelivery
                                                                                     {
@@ -29,7 +29,7 @@
         [Test]
         public void ShouldCallRepoWithWildcard()
         {
-            this.Repository.Received().SearchByOrderWithWildcard("12345%");
+            this.PurchaseOrderDeliveryRepository.Received().SearchByOrderWithWildcard("12345%");
         }
 
         [Test]

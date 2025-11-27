@@ -15,9 +15,11 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingDeliveryForOrderLine : ContextBase
+    public class WhenUpdatingDeliveryForOrderLineWithConvFactor : ContextBase
     {
         private IEnumerable<PurchaseOrderDelivery> result;
+
+        private PurchaseOrder purchaseOrder;
 
         [SetUp]
         public void SetUp()
@@ -27,32 +29,33 @@
                                      new PurchaseOrderDelivery
                                          {
                                              OurDeliveryQty = 100,
+                                             OrderDeliveryQty = 1,
                                              DeliverySeq = 1,
                                              OrderNumber = 1,
                                              DateAdvised = 28.March(1995)
                                          }
                                  };
+            this.purchaseOrder = new PurchaseOrder
+                                     {
+                                         OrderNumber = 1,
+                                         DocumentTypeName = "PO",
+                                         OrderMethod = new OrderMethod { Name = "METHOD" },
+                                         Details = new List<PurchaseOrderDetail>
+                                                       {
+                                                           new PurchaseOrderDetail
+                                                               {
+                                                                   Line = 1,
+                                                                   OurQty = 100,
+                                                                   OrderQty = 1,
+                                                                   OrderConversionFactor = 100,
+                                                                   PurchaseDeliveries = deliveries
+                                                               }
+                                                       }
+                                     };
             this.AuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
             this.MiniOrderRepository.FindById(1).Returns(new MiniOrder());
-            this.PurchaseOrderRepository.FindById(1).Returns(new PurchaseOrder
-                                                                 {
-                                                                     OrderNumber = 1,
-                                                                     DocumentTypeName = "PO",
-                                                                     OrderMethod = new OrderMethod
-                                                                         {
-                                                                             Name = "METHOD"
-                                                                         },
-                                                                     Details = new List<PurchaseOrderDetail>
-                                                                                   {
-                                                                                       new PurchaseOrderDetail
-                                                                                           {
-                                                                                               Line = 1,
-                                                                                               OurQty = 100,
-                                                                                               PurchaseDeliveries = deliveries
-                                                                                           }
-                                                                                   }
-                                                                 });
+            this.PurchaseOrderRepository.FindById(1).Returns(this.purchaseOrder);
             this.PurchaseOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
                 .Returns(deliveries.First());
             this.result = this.Sut.UpdateDeliveriesForOrderLine(
@@ -68,6 +71,13 @@
             this.result.Count().Should().Be(1);
             this.result.First().OurDeliveryQty.Should().Be(100);
             this.result.First().DateAdvised.Should().Be(28.March(1995));
+        }
+
+        [Test]
+        public void ShouldUpdateDetailCorrectly()
+        {
+            this.purchaseOrder.Details.First().OurQty.Should().Be(100);
+            this.purchaseOrder.Details.First().OrderQty.Should().Be(1);
         }
     }
 }

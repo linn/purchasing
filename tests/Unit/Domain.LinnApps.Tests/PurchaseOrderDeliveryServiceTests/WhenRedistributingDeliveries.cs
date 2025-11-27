@@ -31,15 +31,16 @@
         public void SetUp()
         {
             this.existingDelivery = new PurchaseOrderDelivery
-            {
-                OrderNumber = 123456,
-                OurDeliveryQty = 500,
-                OrderDeliveryQty = 500,
-                OurUnitPriceCurrency = 555,
-                DeliverySeq = 1,
-                OrderLine = 1,
-                QuantityOutstanding = 500
-            };
+                                        {
+                                            OrderNumber = 123456,
+                                            OurDeliveryQty = 500,
+                                            OrderDeliveryQty = 500,
+                                            OurUnitPriceCurrency = 555,
+                                            OrderUnitPriceCurrency = 555,
+                                            DeliverySeq = 1,
+                                            OrderLine = 1,
+                                            QuantityOutstanding = 500
+                                        };
 
             this.updatedDeliveries = new List<PurchaseOrderDelivery>
                                          {
@@ -47,6 +48,7 @@
                                                  {
                                                      DeliverySeq = 1,
                                                      OurDeliveryQty = 200,
+                                                     OrderDeliveryQty = 200,
                                                      BaseOurUnitPrice = 11,
                                                      DateRequested = 25.March(2022),
                                                      DateAdvised = 28.March(2022),
@@ -55,6 +57,7 @@
                                              new PurchaseOrderDelivery
                                                  {
                                                      DeliverySeq = 2,
+                                                     OrderDeliveryQty = 200,
                                                      OurDeliveryQty = 200,
                                                      BaseOurUnitPrice = 11,
                                                      DateRequested = 25.March(2022),
@@ -64,6 +67,7 @@
                                              new PurchaseOrderDelivery
                                                  {
                                                      DeliverySeq = 3,
+                                                     OrderDeliveryQty = 100,
                                                      OurDeliveryQty = 100,
                                                      BaseOurUnitPrice = 11,
                                                      DateRequested = 25.March(2022),
@@ -75,14 +79,16 @@
             this.line = new PurchaseOrderDetail
             {
                 Line = 1,
-                OrderUnitPriceCurrency = 666,
-                OrderConversionFactor = 1.5m,
+                OurUnitPriceCurrency = 666m,
+                OrderUnitPriceCurrency = 666m,
+                OrderConversionFactor = 1m,
                 BaseOurUnitPrice = 111,
                 PurchaseDeliveries = new List<PurchaseOrderDelivery>
                                                          {
                                                              this.existingDelivery
                                                          },
-                OurQty = 500
+                OurQty = 500,
+                OrderQty = 500
             };
             this.order = new PurchaseOrder
             {
@@ -97,7 +103,7 @@
                     AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
-            this.Repository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
+            this.PurchaseOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
                 .Returns(this.existingDelivery);
 
             this.MiniOrderRepository.FindById(this.order.OrderNumber).Returns(new MiniOrder { });

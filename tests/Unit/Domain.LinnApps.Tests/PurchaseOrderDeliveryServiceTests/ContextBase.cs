@@ -4,6 +4,7 @@
     using System.Linq;
 
     using Linn.Common.Authorisation;
+    using Linn.Common.Logging;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Keys;
@@ -17,7 +18,7 @@
 
     public class ContextBase
     {
-        protected IPurchaseOrderDeliveryRepository Repository { get; private set; }
+        protected IPurchaseOrderDeliveryRepository PurchaseOrderDeliveryRepository { get; private set; }
 
         protected IEnumerable<PurchaseOrderDelivery> Data { get; private set; }
 
@@ -37,29 +38,33 @@
 
         protected IPurchaseOrderService PurchaseOrderService { get; private set; }
 
+        protected ILog Log { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
-            this.Repository = Substitute.For<IPurchaseOrderDeliveryRepository>();
+            this.PurchaseOrderDeliveryRepository = Substitute.For<IPurchaseOrderDeliveryRepository>();
             this.AuthService = Substitute.For<IAuthorisationService>();
             this.PurchaseLedgerMaster = Substitute.For<ISingleRecordRepository<PurchaseLedgerMaster>>();
             this.MiniOrderRepository = Substitute.For<IRepository<MiniOrder, int>>();
             this.MiniOrderDeliveryRepository = Substitute.For<IRepository<MiniOrderDelivery, MiniOrderDeliveryKey>>();
             this.PurchaseOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
             this.Data = PurchaseOrderDeliveryTestData.BuildData();
-            this.Repository.FindAll().Returns(this.Data.AsQueryable());
+            this.PurchaseOrderDeliveryRepository.FindAll().Returns(this.Data.AsQueryable());
             this.PurchaseOrdersPack = Substitute.For<IPurchaseOrdersPack>();
             this.PurchaseOrderService = Substitute.For<IPurchaseOrderService>();
+            this.Log = Substitute.For<ILog>();
 
             this.Sut = new PurchaseOrderDeliveryService(
-                this.Repository, 
+                this.PurchaseOrderDeliveryRepository, 
                 this.AuthService, 
                 this.PurchaseLedgerMaster,
                 this.MiniOrderRepository,
                 this.MiniOrderDeliveryRepository,
                 this.PurchaseOrderRepository,
                 this.PurchaseOrdersPack,
-                this.PurchaseOrderService);
+                this.PurchaseOrderService,
+                this.Log);
         }
     }
 }

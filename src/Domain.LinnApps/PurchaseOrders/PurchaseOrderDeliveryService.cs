@@ -5,6 +5,7 @@
     using System.Linq;
 
     using Linn.Common.Authorisation;
+    using Linn.Common.Logging;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
@@ -30,6 +31,8 @@
 
         private readonly IPurchaseOrderService purchaseOrderService;
 
+        private readonly ILog log;
+
         public PurchaseOrderDeliveryService(
             IPurchaseOrderDeliveryRepository repository,
             IAuthorisationService authService,
@@ -38,7 +41,8 @@
             IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> miniOrderDeliveryRepository,
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
             IPurchaseOrdersPack purchaseOrdersPack,
-            IPurchaseOrderService purchaseOrderService)
+            IPurchaseOrderService purchaseOrderService,
+            ILog log)
         {
             this.repository = repository;
             this.authService = authService;
@@ -48,6 +52,7 @@
             this.purchaseOrderRepository = purchaseOrderRepository;
             this.purchaseOrdersPack = purchaseOrdersPack;
             this.purchaseOrderService = purchaseOrderService;
+            this.log = log;
         }
 
         public IEnumerable<PurchaseOrderDelivery> SearchDeliveries(
@@ -116,6 +121,7 @@
             }
 
             var entity = this.repository.FindById(key);
+            this.log.Info($"Updating delivery for {key.OrderNumber} (UpdateDelivery)");
 
             if (from.DateAdvised != to.DateAdvised)
             {
@@ -182,6 +188,7 @@
 
             foreach (var group in orderLineGroups)
             {
+                this.log.Info($"Updating deliveries for {group.OrderNumber} (UploadDeliveries)");
                 var existingDeliveries = this.repository.FilterBy(
                     x => x.OrderNumber == group.OrderNumber && x.OrderLine == group.OrderLine);
 
@@ -348,6 +355,8 @@
 
             foreach (var group in orderLineGroups)
             {
+                this.log.Info($"Updating deliveries for {group.OrderNumber} (UpdateDeliveries)");
+
                 foreach (var u in group.DeliveryUpdates)
                 {
                     var deliveryToUpdate = this.repository.FindBy(x =>
@@ -395,6 +404,8 @@
                 throw new UnauthorisedActionException("You are not authorised to update deliveries");
             }
 
+            this.log.Info($"Updating deliveries for order line {orderNumber}/{orderLine} (UpdateDeliveriesForOrderLine)");
+
             var order = this.purchaseOrderRepository
                 .FindById(orderNumber);
             var detail = order?.Details?.SingleOrDefault(x => x.Line == orderLine);
@@ -422,8 +433,13 @@
 
             var updatedDeliveriesForOrderLine = updated.ToList();
 
-            detail.OrderQty = updatedDeliveriesForOrderLine.Sum(x => x.OurDeliveryQty.GetValueOrDefault());
+            detail.OrderQty = updatedDeliveriesForOrderLine.Sum(x => x.OrderDeliveryQty.GetValueOrDefault());
             detail.OurQty = updatedDeliveriesForOrderLine.Sum(x => x.OurDeliveryQty.GetValueOrDefault());
+
+            if (detail.OurQty * detail.OurUnitPriceCurrency != detail.OrderQty * detail.OrderUnitPriceCurrency)
+            {
+                throw new PurchaseOrderDeliveryException($"Cannot update quantity on order line {detail.OrderNumber}/{detail.Line}. {detail.OurQty * detail.OurUnitPriceCurrency} vs {detail.OrderQty * detail.OrderUnitPriceCurrency}. It has conversion factor {detail.OrderConversionFactor} .");
+            }
 
             var list = detail.PurchaseDeliveries.ToArray();
 

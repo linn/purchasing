@@ -52,6 +52,7 @@
                                                  {
                                                      DeliverySeq = 1,
                                                      OurDeliveryQty = 10,
+                                                     OrderDeliveryQty = 10,
                                                      BaseOurUnitPrice = 11,
                                                      DateRequested = 25.March(2022),
                                                      DateAdvised = 28.March(2022),
@@ -62,8 +63,9 @@
             this.line = new PurchaseOrderDetail
                             {
                                 Line = 1,
+                                OurUnitPriceCurrency = 666,
                                 OrderUnitPriceCurrency = 666,
-                                OrderConversionFactor = 1.5m,
+                                OrderConversionFactor = 1m,
                                 BaseOurUnitPrice = 111,
                                 PurchaseDeliveries = new List<PurchaseOrderDelivery>
                                                          {
@@ -93,7 +95,7 @@
                     AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
-            this.Repository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
+            this.PurchaseOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
                 .Returns(this.existingDelivery);
 
             this.MiniOrderRepository.FindById(this.order.OrderNumber).Returns(new MiniOrder { });
