@@ -1,8 +1,6 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Globalization;
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Boms;
