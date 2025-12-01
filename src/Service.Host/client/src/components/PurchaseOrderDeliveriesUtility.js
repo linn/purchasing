@@ -199,7 +199,8 @@ function PurchaseOrderDeliveriesUtility({
                     }}
                     processRowUpdate={newRow => {
                         setChangesMade(true);
-                        setRows(r => r.map(x => (x.id === newRow.id ? newRow : x)));
+                        const rowToSave = { ...newRow, orderDeliveryQty: newRow.ourDeliveryQty };
+                        setRows(r => r.map(x => (x.id === newRow.id ? rowToSave : x)));
                         return newRow;
                     }}
                 />
