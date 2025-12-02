@@ -283,6 +283,8 @@
 
                     if (resource.To.Cancelled == "N")
                     {
+                        logAction = "Un-Cancel";
+
                         order = this.domainService.UnCancelOrder(resource.From.OrderNumber, privilegesList);
                     }
                 }
@@ -314,6 +316,7 @@
                         {
                             if (purchaseOrderDetailResource.FilCancelled == "Y")
                             {
+                                logAction = "Fil-Cancel";
                                 order = this.domainService.FilCancelLine(
                                     resource.From.OrderNumber,
                                     purchaseOrderDetailResource.Line,
@@ -323,7 +326,7 @@
                             }
                             else
                             {
-                                logAction = "Un-Cancel";
+                                logAction = "Fil-Un-Cancel";
 
                                 order = this.domainService.UnFilCancelLine(
                                     resource.From.OrderNumber,
