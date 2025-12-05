@@ -17,6 +17,7 @@
                     Arg.Is<string>(
                         x => x.Equals(AuthorisedAction.SupplierCreate) 
                              || x.Equals(AuthorisedAction.SupplierUpdate)
+                             || x.Equals(AuthorisedAction.PurchaseLedgerAdmin)
                              || x.Equals(AuthorisedAction.SupplierClose)
                              || x.Equals(AuthorisedAction.SupplierHoldChange)), 
                     Arg.Any<IEnumerable<string>>())

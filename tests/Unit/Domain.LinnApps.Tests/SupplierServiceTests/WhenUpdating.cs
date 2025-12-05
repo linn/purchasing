@@ -40,7 +40,10 @@
 
             this.partCategory = new PartCategory { Category = "CAT" };
 
-            this.address = new Address { AddressId = 1, FullAddress = new FullAddress { AddressString = "ADDRESS", Id = 1 } };
+            this.address = new Address
+                               {
+                                   AddressId = 1, FullAddress = new FullAddress { AddressString = "ADDRESS", Id = 1 }
+                               };
 
             this.invAddress = new FullAddress { AddressString = "ADDRESS", Id = 2 };
 

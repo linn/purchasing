@@ -1,9 +1,11 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.SupplierServiceTests
 {
+    using System;
     using System.Collections.Generic;
 
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -11,13 +13,15 @@
 
     using NUnit.Framework;
 
-    public class WhenClosingASupplier : AuthorisedContext
+    public class WhenChangingFinanceOnlyFieldAndNotAuthorised : AuthorisedContext
     {
         private Supplier current;
 
         private Supplier updated;
 
         private Currency currency;
+
+        private Action action;
 
         private Address address;
 
@@ -28,11 +32,12 @@
         {
             this.currency = new Currency { Code = "USD" };
             this.current = new Supplier { SupplierId = 1, Name = "SUPPLIER" };
+
             this.address = new Address { FullAddress = new FullAddress { AddressString = "ADDRESS", Id = 1 } };
 
             this.updated = new Supplier
             {
-                Name = "SUPPLIER",
+                Name = "Supplier new name",
                 SupplierId = 1,
                 Currency = this.currency,
                 VendorManager = new VendorManager { Id = "V" },
@@ -45,7 +50,7 @@
                                        {
                                            new SupplierContact
                                                {
-                                                   IsMainInvoiceContact = "Y", 
+                                                   IsMainInvoiceContact = "Y",
                                                    IsMainOrderContact = "Y",
                                                    Person = new Person()
                                                }
@@ -56,8 +61,6 @@
                 OrderHold = "Y",
                 OrderAddress = this.address,
                 AccountController = new Employee { Id = 123 },
-                ReasonClosed = "SHUT DOWN",
-                ClosedBy = new Employee { Id = 33087 }
             };
 
             this.MockCurrencyRepository
@@ -66,15 +69,20 @@
             this.privileges = new List<string> { "priv" };
             this.VendorManagerRepository.FindById("V").Returns(new VendorManager { Id = "V" });
             this.EmployeeRepository.FindById(33087).Returns(new Employee { Id = 33087 });
-            this.Sut.UpdateSupplier(this.current, this.updated, this.privileges);
+
+            this.MockAuthorisationService.HasPermissionFor(
+                    Arg.Is<string>(x => x == AuthorisedAction.PurchaseLedgerAdmin),
+                    Arg.Any<IEnumerable<string>>())
+                .Returns(false);
+
+            this.action = () => this.Sut.UpdateSupplier(this.current, this.updated, this.privileges);
         }
 
         [Test]
-        public void ShouldUpdateClosedFields()
+        public void ShouldThrowUnauthorisedActionException()
         {
-            this.current.ClosedBy.Id.Should().Be(33087);
-            this.current.ReasonClosed.Should().Be(this.updated.ReasonClosed);
-            this.current.DateClosed.Should().NotBeNull();
+            this.action.Should().Throw<UnauthorisedActionException>()
+                .WithMessage("You are not authorised to change a supplier name");
         }
     }
 }

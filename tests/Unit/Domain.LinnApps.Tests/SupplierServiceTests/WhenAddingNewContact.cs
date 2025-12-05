@@ -39,7 +39,7 @@
 
             this.updated = new Supplier
             {
-                Name = "NEW NAME",
+                Name = "SUPPLIER",
                 SupplierId = 1,
                 Country = "GB",
                 VendorManager = new VendorManager { Id = "V" },

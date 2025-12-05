@@ -103,7 +103,16 @@
 
             ValidateFields(updated);
 
-            current.Name = updated.Name;
+            if (current.Name != updated.Name)
+            {
+                if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseLedgerAdmin, privilegesList))
+                {
+                    throw new UnauthorisedActionException("You are not authorised to change a supplier name");
+                }
+
+                current.Name = updated.Name;
+            }
+
             current.Currency = updated.Currency;
             current.WebAddress = updated.WebAddress;
             current.Planner = updated.Planner;
