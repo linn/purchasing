@@ -41,7 +41,7 @@
 
             this.updated = new Supplier
             {
-                Name = "NEW NAME",
+                Name = "SUPPLIER",
                 SupplierId = 1,
                 VendorManager = new VendorManager { Id = "V" },
                 InvoiceContactMethod = "POST",

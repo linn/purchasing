@@ -28,6 +28,7 @@
 
             this.currentSupplier = new Supplier
                                        {
+                                           Name = "SUPP",
                                            SupplierId = 666,
                                            SupplierContacts = new SupplierContact[]
                                                                   {

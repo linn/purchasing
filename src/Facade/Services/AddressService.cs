@@ -84,6 +84,7 @@
             }
             
             return x => (x.Addressee.ToUpper().Contains(searchResource.Addressee.ToUpper()) 
+                        || x.Line1.ToUpper().Contains(searchResource.Line1.ToUpper())
                         || x.PostCode.ToUpper() == searchResource.PostCode.ToUpper())
                         && !x.DateInvalid.HasValue;
         }

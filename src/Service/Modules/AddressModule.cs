@@ -57,6 +57,7 @@
                     {
                         AddressId = int.TryParse(searchTerm, out var id) ? id : null,
                         Addressee = searchTerm?.Trim(),
+                        Line1 = searchTerm?.Trim(),
                         PostCode = searchTerm?.Trim()
                     });
 
