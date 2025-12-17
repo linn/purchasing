@@ -15,6 +15,7 @@ if [ "${TRAVIS_BRANCH}" = "main" ]; then
     aws s3 cp s3://$S3_BUCKET_NAME/purchasing/production.env ./secrets.env
 
     STACK_NAME=purchasing
+    LEGACY_AUTHORITY_URI=https://www.linn.co.uk/auth/
     APP_ROOT=http://app.linn.co.uk
     PROXY_ROOT=http://app.linn.co.uk
   	ENV_SUFFIX=
@@ -25,6 +26,7 @@ if [ "${TRAVIS_BRANCH}" = "main" ]; then
     aws s3 cp s3://$S3_BUCKET_NAME/purchasing/sys.env ./secrets.env
 
     STACK_NAME=purchasing-sys
+    LEGACY_AUTHORITY_URI=https://www-sys.linn.co.uk/auth/
     APP_ROOT=http://app-sys.linn.co.uk
     PROXY_ROOT=http://app.linn.co.uk
     ENV_SUFFIX=-sys
@@ -38,6 +40,6 @@ fi
 source ./secrets.env > /dev/null 2>&1
 
 # deploy the service to amazon
-aws cloudformation deploy --stack-name $STACK_NAME --template-file ./aws/application.yml --parameter-overrides dockerTag=$TRAVIS_BUILD_NUMBER databaseHost=$DATABASE_HOST databaseName=$DATABASE_NAME databaseUserId=$DATABASE_USER_ID databasePassword=$DATABASE_PASSWORD rabbitServer=$RABBIT_SERVER rabbitPort=$RABBIT_PORT rabbitUsername=$RABBIT_USERNAME rabbitPassword=$RABBIT_PASSWORD appRoot=$APP_ROOT proxyRoot=$PROXY_ROOT authorityUri=$AUTHORITY_URI loggingEnvironment=$LOG_ENVIRONMENT loggingMaxInnerExceptionDepth=$LOG_MAX_INNER_EXCEPTION_DEPTH smtpHostname=$SMTP_HOSTNAME pdfServiceRoot=$PDF_SERVICE_ROOT htmlToPdfApiConversionEndpoint=$HTML_TO_PDF_API_CONVERSION_ENDPOINT viewsRoot=$VIEWS_ROOT purchasingFromAddress=$PURCHASING_FROM_ADDRESS logisticsToAddress=$LOGISTICS_TO_ADDRESS orderBookTestAddress=$ORDER_BOOK_TEST_ADDRESS acknowledgementsBcc=$ACKNOWLEDGEMENTS_BCC environmentSuffix=$ENV_SUFFIX --capabilities=CAPABILITY_IAM
+aws cloudformation deploy --stack-name $STACK_NAME --template-file ./aws/application.yml --parameter-overrides dockerTag=$TRAVIS_BUILD_NUMBER databaseHost=$DATABASE_HOST databaseName=$DATABASE_NAME databaseUserId=$DATABASE_USER_ID databasePassword=$DATABASE_PASSWORD rabbitServer=$RABBIT_SERVER rabbitPort=$RABBIT_PORT rabbitUsername=$RABBIT_USERNAME rabbitPassword=$RABBIT_PASSWORD appRoot=$APP_ROOT proxyRoot=$PROXY_ROOT legacyAuthorityUri=$LEGACY_AUTHORITY_URI cognitoHost=$COGNITO_HOST cognitoClientId=$COGNITO_CLIENT_ID cognitoDomainPrefix=$COGNITO_DOMAIN_PREFIX entraLogoutUri=$ENTRA_LOGOUT_URI authorityUri=$AUTHORITY_URI loggingEnvironment=$LOG_ENVIRONMENT loggingMaxInnerExceptionDepth=$LOG_MAX_INNER_EXCEPTION_DEPTH smtpHostname=$SMTP_HOSTNAME pdfServiceRoot=$PDF_SERVICE_ROOT htmlToPdfApiConversionEndpoint=$HTML_TO_PDF_API_CONVERSION_ENDPOINT viewsRoot=$VIEWS_ROOT purchasingFromAddress=$PURCHASING_FROM_ADDRESS logisticsToAddress=$LOGISTICS_TO_ADDRESS orderBookTestAddress=$ORDER_BOOK_TEST_ADDRESS acknowledgementsBcc=$ACKNOWLEDGEMENTS_BCC environmentSuffix=$ENV_SUFFIX --capabilities=CAPABILITY_IAM
 
 echo "deploy complete"

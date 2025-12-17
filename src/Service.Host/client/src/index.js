@@ -32,7 +32,8 @@ function App() {
 
             if (
                 (!user || user.expired) &&
-                window.location.pathname !== '/purchasing/signin-oidc-client'
+                window.location.pathname !== '/purchasing/auth/' &&
+                window.location.pathname !== '/purchasing/auth/logged-out'
             ) {
                 try {
                     await userManager.signinSilent();

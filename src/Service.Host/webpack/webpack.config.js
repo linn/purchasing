@@ -16,8 +16,7 @@ module.exports = {
             'webpack-dev-server/client?http://localhost:3000', // bundle the client for webpack-dev-server and connect to the provided endpoint
             //'webpack/hot/only-dev-server', // bundle the client for hot reloading (only- means to only hot reload for successful updates)
             './client/src/index.js' // the entry point of our app
-        ],
-        'silent-renew': './client/silent-renew/index.js'
+        ]
     },
     output: {
         path: path.join(__dirname, '../client/build'),

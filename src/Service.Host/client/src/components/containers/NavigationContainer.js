@@ -10,8 +10,9 @@ import {
 } from '@linn-it/linn-form-components-library';
 import Navigation from '../common/Navigation';
 import config from '../../config';
+import userManager from '../../helpers/userManager';
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
     const myStuff = menuSelectors.getMyStuff(state);
 
     // don't render the old sign out link
@@ -33,7 +34,7 @@ const mapStateToProps = (state, ownProps) => {
         loading: menuSelectors.getMenuLoading(state),
         seenNotifications: newsSelectors.getSeenNotifications(state),
         unseenNotifications: newsSelectors.getUnseenNotifications(state),
-        handleSignOut: ownProps.handleSignOut
+        handleSignOut: userManager.signOut()
     };
 };
 

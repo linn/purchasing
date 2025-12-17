@@ -105,6 +105,7 @@ import BomPrintReport from './reports/BomPrintReport';
 import VendorManager from './VendorManager';
 import VendorManagers from './VendorManagers';
 import NavigationContainer from './containers/NavigationContainer';
+import LoggedOut from './LoggedOut';
 
 function Root({ store }) {
     return (
@@ -125,18 +126,12 @@ function Root({ store }) {
                                         path="/"
                                         element={<Navigate to="/purchasing" replace />}
                                     />
-                                    <Route
-                                        exact
-                                        path="/purchasing/signin-oidc-client"
-                                        element={<Callback />}
-                                    />
+                                    <Route exact path="/purchasing/auth" element={<Callback />} />
 
                                     <Route
-                                        exact
-                                        path="/accounts/signin-oidc-client"
-                                        element={<Callback />}
+                                        path="/purchasing/auth/logged-out"
+                                        element={<LoggedOut />}
                                     />
-
                                     <Route
                                         exact
                                         path="/purchasing/suppliers"
