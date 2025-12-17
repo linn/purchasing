@@ -10,7 +10,7 @@ import {
 } from '@linn-it/linn-form-components-library';
 import Navigation from '../common/Navigation';
 import config from '../../config';
-import userManager from '../../helpers/userManager';
+import { signOut } from '../../helpers/userManager';
 
 const mapStateToProps = state => {
     const myStuff = menuSelectors.getMyStuff(state);
@@ -34,7 +34,7 @@ const mapStateToProps = state => {
         loading: menuSelectors.getMenuLoading(state),
         seenNotifications: newsSelectors.getSeenNotifications(state),
         unseenNotifications: newsSelectors.getUnseenNotifications(state),
-        handleSignOut: userManager.signOut()
+        handleSignOut: signOut
     };
 };
 

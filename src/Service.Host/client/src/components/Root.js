@@ -114,9 +114,7 @@ function Root({ store }) {
                 <Provider store={store}>
                     <OidcProvider store={store} userManager={userManager}>
                         <>
-                            <NavigationContainer
-                                handleSignOut={() => userManager.signoutRedirect()}
-                            />
+                            <NavigationContainer />
 
                             <HistoryRouter history={history}>
                                 <Routes>
