@@ -117,13 +117,14 @@
 
         private IEnumerable<LinkResource> BuildLinks(PurchaseOrderDetail item, IEnumerable<string> claims)
         {
+            // can move this back inside the below if statement once purchasing auth is migrated to cognito
+            if (item.CanBeAutoBooked())
+            {
+                yield return new LinkResource { Rel = "auto-book-in", Href = "/ledgers/purchase/auto-book-stock" };
+            }
+
             if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseLedgerAdmin, claims))
             {
-                if (item.CanBeAutoBooked())
-                {
-                    yield return new LinkResource { Rel = "auto-book-in", Href = "/ledgers/purchase/auto-book-stock" };
-                }
-
                 if (item.CanSwitchOurQtyAndOurPrice())
                 {
                     yield return new LinkResource
