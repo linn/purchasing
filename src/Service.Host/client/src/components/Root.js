@@ -105,6 +105,7 @@ import BomPrintReport from './reports/BomPrintReport';
 import VendorManager from './VendorManager';
 import VendorManagers from './VendorManagers';
 import NavigationContainer from './containers/NavigationContainer';
+import LoggedOut from './LoggedOut';
 
 function Root({ store }) {
     return (
@@ -113,9 +114,7 @@ function Root({ store }) {
                 <Provider store={store}>
                     <OidcProvider store={store} userManager={userManager}>
                         <>
-                            <NavigationContainer
-                                handleSignOut={() => userManager.signoutRedirect()}
-                            />
+                            <NavigationContainer />
 
                             <HistoryRouter history={history}>
                                 <Routes>
@@ -125,18 +124,12 @@ function Root({ store }) {
                                         path="/"
                                         element={<Navigate to="/purchasing" replace />}
                                     />
-                                    <Route
-                                        exact
-                                        path="/purchasing/signin-oidc-client"
-                                        element={<Callback />}
-                                    />
+                                    <Route exact path="/purchasing/auth" element={<Callback />} />
 
                                     <Route
-                                        exact
-                                        path="/accounts/signin-oidc-client"
-                                        element={<Callback />}
+                                        path="/purchasing/auth/logged-out"
+                                        element={<LoggedOut />}
                                     />
-
                                     <Route
                                         exact
                                         path="/purchasing/suppliers"

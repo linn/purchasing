@@ -10,9 +10,21 @@ Parameters:
   proxyRoot:
     Type: String
     Description: proxy root
-  authorityUri:
+  cognitoHost:
     Type: String
-    Description: OIDC authority uri
+    Description: Cognito host
+  cognitoClientId:
+    Type: String
+    Description: Cognito client id
+  cognitoDomainPrefix:
+    Type: String
+    Description: Cognito domain prefix
+  entraLogoutUri:
+    Type: String
+    Description: Entra logout uri
+  legacyAuthorityUri:
+    Type: String
+    Description: Legacy OIDC authority uri
   databaseHost:
     Type: String
     Description: Database host
@@ -163,8 +175,16 @@ Resources:
           Value: !Ref appRoot
         - Name: PROXY_ROOT
           Value: !Ref proxyRoot
-        - Name: AUTHORITY_URI
-          Value: !Ref authorityUri
+        - Name: LEGACY_AUTHORITY_URI
+          Value: !Ref legacyAuthorityUri
+        - Name: COGNITO_HOST
+          Value: !Ref cognitoHost
+        - Name: COGNITO_CLIENT_ID
+          Value: !Ref cognitoClientId
+        - Name: COGNITO_DOMAIN_PREFIX
+          Value: !Ref cognitoDomainPrefix
+        - Name: ENTRA_LOGOUT_URI
+          Value: !Ref entraLogoutUri
         - Name: SMTP_HOSTNAME
           Value: !Ref smtpHostname
         - Name: PDF_SERVICE_ROOT

@@ -1,3 +1,6 @@
+using Linn.Purchasing.Service.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 namespace Linn.Purchasing.Service.Host
 {
     using System.IdentityModel.Tokens.Jwt;
@@ -50,13 +53,51 @@ namespace Linn.Purchasing.Service.Host
             services.AddMessageDispatchers();
 
             services.AddCarter();
+            
+            var appSettings = ApplicationSettings.Get();
+
+            const string LegacyJwtScheme = JwtBearerDefaults.AuthenticationScheme;
+            
             services.AddLinnAuthentication(
                 options =>
                     {
-                        options.Authority = ConfigurationManager.Configuration["AUTHORITY_URI"];
+                        options.Authority = ConfigurationManager.Configuration["LEGACY_AUTHORITY_URI"];
                         options.CallbackPath = new PathString("/purchasing/signin-oidc");
                         options.CookiePath = "/purchasing";
                     });
+            
+            services.AddAuthentication().AddJwtBearer(
+                "cognito-provider",
+                options =>
+                {
+                    options.Authority = appSettings.CognitoHost;
+                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = appSettings.CognitoHost,
+                        ValidateAudience = false,
+                        ValidAudience = appSettings.CognitoClientId,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true
+                    };
+                    options.MetadataAddress = $"{appSettings.CognitoHost}/.well-known/openid-configuration";
+                });
+
+            services.AddAuthentication(
+                options =>
+                {
+                    options.DefaultScheme = "MultiAuth";
+                    options.DefaultChallengeScheme = "MultiAuth";
+                }).AddScheme<MultiAuthOptions, MultiAuthHandler>(
+                "MultiAuth",
+                opts =>
+                {
+                    opts.CognitoIssuer = appSettings.CognitoHost;
+                    opts.CognitoScheme = "cognito-provider";
+                    opts.LegacyScheme = LegacyJwtScheme;
+                });
+
+            services.AddAuthorization();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
