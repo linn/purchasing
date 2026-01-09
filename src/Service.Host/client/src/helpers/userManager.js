@@ -41,21 +41,13 @@ export const signOut = () => {
     )}`;
 };
 
-export const signOutEntra = () => {
+export const signOutEntra = async () => {
     const { entraLogoutUri } = config;
+    await userManager.removeUser();
+
     window.location.href = `${entraLogoutUri}?post_logout_redirect_uri=${encodeURIComponent(
         logoutUri
     )}`;
-};
-
-userManager.signoutRedirect = async () => {
-    await userManager.removeUser();
-    signOut();
-};
-
-userManager.signOut = async () => {
-    await userManager.removeUser();
-    signOut();
 };
 
 export default userManager;
