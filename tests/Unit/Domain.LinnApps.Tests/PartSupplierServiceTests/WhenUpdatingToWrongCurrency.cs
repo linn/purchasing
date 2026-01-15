@@ -6,14 +6,17 @@
     using FluentAssertions;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
     using NUnit.Framework;
 
-    public class WhenUpdating : ContextBase
+    public class WhenUpdatingToWrongCurrency : ContextBase
     {
+        private readonly Currency supplierCurrency = new Currency { Code = "GBP" };
+        
         private readonly Currency newCurrency = new Currency { Code = "USD" };
 
         private readonly FullAddress newFullAddress = new FullAddress { Id = 1 };
@@ -28,6 +31,8 @@
 
         private PartSupplier updated;
 
+        private Action action;
+
         [SetUp]
         public void SetUp()
         {
@@ -38,7 +43,7 @@
                                    SupplierDesignation = string.Empty,
                                    OrderMethod = new OrderMethod(),
                                    DeliveryFullAddress = new FullAddress(),
-                                   Currency = this.newCurrency,
+                                   Currency = this.supplierCurrency,
                                    CreatedBy = new Employee { Id = 33087 },
                                    MinimumOrderQty = 1m,
                                    LeadTimeWeeks = 1,
@@ -77,29 +82,16 @@
                 .Returns(
                     new Part { DecrementRule = "YES", BomType = "B" });
             this.SupplierRepository.FindById(1)
-                .Returns(new Supplier { SupplierId = 1, Currency = this.newCurrency });
+                .Returns(new Supplier { SupplierId = 1, Currency = this.supplierCurrency });
 
-            this.Sut.UpdatePartSupplier(this.current, this.updated, new List<string>());
+            this.action = () => this.Sut.UpdatePartSupplier(this.current, this.updated, new List<string>());
         }
 
         [Test]
-        public void ShouldPerformLookUps()
+        public void ShouldThrowException()
         {
-            this.SupplierRepository.Received().FindById(1);
-            this.AddressRepository.Received().FindById(this.newFullAddress.Id);
-            this.OrderMethodRepository.Received().FindById(this.newOrderMethod.Name);
-        }
-
-        [Test]
-        public void ShouldUpdate()
-        {
-            this.current.SupplierDesignation.Should().Be("We updated this to this.");
-            this.current.Currency.Code.Should().Be(this.newCurrency.Code);
-            this.current.OrderMethod.Name.Should().Be(this.newOrderMethod.Name);
-            this.current.DeliveryFullAddress.Id.Should().Be(this.newFullAddress.Id);
-            this.current.MadeInvalidBy.Id.Should().Be(this.madeInvalidBy.Id);
-            this.current.Manufacturer.Code.Should().Be(this.manufacturer.Code);
-            this.current.UnitOfMeasure.Should().Be("NEW");
+            this.action.Should().Throw<PartSupplierException>()
+                .WithMessage("Supplier 1 has currency GBP. Cannot update part supplier to currency USD.");
         }
     }
 }

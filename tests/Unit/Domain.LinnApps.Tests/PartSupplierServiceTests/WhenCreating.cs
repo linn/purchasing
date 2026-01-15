@@ -21,9 +21,12 @@
 
         private PartSupplier result;
 
+        private Currency currency;
+
         [SetUp]
         public void SetUp()
         {
+            this.currency = new Currency { Code = "GBP" };
             this.candidate = new PartSupplier
                                  {
                                      PartNumber = "PART", 
@@ -39,13 +42,13 @@
                                      MinimumDeliveryQty = 1m,
                                      OrderMethod = new OrderMethod { Name = "METHOD" },
                                      Part = new Part { PartNumber = "PART" },
-                                     Currency = new Currency { Code = "GBP" }
+                                     Currency = this.currency
             };
 
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { PartNumber = "PART", Description = "DESC" });
             this.SupplierRepository.FindById(1)
-                .Returns(new Supplier { SupplierId = 1, Name = "A SUPPLIER" });
+                .Returns(new Supplier { SupplierId = 1, Name = "A SUPPLIER", Currency = this.currency });
             this.MockAuthService.HasPermissionFor(
                     AuthorisedAction.PartSupplierCreate, 
                     Arg.Any<IEnumerable<string>>())
@@ -57,6 +60,7 @@
         public void ShouldReturnCreated()
         {
             this.result.SupplierId.Should().Be(1);
+            this.result.Currency.Code.Should().Be(this.currency.Code);
             this.result.PartNumber.Should().Be("PART");
             this.result.SupplierDesignation.Should().Be("1234567");
             this.result.OverbookingAllowed.Should().Be("Y");

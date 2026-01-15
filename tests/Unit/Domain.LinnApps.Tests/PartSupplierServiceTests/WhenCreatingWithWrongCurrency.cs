@@ -8,6 +8,7 @@
 
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -15,47 +16,57 @@
 
     using NUnit.Framework;
 
-    public class WhenCreatingAndNoDesignation : ContextBase
+    public class WhenCreatingWithWrongCurrency : ContextBase
     {
         private PartSupplier candidate;
 
-        private PartSupplier result;
+        private Currency candidateCurrency;
+
+        private Action action;
+
+        private Currency supplierCurrency;
 
         [SetUp]
         public void SetUp()
         {
+            this.candidateCurrency = new Currency { Code = "GBP" };
+            this.supplierCurrency = new Currency { Code = "USD" };
             this.candidate = new PartSupplier
                                  {
-                                     PartNumber = "PART",
-                                     SupplierId = 1,
+                                     PartNumber = "PART", 
+                                     SupplierId = 1, 
                                      MinimumOrderQty = 10,
                                      CreatedBy = new Employee { Id = 33087 },
                                      OrderIncrement = 1m,
                                      LeadTimeWeeks = 1,
                                      DateCreated = DateTime.UnixEpoch,
+                                     SupplierDesignation = "1234567",
                                      CurrencyUnitPrice = 1m,
                                      DamagesPercent = 0m,
                                      MinimumDeliveryQty = 1m,
                                      OrderMethod = new OrderMethod { Name = "METHOD" },
                                      Part = new Part { PartNumber = "PART" },
-                                     Currency = new Currency { Code = "GBP" }
-                                 };
+                                     Currency = this.candidateCurrency
+            };
 
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { PartNumber = "PART", Description = "DESC" });
             this.SupplierRepository.FindById(1)
-                .Returns(new Supplier { SupplierId = 1, Name = "A SUPPLIER", Currency = new Currency { Code = "GBP" } });
+                .Returns(new Supplier { SupplierId = 1, Name = "A SUPPLIER", Currency = this.supplierCurrency });
             this.MockAuthService.HasPermissionFor(
-                    AuthorisedAction.PartSupplierCreate,
+                    AuthorisedAction.PartSupplierCreate, 
                     Arg.Any<IEnumerable<string>>())
                 .Returns(true);
-            this.result = this.Sut.CreatePartSupplier(this.candidate, new List<string>());
+
+            this.action = () => this.Sut.CreatePartSupplier(this.candidate, new List<string>());
         }
 
         [Test]
-        public void ShouldDefaultToPartsDescription()
+        public void ShouldThrowException()
         {
-            this.result.SupplierDesignation.Should().Be("DESC");
+            this.action.Should()
+                .Throw<PartSupplierException>()
+                .WithMessage("Supplier 1 has currency USD. Cannot create a part supplier with currency GBP.");
         }
     }
 }

@@ -86,6 +86,8 @@
             updated.CreatedBy = current.CreatedBy;
             ValidateFields(updated);
 
+            var supplier = this.supplierRepository.FindById(current.SupplierId);
+            
             if (current.OrderMethod.Name != updated.OrderMethod.Name)
             {
                 current.OrderMethod = this.orderMethodRepository.FindById(updated.OrderMethod.Name);
@@ -94,6 +96,12 @@
             if (current.Currency.Code != updated.Currency.Code)
             {
                 current.Currency = this.currencyRepository.FindById(updated.Currency.Code);
+                
+                if (supplier.Currency.Code != current.Currency?.Code)
+                {
+                    throw new PartSupplierException(
+                        $"Supplier {supplier.SupplierId} has currency {supplier.Currency.Code}. Cannot update part supplier to currency {updated.Currency?.Code}.");
+                }
             }
 
             if (current.DeliveryFullAddress?.Id != updated.DeliveryFullAddress?.Id)
@@ -155,6 +163,7 @@
                     {
                         throw new PartSupplierException("No Base Our Unit Price Supplied - please tell IT Support");
                     }
+
                     part.MaterialPrice = updated.BaseOurUnitPrice;
                     var currency = this.currencyRepository.FindById(updated.Currency.Code);
                     part.Currency = currency; // if go straight to updated.currency EF complains
@@ -211,6 +220,12 @@
             if (!string.IsNullOrEmpty(candidate.Currency?.Code))
             {
                 candidate.Currency = this.currencyRepository.FindById(candidate.Currency.Code);
+            }
+
+            if (candidate.Supplier.Currency.Code != candidate.Currency?.Code)
+            {
+                throw new PartSupplierException(
+                    $"Supplier {candidate.Supplier.SupplierId} has currency {candidate.Supplier.Currency.Code}. Cannot create a part supplier with currency {candidate.Currency?.Code}.");
             }
 
             if (candidate.DeliveryFullAddress?.Id != null)

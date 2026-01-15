@@ -62,6 +62,10 @@
             this.PreferredSupplierChangeRepository =
                 Substitute.For<IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>>();
             this.StockLocatorRepository = Substitute.For<IQueryRepository<StockLocator>>();
+
+            this.CurrencyRepository.FindById("GBP").Returns(new Currency { Code = "GBP" });
+            this.CurrencyRepository.FindById("USD").Returns(new Currency { Code = "USD" });
+
             this.Sut = new PartSupplierService(
                 this.MockAuthService,
                 this.CurrencyRepository,
