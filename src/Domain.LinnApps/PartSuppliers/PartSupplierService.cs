@@ -213,6 +213,12 @@
                 candidate.Currency = this.currencyRepository.FindById(candidate.Currency.Code);
             }
 
+            if (candidate.Supplier.Currency.Code != candidate.Currency?.Code)
+            {
+                throw new PartSupplierException(
+                    $"Supplier {candidate.Supplier.SupplierId} has currency {candidate.Supplier.Currency.Code}. Cannot create a part supplier with currency {candidate.Currency?.Code}.");
+            }
+
             if (candidate.DeliveryFullAddress?.Id != null)
             {
                 candidate.DeliveryFullAddress = this.addressRepository.FindById(candidate.DeliveryFullAddress.Id);
