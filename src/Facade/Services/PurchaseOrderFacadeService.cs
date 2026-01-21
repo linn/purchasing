@@ -205,7 +205,8 @@
 
             try
             {
-                var result = this.domainService.AuthorisePurchaseOrder(order, userId, privileges);
+                var privilegesList = privileges.ToList();
+                var result = this.domainService.AuthorisePurchaseOrder(order, userId, privilegesList);
 
                 if (!result.Success)
                 {
@@ -216,7 +217,7 @@
 
                 this.transactionManager.Commit();
 
-                return new SuccessResult<PurchaseOrderResource>((PurchaseOrderResource)this.resourceBuilder.Build(order, privileges));
+                return new SuccessResult<PurchaseOrderResource>((PurchaseOrderResource)this.resourceBuilder.Build(order, privilegesList));
             }
             catch (DomainException exception)
             {
