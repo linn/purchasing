@@ -183,6 +183,12 @@
             }
 
             var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+
+            if (miniOrder == null)
+            {
+                return order;
+            }
+
             miniOrder.CancelledBy = cancelledBy;
             miniOrder.ReasonCancelled = reason;
 
@@ -879,8 +885,15 @@
                 }
             }
             var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+
+            if (miniOrder == null)
+            {
+                return order;
+            }
+
             miniOrder.CancelledBy = null;
             miniOrder.ReasonCancelled = null;
+
             return order;
         }
 
@@ -1325,6 +1338,12 @@
         private void AuthoriseMiniOrder(PurchaseOrder updatedOrder)
         {
             var miniOrder = this.miniOrderRepository.FindById(updatedOrder.OrderNumber);
+
+            if (miniOrder == null)
+            {
+                return;
+            }
+            
             miniOrder.AuthorisedBy = updatedOrder.AuthorisedById;
         }
 
