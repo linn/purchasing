@@ -1,12 +1,11 @@
-﻿using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
-
-namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
+﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
     using System;
     using System.Collections.Generic;
 
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     public class PurchaseOrder
