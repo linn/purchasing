@@ -1,4 +1,6 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
+﻿using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
+
+namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
     using System;
     using System.Collections.Generic;
@@ -100,5 +102,7 @@
         public IEnumerable<PurchaseLedger> LedgerEntries { get; set; }
 
         public IEnumerable<PlCreditDebitNote> ReturnsCreditDebitNotes { get; set; }
+        
+        public PurchaseOrderReq PurchaseOrderReq { get; set; }
     }
 }

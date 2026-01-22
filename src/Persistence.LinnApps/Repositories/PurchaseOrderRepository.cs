@@ -69,6 +69,7 @@
                 .Include(o => o.Details).ThenInclude(d => d.DeliveryConfirmedBy)
                 .Include(o => o.LedgerEntries)
                 .Include(o => o.ReturnsCreditDebitNotes)
+                .Include(o => o.PurchaseOrderReq)
                 .First(o => o.OrderNumber == key);
         }
 
