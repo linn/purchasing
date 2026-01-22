@@ -14,6 +14,8 @@
         public DateTime ReqDate { get; set; }
 
         public int? OrderNumber { get; set; }
+        
+        public PurchaseOrder PurchaseOrder { get; set; }
 
         public string PartNumber { get; set; }
 

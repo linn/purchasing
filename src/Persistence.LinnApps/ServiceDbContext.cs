@@ -1313,6 +1313,7 @@
             entity.Property(e => e.Email).HasColumnName("EMAIL_ADDRESS").HasMaxLength(50);
             entity.Property(e => e.InternalNotes).HasColumnName("INTERNAL_ONLY_ORDER_NOTES").HasMaxLength(300);
             entity.HasOne(e => e.ReqState).WithMany().HasForeignKey(e => e.State);
+            entity.HasOne(e => e.PurchaseOrder).WithOne(r => r.PurchaseOrderReq).HasForeignKey<PurchaseOrderReq>(r => r.OrderNumber);
         }
 
         private void BuildNominals(ModelBuilder builder)

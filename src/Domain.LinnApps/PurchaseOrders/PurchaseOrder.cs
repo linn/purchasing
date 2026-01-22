@@ -5,6 +5,7 @@
 
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     public class PurchaseOrder
@@ -100,5 +101,7 @@
         public IEnumerable<PurchaseLedger> LedgerEntries { get; set; }
 
         public IEnumerable<PlCreditDebitNote> ReturnsCreditDebitNotes { get; set; }
+        
+        public PurchaseOrderReq PurchaseOrderReq { get; set; }
     }
 }

@@ -226,6 +226,15 @@
                         Href = $"/purchasing/pl-credit-debit-notes/{model.ReturnsCreditDebitNotes.First().NoteNumber}"
                     };
                 }
+
+                if (model.PurchaseOrderReq != null)
+                {
+                    yield return new LinkResource
+                    {
+                        Rel = "purchase-order-req",
+                        Href = $"/purchasing/purchase-orders/reqs/{model.PurchaseOrderReq.ReqNumber}"
+                    };
+                }
             }
         }
     }
