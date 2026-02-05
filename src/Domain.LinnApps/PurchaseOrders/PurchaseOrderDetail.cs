@@ -130,7 +130,12 @@
             {
                 return false;
             }
-            
+
+            if (this.BaseOrderUnitPrice < 0)
+            {
+                return false;
+            }
+
             return true;
         }
 
