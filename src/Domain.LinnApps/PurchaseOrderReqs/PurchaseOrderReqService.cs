@@ -135,6 +135,12 @@
 
         public PurchaseOrderReq Create(PurchaseOrderReq entity, IEnumerable<string> privileges)
         {
+            if (entity.RequestedById == 0)
+            {
+                throw new PurchaseOrderReqException(
+                    "Could not determine logged in user from request");
+            }
+
             if (entity.State != "DRAFT" && entity.State != "AUTHORISE WAIT")
             {
                 throw new IllegalPoReqStateChangeException(
