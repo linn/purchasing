@@ -20,7 +20,12 @@
         public void SetUp()
         {
             this.action = () => this.Sut.Create(
-                new PurchaseOrderReq { ReqNumber = this.reqNumber, State = "Order" },
+                new PurchaseOrderReq
+                {
+                    ReqNumber = this.reqNumber, 
+                    State = "Order",
+                    RequestedById = 33087
+                },
                 new List<string>());
         }
 
